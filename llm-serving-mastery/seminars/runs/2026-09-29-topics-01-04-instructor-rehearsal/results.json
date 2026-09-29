@@ -1,0 +1,1031 @@
+{
+  "bundle_schema": 1,
+  "source_commit": "98ee6e35652ca86ce2e79ac5ce775f0400eb19c9",
+  "runs": {
+    "01": {
+      "provenance": {
+        "topic": "01",
+        "source_notebook": "seminars/01-serving-system-baseline.ipynb",
+        "source_commit": "98ee6e35652ca86ce2e79ac5ce775f0400eb19c9",
+        "source_dirty": false,
+        "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+        "gpu_name_driver_total_memory": "NVIDIA GeForce RTX 5070 Ti, 591.86, 16303 MiB",
+        "python": "3.12.13",
+        "hf_hub_offline": true,
+        "started_utc": "2026-09-29T18:01:05.455338+00:00",
+        "finished_utc": "2026-09-29T18:01:58.962748+00:00",
+        "duration_s": 53.481,
+        "executed_code_cells": 10,
+        "resource_gate": {
+          "min_available_ram_gib": 24,
+          "max_gpu_used_mib": 12288
+        },
+        "resource_samples": [
+          {
+            "after_code_cells": 0,
+            "available_ram_gib": 69.18,
+            "gpu_used_mib": 0
+          },
+          {
+            "after_code_cells": 1,
+            "available_ram_gib": 69.15,
+            "gpu_used_mib": 0
+          },
+          {
+            "after_code_cells": 2,
+            "available_ram_gib": 69.15,
+            "gpu_used_mib": 0
+          },
+          {
+            "after_code_cells": 3,
+            "available_ram_gib": 68.78,
+            "gpu_used_mib": 0
+          },
+          {
+            "after_code_cells": 4,
+            "available_ram_gib": 68.64,
+            "gpu_used_mib": 1436
+          },
+          {
+            "after_code_cells": 5,
+            "available_ram_gib": 68.64,
+            "gpu_used_mib": 1436
+          },
+          {
+            "after_code_cells": 6,
+            "available_ram_gib": 67.79,
+            "gpu_used_mib": 1492
+          },
+          {
+            "after_code_cells": 7,
+            "available_ram_gib": 67.79,
+            "gpu_used_mib": 1494
+          },
+          {
+            "after_code_cells": 8,
+            "available_ram_gib": 67.79,
+            "gpu_used_mib": 1502
+          },
+          {
+            "after_code_cells": 9,
+            "available_ram_gib": 67.79,
+            "gpu_used_mib": 1502
+          },
+          {
+            "after_code_cells": 10,
+            "available_ram_gib": 67.78,
+            "gpu_used_mib": 1502
+          }
+        ],
+        "status": "complete"
+      },
+      "evidence": {
+        "schema_version": 1,
+        "experiment": "topic-01-single-request-baseline",
+        "artifact": {
+          "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+          "revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+          "dtype": "float16"
+        },
+        "workload": {
+          "prompt": "Explain time to first token to a backend engineer in two sentences.",
+          "input_tokens": 43,
+          "max_new_tokens": 64,
+          "do_sample": false,
+          "seed": 2025,
+          "load_model": "single request, no server queue"
+        },
+        "environment": {
+          "captured_at_utc": "2026-09-29T18:01:45.395202+00:00",
+          "python": "3.12.13",
+          "torch": "2.14.0+cu130",
+          "transformers": "4.51.3",
+          "cuda_runtime": "13.0",
+          "gpu": "NVIDIA GeForce RTX 5070 Ti",
+          "gpu_total_gib": 15.92
+        },
+        "lifecycle": {
+          "load_seconds": 4.511499800999445,
+          "allocated_after_load_gib": 0.9202370643615723
+        },
+        "nonstreaming": {
+          "e2e_seconds": 1.3947698510019109,
+          "input_tokens": 43,
+          "output_tokens": 63,
+          "output_tokens_per_second": 45.1687423231474,
+          "peak_allocated_gib": 0.9546909332275391
+        },
+        "streaming_proxy": {
+          "time_to_first_nonempty_chunk_seconds": 0.036248888998670736,
+          "e2e_seconds": 1.2927624599979026,
+          "nonempty_chunks": 56,
+          "output_tokens": 63,
+          "mean_inter_chunk_seconds": 0.02283989879995881
+        }
+      }
+    },
+    "02": {
+      "provenance": {
+        "topic": "02",
+        "source_notebook": "seminars/02-gpu-profiling-and-bottlenecks.ipynb",
+        "source_commit": "98ee6e35652ca86ce2e79ac5ce775f0400eb19c9",
+        "source_dirty": false,
+        "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+        "gpu_name_driver_total_memory": "NVIDIA GeForce RTX 5070 Ti, 591.86, 16303 MiB",
+        "python": "3.12.13",
+        "hf_hub_offline": true,
+        "started_utc": "2026-09-29T18:02:16.228864+00:00",
+        "finished_utc": "2026-09-29T18:04:52.598552+00:00",
+        "duration_s": 156.345,
+        "executed_code_cells": 7,
+        "resource_gate": {
+          "min_available_ram_gib": 24,
+          "max_gpu_used_mib": 12288
+        },
+        "resource_samples": [
+          {
+            "after_code_cells": 0,
+            "available_ram_gib": 69.18,
+            "gpu_used_mib": 0
+          },
+          {
+            "after_code_cells": 1,
+            "available_ram_gib": 69.16,
+            "gpu_used_mib": 0
+          },
+          {
+            "after_code_cells": 2,
+            "available_ram_gib": 68.87,
+            "gpu_used_mib": 0
+          },
+          {
+            "after_code_cells": 3,
+            "available_ram_gib": 68.86,
+            "gpu_used_mib": 0
+          },
+          {
+            "after_code_cells": 4,
+            "available_ram_gib": 68.86,
+            "gpu_used_mib": 0
+          },
+          {
+            "after_code_cells": 5,
+            "available_ram_gib": 66.0,
+            "gpu_used_mib": 308
+          },
+          {
+            "after_code_cells": 6,
+            "available_ram_gib": 65.99,
+            "gpu_used_mib": 308
+          },
+          {
+            "after_code_cells": 7,
+            "available_ram_gib": 66.0,
+            "gpu_used_mib": 362
+          }
+        ],
+        "status": "complete"
+      },
+      "evidence": {
+        "metric_contract": 1,
+        "utc_started": "2026-09-29T18:02:41Z",
+        "python": "3.12.13",
+        "torch": "2.14.0+cu130",
+        "transformers": "4.51.3",
+        "cuda_runtime": "13.0",
+        "gpu": "NVIDIA GeForce RTX 5070 Ti",
+        "trials": 5,
+        "dtype": "torch.float16",
+        "models": [
+          {
+            "id": "Qwen/Qwen2.5-0.5B-Instruct",
+            "revision": "7ae557604adf67be50417f59c2c2f167def9a775"
+          },
+          {
+            "id": "Qwen/Qwen2.5-1.5B-Instruct",
+            "revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+          }
+        ],
+        "workloads": [
+          {
+            "prompt_tokens": 128,
+            "output_tokens": 32
+          },
+          {
+            "prompt_tokens": 4096,
+            "output_tokens": 32
+          },
+          {
+            "prompt_tokens": 128,
+            "output_tokens": 128
+          },
+          {
+            "prompt_tokens": 4096,
+            "output_tokens": 128
+          }
+        ],
+        "results": [
+          {
+            "model": {
+              "id": "Qwen/Qwen2.5-0.5B-Instruct",
+              "revision": "7ae557604adf67be50417f59c2c2f167def9a775"
+            },
+            "load_s": 18.902026021001802,
+            "kv": {
+              "layers": 24,
+              "kv_heads": 2,
+              "head_dim": 64,
+              "element_bytes": 2,
+              "bytes_per_token": 12288
+            },
+            "measurements": [
+              {
+                "prompt_tokens": 128,
+                "output_tokens": 32,
+                "batch_size": 1,
+                "trials": 5,
+                "prefill_ms": [
+                  47.89152145385742,
+                  25.27471923828125,
+                  16.98044776916504,
+                  17.749664306640625,
+                  27.680255889892578
+                ],
+                "prefill_median_ms": 25.27471923828125,
+                "decode_steps": 31,
+                "decode_ms": [
+                  840.10791015625,
+                  698.9430541992188,
+                  721.1593017578125,
+                  567.7647094726562,
+                  723.286376953125
+                ],
+                "decode_median_ms": 721.1593017578125,
+                "decode_tokens_per_s": 42.9863414705157,
+                "memory_allocated_bytes": 1029877760,
+                "memory_reserved_bytes": 1075838976,
+                "peak_allocated_bytes": 1072577536,
+                "peak_reserved_bytes": 1138753536
+              },
+              {
+                "prompt_tokens": 4096,
+                "output_tokens": 32,
+                "batch_size": 1,
+                "trials": 5,
+                "prefill_ms": [
+                  73.8301773071289,
+                  73.65897369384766,
+                  72.81641387939453,
+                  72.46240234375,
+                  73.56416320800781
+                ],
+                "prefill_median_ms": 73.56416320800781,
+                "decode_steps": 31,
+                "decode_ms": [
+                  571.897705078125,
+                  603.5260009765625,
+                  595.9849853515625,
+                  739.16162109375,
+                  486.3292541503906
+                ],
+                "decode_median_ms": 595.9849853515625,
+                "decode_tokens_per_s": 52.0147331928397,
+                "memory_allocated_bytes": 1029909504,
+                "memory_reserved_bytes": 1075838976,
+                "peak_allocated_bytes": 2366695424,
+                "peak_reserved_bytes": 2564816896
+              },
+              {
+                "prompt_tokens": 128,
+                "output_tokens": 128,
+                "batch_size": 1,
+                "trials": 5,
+                "prefill_ms": [
+                  17.124832153320312,
+                  18.013343811035156,
+                  39.91804885864258,
+                  57.02793502807617,
+                  17.665119171142578
+                ],
+                "prefill_median_ms": 18.013343811035156,
+                "decode_steps": 127,
+                "decode_ms": [
+                  2652.378662109375,
+                  3064.6171875,
+                  2365.1806640625,
+                  2263.968017578125,
+                  3079.671630859375
+                ],
+                "decode_median_ms": 2652.378662109375,
+                "decode_tokens_per_s": 47.881549423640685,
+                "memory_allocated_bytes": 1029877760,
+                "memory_reserved_bytes": 1075838976,
+                "peak_allocated_bytes": 1074101248,
+                "peak_reserved_bytes": 1140850688
+              },
+              {
+                "prompt_tokens": 4096,
+                "output_tokens": 128,
+                "batch_size": 1,
+                "trials": 5,
+                "prefill_ms": [
+                  75.61376190185547,
+                  73.91600036621094,
+                  73.36614227294922,
+                  72.86473846435547,
+                  73.45391845703125
+                ],
+                "prefill_median_ms": 73.45391845703125,
+                "decode_steps": 127,
+                "decode_ms": [
+                  3048.476806640625,
+                  2104.94775390625,
+                  3393.234130859375,
+                  2921.72900390625,
+                  2446.528076171875
+                ],
+                "decode_median_ms": 2921.72900390625,
+                "decode_tokens_per_s": 43.467412559551356,
+                "memory_allocated_bytes": 1029909504,
+                "memory_reserved_bytes": 1075838976,
+                "peak_allocated_bytes": 2366695424,
+                "peak_reserved_bytes": 2564816896
+              }
+            ]
+          },
+          {
+            "model": {
+              "id": "Qwen/Qwen2.5-1.5B-Instruct",
+              "revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+            },
+            "load_s": 8.158550657997694,
+            "kv": {
+              "layers": 28,
+              "kv_heads": 2,
+              "head_dim": 128,
+              "element_bytes": 2,
+              "bytes_per_token": 28672
+            },
+            "measurements": [
+              {
+                "prompt_tokens": 128,
+                "output_tokens": 32,
+                "batch_size": 1,
+                "trials": 5,
+                "prefill_ms": [
+                  27.845407485961914,
+                  21.438112258911133,
+                  77.12207794189453,
+                  21.771743774414062,
+                  70.82998657226562
+                ],
+                "prefill_median_ms": 27.845407485961914,
+                "decode_steps": 31,
+                "decode_ms": [
+                  748.105224609375,
+                  1221.5177001953125,
+                  831.8101806640625,
+                  1195.0135498046875,
+                  1116.33447265625
+                ],
+                "decode_median_ms": 1116.33447265625,
+                "decode_tokens_per_s": 27.769455086554284,
+                "memory_allocated_bytes": 3121902592,
+                "memory_reserved_bytes": 3319791616,
+                "peak_allocated_bytes": 3167619584,
+                "peak_reserved_bytes": 3382706176
+              },
+              {
+                "prompt_tokens": 4096,
+                "output_tokens": 32,
+                "batch_size": 1,
+                "trials": 5,
+                "prefill_ms": [
+                  185.53805541992188,
+                  185.63372802734375,
+                  186.46006774902344,
+                  185.5850830078125,
+                  186.09420776367188
+                ],
+                "prefill_median_ms": 185.63372802734375,
+                "decode_steps": 31,
+                "decode_ms": [
+                  910.3162231445312,
+                  964.2493896484375,
+                  965.7401123046875,
+                  995.9854736328125,
+                  1214.8399658203125
+                ],
+                "decode_median_ms": 965.7401123046875,
+                "decode_tokens_per_s": 32.09973325641424,
+                "memory_allocated_bytes": 3121934336,
+                "memory_reserved_bytes": 3319791616,
+                "peak_allocated_bytes": 4511719424,
+                "peak_reserved_bytes": 4997513216
+              },
+              {
+                "prompt_tokens": 128,
+                "output_tokens": 128,
+                "batch_size": 1,
+                "trials": 5,
+                "prefill_ms": [
+                  54.75241470336914,
+                  36.3680305480957,
+                  33.579105377197266,
+                  23.028703689575195,
+                  40.96041488647461
+                ],
+                "prefill_median_ms": 36.3680305480957,
+                "decode_steps": 127,
+                "decode_ms": [
+                  4510.30712890625,
+                  4454.5224609375,
+                  4533.73974609375,
+                  4334.54541015625,
+                  4333.74169921875
+                ],
+                "decode_median_ms": 4454.5224609375,
+                "decode_tokens_per_s": 28.510351247229217,
+                "memory_allocated_bytes": 3121902592,
+                "memory_reserved_bytes": 3319791616,
+                "peak_allocated_bytes": 3170961920,
+                "peak_reserved_bytes": 3382706176
+              },
+              {
+                "prompt_tokens": 4096,
+                "output_tokens": 128,
+                "batch_size": 1,
+                "trials": 5,
+                "prefill_ms": [
+                  185.55043029785156,
+                  186.90771484375,
+                  187.1853790283203,
+                  185.77206420898438,
+                  186.55349731445312
+                ],
+                "prefill_median_ms": 186.55349731445312,
+                "decode_steps": 127,
+                "decode_ms": [
+                  3751.473876953125,
+                  4897.62646484375,
+                  4348.25830078125,
+                  4584.904296875,
+                  4389.5703125
+                ],
+                "decode_median_ms": 4389.5703125,
+                "decode_tokens_per_s": 28.932216813647408,
+                "memory_allocated_bytes": 3121934336,
+                "memory_reserved_bytes": 3319791616,
+                "peak_allocated_bytes": 4515061760,
+                "peak_reserved_bytes": 4997513216
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "03": {
+      "provenance": {
+        "topic": "03",
+        "source_notebook": "seminars/03-quantization-tradeoffs.ipynb",
+        "source_commit": "98ee6e35652ca86ce2e79ac5ce775f0400eb19c9",
+        "source_dirty": false,
+        "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+        "gpu_name_driver_total_memory": "NVIDIA GeForce RTX 5070 Ti, 591.86, 16303 MiB",
+        "python": "3.12.13",
+        "hf_hub_offline": true,
+        "started_utc": "2026-09-29T18:05:12.842514+00:00",
+        "finished_utc": "2026-09-29T18:06:35.957396+00:00",
+        "duration_s": 83.09,
+        "executed_code_cells": 6,
+        "resource_gate": {
+          "min_available_ram_gib": 24,
+          "max_gpu_used_mib": 12288
+        },
+        "resource_samples": [
+          {
+            "after_code_cells": 0,
+            "available_ram_gib": 69.18,
+            "gpu_used_mib": 0
+          },
+          {
+            "after_code_cells": 1,
+            "available_ram_gib": 69.15,
+            "gpu_used_mib": 0
+          },
+          {
+            "after_code_cells": 2,
+            "available_ram_gib": 68.74,
+            "gpu_used_mib": 0
+          },
+          {
+            "after_code_cells": 3,
+            "available_ram_gib": 68.73,
+            "gpu_used_mib": 0
+          },
+          {
+            "after_code_cells": 4,
+            "available_ram_gib": 68.66,
+            "gpu_used_mib": 0
+          },
+          {
+            "after_code_cells": 5,
+            "available_ram_gib": 67.69,
+            "gpu_used_mib": 1478
+          },
+          {
+            "after_code_cells": 6,
+            "available_ram_gib": 67.68,
+            "gpu_used_mib": 1478
+          }
+        ],
+        "status": "complete"
+      },
+      "evidence": {
+        "contract": "topic-03-paired-smoke-v2",
+        "utc_started": "2026-09-29T18:05:54Z",
+        "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+        "revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+        "gpu": "NVIDIA GeForce RTX 5070 Ti",
+        "compute_capability": [
+          12,
+          0
+        ],
+        "torch": "2.14.0+cu130",
+        "cuda": "13.0",
+        "transformers": "4.51.3",
+        "bitsandbytes": "0.50.2",
+        "trials": 3,
+        "max_new_tokens": 24,
+        "quality_mode": "natural_eos",
+        "timing_mode": "fixed_output_length",
+        "formats": {
+          "fp16": {
+            "load_s": 5.864489841998875,
+            "peak_allocated_bytes": 1260388352,
+            "peak_reserved_bytes": 1277165568,
+            "rows": [
+              {
+                "bucket": "format",
+                "prompt": "Reply with exactly one word: blue or orange. What color is the sky on a clear day?",
+                "quality_sample": {
+                  "prompt_tokens": 49,
+                  "output_tokens": 2,
+                  "ttft_s": 0.05040876500061131,
+                  "wall_s": 0.07216431900087628,
+                  "post_first_s_per_token": 0.021755554000264965,
+                  "output": "blue"
+                },
+                "timing_trials": [
+                  {
+                    "prompt_tokens": 49,
+                    "output_tokens": 24,
+                    "ttft_s": 0.01815143799831276,
+                    "wall_s": 0.5542580039982568,
+                    "post_first_s_per_token": 0.02330898113043235,
+                    "output": "blue. The sky appears blue because it reflects sunlight and absorbs most of the other colors present in the atmosphere. This phenomenon"
+                  },
+                  {
+                    "prompt_tokens": 49,
+                    "output_tokens": 24,
+                    "ttft_s": 0.01765513799909968,
+                    "wall_s": 0.5022905149999133,
+                    "post_first_s_per_token": 0.021071103347861463,
+                    "output": "blue. The sky appears blue because it reflects sunlight and absorbs most of the other colors present in the atmosphere. This phenomenon"
+                  },
+                  {
+                    "prompt_tokens": 49,
+                    "output_tokens": 24,
+                    "ttft_s": 0.029820288000337314,
+                    "wall_s": 0.5407030009992013,
+                    "post_first_s_per_token": 0.022212291869515826,
+                    "output": "blue. The sky appears blue because it reflects sunlight and absorbs most of the other colors present in the atmosphere. This phenomenon"
+                  }
+                ],
+                "p95_ttft_s": 0.029820288000337314,
+                "p95_wall_s": 0.5542580039982568
+              },
+              {
+                "bucket": "arithmetic",
+                "prompt": "Compute 17 + 28. Give only the integer.",
+                "quality_sample": {
+                  "prompt_tokens": 43,
+                  "output_tokens": 3,
+                  "ttft_s": 0.0947800969988748,
+                  "wall_s": 0.12772133499674965,
+                  "post_first_s_per_token": 0.016470618998937425,
+                  "output": "45"
+                },
+                "timing_trials": [
+                  {
+                    "prompt_tokens": 43,
+                    "output_tokens": 24,
+                    "ttft_s": 0.01877279000109411,
+                    "wall_s": 0.7124332989988034,
+                    "post_first_s_per_token": 0.030159152565117794,
+                    "output": "45.0\n\nThe sum of 17 and 28 is 45.0. Since we"
+                  },
+                  {
+                    "prompt_tokens": 43,
+                    "output_tokens": 24,
+                    "ttft_s": 0.0178795319989149,
+                    "wall_s": 0.5766234170005191,
+                    "post_first_s_per_token": 0.024293212391374098,
+                    "output": "45.0\n\nThe sum of 17 and 28 is 45.0. Since we"
+                  },
+                  {
+                    "prompt_tokens": 43,
+                    "output_tokens": 24,
+                    "ttft_s": 0.01802680800028611,
+                    "wall_s": 0.607229481000104,
+                    "post_first_s_per_token": 0.02561750752173121,
+                    "output": "45.0\n\nThe sum of 17 and 28 is 45.0. Since we"
+                  }
+                ],
+                "p95_ttft_s": 0.01877279000109411,
+                "p95_wall_s": 0.7124332989988034
+              },
+              {
+                "bucket": "instruction",
+                "prompt": "Write exactly three comma-separated verbs for measuring a service.",
+                "quality_sample": {
+                  "prompt_tokens": 40,
+                  "output_tokens": 24,
+                  "ttft_s": 0.01827977799985092,
+                  "wall_s": 0.8874916210006631,
+                  "post_first_s_per_token": 0.03779181926090488,
+                  "output": "1. Measure the time taken to complete the task.\n2. Check if the service is functioning as expected.\n3."
+                },
+                "timing_trials": [
+                  {
+                    "prompt_tokens": 40,
+                    "output_tokens": 24,
+                    "ttft_s": 0.018500042002415285,
+                    "wall_s": 0.5828546150005423,
+                    "post_first_s_per_token": 0.02453715534774465,
+                    "output": "1. Measure the time taken to complete the task.\n2. Check if the service is functioning as expected.\n3."
+                  },
+                  {
+                    "prompt_tokens": 40,
+                    "output_tokens": 24,
+                    "ttft_s": 0.04873486100041191,
+                    "wall_s": 0.7206309329994838,
+                    "post_first_s_per_token": 0.02921287269561182,
+                    "output": "1. Measure the time taken to complete the task.\n2. Check if the service is functioning as expected.\n3."
+                  },
+                  {
+                    "prompt_tokens": 40,
+                    "output_tokens": 24,
+                    "ttft_s": 0.09077259700279683,
+                    "wall_s": 0.8063125420012511,
+                    "post_first_s_per_token": 0.031110432391237144,
+                    "output": "1. Measure the time taken to complete the task.\n2. Check if the service is functioning as expected.\n3."
+                  }
+                ],
+                "p95_ttft_s": 0.09077259700279683,
+                "p95_wall_s": 0.8063125420012511
+              },
+              {
+                "bucket": "reasoning",
+                "prompt": "A server has 2 GiB free and a new request needs 3 GiB. In one sentence, say whether it fits and why.",
+                "quality_sample": {
+                  "prompt_tokens": 58,
+                  "output_tokens": 24,
+                  "ttft_s": 0.017481871997006238,
+                  "wall_s": 0.5183615959977033,
+                  "post_first_s_per_token": 0.02177737930437813,
+                  "output": "The server's current free space of 2 GiB is insufficient to accommodate the requested 3 GiB of data,"
+                },
+                "timing_trials": [
+                  {
+                    "prompt_tokens": 58,
+                    "output_tokens": 24,
+                    "ttft_s": 0.017117267998401076,
+                    "wall_s": 0.5429612779989839,
+                    "post_first_s_per_token": 0.022862783043503598,
+                    "output": "The server's current free space of 2 GiB is insufficient to accommodate the requested 3 GiB of data,"
+                  },
+                  {
+                    "prompt_tokens": 58,
+                    "output_tokens": 24,
+                    "ttft_s": 0.0166608149993408,
+                    "wall_s": 0.4037018339986389,
+                    "post_first_s_per_token": 0.01682787039127383,
+                    "output": "The server's current free space of 2 GiB is insufficient to accommodate the requested 3 GiB of data,"
+                  },
+                  {
+                    "prompt_tokens": 58,
+                    "output_tokens": 24,
+                    "ttft_s": 0.04300290299943299,
+                    "wall_s": 0.49542687899884186,
+                    "post_first_s_per_token": 0.01967060765214821,
+                    "output": "The server's current free space of 2 GiB is insufficient to accommodate the requested 3 GiB of data,"
+                  }
+                ],
+                "p95_ttft_s": 0.04300290299943299,
+                "p95_wall_s": 0.5429612779989839
+              }
+            ]
+          },
+          "nf4_w4a16": {
+            "load_s": 4.50025136199838,
+            "peak_allocated_bytes": 663721984,
+            "peak_reserved_bytes": 1310720000,
+            "rows": [
+              {
+                "bucket": "format",
+                "prompt": "Reply with exactly one word: blue or orange. What color is the sky on a clear day?",
+                "quality_sample": {
+                  "prompt_tokens": 49,
+                  "output_tokens": 3,
+                  "ttft_s": 0.07191888300076243,
+                  "wall_s": 0.13805737800066709,
+                  "post_first_s_per_token": 0.033069247499952326,
+                  "output": "Blue."
+                },
+                "timing_trials": [
+                  {
+                    "prompt_tokens": 49,
+                    "output_tokens": 24,
+                    "ttft_s": 0.07199368899819092,
+                    "wall_s": 0.8325309139981982,
+                    "post_first_s_per_token": 0.03306683586956553,
+                    "output": "Blue. The sky appears blue because of the scattering of sunlight as it passes through the atmosphere. When there's no cloud"
+                  },
+                  {
+                    "prompt_tokens": 49,
+                    "output_tokens": 24,
+                    "ttft_s": 0.06391590600105701,
+                    "wall_s": 1.2815114810000523,
+                    "post_first_s_per_token": 0.05293893804343458,
+                    "output": "Blue. The sky appears blue because of the scattering of sunlight as it passes through the atmosphere. When there's no cloud"
+                  },
+                  {
+                    "prompt_tokens": 49,
+                    "output_tokens": 24,
+                    "ttft_s": 0.08841231200131006,
+                    "wall_s": 1.2042073020020325,
+                    "post_first_s_per_token": 0.04851282565220533,
+                    "output": "Blue. The sky appears blue because of the scattering of sunlight as it passes through the atmosphere. When there's no cloud"
+                  }
+                ],
+                "p95_ttft_s": 0.08841231200131006,
+                "p95_wall_s": 1.2815114810000523
+              },
+              {
+                "bucket": "arithmetic",
+                "prompt": "Compute 17 + 28. Give only the integer.",
+                "quality_sample": {
+                  "prompt_tokens": 43,
+                  "output_tokens": 3,
+                  "ttft_s": 0.0669450120003603,
+                  "wall_s": 0.15262454099865863,
+                  "post_first_s_per_token": 0.04283976449914917,
+                  "output": "45"
+                },
+                "timing_trials": [
+                  {
+                    "prompt_tokens": 43,
+                    "output_tokens": 24,
+                    "ttft_s": 0.11242488000061712,
+                    "wall_s": 1.2454080850002356,
+                    "post_first_s_per_token": 0.0492601393478095,
+                    "output": "45.000000000000003 (rounded to an integer)"
+                  },
+                  {
+                    "prompt_tokens": 43,
+                    "output_tokens": 24,
+                    "ttft_s": 0.07440812699860544,
+                    "wall_s": 1.102853189000598,
+                    "post_first_s_per_token": 0.044715002695738804,
+                    "output": "45.000000000000003 (rounded to an integer)"
+                  },
+                  {
+                    "prompt_tokens": 43,
+                    "output_tokens": 24,
+                    "ttft_s": 0.10168696500113583,
+                    "wall_s": 1.1668735850034864,
+                    "post_first_s_per_token": 0.04631246173923263,
+                    "output": "45.000000000000003 (rounded to an integer)"
+                  }
+                ],
+                "p95_ttft_s": 0.11242488000061712,
+                "p95_wall_s": 1.2454080850002356
+              },
+              {
+                "bucket": "instruction",
+                "prompt": "Write exactly three comma-separated verbs for measuring a service.",
+                "quality_sample": {
+                  "prompt_tokens": 40,
+                  "output_tokens": 12,
+                  "ttft_s": 0.11049674600144499,
+                  "wall_s": 0.5751040210016072,
+                  "post_first_s_per_token": 0.04223702500001474,
+                  "output": "1. Serve\n2. Provide\n3. Offer"
+                },
+                "timing_trials": [
+                  {
+                    "prompt_tokens": 40,
+                    "output_tokens": 24,
+                    "ttft_s": 0.058259689998521935,
+                    "wall_s": 0.9949526389973471,
+                    "post_first_s_per_token": 0.04072578039125327,
+                    "output": "1. Serve\n2. Provide\n3. Offer\nThese verbs can be used to describe the act of providing or"
+                  },
+                  {
+                    "prompt_tokens": 40,
+                    "output_tokens": 24,
+                    "ttft_s": 0.026420957001391798,
+                    "wall_s": 1.0526901680023002,
+                    "post_first_s_per_token": 0.04462040047830036,
+                    "output": "1. Serve\n2. Provide\n3. Offer\nThese verbs can be used to describe the act of providing or"
+                  },
+                  {
+                    "prompt_tokens": 40,
+                    "output_tokens": 24,
+                    "ttft_s": 0.07151283799976227,
+                    "wall_s": 1.0282846250011062,
+                    "post_first_s_per_token": 0.04159877334788452,
+                    "output": "1. Serve\n2. Provide\n3. Offer\nThese verbs can be used to describe the act of providing or"
+                  }
+                ],
+                "p95_ttft_s": 0.07151283799976227,
+                "p95_wall_s": 1.0526901680023002
+              },
+              {
+                "bucket": "reasoning",
+                "prompt": "A server has 2 GiB free and a new request needs 3 GiB. In one sentence, say whether it fits and why.",
+                "quality_sample": {
+                  "prompt_tokens": 58,
+                  "output_tokens": 24,
+                  "ttft_s": 0.026216702000965597,
+                  "wall_s": 0.9514343779992487,
+                  "post_first_s_per_token": 0.04022685547818622,
+                  "output": "It does not fit because the server has 2 GiB of free space, which is insufficient to accommodate the requested "
+                },
+                "timing_trials": [
+                  {
+                    "prompt_tokens": 58,
+                    "output_tokens": 24,
+                    "ttft_s": 0.061817497000447474,
+                    "wall_s": 1.0863426969990542,
+                    "post_first_s_per_token": 0.0445445739129829,
+                    "output": "It does not fit because the server has 2 GiB of free space, which is insufficient to accommodate the requested "
+                  },
+                  {
+                    "prompt_tokens": 58,
+                    "output_tokens": 24,
+                    "ttft_s": 0.026244415999826742,
+                    "wall_s": 1.106154075001541,
+                    "post_first_s_per_token": 0.04695259386963975,
+                    "output": "It does not fit because the server has 2 GiB of free space, which is insufficient to accommodate the requested "
+                  },
+                  {
+                    "prompt_tokens": 58,
+                    "output_tokens": 24,
+                    "ttft_s": 0.02614062600332545,
+                    "wall_s": 0.8167132250018767,
+                    "post_first_s_per_token": 0.034372721695589185,
+                    "output": "It does not fit because the server has 2 GiB of free space, which is insufficient to accommodate the requested "
+                  }
+                ],
+                "p95_ttft_s": 0.061817497000447474,
+                "p95_wall_s": 1.106154075001541
+              }
+            ]
+          }
+        }
+      }
+    },
+    "04": {
+      "provenance": {
+        "topic": "04",
+        "source_notebook": "seminars/04-vllm-openai-serving.ipynb",
+        "source_commit": "98ee6e35652ca86ce2e79ac5ce775f0400eb19c9",
+        "source_dirty": false,
+        "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+        "gpu_name_driver_total_memory": "NVIDIA GeForce RTX 5070 Ti, 591.86, 16303 MiB",
+        "python": "3.12.13",
+        "hf_hub_offline": true,
+        "started_utc": "2026-09-29T18:06:48.058830+00:00",
+        "finished_utc": "2026-09-29T18:07:19.237002+00:00",
+        "duration_s": 31.152,
+        "executed_code_cells": 7,
+        "resource_gate": {
+          "min_available_ram_gib": 24,
+          "max_gpu_used_mib": 12288
+        },
+        "resource_samples": [
+          {
+            "after_code_cells": 0,
+            "available_ram_gib": 69.17,
+            "gpu_used_mib": 0
+          },
+          {
+            "after_code_cells": 1,
+            "available_ram_gib": 69.14,
+            "gpu_used_mib": 0
+          },
+          {
+            "after_code_cells": 2,
+            "available_ram_gib": 68.69,
+            "gpu_used_mib": 0
+          },
+          {
+            "after_code_cells": 3,
+            "available_ram_gib": 66.15,
+            "gpu_used_mib": 7528
+          },
+          {
+            "after_code_cells": 4,
+            "available_ram_gib": 66.02,
+            "gpu_used_mib": 7530
+          },
+          {
+            "after_code_cells": 5,
+            "available_ram_gib": 66.03,
+            "gpu_used_mib": 7530
+          },
+          {
+            "after_code_cells": 6,
+            "available_ram_gib": 65.93,
+            "gpu_used_mib": 7530
+          },
+          {
+            "after_code_cells": 7,
+            "available_ram_gib": 68.59,
+            "gpu_used_mib": 0
+          }
+        ],
+        "status": "complete"
+      },
+      "evidence": {
+        "contract": "topic-04-api-smoke-v2",
+        "utc_started": "2026-09-29T18:06:53Z",
+        "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+        "revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+        "served_name": "topic04",
+        "gpu": "NVIDIA GeForce RTX 5070 Ti",
+        "torch": "2.13.0+cu130",
+        "cuda": "13.0",
+        "vllm": "0.29.0",
+        "openai_sdk": "3.20.0",
+        "python": "3.12.13",
+        "wsl_v1_runner_fallback": true,
+        "advertised_models": [
+          "topic04"
+        ],
+        "nonstream": {
+          "wall_s": 0.7475336059978872,
+          "finish_reason": "stop",
+          "usage": {
+            "completion_tokens": 29,
+            "prompt_tokens": 41,
+            "total_tokens": 70,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": null
+          },
+          "content": "An API server is a software application that acts as the gateway for clients to communicate with another system or service over an internet protocol (HTTP)."
+        },
+        "sdk_stream": {
+          "first_content_s": 0.053150249001191696,
+          "wall_s": 0.46342123500289745,
+          "finish_reason": "stop",
+          "content": "An API server is a software application that acts as the gateway for clients to communicate with another system or service over an internet protocol (HTTP)."
+        },
+        "raw_sse": {
+          "json_frames": 11,
+          "done": true
+        },
+        "negative": {
+          "wrong_model": {
+            "status": 404
+          },
+          "over_context": {
+            "status": 400,
+            "rendered_prompt_tokens": 2329
+          }
+        },
+        "launch_args": [
+          "serve",
+          "<PINNED_LOCAL_SNAPSHOT>",
+          "--served-model-name",
+          "topic04",
+          "--host",
+          "127.0.0.1",
+          "--port",
+          "8000",
+          "--dtype",
+          "float16",
+          "--max-model-len",
+          "2048",
+          "--max-num-seqs",
+          "4",
+          "--gpu-memory-utilization",
+          "0.45",
+          "--enforce-eager"
+        ]
+      }
+    }
+  }
+}
