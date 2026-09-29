@@ -156,8 +156,8 @@
               <div class="meta-value">Albert Nasybullin</div>
             </div>
             <div>
-              <div class="meta-label">Date</div>
-              <div class="meta-value">TBA</div>
+              <div class="meta-label">First round deadline</div>
+              <div class="meta-value">8 October 2026</div>
             </div>
           </div>
           <aside class="slide-notes">Welcome. This course is about the moment after the model works: serving it to many people at once, fast, cheaply and reliably. Today: who I am, why serving is hard (with a live demo), what we will build, how the weekly leaderboard works, how you are graded, and how to succeed.
@@ -166,7 +166,8 @@
         </section>
 
         <!-- ============================================ ART-HERO · rush hour ============================================ -->
-        <section class="slide" data-type="art-hero" data-screen-label="02 Rush hour">
+
+<section class="slide" data-type="art-hero" data-screen-label="02 Rush hour">
           <div class="art-hero">
             <div class="art-hero__kicker"><span lang="en">The setting</span></div>
             <figure class="art-hero__fig">
@@ -571,13 +572,13 @@
             </div>
             <div class="twocol-col">
               <div class="qr-block">
-                <div class="qr-canvas" data-qr="https://colab.research.google.com/github/levshaazz/llm-serving-mastery/blob/main/seminars/00-live-demo-pipeline-vs-vllm.ipynb"></div>
+                <div class="qr-canvas" data-qr="https://colab.research.google.com/github/levshaazz/llm-serving-mastery-submission-example/blob/main/seminars/00-live-demo-pipeline-vs-vllm.ipynb"></div>
                 <div class="qr-caption">
                   <span lang="en">Run it yourself</span>
                   <span class="qr-url">seminars/00-live-demo-pipeline-vs-vllm.ipynb</span>
                 </div>
               </div>
-              <a href="https://colab.research.google.com/github/levshaazz/llm-serving-mastery/blob/main/seminars/00-live-demo-pipeline-vs-vllm.ipynb"
+              <a href="https://colab.research.google.com/github/levshaazz/llm-serving-mastery-submission-example/blob/main/seminars/00-live-demo-pipeline-vs-vllm.ipynb"
                  target="_blank" rel="noopener"
                  style="display:inline-block; margin-top:var(--sp-3); padding:12px 24px; border-radius:10px;
                         background:var(--accent); color:#fff; font-weight:600; font-size:24px; text-decoration:none;
@@ -589,7 +590,7 @@
               </ul>
             </div>
           </div>
-          <aside class="slide-notes">Switch to Colab. The notebook: (1) starts a deliberately naive OpenAI-compatible server around transformers.pipeline, one request at a time; (2) fires 1, 8, 32, 64 concurrent streaming clients and records TTFT, throughput and failures; (3) stops it, starts vLLM with the same model, repeats; (4) prints this table and a plot, and runs one extra 64-client wave while polling vLLM's /metrics, so you can watch "requests running" climb to 64. p95 TTFT is over successful requests, matching the judge; failures stay in their own column and must be read alongside it. Fill the blanks with the printed numbers, then compare with the predictions from the previous slide. Colab's T4 has 320 GB/s of bandwidth, so absolute numbers are smaller than on the judge — the ratio is the point. Rehearsal on a Colab T4 (2026-09-19, seminars/runs/): pipeline 21 / 21 / 18 / 19 tok/s at 1 / 8 / 32 / 64 clients, 19 of 32 and 51 of 64 clients gave up at 60 s; vLLM 49 / 315 / 922 / 1459 tok/s, p95 TTFT 0.32 s at 64, no failures — about 77× at 64 clients. Expect numbers in that range live; vLLM start-up takes ~2 min, install ~5 min — start the notebook before the lecture.</aside>
+          <aside class="slide-notes">Switch to the public Colab notebook. It starts a deliberately serial pipeline server, sends 1, 8, 32 and 64 simultaneous streaming requests, then repeats on vLLM with the same pinned model. The p95 TTFT population contains successful requests only; report failures beside it. The published metric-contract-v2 rehearsal in seminars/runs/ used a T4 and preserved raw records; its numbers describe only that device, workload and runtime. Colab may assign a different GPU and the curves may change. Record the actual device and environment before interpreting any difference. This demonstration does not establish how a 5070 Ti will behave.</aside>
         </section>
 
         <!-- ============================================ TABLE · kitchen dictionary ============================================ -->
@@ -929,8 +930,8 @@ exec /runtime/.venv/bin/vllm serve \
         <!-- ============================================ TWO-COL · the defense ============================================ -->
 <section class="slide" data-type="two-col" data-screen-label="29b Round 1 bars">
           <div class="slide-header">
-            <h2><span lang="en">Round 1 calibration — provisional</span></h2>
-            <span class="slide-kicker"><span lang="en">Not valid for grading until the v3 reference rerun</span></span>
+            <h2><span lang="en">Round 1 calibration — verified</span></h2>
+            <span class="slide-kicker"><span lang="en">Config v5 · RTX 5070 Ti · 29 September 2026</span></span>
           </div>
           <div class="twocol">
             <div class="twocol-col">
@@ -949,20 +950,20 @@ exec /runtime/.venv/bin/vllm serve \
               <div class="callout" data-kind="info">
                 <div class="callout-icon">i</div>
                 <div class="callout-body">
-                  <strong><span lang="en">Historical calibration only</span></strong>
-                  <p><span lang="en">These values were reconstructed from a lost Colab run and lack complete provenance. They illustrate the calculation, but cannot grade a round.</span></p>
+                  <strong><span lang="en">Measured on the judge GPU</span></strong>
+                  <p><span lang="en">The reference preserves model revision, judge/config hashes, quality scores, raw run artifacts and GPU identity. Published bars come from this config-v5 run.</span></p>
                 </div>
               </div>
               <div class="callout" data-kind="warn" style="margin-top:var(--sp-3)">
                 <div class="callout-icon">!</div>
                 <div class="callout-body">
-                  <strong><span lang="en">Required before opening</span></strong>
-                  <p><span lang="en">Run the reference through judge config v3, preserve raw artifacts, then publish verified gates, \(S_{\text{bar}}\) and the SLO.</span></p>
+                  <strong><span lang="en">Same seed for grading</span></strong>
+                  <p><span lang="en">Every Round 1 submission must use the reference round's private seed. If it is lost, recalibrate before grading.</span></p>
                 </div>
               </div>
             </div>
           </div>
-          <aside class="slide-notes">Do not present these numbers as active grading thresholds. The original result.json was reconstructed from console output after the Colab VM was lost. Judge v3 now refuses to generate thresholds from a provenance-incomplete reference. Rerun Qwen2.5-3B-Instruct through the same clean v3 pipeline on the declared reference hardware, preserve raw artifacts, and only then replace this provisional table. Numbers retained for historical comparison: judge/thresholds/round-01.json.</aside>
+          <aside class="slide-notes">These are the published verified Round 01 bars from judge/reference/round-01.v5.result.json and judge/thresholds/round-01.json. The 2026-09-19 T4 result remains historical only. The private seed from this calibration must be reused for all Round 01 submissions; if lost, a new reference is required. The speed bar is the geometric mean of 2138.59 and 2955.67 output tok/s, rounded to 2514.1. The p95 TTFT SLO is 0.8 s.</aside>
         </section>
 
         <!-- ============================================ -->
@@ -1210,12 +1211,12 @@ Kept:   yes. Next: FP8 KV cache.</code></pre>
                 <div class="contact-value">Thursdays, 23:59 MSK</div>
               </div>
               <div class="contact-item">
-                <div class="contact-label">Office hours</div>
-                <div class="contact-value">TBA</div>
+                <div class="contact-label">Start here</div>
+                <div class="contact-value">Public student example</div>
               </div>
               <div class="contact-item">
-                <div class="contact-label">GitHub</div>
-                <div class="contact-value">github.com/levshaazz/llm-serving-mastery</div>
+                <div class="contact-label">Student example</div>
+                <div class="contact-value">github.com/levshaazz/llm-serving-mastery-submission-example</div>
               </div>
             </div>
             <div class="qr-block">
@@ -1232,7 +1233,8 @@ Kept:   yes. Next: FP8 KV cache.</code></pre>
         </section>
 
         <!-- ============================================ QUOTE · closing ============================================ -->
-        <section class="slide" data-type="quote" data-screen-label="38 Closing quote">
+
+<section class="slide" data-type="quote" data-screen-label="38 Closing quote">
           <div>
             <div class="quote-mark">"</div>
             <blockquote><span lang="en">Mise-en-place is the religion of all good line cooks.</span></blockquote>

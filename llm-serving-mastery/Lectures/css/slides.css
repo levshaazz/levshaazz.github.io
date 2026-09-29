@@ -389,6 +389,13 @@
   background: var(--bg-alt);
   border-radius: var(--r-md);
 }
+/* Reusable single-prose caption variant for a worked equation's assumptions/omissions. */
+.slide[data-type="formula"] .formula-caption:not(:has(.var-block)) {
+  display: block;
+  font-size: var(--fs-small);
+  line-height: 1.35;
+  color: var(--ink-2);
+}
 .slide[data-type="formula"] .formula-caption .var-block {
   text-align: center;
 }

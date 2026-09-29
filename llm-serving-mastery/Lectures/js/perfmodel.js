@@ -76,12 +76,72 @@
     }
   }
 
+  // Teaching model: signed symmetric integer quantization, deliberately not NF4/AWQ.
+  function quant(root) {
+    const x = val(root, 'value') / 100;
+    const scale = Math.max(.01, val(root, 'scale') / 100);
+    const bits = Math.max(2, val(root, 'bits'));
+    const lo = -(2 ** (bits - 1));
+    const hi = 2 ** (bits - 1) - 1;
+    const unclipped = Math.round(x / scale);
+    const code = Math.max(lo, Math.min(hi, unclipped));
+    const reconstructed = code * scale;
+    out(root, 'code', String(code));
+    out(root, 'reconstructed', fmt(reconstructed, 2));
+    out(root, 'error', fmt(Math.abs(x - reconstructed), 2));
+    out(root, 'clipped', unclipped !== code ? 'clipped' : 'in range');
+  }
+
+  function weights(root) {
+    const params = Math.max(.1, val(root, 'params')) * 1e9;
+    const bits = Math.max(2, val(root, 'bits'));
+    const group = Math.max(16, val(root, 'group'));
+    const reserve = Math.max(0, val(root, 'reserve'));
+    const kvGib = Math.max(0, val(root, 'kv')) / 100;
+    const weightBytes = params * bits / 8;
+    const scaleBytes = Math.ceil(params / group) * 2;
+    const budget = Math.max(0, 16 - reserve - kvGib);
+    const totalGib = (weightBytes + scaleBytes) / (2 ** 30);
+    out(root, 'payload', `${fmt(weightBytes / 1e9, 2)} GB`);
+    out(root, 'scales', `${fmt(scaleBytes / 1e6, 2)} MB`);
+    out(root, 'weights', `${fmt(totalGib, 2)} GiB`);
+    out(root, 'fit', totalGib <= budget ? `${fmt(budget - totalGib, 2)} GiB left` : `${fmt(totalGib - budget, 2)} GiB over`);
+    const fill = root.querySelector('.pm-capacity-fill');
+    if (fill) {
+      fill.style.width = `${Math.min(100, totalGib / Math.max(.01, budget) * 100)}%`;
+      fill.classList.toggle('is-over', totalGib > budget);
+    }
+  }
+
+  function candidate(root) {
+    const qualityFloor = val(root, 'quality');
+    const ttftCeiling = val(root, 'ttft') / 100;
+    const headroomFloor = val(root, 'headroom');
+    // Hypothetical classroom data; no candidate represents a measured GPU run.
+    const cases = [
+      { name: 'FP16', quality: 98, ttft: .42, headroom: 2, goodput: 840 },
+      { name: 'FP8', quality: 97, ttft: .35, headroom: 5, goodput: 1010 },
+      { name: 'W4A16', quality: 91, ttft: .49, headroom: 8, goodput: 960 },
+    ];
+    const feasible = cases.filter((c) => c.quality >= qualityFloor && c.ttft <= ttftCeiling && c.headroom >= headroomFloor);
+    const best = feasible.sort((a, b) => b.goodput - a.goodput)[0];
+    out(root, 'feasible', feasible.length ? feasible.map((c) => c.name).join(', ') : 'none');
+    out(root, 'choice', best ? `${best.name} · ${best.goodput} tok/s` : 'revise constraints');
+    root.querySelectorAll('[data-pm-candidate]').forEach((el) => {
+      const item = cases.find((c) => c.name === el.dataset.pmCandidate);
+      el.classList.toggle('is-infeasible', !feasible.includes(item));
+    });
+  }
+
   function update(root) {
     reflect(root);
     const kind = root.dataset.kind;
     if (kind === 'shape') shape(root);
     else if (kind === 'roofline') roofline(root);
     else if (kind === 'kv') kv(root);
+    else if (kind === 'quant') quant(root);
+    else if (kind === 'weights') weights(root);
+    else if (kind === 'candidate') candidate(root);
     root.dataset.pmReady = '1';
     window.Lecture?.refit(root.closest('.slide'));
   }
@@ -89,8 +149,15 @@
   function init(root) {
     if (root.dataset.pmBound) return;
     root.dataset.pmBound = '1'; root.dataset.pmReady = '0';
+    const defaults = [...root.querySelectorAll('[data-pm-input]')].map((el) => [el, el.value]);
+    const initialPhase = root.dataset.phase;
     root.querySelectorAll('[data-pm-input]').forEach((el) => el.addEventListener('input', () => update(root)));
     root.querySelectorAll('[data-pm-phase]').forEach((b) => b.addEventListener('click', () => { root.dataset.phase = b.dataset.pmPhase; update(root); }));
+    root.querySelectorAll('[data-pm-reset]').forEach((button) => button.addEventListener('click', () => {
+      defaults.forEach(([el, value]) => { el.value = value; });
+      if (initialPhase) root.dataset.phase = initialPhase;
+      update(root);
+    }));
     update(root);
   }
   const initAll = () => document.querySelectorAll('.pm-widget[data-kind]').forEach(init);
