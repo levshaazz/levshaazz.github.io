@@ -1,0 +1,86 @@
+name: Verify and publish private course source
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: course-site-sync
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Verify and publish course site
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out public Pages host
+        uses: actions/checkout@v4
+        with:
+          path: public
+      - name: Check out private course source
+        uses: actions/checkout@v4
+        with:
+          repository: levshaazz/llm-serving-mastery
+          token: ${{ secrets.COURSE_REPO_TOKEN }}
+          path: course
+      - name: Detect a new private source commit
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_sha=$(git -C course rev-parse HEAD)
+          published_sha=$(cat public/.course-source-sha 2>/dev/null || true)
+          echo "source_sha=$source_sha" >> "$GITHUB_OUTPUT"
+          if [[ "$source_sha" == "$published_sha" ]]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-node@v4
+        if: steps.version.outputs.changed == 'true'
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: course/package-lock.json
+      - uses: actions/setup-python@v5
+        if: steps.version.outputs.changed == 'true'
+        with:
+          python-version: '3.12'
+      - name: Install course dependencies
+        if: steps.version.outputs.changed == 'true'
+        working-directory: course
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          python -m pip install PyYAML==6.0.2
+      - name: Verify and build
+        if: steps.version.outputs.changed == 'true'
+        working-directory: course
+        env:
+          PUBLIC_BUILD_SHA: ${{ steps.version.outputs.source_sha }}
+        run: |
+          npm run check
+          npm run build
+          npm run check:site
+      - name: Publish generated site
+        if: steps.version.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="$GITHUB_WORKSPACE/public/llm-serving-mastery"
+          test "$target" = "$GITHUB_WORKSPACE/public/llm-serving-mastery"
+          rm -rf "$target"
+          mkdir -p "$target"
+          cp -a course/docs/. "$target/"
+          cp course/docs/index.html public/index.html
+          touch public/.nojekyll
+          printf '%s\n' '${{ steps.version.outputs.source_sha }}' > public/.course-source-sha
+          git -C public config user.name github-actions[bot]
+          git -C public config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git -C public add --all
+          git -C public commit -m "Publish course site from ${{ steps.version.outputs.source_sha }}"
+          git -C public push origin main
