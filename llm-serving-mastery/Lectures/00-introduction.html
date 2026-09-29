@@ -562,13 +562,13 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr><td>1</td><td>…</td><td>…</td><td>…</td><td>…</td></tr>
-                  <tr><td>8</td><td>…</td><td>…</td><td>…</td><td>…</td></tr>
-                  <tr><td>32</td><td>…</td><td>…</td><td>…</td><td>…</td></tr>
-                  <tr><td>64</td><td>…</td><td>…</td><td>…</td><td>…</td></tr>
+                  <tr><td>1</td><td>19.7</td><td>64.1</td><td>0.181 s</td><td>0.033 s</td></tr>
+                  <tr><td>8</td><td>22.5</td><td>324.2</td><td>25.269 s</td><td>0.109 s</td></tr>
+                  <tr><td>32</td><td>19.7</td><td>957.2</td><td>50.903 s</td><td>0.225 s</td></tr>
+                  <tr><td>64</td><td>18.7</td><td>1519.3</td><td>53.251 s</td><td>0.523 s</td></tr>
                 </tbody>
               </table>
-              <p class="small muted mt-3"><span lang="en">Filled in live from the notebook metrics. Failed requests are reported beside the successful-request latency distribution, never folded into it.</span></p>
+              <p class="small muted mt-3"><span lang="en">Published T4 rehearsal: median successful-output tok/s across three waves; p95 TTFT of successful requests only. At 64 clients, failures were 154/192 vs 0/192. <a href="../seminars/runs/2026-09-20-topic-00-metric-contract-v2/README.md">Method, ranges and raw records</a>. Your live run may differ.</span></p>
             </div>
             <div class="twocol-col">
               <div class="qr-block">
@@ -590,7 +590,7 @@
               </ul>
             </div>
           </div>
-          <aside class="slide-notes">Switch to the public Colab notebook. It starts a deliberately serial pipeline server, sends 1, 8, 32 and 64 simultaneous streaming requests, then repeats on vLLM with the same pinned model. The p95 TTFT population contains successful requests only; report failures beside it. The published metric-contract-v2 rehearsal in seminars/runs/ used a T4 and preserved raw records; its numbers describe only that device, workload and runtime. Colab may assign a different GPU and the curves may change. Record the actual device and environment before interpreting any difference. This demonstration does not establish how a 5070 Ti will behave.</aside>
+          <aside class="slide-notes">First show the published T4 rehearsal in the table, then switch to the public Colab notebook and ask students to predict whether their curve will match it. The notebook uses a deliberately serial pipeline server and 1, 8, 32 and 64 simultaneous streaming clients, three waves per server, with the same pinned model. The table is successful-output goodput (wave median) and p95 TTFT among successful requests; at 32 clients the baseline had 54/96 failures and at 64 it had 154/192, while vLLM had none. The published metric-contract-v2 record contains ranges and raw requests. Colab may assign a different GPU and the curves may change; record the actual device and environment before interpreting any difference. This demonstration does not establish how a 5070 Ti will behave.</aside>
         </section>
 
         <!-- ============================================ TABLE · kitchen dictionary ============================================ -->
