@@ -512,7 +512,7 @@
             </thead>
             <tbody>
               <tr><td><strong>TTFT</strong></td><td><span lang="en">time to the first bite</span></td><td><span lang="en">time to first token: from sending the request to receiving the first streamed token</span></td></tr>
-              <tr><td><strong>TPOT</strong></td><td><span lang="en">pace between courses</span></td><td><span lang="en">time per output token after the first (a.k.a. inter-token latency)</span></td></tr>
+              <tr><td><strong>TPOT</strong></td><td><span lang="en">pace between courses</span></td><td><span lang="en">decode duration divided by post-first-token gaps; related to, but not identical with, an individual inter-token latency</span></td></tr>
               <tr><td><strong><span lang="en">Throughput</span></strong></td><td><span lang="en">plates per hour</span></td><td><span lang="en">output tokens per second, summed over all concurrent requests</span></td></tr>
               <tr><td><strong>p95</strong></td><td><span lang="en">the slow tail</span></td><td><span lang="en">the value 95% of successful requests beat; always report failures beside it</span></td></tr>
             </tbody>
@@ -528,7 +528,6 @@
         </section>
 
         <!-- ============================================ PAUSE · predict ============================================ -->
-
 <section class="slide" data-type="pause" data-pause-seconds="45" data-screen-label="16 Predict">
           <div class="pause-phrase">
             <span lang="en">Predict before we run it:</span>
@@ -568,7 +567,7 @@
                   <tr><td>64</td><td>…</td><td>…</td><td>…</td><td>…</td></tr>
                 </tbody>
               </table>
-              <p class="small muted mt-3"><span lang="en">Filled in live. The notebook prints this exact table; failed requests (60 s client timeout) are reported next to it.</span></p>
+              <p class="small muted mt-3"><span lang="en">Filled in live from the notebook metrics. Failed requests are reported beside the successful-request latency distribution, never folded into it.</span></p>
             </div>
             <div class="twocol-col">
               <div class="qr-block">
@@ -594,7 +593,6 @@
         </section>
 
         <!-- ============================================ TABLE · kitchen dictionary ============================================ -->
-
 <section class="slide" data-type="two-col" data-screen-label="18 Kitchen dictionary">
           <div class="slide-header">
             <h2><span lang="en">The kitchen dictionary</span></h2>
@@ -743,9 +741,9 @@
             </thead>
             <tbody>
               <tr><td>9</td><td><span lang="en">Docker for LLM inference</span></td><td><span lang="en">A lean vLLM image, GPU containers</span></td></tr>
-              <tr><td>10</td><td><span lang="en">Multi-GPU inference: tensor parallelism</span></td><td><span lang="en">— (lecture + live demo)</span></td></tr>
-              <tr><td>11</td><td><span lang="en">Kubernetes for LLM serving: GPU Operator &amp; Helm</span></td><td><span lang="en">— (lecture + live demo)</span></td></tr>
-              <tr><td>12</td><td><span lang="en">Advanced Kubernetes: single-pod concurrency &amp; HPA</span></td><td><span lang="en">— (lecture + live demo)</span></td></tr>
+              <tr><td>10</td><td><span lang="en">Multi-GPU inference: tensor parallelism</span></td><td><span lang="en">Hands-on 2- and 4-GPU comparison</span></td></tr>
+              <tr><td>11</td><td><span lang="en">Kubernetes for LLM serving: GPU Operator &amp; Helm</span></td><td><span lang="en">Hands-on GPU workload + Helm release</span></td></tr>
+              <tr><td>12</td><td><span lang="en">Advanced Kubernetes: single-pod concurrency &amp; HPA</span></td><td><span lang="en">Hands-on autoscaling + failure drill</span></td></tr>
               <tr><td>13</td><td><span lang="en">LLMOps: observability, monitoring, cost</span></td><td><span lang="en">Prometheus + Grafana for vLLM</span></td></tr>
               <tr><td>14</td><td><span lang="en">Fine-tuning in the serving pipeline</span></td><td><span lang="en">LoRA adapters in vLLM</span></td></tr>
               <tr><td>15</td><td><span lang="en">Best practices, cost optimization, trends</span></td><td><span lang="en">Project defenses, final review</span></td></tr>
@@ -755,7 +753,6 @@
         </section>
 
         <!-- ============================================ DIVIDER — Part 04 ============================================ -->
-
 <section class="slide" data-type="divider" data-screen-label="24 Divider P04">
           <div class="divider-content">
             <div class="divider-num"><span lang="en">Part 04</span></div>
@@ -940,11 +937,11 @@ exec /runtime/.venv/bin/vllm serve \
               <table class="cmp-table">
                 <thead><tr><th><span lang="en">Bar</span></th><th><span lang="en">Round 1</span></th></tr></thead>
                 <tbody>
-                  <tr><td>GSM8K</td><td>≥ 51.3%</td></tr>
-                  <tr><td>IFEval</td><td>≥ 53.5%</td></tr>
-                  <tr><td>MMLU-Pro</td><td>≥ 40.5%</td></tr>
-                  <tr><td><span lang="en">p95 TTFT at 64 clients</span></td><td>≤ 3.7 s</td></tr>
-                  <tr><td class="cell-good">\(S_{\text{bar}}\)</td><td class="cell-good"><strong>422.4 tok/s</strong></td></tr>
+                  <tr><td>GSM8K</td><td>≥ 49.0%</td></tr>
+                  <tr><td>IFEval</td><td>≥ 54.0%</td></tr>
+                  <tr><td>MMLU-Pro</td><td>≥ 45.6%</td></tr>
+                  <tr><td><span lang="en">p95 TTFT at 64 clients</span></td><td>≤ 0.8 s</td></tr>
+                  <tr><td class="cell-good">\(S_{\text{bar}}\)</td><td class="cell-good"><strong>2514.1 tok/s</strong></td></tr>
                 </tbody>
               </table>
             </div>
@@ -1020,7 +1017,7 @@ exec /runtime/.venv/bin/vllm serve \
           </div>
           <div class="twocol">
             <div class="twocol-col">
-              <div class="code-block">
+              <div class="code-block is-wrap">
                 <div class="code-header"><span class="code-lang">JOURNAL.md · example entry</span></div>
                 <pre><code class="language-markdown">## Round 04 — prefix caching, more seqs
 Hypothesis: prompts share a long system
@@ -1046,7 +1043,8 @@ Kept:   yes. Next: FP8 KV cache.</code></pre>
         </section>
 
         <!-- ============================================ DIVIDER — Part 05 ============================================ -->
-        <section class="slide" data-type="divider" data-screen-label="31 Divider P05">
+        
+<section class="slide" data-type="divider" data-screen-label="31 Divider P05">
           <div class="divider-content">
             <div class="divider-num"><span lang="en">Part 05</span></div>
             <h1><span lang="en">Grading</span></h1>
