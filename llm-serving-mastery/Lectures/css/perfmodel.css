@@ -1,6 +1,6 @@
 /* =========================================================
    perfmodel.css — reusable quantitative performance widgets.
-   Mount contract: .pm-widget[data-kind="shape|roofline|kv|quant|weights|candidate"]
+   Mount contract: .pm-widget[data-kind="shape|roofline|kv|burst|quant|weights|candidate"]
    with controls carrying data-pm-input and outputs carrying
    data-pm-output. Logic lives in js/perfmodel.js.
    ========================================================= */

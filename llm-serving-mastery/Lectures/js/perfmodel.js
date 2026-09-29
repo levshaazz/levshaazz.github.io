@@ -76,6 +76,27 @@
     }
   }
 
+  // Deterministic fluid burst model, not a measured GPU scheduler. Each slot
+  // completes one equal-duration request per wave; admitted requests keep FIFO.
+  function burst(root) {
+    const arrivals = Math.max(1, val(root, 'arrivals'));
+    const slots = Math.max(1, val(root, 'slots'));
+    const queue = Math.max(0, val(root, 'queue'));
+    const service = Math.max(1, val(root, 'service'));
+    const deadline = Math.max(1, val(root, 'deadline'));
+    const admitted = Math.min(arrivals, slots + queue);
+    const rejected = arrivals - admitted;
+    const onTime = Math.min(admitted, Math.floor(deadline / service) * slots);
+    const expired = admitted - onTime;
+    const last = Math.ceil(admitted / slots) * service;
+    out(root, 'admitted', String(admitted));
+    out(root, 'rejected', String(rejected));
+    out(root, 'on-time', String(onTime));
+    out(root, 'expired', String(expired));
+    out(root, 'last', `${fmt(last, 0)} ms`);
+    out(root, 'decision', rejected ? 'explicitly shed' : expired ? 'accepted work expires' : 'all admitted fit');
+  }
+
   // Teaching model: signed symmetric integer quantization, deliberately not NF4/AWQ.
   function quant(root) {
     const x = val(root, 'value') / 100;
@@ -139,6 +160,7 @@
     if (kind === 'shape') shape(root);
     else if (kind === 'roofline') roofline(root);
     else if (kind === 'kv') kv(root);
+    else if (kind === 'burst') burst(root);
     else if (kind === 'quant') quant(root);
     else if (kind === 'weights') weights(root);
     else if (kind === 'candidate') candidate(root);

@@ -93,6 +93,36 @@
   background: var(--ink);
   color: var(--bg);
 }
+/* Decision checkpoints used to shrink to a 26px term in a shallow card.
+   Give the question—not empty canvas—the dominant visual area. This remains a
+   shared pattern for all def-card pause slides, with the original phrase/timer
+   pause variant unchanged. */
+.slide[data-type="pause"].is-active:has(.slide-body > .def-card) {
+  display: block;
+}
+.slide[data-type="pause"]:has(.slide-body > .def-card) .slide-body {
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  place-items: stretch;
+}
+.slide[data-type="pause"]:has(.slide-body > .def-card) .slide-header h2 { color: var(--bg); }
+.slide[data-type="pause"]:has(.slide-body > .def-card) .def-card {
+  align-self: center;
+  width: 100%;
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 84px;
+  background: var(--bg);
+  color: var(--ink);
+  border: 3px solid var(--bg);
+  box-shadow: 12px 12px 0 var(--rule-strong);
+}
+.slide[data-type="pause"]:has(.slide-body > .def-card) .def-tag { font-size: var(--fs-tiny); margin-bottom: var(--sp-3); }
+.slide[data-type="pause"]:has(.slide-body > .def-card) .def-term { font-size: 64px; line-height: 1.1; max-width: 29ch; margin-bottom: var(--sp-4); }
+.slide[data-type="pause"]:has(.slide-body > .def-card) .def-body { font-size: var(--fs-small); max-width: 63ch; }
 .pause-phrase {
   font-family: var(--font-serif);
   font-size: var(--fs-h1);
