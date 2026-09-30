@@ -391,7 +391,7 @@
 }
 .slide[data-type="formula"] .formula-caption {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: var(--sp-6);
   padding: var(--sp-4);
   background: var(--bg-alt);
@@ -408,6 +408,7 @@
   text-align: center;
 }
 .slide[data-type="formula"] .formula-caption .var-symbol {
+  display: block;
   font-family: var(--font-serif);
   font-style: italic;
   font-size: 64px;
@@ -416,9 +417,49 @@
   margin-bottom: var(--sp-2);
 }
 .slide[data-type="formula"] .formula-caption .var-desc {
+  display: block;
   font-size: var(--fs-small);
   color: var(--ink-2);
   line-height: 1.3;
+}
+
+/* Worked formula: equation -> units/meaning -> calculation -> limits.
+   Use native math/body tokens and bounded content, never auto-shrink this pattern. */
+.slide[data-type="formula"].formula-worked > .slide-body {
+  display: grid;
+  grid-template-rows: auto auto auto auto auto;
+  align-content: start;
+  gap: var(--sp-3);
+  height: 100%;
+}
+.formula-worked .formula-stage { min-height: 120px; }
+.slide.formula-worked .formula-stage .katex,
+.slide.formula-worked .formula-stage mjx-container {
+  font-size: var(--fs-math) !important;
+  padding: var(--sp-2) var(--sp-4);
+}
+.slide.formula-worked .formula-caption { gap: var(--sp-4); padding: var(--sp-3); }
+.slide.formula-worked .formula-caption .var-block { text-align: left; }
+.slide.formula-worked .formula-caption .var-symbol { font-size: var(--fs-h3); }
+.formula-worked .var-unit {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+  color: var(--accent-ink);
+  margin-bottom: var(--sp-1);
+}
+.formula-example {
+  font-size: var(--fs-body);
+  line-height: 1.25;
+  border-left: 6px solid var(--c-green);
+  padding-left: var(--sp-3);
+}
+.formula-example strong { color: var(--accent-ink); }
+.formula-limit { font-size: var(--fs-small); line-height: 1.3; color: var(--ink-2); }
+.formula-limit a { color: var(--accent-ink); }
+@media print {
+  .slide[data-type="formula"].formula-worked > .slide-body { display: grid !important; }
+  .formula-worked .formula-caption { break-inside: avoid; }
 }
 
 /* --- CODE ----------------------------------------------- */
