@@ -1075,7 +1075,8 @@ interactive-demo {
 .walk-step[data-final="true"] .walk-detail { opacity: 0.92; }
 .walk-step[data-final="true"] .walk-state {
   background: var(--c-amber);
-  color: var(--ink);
+  /* Amber stays light in both themes; theme-dependent ink becomes pale in dark. */
+  color: #14181F;
 }
 
 /* Progressive reveal driven by data-current-step on slide.

@@ -1,0 +1,81 @@
+[
+  {
+    "model": "Qwen/Qwen2.5-0.5B-Instruct",
+    "input_tokens": 128,
+    "output_tokens": 8,
+    "trace_sha256": "6ce71deef55694c0749119698daa09ed7f56a1075d357a44af7710cd2489bb2b",
+    "kernel_events": 8304,
+    "kernel_union_ms": 33.3307333984375,
+    "first_to_last_kernel_ms": 322.3618828125,
+    "selected_operator_attribution": [
+      {
+        "name": "aten::mm",
+        "calls": 776,
+        "self_device_us": 20133.88999999952
+      },
+      {
+        "name": "aten::addmm",
+        "calls": 576,
+        "self_device_us": 2966.2829999998266
+      },
+      {
+        "name": "aten::mul",
+        "calls": 1760,
+        "self_device_us": 2195.2030000007053
+      },
+      {
+        "name": "aten::copy_",
+        "calls": 1240,
+        "self_device_us": 1855.0669999996335
+      },
+      {
+        "name": "aten::_flash_attention_forward",
+        "calls": 192,
+        "self_device_us": 1683.0270000001092
+      },
+      {
+        "name": "aten::add",
+        "calls": 1160,
+        "self_device_us": 1226.9869999997763
+      }
+    ],
+    "warning": "Profiled 0.5B P/8 only. Operator attribution can overlap physical kernels; do not sum representations. Kernel-span gaps do not identify their CPU cause."
+  },
+  {
+    "model": "Qwen/Qwen2.5-0.5B-Instruct",
+    "input_tokens": 4096,
+    "output_tokens": 8,
+    "trace_sha256": "c4dad76996ef5aa8f8f142365c174b34d480d72a3b029222a1e8fc3e6ee64b3a",
+    "kernel_events": 8400,
+    "kernel_union_ms": 82.4213203125,
+    "first_to_last_kernel_ms": 300.9228798828125,
+    "selected_operator_attribution": [
+      {
+        "name": "aten::mm",
+        "calls": 776,
+        "self_device_us": 40852.171999999795
+      },
+      {
+        "name": "aten::_flash_attention_forward",
+        "calls": 192,
+        "self_device_us": 13818.546000000357
+      },
+      {
+        "name": "aten::copy_",
+        "calls": 1240,
+        "self_device_us": 7211.438000000211
+      },
+      {
+        "name": "aten::mul",
+        "calls": 1760,
+        "self_device_us": 6923.562999999913
+      },
+      {
+        "name": "aten::addmm",
+        "calls": 576,
+        "self_device_us": 4470.404000000157
+      }
+    ],
+    "warning": "Profiled 0.5B P/8 only. Operator attribution can overlap physical kernels; do not sum representations. Kernel-span gaps do not identify their CPU cause."
+  }
+]

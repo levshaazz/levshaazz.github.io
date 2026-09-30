@@ -1,0 +1,272 @@
+[
+  {
+    "model": "Qwen/Qwen2.5-0.5B-Instruct",
+    "batch": 1,
+    "input_tokens": 4096,
+    "output_tokens": 32,
+    "n": 5,
+    "prefill_wall_ms": {
+      "median": 58.92567800037796,
+      "min": 57.61214800077141,
+      "max": 61.415964999469
+    },
+    "decode_wall_ms": {
+      "median": 822.7211419980449,
+      "min": 666.7585479990521,
+      "max": 936.1490869996487
+    },
+    "decode_mean_step_ms": {
+      "median": 26.53939167735629,
+      "min": 21.50834025803394,
+      "max": 30.198357645149958
+    },
+    "decode_aggregate_tokens_per_s": {
+      "median": 37.679838790472786,
+      "min": 33.11438362809794,
+      "max": 46.493592160207406
+    }
+  },
+  {
+    "model": "Qwen/Qwen2.5-0.5B-Instruct",
+    "batch": 1,
+    "input_tokens": 128,
+    "output_tokens": 32,
+    "n": 5,
+    "prefill_wall_ms": {
+      "median": 45.79176300103427,
+      "min": 20.087061002413975,
+      "max": 89.08155500103021
+    },
+    "decode_wall_ms": {
+      "median": 862.0461509999586,
+      "min": 573.8344330020482,
+      "max": 1032.6044949979405
+    },
+    "decode_mean_step_ms": {
+      "median": 27.807940354837374,
+      "min": 18.51078816135639,
+      "max": 33.3098224192884
+    },
+    "decode_aggregate_tokens_per_s": {
+      "median": 35.960951700834734,
+      "min": 30.02117475777774,
+      "max": 54.022551135214556
+    }
+  },
+  {
+    "model": "Qwen/Qwen2.5-0.5B-Instruct",
+    "batch": 1,
+    "input_tokens": 128,
+    "output_tokens": 128,
+    "n": 5,
+    "prefill_wall_ms": {
+      "median": 44.89183900295757,
+      "min": 17.222074002347654,
+      "max": 51.03818400311866
+    },
+    "decode_wall_ms": {
+      "median": 3052.3319329986407,
+      "min": 2942.0721140013484,
+      "max": 3360.040198000206
+    },
+    "decode_mean_step_ms": {
+      "median": 24.034109708650714,
+      "min": 23.165922157490932,
+      "max": 26.45700943307249
+    },
+    "decode_aggregate_tokens_per_s": {
+      "median": 41.607532466245885,
+      "min": 37.79716685401161,
+      "max": 43.16685488285818
+    }
+  },
+  {
+    "model": "Qwen/Qwen2.5-0.5B-Instruct",
+    "batch": 4,
+    "input_tokens": 128,
+    "output_tokens": 32,
+    "n": 5,
+    "prefill_wall_ms": {
+      "median": 45.250242998008616,
+      "min": 16.72926900209859,
+      "max": 56.48068500158843
+    },
+    "decode_wall_ms": {
+      "median": 770.6216630031122,
+      "min": 522.6995119992353,
+      "max": 1002.9636789986398
+    },
+    "decode_mean_step_ms": {
+      "median": 24.85876332268104,
+      "min": 16.861274580620492,
+      "max": 32.353667064472255
+    },
+    "decode_aggregate_tokens_per_s": {
+      "median": 160.9090503850775,
+      "min": 123.63358972660082,
+      "max": 237.22998999123118
+    }
+  },
+  {
+    "model": "Qwen/Qwen2.5-0.5B-Instruct",
+    "batch": 1,
+    "input_tokens": 4096,
+    "output_tokens": 128,
+    "n": 5,
+    "prefill_wall_ms": {
+      "median": 58.990203997382196,
+      "min": 57.94473900095909,
+      "max": 65.96649499988416
+    },
+    "decode_wall_ms": {
+      "median": 2831.6445059972466,
+      "min": 2469.3257869985246,
+      "max": 3711.3176910024777
+    },
+    "decode_mean_step_ms": {
+      "median": 22.296413433049185,
+      "min": 19.44351013384665,
+      "max": 29.222973944901398
+    },
+    "decode_aggregate_tokens_per_s": {
+      "median": 44.85026271165816,
+      "min": 34.21965204107751,
+      "max": 51.43104270351018
+    }
+  },
+  {
+    "model": "Qwen/Qwen2.5-1.5B-Instruct",
+    "batch": 1,
+    "input_tokens": 4096,
+    "output_tokens": 32,
+    "n": 5,
+    "prefill_wall_ms": {
+      "median": 163.66494800240616,
+      "min": 163.3554180007195,
+      "max": 163.80402000140748
+    },
+    "decode_wall_ms": {
+      "median": 1039.1329439989931,
+      "min": 763.8946680017398,
+      "max": 1154.4287819997407
+    },
+    "decode_mean_step_ms": {
+      "median": 33.520417548354615,
+      "min": 24.64176348392709,
+      "max": 37.239638129023895
+    },
+    "decode_aggregate_tokens_per_s": {
+      "median": 29.832563945764033,
+      "min": 26.853107340498518,
+      "max": 40.581511167099016
+    }
+  },
+  {
+    "model": "Qwen/Qwen2.5-1.5B-Instruct",
+    "batch": 1,
+    "input_tokens": 128,
+    "output_tokens": 32,
+    "n": 5,
+    "prefill_wall_ms": {
+      "median": 22.302320001472253,
+      "min": 18.12101199902827,
+      "max": 30.673100001877174
+    },
+    "decode_wall_ms": {
+      "median": 839.1545480008062,
+      "min": 834.4944150012452,
+      "max": 1255.3073589988344
+    },
+    "decode_mean_step_ms": {
+      "median": 27.069501548413104,
+      "min": 26.919174677459523,
+      "max": 40.493785774155945
+    },
+    "decode_aggregate_tokens_per_s": {
+      "median": 36.94194361915109,
+      "min": 24.69514719066407,
+      "max": 37.14824142945731
+    }
+  },
+  {
+    "model": "Qwen/Qwen2.5-1.5B-Instruct",
+    "batch": 1,
+    "input_tokens": 128,
+    "output_tokens": 128,
+    "n": 5,
+    "prefill_wall_ms": {
+      "median": 64.63690600139671,
+      "min": 21.192741001868853,
+      "max": 100.23633300079382
+    },
+    "decode_wall_ms": {
+      "median": 3598.901591998583,
+      "min": 3038.084613002866,
+      "max": 4268.901176001236
+    },
+    "decode_mean_step_ms": {
+      "median": 28.337807811012468,
+      "min": 23.921926086636738,
+      "max": 33.61339508662391
+    },
+    "decode_aggregate_tokens_per_s": {
+      "median": 35.28854478331899,
+      "min": 29.750044511211524,
+      "max": 41.802654032888256
+    }
+  },
+  {
+    "model": "Qwen/Qwen2.5-1.5B-Instruct",
+    "batch": 4,
+    "input_tokens": 128,
+    "output_tokens": 32,
+    "n": 5,
+    "prefill_wall_ms": {
+      "median": 24.165032999007963,
+      "min": 23.512111998570617,
+      "max": 46.830809998937184
+    },
+    "decode_wall_ms": {
+      "median": 799.1155050003727,
+      "min": 762.9445189995749,
+      "max": 1200.3822699989541
+    },
+    "decode_mean_step_ms": {
+      "median": 25.777919516141054,
+      "min": 24.61111351611532,
+      "max": 38.72200870964368
+    },
+    "decode_aggregate_tokens_per_s": {
+      "median": 155.17156058677924,
+      "min": 103.30042612184536,
+      "max": 162.52820082199068
+    }
+  },
+  {
+    "model": "Qwen/Qwen2.5-1.5B-Instruct",
+    "batch": 1,
+    "input_tokens": 4096,
+    "output_tokens": 128,
+    "n": 5,
+    "prefill_wall_ms": {
+      "median": 163.98943700187374,
+      "min": 163.462710002932,
+      "max": 164.84367399971234
+    },
+    "decode_wall_ms": {
+      "median": 3284.7524999997404,
+      "min": 3070.6296880016453,
+      "max": 4270.292860001064
+    },
+    "decode_mean_step_ms": {
+      "median": 25.864192913383782,
+      "min": 24.178186519697995,
+      "max": 33.624353228354835
+    },
+    "decode_aggregate_tokens_per_s": {
+      "median": 38.66349138938475,
+      "min": 29.74034900266029,
+      "max": 41.35959490532092
+    }
+  }
+]

@@ -1,0 +1,68 @@
+{
+  "topic": "02",
+  "source_notebook": "seminars/02-gpu-profiling-and-bottlenecks.ipynb",
+  "source_commit": "8074c6a7260e533af0d88e5ba42e3b671a0766dd",
+  "source_dirty": false,
+  "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+  "gpu_name_driver_total_memory": "NVIDIA GeForce RTX 5070 Ti, 591.86, 16303 MiB",
+  "python": "3.12.13",
+  "hf_hub_offline": true,
+  "started_utc": "2026-09-30T20:29:52.673467+00:00",
+  "finished_utc": "2026-09-30T20:33:02.943971+00:00",
+  "resource_gate": {
+    "min_available_ram_gib": 24,
+    "max_gpu_used_mib": 12288
+  },
+  "resource_samples": [
+    {
+      "after_code_cells": 0,
+      "available_ram_gib": 69.21,
+      "gpu_used_mib": 14
+    },
+    {
+      "after_code_cells": 1,
+      "available_ram_gib": 69.16,
+      "gpu_used_mib": 14
+    },
+    {
+      "after_code_cells": 2,
+      "available_ram_gib": 69.16,
+      "gpu_used_mib": 14
+    },
+    {
+      "after_code_cells": 3,
+      "available_ram_gib": 69.16,
+      "gpu_used_mib": 14
+    },
+    {
+      "after_code_cells": 4,
+      "available_ram_gib": 67.96,
+      "gpu_used_mib": 321
+    },
+    {
+      "after_code_cells": 5,
+      "available_ram_gib": 67.35,
+      "gpu_used_mib": 321
+    },
+    {
+      "after_code_cells": 6,
+      "available_ram_gib": 67.34,
+      "gpu_used_mib": 321
+    },
+    {
+      "after_code_cells": 7,
+      "available_ram_gib": 67.32,
+      "gpu_used_mib": 333
+    }
+  ],
+  "status": "complete",
+  "duration_s": 190.248,
+  "executed_code_cells": 7,
+  "scope": "One guarded teaching rehearsal; not a judge reference, production capacity or p95 estimate",
+  "limitations": [
+    "Five trials per case have large variation in some short shapes",
+    "Static identical token rows; no queue/HTTP/padding/EOS",
+    "v1 and v2 are different protocols, not a controlled speedup",
+    "Raw traces remain local because they contain machine metadata"
+  ]
+}
