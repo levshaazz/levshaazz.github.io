@@ -1,0 +1,116 @@
+<!DOCTYPE html><html lang="en" data-lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Start here: private repository and submission · LLM Serving Mastery</title><meta name="description" content="From a model that runs to a service that survives rush hour: optimization, high-concurrency serving with vLLM, multi-GPU, Kubernetes and LLMOps — measured every week on a public leaderboard."><link rel="canonical" href="https://levshaazz.github.io/llm-serving-mastery/en/start/"><meta property="og:title" content="Start here: private repository and submission · LLM Serving Mastery"><meta property="og:description" content="From a model that runs to a service that survives rush hour: optimization, high-concurrency serving with vLLM, multi-GPU, Kubernetes and LLMOps — measured every week on a public leaderboard."><meta property="og:image" content="https://levshaazz.github.io/llm-serving-mastery/Lectures/assets/img/L0/L0-01-rush-hour.webp"><meta property="og:url" content="https://levshaazz.github.io/llm-serving-mastery/en/start/"><meta property="og:type" content="website"><meta name="twitter:card" content="summary_large_image"><!-- no-flash: apply saved theme before first paint --><script>
+    try {
+      const th = localStorage.getItem('lsm.theme');
+      if (th === 'dark' || (!th && matchMedia('(prefers-color-scheme: dark)').matches))
+        document.documentElement.dataset.theme = 'dark';
+    } catch (e) {}
+  </script><link rel="stylesheet" href="/llm-serving-mastery/_astro/BaseLayout.CpzfAFli.css"></head><body><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="wrap"><div class="topbar"><a class="logo" href="/llm-serving-mastery/en/"><span class="mark">LSM</span></a><nav class="nav" aria-label="Primary"><a href="/llm-serving-mastery/en/start" aria-current="page">Start here</a><a href="/llm-serving-mastery/en/">Lectures</a><a href="/llm-serving-mastery/en/book">Book</a><a href="/llm-serving-mastery/en/playground">Playground</a><a href="/llm-serving-mastery/en/papers">Papers</a><a href="/llm-serving-mastery/en/schedule">Schedule</a><a href="/llm-serving-mastery/en/syllabus">Syllabus</a><a href="/llm-serving-mastery/en/leaderboard">Leaderboard</a><a href="/llm-serving-mastery/en/glossary">Glossary</a><a href="/llm-serving-mastery/en/search">Search</a></nav><div class="controls"><button id="theme-toggle" type="button" aria-label="Toggle theme" title="Toggle theme">◐</button></div></div></div></header><main id="main"><div class="wrap book-page"><header class="page-head"><div class="eyebrow">Student start guide</div><h1>Your first submission</h1><p class="notice">Round 01: 2026-10-08, 23:59 MSK (UTC+3). Capture begins one minute later.</p><p>Start with Topics 01–02. <a href="/llm-serving-mastery/en/schedule">All deadlines</a> · <a href="/llm-serving-mastery/en/leaderboard">All grading gates</a></p></header><article class="book-article"><h1 id="from-an-empty-repository-to-round-01">From an empty repository to Round 01</h1>
+<p>You submit a <strong>private</strong> GitHub repository. The public example supplies the files and CPU checks;
+the instructor’s private course repository is not needed. The judge runs your tagged server, not
+your Colab notebook. A notebook result is learning evidence, not a leaderboard score.</p>
+<h2 id="1-make-a-private-copy-including-ci">1. Make a private copy, including CI</h2>
+<p>Create a new <strong>empty private repository</strong> in your personal GitHub account, with no initial README.
+Do not use Fork: a fork of this public example is not the private-copy workflow. Then run:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">git</span><span style="color:#9ECBFF"> clone</span><span style="color:#9ECBFF"> https://github.com/levshaazz/llm-serving-mastery-submission-example.git</span><span style="color:#9ECBFF"> my-serving</span></span>
+<span class="line"><span style="color:#79B8FF">cd</span><span style="color:#9ECBFF"> my-serving</span></span>
+<span class="line"><span style="color:#B392F0">git</span><span style="color:#9ECBFF"> remote</span><span style="color:#9ECBFF"> rename</span><span style="color:#9ECBFF"> origin</span><span style="color:#9ECBFF"> upstream</span></span>
+<span class="line"><span style="color:#B392F0">git</span><span style="color:#9ECBFF"> remote</span><span style="color:#9ECBFF"> add</span><span style="color:#9ECBFF"> origin</span><span style="color:#9ECBFF"> https://github.com/YOUR_LOGIN/YOUR_PRIVATE_REPO.git</span></span>
+<span class="line"><span style="color:#B392F0">git</span><span style="color:#9ECBFF"> push</span><span style="color:#79B8FF"> -u</span><span style="color:#9ECBFF"> origin</span><span style="color:#9ECBFF"> main</span></span></code></pre>
+<p>Replace both placeholders with your own account and repository name. Authenticate normally with
+GitHub; never put a token in the remote URL. These commands retain the example’s history and its
+<code>.github/workflows/</code> checks, and make your private repository the push destination. They do not
+push any example tags. In <code>submission.yaml</code>, replace <code>author</code> with the owner’s exact GitHub login.
+Keep the immutable model revision unless you deliberately change the model. Commit your edits.</p>
+<p>Open <strong>Settings → Collaborators → Add people</strong>, invite <strong>levshaazz</strong>, and wait for acceptance.
+Then <a href="https://docs.google.com/spreadsheets/d/1y6w_Ruf3Ofh5gBMFH3LUmgBmP6faaMUG/edit">register the repository URL in the course sheet</a>.
+Registration, an invitation, and a readable repository are three separate states.</p>
+<h2 id="2-obtain-an-access-receipt">2. Obtain an access receipt</h2>
+<p>Enable Issues in your private repository if necessary. Open one Issue titled <strong>Course readiness</strong>
+and mention <strong>@levshaazz</strong>. Ask for judge access confirmation and include your default-branch commit
+SHA (<code>git rev-parse HEAD</code>). The instructor replies <strong>Access checked</strong>, with the checked commit and
+time, only after the judge can read the repository. An accepted invitation alone is not that receipt.</p>
+<p>If the invitation is still pending and the private mention cannot reach the instructor, open a
+general access-help Issue in the <a href="https://github.com/levshaazz/llm-serving-mastery-submission-example/issues">public example</a>.
+Say that an invitation is pending; do not paste the private URL, solution, log, token or personal data.
+The registration sheet already supplies the private URL to the instructor.</p>
+<h2 id="3-complete-the-cpu-checks">3. Complete the CPU checks</h2>
+<p>Use Python 3.12 and install <code>uv</code>. From the repository root:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">python</span><span style="color:#9ECBFF"> scripts/validate_submission.py</span><span style="color:#79B8FF"> --root</span><span style="color:#9ECBFF"> .</span></span>
+<span class="line"><span style="color:#B392F0">python</span><span style="color:#79B8FF"> -m</span><span style="color:#9ECBFF"> unittest</span><span style="color:#9ECBFF"> discover</span><span style="color:#79B8FF"> -s</span><span style="color:#9ECBFF"> tests</span><span style="color:#79B8FF"> -v</span></span>
+<span class="line"><span style="color:#B392F0">bash</span><span style="color:#79B8FF"> -n</span><span style="color:#9ECBFF"> prepare.sh</span><span style="color:#9ECBFF"> serve.sh</span></span>
+<span class="line"><span style="color:#B392F0">uv</span><span style="color:#9ECBFF"> lock</span><span style="color:#79B8FF"> --check</span></span></code></pre>
+<p>Push your commit and inspect <strong>Actions → Submission contract</strong> for that exact commit. The local
+commands remain usable if GitHub Actions is unavailable because of an account quota; report the
+quota problem in the private readiness Issue rather than inventing a passing CI result.
+Run <code>uv lock</code> and commit <code>uv.lock</code> only when changing dependencies. Do not refresh the lockfile for
+every launch. CPU checks verify packaging and consistency, not model quality, speed or CUDA support.</p>
+<h2 id="4-arrange-your-gpu-and-keep-the-two-environments-separate">4. Arrange your GPU and keep the two environments separate</h2>
+<p>You are responsible for finding a <strong>CUDA GPU</strong>. Colab does not guarantee a GPU or a particular model,
+and the course does not provide instructor-machine development slots. CPU work can begin immediately,
+but it does not replace a GPU smoke check. Report a blocker before the deadline; there is no automatic
+extension or exemption. Instructor infrastructure incidents follow the published course-wide policy.</p>
+<p>The Topic 01 notebook uses a small pinned model to teach measurement. The submission example uses a
+different, larger reference model to meet judge quality gates. Keep the notebook and server package
+environments separate; do not replace the submission model with the lab model just to copy its output.
+Local GPU performance is not a prediction of your RTX 5070 Ti leaderboard score.</p>
+<p>Run the notebook linked from the <a href="https://levshaazz.github.io/llm-serving-mastery/en/topics/01/">Topic 01 hub</a>.
+Copy the resulting files from Colab to your private repository before the runtime is discarded:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>evidence/topic-01-baseline.json</span></span>
+<span class="line"><span>evidence/topic-01-reflection.md</span></span>
+<span class="line"><span>evidence/topic-01-boundary-trace.md</span></span></code></pre>
+<p>The trace names client, gateway, scheduler and worker boundaries. Mark events you did not measure
+<strong>not observed</strong>; a diagram is not permission to invent internal timestamps. Save the completed
+notebook without credentials or cached weights. Study Topic 02 and save its artifacts as listed on
+its topic page. Keep <code>JOURNAL.md</code> as the record of changes, measurements and failed hypotheses.</p>
+<h2 id="5-run-the-gpu-streaming-smoke">5. Run the GPU streaming smoke</h2>
+<p>On Linux or a suitable Colab environment, run <code>bash serve.sh</code> from your submission checkout.
+The first launch may download the pinned model and dependencies; keep their caches for later runs.
+In a second terminal, once <code>/v1/models</code> is ready, run:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">python</span><span style="color:#9ECBFF"> scripts/smoke_submission.py</span></span></code></pre>
+<p>Keep the exit status, commit SHA, GPU/runtime identity and a sanitized output in your journal.
+The server must expose model name <code>submission</code>, support streaming and the declared generation
+parameters. Stop it after testing. A local smoke is necessary but does not establish hidden quality,
+load tolerance, canary consistency or the final grade. You do not need a judge seed: the instructor
+keeps and applies the same protected seed to every submission within the round.</p>
+<h2 id="6-read-the-tuesday-result">6. Read the Tuesday result</h2>
+<p>The instructor checks the <strong>current default branch</strong> each Tuesday before the Thursday deadline.
+For Round 01 that is <strong>6 October 2026</strong>. Results are reviewed manually and returned in your private
+<strong>Course readiness</strong> Issue. No exact hour is promised. These are future checks, not already earned
+passes. If no result has arrived by Wednesday, request status in that Issue.</p>
+<p>The reply distinguishes <strong>access checked</strong>, <strong>startup/smoke passed</strong>, <strong>student fix needed</strong>, and
+<strong>judge incident / not checked</strong>. It identifies the checked SHA and gives a sanitized diagnostic.
+Only <code>startup/smoke passed</code> demonstrates startup on the judge GPU for that commit. It does not run
+quality or speed scoring. Later changes require their own checks. Raw server logs and private URLs
+stay private; the instructor does not post them to the public portal.</p>
+<h2 id="7-freeze-and-submit">7. Freeze and submit</h2>
+<p>Check the <a href="https://levshaazz.github.io/llm-serving-mastery/en/schedule/">canonical deadlines</a>.
+Commit all source, lockfile, journal and required evidence. Confirm <code>git status</code> is clean, the intended
+commit passed your checks, the judge has access, and your private remote is correct. Then:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">git</span><span style="color:#9ECBFF"> push</span><span style="color:#9ECBFF"> origin</span><span style="color:#9ECBFF"> main</span></span>
+<span class="line"><span style="color:#B392F0">git</span><span style="color:#9ECBFF"> tag</span><span style="color:#9ECBFF"> round-01</span></span>
+<span class="line"><span style="color:#B392F0">git</span><span style="color:#9ECBFF"> push</span><span style="color:#9ECBFF"> origin</span><span style="color:#9ECBFF"> round-01</span></span>
+<span class="line"><span style="color:#B392F0">git</span><span style="color:#9ECBFF"> ls-remote</span><span style="color:#79B8FF"> --tags</span><span style="color:#9ECBFF"> origin</span><span style="color:#9ECBFF"> refs/tags/round-01</span></span></code></pre>
+<p>The last command confirms that the tag exists on GitHub. Do not overwrite an existing tag blindly;
+inspect it and ask in the private Issue if unsure. Do not move it after the deadline. Submission is
+the tag, not a sheet entry, branch push, notebook upload or screenshot of green CI. The judge captures
+the tag one minute after the published deadline and records the actual capture time and SHA. Commit
+dates do not prove when a tag was pushed. A Tuesday rehearsal never replaces this official snapshot.</p>
+<h2 id="8-scores-questions-and-appeals">8. Scores, questions and appeals</h2>
+<p>Read all <a href="https://levshaazz.github.io/llm-serving-mastery/en/leaderboard/">quality, latency, length, error, canary and speed rules</a>
+before tuning. Green CI and a working server do not guarantee a nonzero mark. The published reference
+is a starting implementation, not permission to special-case hidden tests or cache their answers.</p>
+<p>General questions go to <a href="https://github.com/levshaazz/llm-serving-mastery-submission-example/issues">public example Issues</a>.
+Individual diagnostics and appeals go to an Issue in <strong>your private repository</strong>, mentioning
+<strong>@levshaazz</strong>. Include round, tag, SHA, published result and the specific discrepancy; never include
+tokens or hidden judge material. Reviewed results are due within five calendar days after the
+deadline; request review within three calendar days of publication. A judge error receives no zero
+and is rerun under the course incident policy. See the
+<a href="https://levshaazz.github.io/llm-serving-mastery/en/syllabus/">syllabus</a> for the complete policy.</p>
+</article></div></main><footer class="site-footer"><div class="wrap" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;width:100%"><div>LLM Serving Mastery · vLLM, Multi-GPU, and Production Deployment</div><div><a href="/llm-serving-mastery/en/changelog">Changelog</a> · <a href="/llm-serving-mastery/en/provenance">Provenance</a> · <a href="https://github.com/levshaazz/llm-serving-mastery-submission-example">Student example</a></div><div>Updated 2026-09-30 · course build ae16e99</div></div></footer><script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const root = document.documentElement;
+      const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      if (next === 'dark') root.dataset.theme = 'dark'; else delete root.dataset.theme;
+      try { localStorage.setItem('lsm.theme', next); } catch (e) {}
+    });
+  </script></body></html>

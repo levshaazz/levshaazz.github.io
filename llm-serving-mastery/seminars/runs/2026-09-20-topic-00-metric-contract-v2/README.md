@@ -39,6 +39,10 @@ fully resolvable from the cited commit rather than from an untracked script.
   wave wall time. Tokens generated for requests that later time out are deliberately excluded.
 - TTFT percentiles contain successful requests only. Failures remain visible as a count and rate;
   a timeout is never inserted into the latency population as an artificial 60 s value.
+- Interpretation correction (30 September): the client at the pinned commit resets `ttft` to
+  `null` in its exception handler, even if content arrived before the failure. Failed-attempt
+  TTFT is therefore **not retained**, not proof that no first content arrived. This clarification
+  changes no raw records, hashes, counts or successful-only aggregates.
 - Aggregate goodput is the median of three wave-level values; its range is min–max. TTFT is pooled
   across successful requests from all three repeats. Failure counts are totals across all repeats.
 

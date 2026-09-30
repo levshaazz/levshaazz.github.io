@@ -871,10 +871,10 @@ exec /runtime/.venv/bin/vllm serve \
   --dtype half --max-model-len 4096 \
   --gpu-memory-utilization 0.90</code></pre>
               </div>
-              <p class="small muted mt-3"><span lang="en">Fixed: port <code>8000</code>, model name <code>submission</code>, streaming <code>/v1/chat/completions</code> that honours <code>max_tokens</code> and <code>ignore_eos</code> and takes 4096-token requests. Start from <code>submission-template/</code> in the course repo.</span></p>
+              <p class="small muted mt-3"><span lang="en">Fixed: port <code>8000</code>, model name <code>submission</code>, streaming <code>/v1/chat/completions</code> with <code>max_tokens</code>, <code>ignore_eos</code> and 4096-token requests. Make a private copy of the <a href="https://github.com/levshaazz/llm-serving-mastery-submission-example">public example</a>; see <a href="../en/start/">Start here</a>.</span></p>
             </div>
           </div>
-          <aside class="slide-notes">The contract is strict on purpose: I must be able to literally clone your repository and run it. prepare.sh gets network access before any secret seed or prompts exist; it installs the locked environment and fetches the declared immutable model revision into a fresh per-run cache. The measured serve.sh then starts on an internal Docker network with no egress. A Dockerfile is the alternative, but it must bake in everything needed offline. The model and stack may change between rounds. The reference is Qwen2.5-3B-Instruct on plain vLLM, FP16: a starting point, not a recommendation. Hidden probes check each response separately, so a high average cannot hide early stopping.</aside>
+          <aside class="slide-notes">The contract is strict on purpose: I must be able to literally clone your repository and run it. prepare.sh gets network access before any secret seed or prompts exist; it installs the locked environment and fetches the declared immutable model revision into the persistent verified model cache; each run receives an isolated serving environment. The measured serve.sh then starts on an internal Docker network with no egress. A Dockerfile is the alternative, but it must bake in everything needed offline. The model and stack may change between rounds. The reference is Qwen2.5-3B-Instruct on plain vLLM, FP16: a starting point, not a recommendation. Hidden probes check each response separately, so a high average cannot hide early stopping.</aside>
         </section>
 
         <!-- ============================================ TABLE · dev box vs judge ============================================ -->
@@ -899,14 +899,15 @@ exec /runtime/.venv/bin/vllm serve \
             <div class="callout-icon">!</div>
             <div class="callout-body">
               <strong><span lang="en">What this means for you</span></strong>
-              <p><span lang="en">Develop and debug on Colab; trust only the judge's numbers. Low-precision tricks (FP8, NVFP4) cannot be tested on a T4 — use the weekly dry-run logs to check that they start on Blackwell.</span></p>
+              <p><span lang="en">Find a suitable CUDA GPU for development; Colab availability is not guaranteed. FP8 / NVFP4 need compatible hardware. Tuesday startup diagnostics arrive in your private readiness Issue; only judge measurements determine your score.</span></p>
             </div>
           </div>
           <aside class="slide-notes">An optimization that wins on the T4 may not transfer, and vice versa: the judge has ~2.8× the memory bandwidth, and supports data types the T4 does not have at all. That is realistic — production hardware is rarely your laptop. Write down in your journal which results came from Colab and which from the judge.</aside>
         </section>
 
         <!-- ============================================ TABLE · scoring ============================================ -->
-        <section class="slide" data-type="table" data-screen-label="29 Scoring a round">
+
+<section class="slide" data-type="table" data-screen-label="29 Scoring a round">
           <div class="slide-header">
             <h2><span lang="en">How a round is scored</span></h2>
             <span class="slide-kicker"><span lang="en">Gates first, then one number: S</span></span>
@@ -958,13 +959,13 @@ exec /runtime/.venv/bin/vllm serve \
               <div class="callout" data-kind="warn" style="margin-top:var(--sp-3)">
                 <div class="callout-icon">!</div>
                 <div class="callout-body">
-                  <strong><span lang="en">Same seed for grading</span></strong>
-                  <p><span lang="en">Every Round 1 submission must use the reference round's private seed. If it is lost, recalibrate before grading.</span></p>
+                  <strong><span lang="en">The judge owns the seed</span></strong>
+                  <p><span lang="en">The instructor evaluates every Round 1 submission with the same protected seed. Students do not obtain it or put it in their repository.</span></p>
                 </div>
               </div>
             </div>
           </div>
-          <aside class="slide-notes">These are the published verified Round 01 bars from judge/reference/round-01.v5.result.json and judge/thresholds/round-01.json. The 2026-09-19 T4 result remains historical only. The private seed from this calibration must be reused for all Round 01 submissions; if lost, a new reference is required. The speed bar is the geometric mean of 2138.59 and 2955.67 output tok/s, rounded to 2514.1. The p95 TTFT SLO is 0.8 s.</aside>
+          <aside class="slide-notes">The verified 30 September reference yields 2145.05 and 2925.86 output tok/s; their geometric mean rounds to 2505.2. The p95 TTFT 0.5857 s receives 1.25 headroom and upward rounding to 0.8 s. The instructor keeps the seed; students never need it. The public leaderboard also lists numeric canary similarity, diversity and length floors. Old T4 demonstration figures are unrelated to these grading bars.</aside>
         </section>
 
         <!-- ============================================ -->
@@ -1136,7 +1137,7 @@ Kept:   yes. Next: FP8 KV cache.</code></pre>
                 <li class="obj-item"><span class="obj-check" aria-hidden="true">✓</span><span class="obj-text"><span lang="en">Create your repository <strong>this week</strong> and submit round 1 early — a boring server that starts beats a clever one that does not.</span></span></li>
                 <li class="obj-item"><span class="obj-check" aria-hidden="true">✓</span><span class="obj-text"><span lang="en">Change <strong>one thing</strong> per experiment; predict, then measure.</span></span></li>
                 <li class="obj-item"><span class="obj-check" aria-hidden="true">✓</span><span class="obj-text"><span lang="en">Write the journal entry the day you run the experiment.</span></span></li>
-                <li class="obj-item"><span class="obj-check" aria-hidden="true">✓</span><span class="obj-text"><span lang="en">Read the dry-run log every week.</span></span></li>
+                <li class="obj-item"><span class="obj-check" aria-hidden="true">✓</span><span class="obj-text"><span lang="en">Read your private readiness Issue.</span></span></li>
               </ul>
               <div class="callout" data-kind="info">
                 <div class="callout-icon">i</div>

@@ -1,0 +1,15 @@
+/* Shared evidence canvas. Static, native SVG: keyboard navigation stays with the deck.
+   Image alternatives, visible captions and Book prose retain the argument without JavaScript. */
+.evidence-figure { margin:0; min-width:0; }
+.evidence-figure img { display:block; width:100%; height:auto; }
+.evidence-figure .evidence-dark { display:none; }
+[data-theme="dark"] .evidence-figure .evidence-light { display:none; }
+[data-theme="dark"] .evidence-figure .evidence-dark { display:block; }
+.slide[data-type="evidence"] .evidence-figure { display:flex; flex-direction:column; gap:24px; }
+.slide[data-type="evidence"] .evidence-canvas { width:100%; }
+.slide[data-type="evidence"] figcaption { font-size:var(--fs-small); line-height:1.35; }
+.evidence-figure .evidence-status { font-weight:700; }
+@media print {
+  .evidence-figure .evidence-light { display:block !important; }
+  .evidence-figure .evidence-dark { display:none !important; }
+}
