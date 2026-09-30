@@ -45,11 +45,38 @@
     out(root, 'attainable', `${fmt(attainable)} TFLOP/s`);
     out(root, 'ridge', `${fmt(ridge)} FLOP/B`);
     out(root, 'regime', regime);
-    const x = 90 + (Math.log10(intensity) + 1) / 4 * 720;
-    const yValue = Math.max(.1, attainable);
-    const y = 330 - (Math.log10(yValue) + 1) / 3 * 250;
+    // Point, roofs and grid must use the same log transform. The former static
+    // path had a different ridge than the independently positioned workload point.
+    const input = root.querySelector('[data-pm-input="intensity"]');
+    const lo = Math.max(.01, Number(input.min)), hi = Math.max(lo * 10, Number(input.max));
+    const floor = Math.min(bandwidth * lo / 1000, compute / 100);
+    const xAt = value => 90 + Math.log10(value / lo) / Math.log10(hi / lo) * 740;
+    const yAt = value => 330 - Math.log10(value / floor) / Math.log10(compute / floor) * 250;
+    const boundedRidge = Math.max(lo, Math.min(hi, ridge));
+    const ceilingAt = value => Math.min(compute, bandwidth * value / 1000);
+    const x = xAt(intensity), y = yAt(attainable);
+    root.querySelector('.roof-memory')?.setAttribute('d', `M90 ${yAt(ceilingAt(lo))} L${xAt(boundedRidge)} ${yAt(ceilingAt(boundedRidge))}`);
+    root.querySelector('.roof-compute')?.setAttribute('d', `M${xAt(boundedRidge)} ${yAt(ceilingAt(boundedRidge))} L830 ${yAt(ceilingAt(hi))}`);
+    const grid = root.querySelector('.pm-roof .grid');
+    grid?.setAttribute('x1', String(xAt(boundedRidge))); grid?.setAttribute('x2', String(xAt(boundedRidge)));
+    const svg = root.querySelector('.pm-roof');
+    if (svg) {
+      svg.setAttribute('aria-label', `Log roofline: ${compute} TFLOP/s compute, ${bandwidth} GB/s memory; workload ${intensity} FLOP/B, ceiling ${attainable} TFLOP/s`);
+      svg.querySelector('text[x="340"]')?.replaceChildren(document.createTextNode('intensity · FLOP/B (log)'));
+      svg.querySelector('text[transform]')?.replaceChildren(document.createTextNode('TFLOP/s (log)'));
+      // Leave clear space above the sloped roof; its former static label crossed it.
+      svg.querySelector('text[x="145"]')?.setAttribute('y', '170');
+      if (!svg.querySelector('[data-roof-ticks]')) {
+        const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        group.setAttribute('data-roof-ticks', '');
+        const tick = (x, y, text, anchor) => { const el = document.createElementNS(group.namespaceURI, 'text'); el.setAttribute('x', x); el.setAttribute('y', y); el.setAttribute('text-anchor', anchor); el.textContent = text; group.append(el); };
+        for (let value = lo; value <= hi; value *= 10) tick(xAt(value), 360, fmt(value), 'middle');
+        for (const value of [floor, Math.sqrt(floor * compute), compute]) tick(70, yAt(value) + 6, fmt(value), 'end');
+        svg.append(group);
+      }
+    }
     const p = root.querySelector('.pm-point');
-    if (p) { p.setAttribute('cx', String(Math.max(90, Math.min(810, x)))); p.setAttribute('cy', String(Math.max(65, Math.min(330, y)))); }
+    if (p) { p.setAttribute('cx', String(Math.max(90, Math.min(830, x)))); p.setAttribute('cy', String(Math.max(80, Math.min(330, y)))); }
   }
 
   function kv(root) {
