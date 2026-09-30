@@ -779,16 +779,16 @@
         <section class="slide" data-type="walkthrough" data-max-step="6" data-current-step="0" data-screen-label="26 How a round works">
           <div class="slide-header">
             <h2><span lang="en">How a round works</span></h2>
-            <span class="slide-kicker"><span lang="en">Fully automatic · step with →</span></span>
+            <span class="slide-kicker"><span lang="en">Measured automatically · reviewed before publication · step with →</span></span>
           </div>
           <div class="walk-flow">
             <div class="walk-step" data-step="1" data-color="violet">
               <div class="walk-num">01</div>
               <div class="walk-content">
-                <div class="walk-label"><span lang="en">Thursday 23:59 MSK — snapshot</span></div>
-                <div class="walk-detail"><span lang="en">The judge records the commit your <code>round-NN</code> tag points to. Moving the tag later changes nothing.</span></div>
+                <div class="walk-label"><span lang="en">Friday 00:00 MSK — snapshot</span></div>
+                <div class="walk-detail"><span lang="en">The judge records the commit your <code>round-NN</code> tag points to. Moving it after capture changes nothing.</span></div>
               </div>
-              <div class="walk-state">Thu 23:59</div>
+              <div class="walk-state">Fri 00:00</div>
             </div>
             <div class="walk-step" data-step="2" data-color="accent">
               <div class="walk-num">02</div>
@@ -802,9 +802,9 @@
               <div class="walk-num">03</div>
               <div class="walk-content">
                 <div class="walk-label"><span lang="en">Start</span></div>
-                <div class="walk-detail"><span lang="en"><code>serve.sh</code> (or your Dockerfile) must list <code>submission</code> on <code>/v1/models</code> within 30 min.</span></div>
+                <div class="walk-detail"><span lang="en"><code>serve.sh</code> (or your Dockerfile) must list <code>submission</code> on <code>/v1/models</code> within one shared 45 min startup budget.</span></div>
               </div>
-              <div class="walk-state">≤ 30 min</div>
+              <div class="walk-state">≤ 45 min</div>
             </div>
             <div class="walk-step" data-step="4" data-color="amber">
               <div class="walk-num">04</div>
@@ -826,16 +826,17 @@
               <div class="walk-num">06</div>
               <div class="walk-content">
                 <div class="walk-label"><span lang="en">Board</span></div>
-                <div class="walk-detail"><span lang="en">Mark, rank and Overdrive are published with the full logs of every step.</span></div>
+                <div class="walk-detail"><span lang="en">After review, mark, rank and Overdrive are published with sanitized results and logs.</span></div>
               </div>
               <div class="walk-state">public</div>
             </div>
           </div>
-          <aside class="slide-notes">Step through it. The snapshot is what makes the deadline real: at Thursday 23:59 Moscow time (UTC+3) the judge resolves every student's round-NN tag to a commit SHA and measures exactly those commits — re-tagging after the deadline has no effect. Then a clean checkout, start-up (30-minute window: dependency install, weight download, engine start), a one-request smoke test, the quality gate, the speed runs, and publication with the full logs so that every failure is explainable. The same code runs in Colab: you can put your own repository through the identical pipeline before Thursday.</aside>
+          <aside class="slide-notes">Step through it. Thursday 23:59 Moscow time (UTC+3) is the deadline; the judge snapshots each round-NN tag at Friday 00:00 and measures those exact commits. Re-tagging after the deadline has no effect. Then a clean checkout, one shared 45-minute startup budget (dependency install, model availability, engine readiness), a one-request smoke test, quality and speed measurements, human review, and publication of sanitized results and logs. The public self-check and Colab path test the visible contract, not the private hidden quality or load gates.</aside>
         </section>
 
         <!-- ============================================ -->
-        <section class="slide" data-type="two-col" data-screen-label="27 The contract">
+
+<section class="slide" data-type="two-col" data-screen-label="27 The contract">
           <div class="slide-header">
             <h2><span lang="en">The submission contract</span></h2>
             <span class="slide-kicker"><span lang="en">If I cannot run it from a clean machine, it does not count</span></span>
@@ -915,16 +916,16 @@ exec /runtime/.venv/bin/vllm serve \
               <tr><th><span lang="en">Step</span></th><th><span lang="en">Rule</span></th></tr>
             </thead>
             <tbody>
-              <tr><td><span lang="en">Snapshot</span></td><td><span lang="en">Thursday 23:59 MSK: the commit your <code>round-NN</code> tag points to. No tag → 0.</span></td></tr>
-              <tr><td><span lang="en">Contract</span></td><td><span lang="en">Server starts and lists <code>submission</code> within 30 min; a streamed smoke answer works.</span></td></tr>
+              <tr><td><span lang="en">Snapshot</span></td><td><span lang="en">Thursday 23:59 MSK deadline; Friday 00:00 tag snapshot. No <code>round-NN</code> tag → 0.</span></td></tr>
+              <tr><td><span lang="en">Contract</span></td><td><span lang="en">Server lists <code>submission</code> within one shared 45 min startup budget; a streamed smoke answer works.</span></td></tr>
               <tr><td><span lang="en">Quality gate</span></td><td><span lang="en">GSM8K, IFEval, MMLU-Pro subsets (lm-eval): each ≥ 90% of the reference.</span></td></tr>
               <tr><td><span lang="en">Latency & honesty gates</span></td><td><span lang="en">p95 TTFT among successful requests at 64 clients ≤ the round's SLO; errors ≤ 1%; every hidden length probe ≥ 95% of 256 tokens.</span></td></tr>
-              <tr><td><span lang="en">Same model</span></td><td><span lang="en">Every hidden at-rest/load pair must match; per-request length and output-diversity checks also pass.</span></td></tr>
+              <tr><td><span lang="en">Same model</span></td><td><span lang="en">Mean hidden at-rest/load pair similarity ≥ published floor; per-request length and output-diversity checks also pass.</span></td></tr>
               <tr><td><span lang="en">Speed</span></td><td><span lang="en">\(S = \sqrt{\text{tok/s}_{32} \cdot \text{tok/s}_{64}}\)</span></td></tr>
               <tr><td><span lang="en">Mark 0–5</span></td><td><span lang="en">\(5 \times \min(1,\ S / S_{\text{bar}})\); any failed gate → 0. <strong>Round = 4%</strong>: points = mark × 0.8.</span></td></tr>
             </tbody>
           </table>
-          <aside class="slide-notes">Top to bottom, every round. The snapshot makes the deadline real. A server that does not start, or that got fast by getting dumb, scores zero — quality, latency, errors and layered hidden probes are independent gates. Length is checked per hidden response, not by the GuideLLM mean; same-model similarity uses the worst pair, not the average; diverse prompts must not collapse to one canned output. These are practical anti-gaming checks, not cryptographic proof, so raw artifacts and provenance are retained for audit. Among valid submissions only S matters: the geometric mean of throughput at 32 and 64 clients. The mark is proportional: half the bar = 2.5 of 5. Each round is worth 4% of the course grade (mark × 0.8); ten rounds = 40%.</aside>
+          <aside class="slide-notes">Top to bottom, every round. The snapshot makes the deadline real. A server that does not start, or that got fast by getting dumb, scores zero — quality, latency, errors and layered hidden probes are independent gates. Length is checked per hidden response, not by the GuideLLM mean; same-model similarity uses the arithmetic mean of hidden at-rest/load pairs against the published floor (0.8 in Round 01), so one divergent valid continuation need not fail the gate. Diverse prompts must not collapse to one canned output. These are practical anti-gaming checks, not cryptographic proof, so raw artifacts and provenance are retained for audit. Among valid submissions only S matters: the geometric mean of throughput at 32 and 64 clients. The mark is proportional: half the bar = 2.5 of 5. Each round is worth 4% of the course grade (mark × 0.8); ten rounds = 40%.</aside>
         </section>
 
         <!-- ============================================ TWO-COL · the defense ============================================ -->
