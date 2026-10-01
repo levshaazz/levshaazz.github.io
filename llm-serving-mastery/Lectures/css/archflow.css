@@ -36,7 +36,8 @@
   opacity: 0;
   transition: opacity var(--dur) var(--ease);
 }
-.af-wires marker path { fill: var(--ink-3); stroke: none; }
+/* The hidden-wire rule above must not hide the arrowhead geometry inside defs. */
+.af-wires marker path { fill: var(--ink-3); stroke: none; opacity: 1; }
 .af-wires path.is-shown,
 .af-wires line.is-shown { opacity: 0.9; }
 /* Edge kinds (system blueprints): async = dashed, control = dashed + muted. */

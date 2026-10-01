@@ -1,0 +1,27 @@
+{
+  "protocol": "topic02-transformer-recap-v1",
+  "source_commit": "17a8cbc74ee572656f1053d4b6a14141b4572eb0",
+  "source_dirty": false,
+  "source_hashes_sha256": {
+    "teaching/topic02_block_capture.py": "757556f27357f6e554b70bc20f7b9a9a9505544261f86f1735c06c2b9a3ae0de",
+    "scripts/run_topic02_block_capture.py": "176dfcbba1177be192dfa666fd8237b39a798c9d4d97f02bb7c82adbc66d1fdb",
+    "teaching/topic02_prompt_demo.py": "eb73ece793635bf8793b0e84579092878c903b1a6d389c943d37fc1bb4f72749",
+    "teaching/topic02_lab.py": "20c9867885c86846f73f00fbf9daf1588d79a28ba979d579f28b320cecbde53c",
+    "scripts/run_topic02_prompt_demo.py": "9af870ac95ce1450d59a7cfe84b0a1fb1e32e02a95efe960a6c59216cd861e90"
+  },
+  "python": "3.12.13",
+  "hf_hub_offline": true,
+  "gpu_name_driver_total_memory": "NVIDIA GeForce RTX 5070 Ti, 591.86, 16303 MiB",
+  "limits": {
+    "min_available_ram_gib": 24,
+    "max_device_used_gib": 12,
+    "memory_max_bytes": 25769803776,
+    "memory_swap_max_bytes": 0,
+    "external_wall_timeout_s": 180
+  },
+  "started_utc": "2026-10-01T19:30:06.974464+00:00",
+  "status": "complete",
+  "capture_sha256": "a906a242fb9ab3e781f639ae516e9ff1904b26f111df1830d112b3bf3783b694",
+  "finished_utc": "2026-10-01T19:30:54.946028+00:00",
+  "duration_s": 48.024
+}
