@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "evidence_kind": "measured_trace_excerpt",
+  "source": {
+    "rehearsal_source_sha": "8074c6a7260e533af0d88e5ba42e3b671a0766dd",
+    "trace_sha256": "6ce71deef55694c0749119698daa09ed7f56a1075d357a44af7710cd2489bb2b",
+    "profile_summary": "profiles.json",
+    "input_tokens": 128,
+    "output_tokens": 8,
+    "batch_size": 1,
+    "model": "Qwen/Qwen2.5-0.5B-Instruct",
+    "precision": "FP16",
+    "device": "NVIDIA GeForce RTX 5070 Ti",
+    "input_kind": "Repeated synthetic token IDs, not a natural-language prompt"
+  },
+  "selection": {
+    "rule": "Sort all cat=kernel, ph=X events by ts. Find the first whose uniquely correlation-matched CUDA launch API interval is fully contained in the CPU annotation topic02_decode_7_steps. Retain that kernel and the next seven consecutive physical kernels. Assert all eight matched API intervals are contained in the same annotation.",
+    "kernel_ordinals_zero_based": [
+      1101,
+      1108
+    ],
+    "time_origin": "Start of earliest retained event (first matched CPU launch); all timestamps are relative, in microseconds.",
+    "window_start_relative_to_first_trace_kernel_us": 28710.844727,
+    "cpu_annotation": "topic02_decode_7_steps",
+    "join": "Unique args.correlation match between each kernel and cuda_runtime/cuda_driver launch API; original identifiers omitted.",
+    "numeric_rounding": "Six decimal places in microseconds; display should round further. Precision is not accuracy."
+  },
+  "window": {
+    "start_us": 0,
+    "end_us": 916.402141,
+    "physical_kernel_union_us": 9.44,
+    "first_to_last_kernel_us": 868.601359,
+    "physical_kernel_count": 8,
+    "kernel_stream_count": 1,
+    "other_recorded_gpu_activity": []
+  },
+  "kernels": [
+    {
+      "id": "kernel-01",
+      "name": "void at::native::(anonymous namespace)::indexSelectSmallIndex<c10::Half, long, unsigned int, 2, 2, -2>(at::cuda::detail::TensorInfo<c10::Half, unsigned int>, at::cuda::detail::TensorInfo<c10::Half const, unsigned int>, at::cuda::detail::TensorInfo<long const, unsigned int>, int, int, unsigned int, long)",
+      "label": "indexSelectSmallIndex",
+      "start_us": 47.800781,
+      "duration_us": 1.44,
+      "launch": {
+        "category": "cuda_runtime",
+        "name": "cudaLaunchKernel",
+        "start_us": 0,
+        "duration_us": 35.809
+      }
+    },
+    {
+      "id": "kernel-02",
+      "name": "void (anonymous namespace)::elementwise_kernel_with_index<int, at::native::arange_cuda_out(c10::Scalar const&, c10::Scalar const&, c10::Scalar const&, at::Tensor&)::{lambda()#1}::operator()() const::{lambda()#4}::operator()() const::{lambda(long)#1}>(int, at::native::arange_cuda_out(c10::Scalar const&, c10::Scalar const&, c10::Scalar const&, at::Tensor&)::{lambda()#1}::operator()() const::{lambda()#4}::operator()() const::{lambda(long)#1}, function_traits<at::native::arange_cuda_out(c10::Scalar const&, c10::Scalar const&, c10::Scalar const&, at::Tensor&)::{lambda()#1}::operator()() const::{lambda()#4}::operator()() const::{lambda(long)#1}>::result_type*)",
+      "label": "arange_cuda_out",
+      "start_us": 148.667969,
+      "duration_us": 0.768,
+      "launch": {
+        "category": "cuda_runtime",
+        "name": "cudaLaunchKernel",
+        "start_us": 104.561523,
+        "duration_us": 31.881
+      }
+    },
+    {
+      "id": "kernel-03",
+      "name": "void at::native::unrolled_elementwise_kernel<at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#7}::operator()() const::{lambda(float)#1}, std::array<char*, 2ul>, 4, TrivialOffsetCalculator<1, unsigned int>, TrivialOffsetCalculator<1, unsigned int>, at::native::memory::LoadWithCast<1>, at::native::memory::StoreWithCast<1> >(int, at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#7}::operator()() const::{lambda(float)#1}, std::array<char*, 2ul>, TrivialOffsetCalculator<1, unsigned int>, TrivialOffsetCalculator<1, unsigned int>, at::native::memory::LoadWithCast<1>, at::native::memory::StoreWithCast<1>)",
+      "label": "direct_copy_kernel_cuda",
+      "start_us": 295.040039,
+      "duration_us": 1.408,
+      "launch": {
+        "category": "cuda_runtime",
+        "name": "cudaLaunchKernel",
+        "start_us": 245.963867,
+        "duration_us": 37.002
+      }
+    },
+    {
+      "id": "kernel-04",
+      "name": "_bmm_outer_product_kernel",
+      "label": "_bmm_outer_product_kernel",
+      "start_us": 493.446289,
+      "duration_us": 1.12,
+      "launch": {
+        "category": "cuda_driver",
+        "name": "cuLaunchKernelEx",
+        "start_us": 444.145508,
+        "duration_us": 33.275
+      }
+    },
+    {
+      "id": "kernel-05",
+      "name": "void at::native::(anonymous namespace)::CatArrayBatchedCopy_vectorized<at::native::(anonymous namespace)::OpaqueType<4u>, unsigned int, 3, 128, 1, 16, 4>(char*, at::native::(anonymous namespace)::CatArrInputTensorMetadata<at::native::(anonymous namespace)::OpaqueType<4u>, unsigned int, 128, 1>, at::native::(anonymous namespace)::TensorSizeStride<unsigned int, 4u>, int, unsigned int)",
+      "label": "CatArrayBatchedCopy_vectorized",
+      "start_us": 600.873047,
+      "duration_us": 0.992,
+      "launch": {
+        "category": "cuda_runtime",
+        "name": "cudaLaunchKernel",
+        "start_us": 554.969727,
+        "duration_us": 33.094
+      }
+    },
+    {
+      "id": "kernel-06",
+      "name": "void at::native::vectorized_elementwise_kernel<4, at::native::cos_kernel_cuda(at::TensorIteratorBase&)::{lambda()#2}::operator()() const::{lambda()#2}::operator()() const::{lambda(float)#1}, std::array<char*, 2ul>, false>(int, at::native::cos_kernel_cuda(at::TensorIteratorBase&)::{lambda()#2}::operator()() const::{lambda()#2}::operator()() const::{lambda(float)#1}, std::array<char*, 2ul>)",
+      "label": "cos_kernel_cuda",
+      "start_us": 705.036133,
+      "duration_us": 1.376,
+      "launch": {
+        "category": "cuda_runtime",
+        "name": "cudaLaunchKernel",
+        "start_us": 642.598633,
+        "duration_us": 43.644
+      }
+    },
+    {
+      "id": "kernel-07",
+      "name": "void at::native::vectorized_elementwise_kernel<4, at::native::AUnaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float> >, std::array<char*, 2ul>, false>(int, at::native::AUnaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float> >, std::array<char*, 2ul>)",
+      "label": "MulFunctor",
+      "start_us": 814.415039,
+      "duration_us": 0.928,
+      "launch": {
+        "category": "cuda_runtime",
+        "name": "cudaLaunchKernel",
+        "start_us": 770.916992,
+        "duration_us": 30.388
+      }
+    },
+    {
+      "id": "kernel-08",
+      "name": "void at::native::vectorized_elementwise_kernel<4, at::native::sin_kernel_cuda(at::TensorIteratorBase&)::{lambda()#2}::operator()() const::{lambda()#2}::operator()() const::{lambda(float)#1}, std::array<char*, 2ul>, false>(int, at::native::sin_kernel_cuda(at::TensorIteratorBase&)::{lambda()#2}::operator()() const::{lambda()#2}::operator()() const::{lambda(float)#1}, std::array<char*, 2ul>)",
+      "label": "sin_kernel_cuda",
+      "start_us": 914.994141,
+      "duration_us": 1.408,
+      "launch": {
+        "category": "cuda_runtime",
+        "name": "cudaLaunchKernel",
+        "start_us": 872.152344,
+        "duration_us": 30.088
+      }
+    }
+  ],
+  "limits": [
+    "This is the start of one profiled decode region, not a representative random sample or an unprofiled latency measurement.",
+    "The CPU annotation labels submitted work; its boundaries are not synchronized GPU boundaries. Membership is established through matched launch APIs.",
+    "API intervals and GPU kernels can overlap and are not additive time buckets.",
+    "Time outside these recorded kernels does not by itself establish idle GPU time or identify a CPU bottleneck. Other categories, processes and profiler overhead are outside this claim.",
+    "Short labels abbreviate exact kernel symbol names retained in name; they are not a complete semantic reconstruction of the model.",
+    "Only allowlisted names, relative times and hash provenance are published. No raw timestamps, paths, PID/TID, host metadata or original correlation IDs are included."
+  ]
+}

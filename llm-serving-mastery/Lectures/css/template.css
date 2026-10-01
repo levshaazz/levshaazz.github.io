@@ -548,10 +548,11 @@ details > summary:focus-visible {
   }
   .slide[data-type="divider"] h1 { color: var(--bg) !important; }
   .slide[data-type="divider"] .divider-num { color: var(--c-amber) !important; }
-  /* MathJax / KaTeX containers print best with explicit colors.
-     Scoped so the divider's KaTeX (if any) stays light, not forced dark. */
+  /* MathJax / KaTeX containers print best with explicit theme ink.
+     A fixed dark color disappears on the dark theme's retained math highlight.
+     Exclude dividers, whose foreground is deliberately inverted. */
   .slide:not([data-type="divider"]) mjx-container,
-  .slide:not([data-type="divider"]) .katex { color: #14181F !important; }
+  .slide:not([data-type="divider"]) .katex { color: var(--ink) !important; }
   /* Hidden answers — print expanded for handouts. */
   .hidden-answer .ha-content { display: block !important; }
   .hidden-answer .ha-reveal { display: none !important; }

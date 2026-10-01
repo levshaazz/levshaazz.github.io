@@ -1,0 +1,734 @@
+{
+  "protocol": "topic02-concrete-prompt-v1",
+  "scope": "one instrumented natural-EOS request; not a benchmark",
+  "model": {
+    "id": "Qwen/Qwen2.5-1.5B-Instruct",
+    "revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+    "kv_bytes_per_token": 28672,
+    "layers": 28,
+    "kv_heads": 2,
+    "attention_heads": 12,
+    "hidden_size": 1536,
+    "attention_selected": "sdpa"
+  },
+  "environment": {
+    "torch": "2.14.0+cu130",
+    "transformers": "4.51.3",
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 5070 Ti",
+    "dtype": "float16",
+    "attention_requested": "sdpa",
+    "logits_to_keep": 1
+  },
+  "generation": {
+    "max_new_tokens": 24,
+    "do_sample": false,
+    "batch": 1,
+    "eos_token_ids": [
+      151645,
+      151643
+    ]
+  },
+  "measurement": {
+    "warmup_requests": 1,
+    "measured_requests": 1,
+    "interval": "synchronized wall and CUDA events: forward + argmax; excludes CPU token extraction/text rendering/resource checks",
+    "memory_peak_scope": "reset before each individual forward+argmax; model remains loaded",
+    "limitations": [
+      "single request, no distribution or performance guarantee",
+      "per-token synchronization and inspection alter the execution",
+      "not HTTP TTFT/TPOT, not summed CUDA kernel time, not protocol v2"
+    ]
+  },
+  "resource_samples": [
+    {
+      "stage": "before_load",
+      "host_available_bytes": 74161643520,
+      "device_used_bytes": 1356398592,
+      "allocated_bytes": 0,
+      "reserved_bytes": 0,
+      "peak_allocated_bytes": 0,
+      "peak_reserved_bytes": 0
+    },
+    {
+      "stage": "post_load",
+      "host_available_bytes": 71310524416,
+      "device_used_bytes": 4642635776,
+      "allocated_bytes": 3088347136,
+      "reserved_bytes": 3286237184,
+      "peak_allocated_bytes": 3088347136,
+      "peak_reserved_bytes": 3286237184
+    },
+    {
+      "stage": "after_warmup",
+      "host_available_bytes": 71274737664,
+      "device_used_bytes": 4737007616,
+      "allocated_bytes": 3121901568,
+      "reserved_bytes": 3323985920,
+      "peak_allocated_bytes": 3125901824,
+      "peak_reserved_bytes": 3323985920
+    },
+    {
+      "stage": "after_replay",
+      "host_available_bytes": 71274737664,
+      "device_used_bytes": 4737007616,
+      "allocated_bytes": 3123364864,
+      "reserved_bytes": 3323985920,
+      "peak_allocated_bytes": 3123696128,
+      "peak_reserved_bytes": 3323985920
+    },
+    {
+      "stage": "after_release",
+      "host_available_bytes": 71274799104,
+      "device_used_bytes": 1446576128,
+      "allocated_bytes": 33554432,
+      "reserved_bytes": 33554432,
+      "peak_allocated_bytes": 3123696128,
+      "peak_reserved_bytes": 3323985920
+    }
+  ],
+  "prompt": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a helpful assistant. Reply with only the requested numbers."
+      },
+      {
+        "role": "user",
+        "content": "Continue the sequence with three numbers: 2, 4, 6,"
+      }
+    ],
+    "rendered_chat": "<|im_start|>system\nYou are a helpful assistant. Reply with only the requested numbers.<|im_end|>\n<|im_start|>user\nContinue the sequence with three numbers: 2, 4, 6,<|im_end|>\n<|im_start|>assistant\n",
+    "input_token_ids": [
+      151644,
+      8948,
+      198,
+      2610,
+      525,
+      264,
+      10950,
+      17847,
+      13,
+      17841,
+      448,
+      1172,
+      279,
+      11223,
+      5109,
+      13,
+      151645,
+      198,
+      151644,
+      872,
+      198,
+      23526,
+      279,
+      8500,
+      448,
+      2326,
+      5109,
+      25,
+      220,
+      17,
+      11,
+      220,
+      19,
+      11,
+      220,
+      21,
+      11,
+      151645,
+      198,
+      151644,
+      77091,
+      198
+    ],
+    "input_token_count": 42,
+    "input_tokens": [
+      {
+        "id": 151644,
+        "piece": "<|im_start|>",
+        "text": "<|im_start|>",
+        "index": 0
+      },
+      {
+        "id": 8948,
+        "piece": "system",
+        "text": "system",
+        "index": 1
+      },
+      {
+        "id": 198,
+        "piece": "Ċ",
+        "text": "\n",
+        "index": 2
+      },
+      {
+        "id": 2610,
+        "piece": "You",
+        "text": "You",
+        "index": 3
+      },
+      {
+        "id": 525,
+        "piece": "Ġare",
+        "text": " are",
+        "index": 4
+      },
+      {
+        "id": 264,
+        "piece": "Ġa",
+        "text": " a",
+        "index": 5
+      },
+      {
+        "id": 10950,
+        "piece": "Ġhelpful",
+        "text": " helpful",
+        "index": 6
+      },
+      {
+        "id": 17847,
+        "piece": "Ġassistant",
+        "text": " assistant",
+        "index": 7
+      },
+      {
+        "id": 13,
+        "piece": ".",
+        "text": ".",
+        "index": 8
+      },
+      {
+        "id": 17841,
+        "piece": "ĠReply",
+        "text": " Reply",
+        "index": 9
+      },
+      {
+        "id": 448,
+        "piece": "Ġwith",
+        "text": " with",
+        "index": 10
+      },
+      {
+        "id": 1172,
+        "piece": "Ġonly",
+        "text": " only",
+        "index": 11
+      },
+      {
+        "id": 279,
+        "piece": "Ġthe",
+        "text": " the",
+        "index": 12
+      },
+      {
+        "id": 11223,
+        "piece": "Ġrequested",
+        "text": " requested",
+        "index": 13
+      },
+      {
+        "id": 5109,
+        "piece": "Ġnumbers",
+        "text": " numbers",
+        "index": 14
+      },
+      {
+        "id": 13,
+        "piece": ".",
+        "text": ".",
+        "index": 15
+      },
+      {
+        "id": 151645,
+        "piece": "<|im_end|>",
+        "text": "<|im_end|>",
+        "index": 16
+      },
+      {
+        "id": 198,
+        "piece": "Ċ",
+        "text": "\n",
+        "index": 17
+      },
+      {
+        "id": 151644,
+        "piece": "<|im_start|>",
+        "text": "<|im_start|>",
+        "index": 18
+      },
+      {
+        "id": 872,
+        "piece": "user",
+        "text": "user",
+        "index": 19
+      },
+      {
+        "id": 198,
+        "piece": "Ċ",
+        "text": "\n",
+        "index": 20
+      },
+      {
+        "id": 23526,
+        "piece": "Continue",
+        "text": "Continue",
+        "index": 21
+      },
+      {
+        "id": 279,
+        "piece": "Ġthe",
+        "text": " the",
+        "index": 22
+      },
+      {
+        "id": 8500,
+        "piece": "Ġsequence",
+        "text": " sequence",
+        "index": 23
+      },
+      {
+        "id": 448,
+        "piece": "Ġwith",
+        "text": " with",
+        "index": 24
+      },
+      {
+        "id": 2326,
+        "piece": "Ġthree",
+        "text": " three",
+        "index": 25
+      },
+      {
+        "id": 5109,
+        "piece": "Ġnumbers",
+        "text": " numbers",
+        "index": 26
+      },
+      {
+        "id": 25,
+        "piece": ":",
+        "text": ":",
+        "index": 27
+      },
+      {
+        "id": 220,
+        "piece": "Ġ",
+        "text": " ",
+        "index": 28
+      },
+      {
+        "id": 17,
+        "piece": "2",
+        "text": "2",
+        "index": 29
+      },
+      {
+        "id": 11,
+        "piece": ",",
+        "text": ",",
+        "index": 30
+      },
+      {
+        "id": 220,
+        "piece": "Ġ",
+        "text": " ",
+        "index": 31
+      },
+      {
+        "id": 19,
+        "piece": "4",
+        "text": "4",
+        "index": 32
+      },
+      {
+        "id": 11,
+        "piece": ",",
+        "text": ",",
+        "index": 33
+      },
+      {
+        "id": 220,
+        "piece": "Ġ",
+        "text": " ",
+        "index": 34
+      },
+      {
+        "id": 21,
+        "piece": "6",
+        "text": "6",
+        "index": 35
+      },
+      {
+        "id": 11,
+        "piece": ",",
+        "text": ",",
+        "index": 36
+      },
+      {
+        "id": 151645,
+        "piece": "<|im_end|>",
+        "text": "<|im_end|>",
+        "index": 37
+      },
+      {
+        "id": 198,
+        "piece": "Ċ",
+        "text": "\n",
+        "index": 38
+      },
+      {
+        "id": 151644,
+        "piece": "<|im_start|>",
+        "text": "<|im_start|>",
+        "index": 39
+      },
+      {
+        "id": 77091,
+        "piece": "assistant",
+        "text": "assistant",
+        "index": 40
+      },
+      {
+        "id": 198,
+        "piece": "Ċ",
+        "text": "\n",
+        "index": 41
+      }
+    ]
+  },
+  "replay": {
+    "output_token_ids": [
+      23,
+      11,
+      220,
+      16,
+      15,
+      11,
+      220,
+      16,
+      17,
+      151645
+    ],
+    "output_text": "8, 10, 12",
+    "output_text_with_special_tokens": "8, 10, 12<|im_end|>",
+    "stop_reason": "eos",
+    "steps": [
+      {
+        "output_index": 1,
+        "phase": "prefill",
+        "input_shape": [
+          1,
+          42
+        ],
+        "input_token_ids": [
+          151644,
+          8948,
+          198,
+          2610,
+          525,
+          264,
+          10950,
+          17847,
+          13,
+          17841,
+          448,
+          1172,
+          279,
+          11223,
+          5109,
+          13,
+          151645,
+          198,
+          151644,
+          872,
+          198,
+          23526,
+          279,
+          8500,
+          448,
+          2326,
+          5109,
+          25,
+          220,
+          17,
+          11,
+          220,
+          19,
+          11,
+          220,
+          21,
+          11,
+          151645,
+          198,
+          151644,
+          77091,
+          198
+        ],
+        "kv_tokens_before": 0,
+        "kv_tokens_after": 42,
+        "selected_token": {
+          "id": 23,
+          "piece": "8",
+          "text": "8"
+        },
+        "decoded_prefix": "8",
+        "wall_ms": 19.63335300001745,
+        "cuda_event_ms": 19.085664749145508,
+        "memory": {
+          "allocated_bytes": 3123106304,
+          "reserved_bytes": 3323985920,
+          "peak_allocated_bytes": 3125901824,
+          "peak_reserved_bytes": 3323985920
+        }
+      },
+      {
+        "output_index": 2,
+        "phase": "decode",
+        "input_shape": [
+          1,
+          1
+        ],
+        "input_token_ids": [
+          23
+        ],
+        "kv_tokens_before": 42,
+        "kv_tokens_after": 43,
+        "selected_token": {
+          "id": 11,
+          "piece": ",",
+          "text": ","
+        },
+        "decoded_prefix": "8,",
+        "wall_ms": 81.22387200000958,
+        "cuda_event_ms": 81.15577697753906,
+        "memory": {
+          "allocated_bytes": 3123135488,
+          "reserved_bytes": 3323985920,
+          "peak_allocated_bytes": 3123442176,
+          "peak_reserved_bytes": 3323985920
+        }
+      },
+      {
+        "output_index": 3,
+        "phase": "decode",
+        "input_shape": [
+          1,
+          1
+        ],
+        "input_token_ids": [
+          11
+        ],
+        "kv_tokens_before": 43,
+        "kv_tokens_after": 44,
+        "selected_token": {
+          "id": 220,
+          "piece": "Ġ",
+          "text": " "
+        },
+        "decoded_prefix": "8, ",
+        "wall_ms": 28.601944000001822,
+        "cuda_event_ms": 28.543039321899414,
+        "memory": {
+          "allocated_bytes": 3123164160,
+          "reserved_bytes": 3323985920,
+          "peak_allocated_bytes": 3123470848,
+          "peak_reserved_bytes": 3323985920
+        }
+      },
+      {
+        "output_index": 4,
+        "phase": "decode",
+        "input_shape": [
+          1,
+          1
+        ],
+        "input_token_ids": [
+          220
+        ],
+        "kv_tokens_before": 44,
+        "kv_tokens_after": 45,
+        "selected_token": {
+          "id": 16,
+          "piece": "1",
+          "text": "1"
+        },
+        "decoded_prefix": "8, 1",
+        "wall_ms": 20.453992999819093,
+        "cuda_event_ms": 20.372831344604492,
+        "memory": {
+          "allocated_bytes": 3123192832,
+          "reserved_bytes": 3323985920,
+          "peak_allocated_bytes": 3123499520,
+          "peak_reserved_bytes": 3323985920
+        }
+      },
+      {
+        "output_index": 5,
+        "phase": "decode",
+        "input_shape": [
+          1,
+          1
+        ],
+        "input_token_ids": [
+          16
+        ],
+        "kv_tokens_before": 45,
+        "kv_tokens_after": 46,
+        "selected_token": {
+          "id": 15,
+          "piece": "0",
+          "text": "0"
+        },
+        "decoded_prefix": "8, 10",
+        "wall_ms": 33.23044800004027,
+        "cuda_event_ms": 33.17951965332031,
+        "memory": {
+          "allocated_bytes": 3123221504,
+          "reserved_bytes": 3323985920,
+          "peak_allocated_bytes": 3123528192,
+          "peak_reserved_bytes": 3323985920
+        }
+      },
+      {
+        "output_index": 6,
+        "phase": "decode",
+        "input_shape": [
+          1,
+          1
+        ],
+        "input_token_ids": [
+          15
+        ],
+        "kv_tokens_before": 46,
+        "kv_tokens_after": 47,
+        "selected_token": {
+          "id": 11,
+          "piece": ",",
+          "text": ","
+        },
+        "decoded_prefix": "8, 10,",
+        "wall_ms": 16.885007999917434,
+        "cuda_event_ms": 16.802719116210938,
+        "memory": {
+          "allocated_bytes": 3123250176,
+          "reserved_bytes": 3323985920,
+          "peak_allocated_bytes": 3123556864,
+          "peak_reserved_bytes": 3323985920
+        }
+      },
+      {
+        "output_index": 7,
+        "phase": "decode",
+        "input_shape": [
+          1,
+          1
+        ],
+        "input_token_ids": [
+          11
+        ],
+        "kv_tokens_before": 47,
+        "kv_tokens_after": 48,
+        "selected_token": {
+          "id": 220,
+          "piece": "Ġ",
+          "text": " "
+        },
+        "decoded_prefix": "8, 10, ",
+        "wall_ms": 68.2125509999878,
+        "cuda_event_ms": 68.14598083496094,
+        "memory": {
+          "allocated_bytes": 3123278848,
+          "reserved_bytes": 3323985920,
+          "peak_allocated_bytes": 3123591680,
+          "peak_reserved_bytes": 3323985920
+        }
+      },
+      {
+        "output_index": 8,
+        "phase": "decode",
+        "input_shape": [
+          1,
+          1
+        ],
+        "input_token_ids": [
+          220
+        ],
+        "kv_tokens_before": 48,
+        "kv_tokens_after": 49,
+        "selected_token": {
+          "id": 16,
+          "piece": "1",
+          "text": "1"
+        },
+        "decoded_prefix": "8, 10, 1",
+        "wall_ms": 17.700886000056926,
+        "cuda_event_ms": 17.647199630737305,
+        "memory": {
+          "allocated_bytes": 3123307520,
+          "reserved_bytes": 3323985920,
+          "peak_allocated_bytes": 3123626496,
+          "peak_reserved_bytes": 3323985920
+        }
+      },
+      {
+        "output_index": 9,
+        "phase": "decode",
+        "input_shape": [
+          1,
+          1
+        ],
+        "input_token_ids": [
+          16
+        ],
+        "kv_tokens_before": 49,
+        "kv_tokens_after": 50,
+        "selected_token": {
+          "id": 17,
+          "piece": "2",
+          "text": "2"
+        },
+        "decoded_prefix": "8, 10, 12",
+        "wall_ms": 55.26893700016444,
+        "cuda_event_ms": 55.212703704833984,
+        "memory": {
+          "allocated_bytes": 3123336192,
+          "reserved_bytes": 3323985920,
+          "peak_allocated_bytes": 3123661312,
+          "peak_reserved_bytes": 3323985920
+        }
+      },
+      {
+        "output_index": 10,
+        "phase": "decode",
+        "input_shape": [
+          1,
+          1
+        ],
+        "input_token_ids": [
+          17
+        ],
+        "kv_tokens_before": 50,
+        "kv_tokens_after": 51,
+        "selected_token": {
+          "id": 151645,
+          "piece": "<|im_end|>",
+          "text": "<|im_end|>"
+        },
+        "decoded_prefix": "8, 10, 12<|im_end|>",
+        "wall_ms": 16.745422999974835,
+        "cuda_event_ms": 16.682655334472656,
+        "memory": {
+          "allocated_bytes": 3123364864,
+          "reserved_bytes": 3323985920,
+          "peak_allocated_bytes": 3123696128,
+          "peak_reserved_bytes": 3323985920
+        }
+      }
+    ],
+    "final_kv_tokens": 51,
+    "instrumented_request_wall_ms": 369.3175700000211
+  }
+}
