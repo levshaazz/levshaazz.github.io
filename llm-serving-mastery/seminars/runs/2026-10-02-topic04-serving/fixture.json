@@ -1,0 +1,220 @@
+{
+  "schema": "topic04-sse-fixture-v1",
+  "kind": "illustrative bytes, clocks and usage; no server or tokenizer executed",
+  "request": {
+    "model": "topic04",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Say caf\u00e9 \u2615 briefly."
+      }
+    ],
+    "max_tokens": 16,
+    "temperature": 0,
+    "stream": true,
+    "stream_options": {
+      "include_usage": true
+    }
+  },
+  "frames": [
+    ": heartbeat\r\n\r\n",
+    "data: {\"id\":\"illustrative\",\"object\":\"chat.completion.chunk\",\"model\":\"topic04\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"finish_reason\":null}]}\r\n\r\n",
+    "data: {\"id\":\"illustrative\",\"object\":\"chat.completion.chunk\",\"model\":\"topic04\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"Caf\u00e9 \"},\"finish_reason\":null}]}\r\n\r\n",
+    "data: {\"id\":\"illustrative\",\"object\":\"chat.completion.chunk\",\"model\":\"topic04\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"\u2615.\"},\"finish_reason\":null}]}\r\n\r\n",
+    "data: {\"id\":\"illustrative\",\"object\":\"chat.completion.chunk\",\"model\":\"topic04\",\"choices\":[{\"index\":0,\"delta\":{},\"finish_reason\":\"stop\"}]}\r\n\r\n",
+    "data: {\"choices\":[],\"usage\":{\"prompt_tokens\":13,\"completion_tokens\":4,\"total_tokens\":17}}\r\n\r\n",
+    "data: [DONE]\r\n\r\n"
+  ],
+  "chunks": [
+    {
+      "at_s": 0.01,
+      "hex": "3a206865617274626561740d"
+    },
+    {
+      "at_s": 0.01,
+      "hex": "0a0d0a"
+    },
+    {
+      "at_s": 0.03,
+      "hex": "646174613a207b226964223a22696c6c757374726174697665222c226f626a656374223a22636861742e636f6d706c6574696f6e2e6368756e6b222c226d6f64656c223a22746f7069633034222c2263686f69636573223a5b7b22696e646578223a302c2264656c7461223a7b22726f6c65223a22617373697374616e74222c22636f6e74656e74223a22227d2c2266696e6973685f726561736f6e223a6e756c6c7d5d7d0d"
+    },
+    {
+      "at_s": 0.03,
+      "hex": "0a0d0a"
+    },
+    {
+      "at_s": 0.1,
+      "hex": "646174613a207b226964223a22696c6c757374726174697665222c226f626a656374223a22636861742e636f6d706c6574696f6e2e6368756e6b222c226d6f64656c223a22746f7069633034222c2263686f69636573223a5b7b22696e646578223a302c2264656c7461223a7b22636f6e74656e74223a22436166c3"
+    },
+    {
+      "at_s": 0.1,
+      "hex": "a920227d2c2266696e6973685f726561736f6e223a6e756c6c7d5d7d0d"
+    },
+    {
+      "at_s": 0.1,
+      "hex": "0a0d0a"
+    },
+    {
+      "at_s": 0.14,
+      "hex": "646174613a207b226964223a22696c6c757374726174697665222c226f626a656374223a22636861742e636f6d706c6574696f6e2e6368756e6b222c226d6f64656c223a22746f7069633034222c2263686f69636573223a5b7b22696e646578223a302c2264656c7461223a7b22636f6e74656e74223a22e2"
+    },
+    {
+      "at_s": 0.14,
+      "hex": "98952e227d2c2266696e6973685f726561736f6e223a6e756c6c7d5d7d0d"
+    },
+    {
+      "at_s": 0.14,
+      "hex": "0a0d0a"
+    },
+    {
+      "at_s": 0.15,
+      "hex": "646174613a207b226964223a22696c6c757374726174697665222c226f626a656374223a22636861742e636f6d706c6574696f6e2e6368756e6b222c226d6f64656c223a22746f7069633034222c2263686f69636573223a5b7b22696e646578223a302c2264656c7461223a7b7d2c2266696e6973685f726561736f6e223a2273746f70227d5d7d0d"
+    },
+    {
+      "at_s": 0.15,
+      "hex": "0a0d0a"
+    },
+    {
+      "at_s": 0.16,
+      "hex": "646174613a207b2263686f69636573223a5b5d2c227573616765223a7b2270726f6d70745f746f6b656e73223a31332c22636f6d706c6574696f6e5f746f6b656e73223a342c22746f74616c5f746f6b656e73223a31377d7d0d"
+    },
+    {
+      "at_s": 0.16,
+      "hex": "0a0d0a"
+    },
+    {
+      "at_s": 0.17,
+      "hex": "646174613a205b444f4e455d0d"
+    },
+    {
+      "at_s": 0.17,
+      "hex": "0a0d0a"
+    }
+  ],
+  "complete": {
+    "status": "complete",
+    "content": "Caf\u00e9 \u2615.",
+    "finish_reason": "stop",
+    "done": true,
+    "usage": {
+      "prompt_tokens": 13,
+      "completion_tokens": 4,
+      "total_tokens": 17
+    },
+    "first_event_s": 0.03,
+    "first_content_s": 0.1,
+    "wall_s": 0.17,
+    "byte_count": 743,
+    "event_count": 6,
+    "events": [
+      {
+        "index": 0,
+        "at_s": 0.03,
+        "event": "message",
+        "data": "{\"id\":\"illustrative\",\"object\":\"chat.completion.chunk\",\"model\":\"topic04\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"finish_reason\":null}]}",
+        "kind": "role_or_empty"
+      },
+      {
+        "index": 1,
+        "at_s": 0.1,
+        "event": "message",
+        "data": "{\"id\":\"illustrative\",\"object\":\"chat.completion.chunk\",\"model\":\"topic04\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"Caf\u00e9 \"},\"finish_reason\":null}]}",
+        "kind": "content"
+      },
+      {
+        "index": 2,
+        "at_s": 0.14,
+        "event": "message",
+        "data": "{\"id\":\"illustrative\",\"object\":\"chat.completion.chunk\",\"model\":\"topic04\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"\u2615.\"},\"finish_reason\":null}]}",
+        "kind": "content"
+      },
+      {
+        "index": 3,
+        "at_s": 0.15,
+        "event": "message",
+        "data": "{\"id\":\"illustrative\",\"object\":\"chat.completion.chunk\",\"model\":\"topic04\",\"choices\":[{\"index\":0,\"delta\":{},\"finish_reason\":\"stop\"}]}",
+        "kind": "finish"
+      },
+      {
+        "index": 4,
+        "at_s": 0.16,
+        "event": "message",
+        "data": "{\"choices\":[],\"usage\":{\"prompt_tokens\":13,\"completion_tokens\":4,\"total_tokens\":17}}",
+        "kind": "usage"
+      },
+      {
+        "index": 5,
+        "at_s": 0.17,
+        "event": "message",
+        "data": "[DONE]",
+        "kind": "done"
+      }
+    ],
+    "error": null,
+    "unfinished_frame": false,
+    "clock": "client chunk-arrival wall; not token emission or GPU time"
+  },
+  "partial": {
+    "status": "partial",
+    "content": "Caf\u00e9 ",
+    "finish_reason": null,
+    "done": false,
+    "usage": null,
+    "first_event_s": 0.03,
+    "first_content_s": 0.1,
+    "wall_s": 0.1,
+    "byte_count": 340,
+    "event_count": 2,
+    "events": [
+      {
+        "index": 0,
+        "at_s": 0.03,
+        "event": "message",
+        "data": "{\"id\":\"illustrative\",\"object\":\"chat.completion.chunk\",\"model\":\"topic04\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"finish_reason\":null}]}",
+        "kind": "role_or_empty"
+      },
+      {
+        "index": 1,
+        "at_s": 0.1,
+        "event": "message",
+        "data": "{\"id\":\"illustrative\",\"object\":\"chat.completion.chunk\",\"model\":\"topic04\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"Caf\u00e9 \"},\"finish_reason\":null}]}",
+        "kind": "content"
+      }
+    ],
+    "error": null,
+    "unfinished_frame": false,
+    "clock": "client chunk-arrival wall; not token emission or GPU time"
+  },
+  "cancelled": {
+    "status": "cancelled",
+    "content": "Caf\u00e9 ",
+    "finish_reason": null,
+    "done": false,
+    "usage": null,
+    "first_event_s": 0.03,
+    "first_content_s": 0.1,
+    "wall_s": 0.1,
+    "byte_count": 340,
+    "event_count": 2,
+    "events": [
+      {
+        "index": 0,
+        "at_s": 0.03,
+        "event": "message",
+        "data": "{\"id\":\"illustrative\",\"object\":\"chat.completion.chunk\",\"model\":\"topic04\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"finish_reason\":null}]}",
+        "kind": "role_or_empty"
+      },
+      {
+        "index": 1,
+        "at_s": 0.1,
+        "event": "message",
+        "data": "{\"id\":\"illustrative\",\"object\":\"chat.completion.chunk\",\"model\":\"topic04\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"Caf\u00e9 \"},\"finish_reason\":null}]}",
+        "kind": "content"
+      }
+    ],
+    "error": null,
+    "unfinished_frame": false,
+    "clock": "client chunk-arrival wall; not token emission or GPU time"
+  },
+  "source": "https://html.spec.whatwg.org/multipage/server-sent-events.html"
+}

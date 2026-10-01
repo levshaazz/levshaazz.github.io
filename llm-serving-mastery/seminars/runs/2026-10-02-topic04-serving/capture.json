@@ -1,0 +1,463 @@
+{
+  "contract": "topic-04-api-smoke-v3",
+  "status": "complete",
+  "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+  "revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "served_name": "topic04",
+  "utc_started": "2026-10-01T22:05:29.847952+00:00",
+  "vllm": "0.29.0",
+  "openai_sdk": "3.20.0",
+  "httpx": "0.28.1",
+  "transformers": "5.17.0",
+  "torch": "2.13.0+cu130",
+  "cuda": "13.0",
+  "gpu": "NVIDIA GeForce RTX 5070 Ti",
+  "launch_args": [
+    "serve",
+    "<pinned-local-snapshot>",
+    "--served-model-name",
+    "topic04",
+    "--host",
+    "127.0.0.1",
+    "--port",
+    "8000",
+    "--dtype",
+    "float16",
+    "--max-model-len",
+    "2048",
+    "--max-num-seqs",
+    "4",
+    "--gpu-memory-utilization",
+    "0.45",
+    "--enforce-eager"
+  ],
+  "wsl_v1_runner_fallback": true,
+  "resource_samples": [
+    {
+      "available_ram_gib": 68.89566421508789,
+      "device_used_mib": 0
+    },
+    {
+      "available_ram_gib": 68.76938247680664,
+      "device_used_mib": 0
+    }
+  ],
+  "request_prompt": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Reply with one short sentence explaining what an API server does."
+      }
+    ],
+    "rendered_chat": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|im_start|>user\nReply with one short sentence explaining what an API server does.<|im_end|>\n<|im_start|>assistant\n",
+    "input_token_ids": [
+      151644,
+      8948,
+      198,
+      2610,
+      525,
+      1207,
+      16948,
+      11,
+      3465,
+      553,
+      54364,
+      14817,
+      13,
+      1446,
+      525,
+      264,
+      10950,
+      17847,
+      13,
+      151645,
+      198,
+      151644,
+      872,
+      198,
+      20841,
+      448,
+      825,
+      2805,
+      11652,
+      25021,
+      1128,
+      458,
+      5333,
+      3538,
+      1558,
+      13,
+      151645,
+      198,
+      151644,
+      77091,
+      198
+    ],
+    "prompt_tokens": 41,
+    "input_token_pieces": [
+      "<|im_start|>",
+      "system",
+      "Ċ",
+      "You",
+      "Ġare",
+      "ĠQ",
+      "wen",
+      ",",
+      "Ġcreated",
+      "Ġby",
+      "ĠAlibaba",
+      "ĠCloud",
+      ".",
+      "ĠYou",
+      "Ġare",
+      "Ġa",
+      "Ġhelpful",
+      "Ġassistant",
+      ".",
+      "<|im_end|>",
+      "Ċ",
+      "<|im_start|>",
+      "user",
+      "Ċ",
+      "Reply",
+      "Ġwith",
+      "Ġone",
+      "Ġshort",
+      "Ġsentence",
+      "Ġexplaining",
+      "Ġwhat",
+      "Ġan",
+      "ĠAPI",
+      "Ġserver",
+      "Ġdoes",
+      ".",
+      "<|im_end|>",
+      "Ċ",
+      "<|im_start|>",
+      "assistant",
+      "Ċ"
+    ]
+  },
+  "raw_prompt": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Say hello briefly."
+      }
+    ],
+    "rendered_chat": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|im_start|>user\nSay hello briefly.<|im_end|>\n<|im_start|>assistant\n",
+    "input_token_ids": [
+      151644,
+      8948,
+      198,
+      2610,
+      525,
+      1207,
+      16948,
+      11,
+      3465,
+      553,
+      54364,
+      14817,
+      13,
+      1446,
+      525,
+      264,
+      10950,
+      17847,
+      13,
+      151645,
+      198,
+      151644,
+      872,
+      198,
+      45764,
+      23811,
+      26753,
+      13,
+      151645,
+      198,
+      151644,
+      77091,
+      198
+    ],
+    "prompt_tokens": 33,
+    "input_token_pieces": [
+      "<|im_start|>",
+      "system",
+      "Ċ",
+      "You",
+      "Ġare",
+      "ĠQ",
+      "wen",
+      ",",
+      "Ġcreated",
+      "Ġby",
+      "ĠAlibaba",
+      "ĠCloud",
+      ".",
+      "ĠYou",
+      "Ġare",
+      "Ġa",
+      "Ġhelpful",
+      "Ġassistant",
+      ".",
+      "<|im_end|>",
+      "Ċ",
+      "<|im_start|>",
+      "user",
+      "Ċ",
+      "Say",
+      "Ġhello",
+      "Ġbriefly",
+      ".",
+      "<|im_end|>",
+      "Ċ",
+      "<|im_start|>",
+      "assistant",
+      "Ċ"
+    ]
+  },
+  "limits": {
+    "max_model_len": 2048,
+    "max_num_seqs": 4,
+    "gpu_memory_utilization": 0.45
+  },
+  "limitations": [
+    "single sequential API smoke, not throughput benchmark",
+    "first call may include lazy runtime initialization",
+    "TCP/HTTP chunk boundaries are not generated token boundaries",
+    "client disconnect reclamation not measured"
+  ],
+  "advertised_models": [
+    "topic04"
+  ],
+  "startup_s": 24.456222492999586,
+  "nonstream": {
+    "request": {
+      "model": "topic04",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Reply with one short sentence explaining what an API server does."
+        }
+      ],
+      "max_tokens": 48,
+      "temperature": 0
+    },
+    "wall_s": 0.8830939609997586,
+    "finish_reason": "stop",
+    "usage": {
+      "completion_tokens": 29,
+      "prompt_tokens": 41,
+      "total_tokens": 70,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    },
+    "content": "An API server is a software application that acts as the gateway for clients to communicate with another system or service over an internet protocol (HTTP)."
+  },
+  "sdk_stream": {
+    "first_content_s": 0.06405494099999487,
+    "wall_s": 0.5953651939998963,
+    "finish_reason": "stop",
+    "content": "An API server is a software application that acts as the gateway for clients to communicate with another system or service over an internet protocol (HTTP).",
+    "sdk_chunks": 30
+  },
+  "raw_sse": {
+    "status": "complete",
+    "content": "Hello! How can I assist you today?",
+    "finish_reason": "stop",
+    "done": true,
+    "usage": {
+      "prompt_tokens": 33,
+      "total_tokens": 43,
+      "completion_tokens": 10
+    },
+    "first_event_s": 0.05866083799992339,
+    "first_content_s": 0.05872152499978256,
+    "wall_s": 0.17361840400008077,
+    "byte_count": 2718,
+    "event_count": 13,
+    "events": [
+      {
+        "index": 0,
+        "at_s": 0.05866083799992339,
+        "event": "message",
+        "data": "{\"id\":\"chatcmpl-ba4deba68c98bed8\",\"object\":\"chat.completion.chunk\",\"created\":1790892355,\"model\":\"topic04\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"prompt_text\":null}",
+        "kind": "role_or_empty"
+      },
+      {
+        "index": 1,
+        "at_s": 0.05872152499978256,
+        "event": "message",
+        "data": "{\"id\":\"chatcmpl-ba4deba68c98bed8\",\"object\":\"chat.completion.chunk\",\"created\":1790892355,\"model\":\"topic04\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"Hello\"},\"logprobs\":null,\"finish_reason\":null,\"token_ids\":null}]}",
+        "kind": "content"
+      },
+      {
+        "index": 2,
+        "at_s": 0.0673291999992216,
+        "event": "message",
+        "data": "{\"id\":\"chatcmpl-ba4deba68c98bed8\",\"object\":\"chat.completion.chunk\",\"created\":1790892355,\"model\":\"topic04\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"!\"},\"logprobs\":null,\"finish_reason\":null,\"token_ids\":null}]}",
+        "kind": "content"
+      },
+      {
+        "index": 3,
+        "at_s": 0.07651217199963867,
+        "event": "message",
+        "data": "{\"id\":\"chatcmpl-ba4deba68c98bed8\",\"object\":\"chat.completion.chunk\",\"created\":1790892355,\"model\":\"topic04\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\" How\"},\"logprobs\":null,\"finish_reason\":null,\"token_ids\":null}]}",
+        "kind": "content"
+      },
+      {
+        "index": 4,
+        "at_s": 0.08649925200006692,
+        "event": "message",
+        "data": "{\"id\":\"chatcmpl-ba4deba68c98bed8\",\"object\":\"chat.completion.chunk\",\"created\":1790892355,\"model\":\"topic04\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\" can\"},\"logprobs\":null,\"finish_reason\":null,\"token_ids\":null}]}",
+        "kind": "content"
+      },
+      {
+        "index": 5,
+        "at_s": 0.09595841199916322,
+        "event": "message",
+        "data": "{\"id\":\"chatcmpl-ba4deba68c98bed8\",\"object\":\"chat.completion.chunk\",\"created\":1790892355,\"model\":\"topic04\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\" I\"},\"logprobs\":null,\"finish_reason\":null,\"token_ids\":null}]}",
+        "kind": "content"
+      },
+      {
+        "index": 6,
+        "at_s": 0.10532649800006766,
+        "event": "message",
+        "data": "{\"id\":\"chatcmpl-ba4deba68c98bed8\",\"object\":\"chat.completion.chunk\",\"created\":1790892355,\"model\":\"topic04\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\" assist\"},\"logprobs\":null,\"finish_reason\":null,\"token_ids\":null}]}",
+        "kind": "content"
+      },
+      {
+        "index": 7,
+        "at_s": 0.11451939499966102,
+        "event": "message",
+        "data": "{\"id\":\"chatcmpl-ba4deba68c98bed8\",\"object\":\"chat.completion.chunk\",\"created\":1790892355,\"model\":\"topic04\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\" you\"},\"logprobs\":null,\"finish_reason\":null,\"token_ids\":null}]}",
+        "kind": "content"
+      },
+      {
+        "index": 8,
+        "at_s": 0.12420863999977882,
+        "event": "message",
+        "data": "{\"id\":\"chatcmpl-ba4deba68c98bed8\",\"object\":\"chat.completion.chunk\",\"created\":1790892355,\"model\":\"topic04\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\" today\"},\"logprobs\":null,\"finish_reason\":null,\"token_ids\":null}]}",
+        "kind": "content"
+      },
+      {
+        "index": 9,
+        "at_s": 0.14300291300060053,
+        "event": "message",
+        "data": "{\"id\":\"chatcmpl-ba4deba68c98bed8\",\"object\":\"chat.completion.chunk\",\"created\":1790892355,\"model\":\"topic04\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"?\"},\"logprobs\":null,\"finish_reason\":null,\"token_ids\":null}]}",
+        "kind": "content"
+      },
+      {
+        "index": 10,
+        "at_s": 0.17354318899924692,
+        "event": "message",
+        "data": "{\"id\":\"chatcmpl-ba4deba68c98bed8\",\"object\":\"chat.completion.chunk\",\"created\":1790892355,\"model\":\"topic04\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"\"},\"logprobs\":null,\"finish_reason\":\"stop\",\"stop_reason\":null,\"token_ids\":null}]}",
+        "kind": "finish"
+      },
+      {
+        "index": 11,
+        "at_s": 0.17358486999910383,
+        "event": "message",
+        "data": "{\"id\":\"chatcmpl-ba4deba68c98bed8\",\"object\":\"chat.completion.chunk\",\"created\":1790892355,\"model\":\"topic04\",\"choices\":[],\"usage\":{\"prompt_tokens\":33,\"total_tokens\":43,\"completion_tokens\":10},\"system_fingerprint\":\"vllm-0.29.0-nohash\"}",
+        "kind": "usage"
+      },
+      {
+        "index": 12,
+        "at_s": 0.17361840400008077,
+        "event": "message",
+        "data": "[DONE]",
+        "kind": "done"
+      }
+    ],
+    "error": null,
+    "unfinished_frame": false,
+    "clock": "client chunk-arrival wall; not token emission or GPU time",
+    "request": {
+      "model": "topic04",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Say hello briefly."
+        }
+      ],
+      "max_tokens": 16,
+      "temperature": 0,
+      "stream": true,
+      "stream_options": {
+        "include_usage": true
+      }
+    },
+    "http_status": 200,
+    "content_type": "text/event-stream",
+    "chunks": [
+      {
+        "at_s": 0.05866083799992339,
+        "hex": "646174613a207b226964223a2263686174636d706c2d62613464656261363863393862656438222c226f626a656374223a22636861742e636f6d706c6574696f6e2e6368756e6b222c2263726561746564223a313739303839323335352c226d6f64656c223a22746f7069633034222c2263686f69636573223a5b7b22696e646578223a302c2264656c7461223a7b22726f6c65223a22617373697374616e74222c22636f6e74656e74223a22227d2c226c6f6770726f6273223a6e756c6c2c2266696e6973685f726561736f6e223a6e756c6c7d5d2c2270726f6d70745f746f6b656e5f696473223a6e756c6c2c2270726f6d70745f74657874223a6e756c6c7d0a0a"
+      },
+      {
+        "at_s": 0.05872152499978256,
+        "hex": "646174613a207b226964223a2263686174636d706c2d62613464656261363863393862656438222c226f626a656374223a22636861742e636f6d706c6574696f6e2e6368756e6b222c2263726561746564223a313739303839323335352c226d6f64656c223a22746f7069633034222c2263686f69636573223a5b7b22696e646578223a302c2264656c7461223a7b22636f6e74656e74223a2248656c6c6f227d2c226c6f6770726f6273223a6e756c6c2c2266696e6973685f726561736f6e223a6e756c6c2c22746f6b656e5f696473223a6e756c6c7d5d7d0a0a"
+      },
+      {
+        "at_s": 0.0673291999992216,
+        "hex": "646174613a207b226964223a2263686174636d706c2d62613464656261363863393862656438222c226f626a656374223a22636861742e636f6d706c6574696f6e2e6368756e6b222c2263726561746564223a313739303839323335352c226d6f64656c223a22746f7069633034222c2263686f69636573223a5b7b22696e646578223a302c2264656c7461223a7b22636f6e74656e74223a2221227d2c226c6f6770726f6273223a6e756c6c2c2266696e6973685f726561736f6e223a6e756c6c2c22746f6b656e5f696473223a6e756c6c7d5d7d0a0a"
+      },
+      {
+        "at_s": 0.07651217199963867,
+        "hex": "646174613a207b226964223a2263686174636d706c2d62613464656261363863393862656438222c226f626a656374223a22636861742e636f6d706c6574696f6e2e6368756e6b222c2263726561746564223a313739303839323335352c226d6f64656c223a22746f7069633034222c2263686f69636573223a5b7b22696e646578223a302c2264656c7461223a7b22636f6e74656e74223a2220486f77227d2c226c6f6770726f6273223a6e756c6c2c2266696e6973685f726561736f6e223a6e756c6c2c22746f6b656e5f696473223a6e756c6c7d5d7d0a0a"
+      },
+      {
+        "at_s": 0.08649925200006692,
+        "hex": "646174613a207b226964223a2263686174636d706c2d62613464656261363863393862656438222c226f626a656374223a22636861742e636f6d706c6574696f6e2e6368756e6b222c2263726561746564223a313739303839323335352c226d6f64656c223a22746f7069633034222c2263686f69636573223a5b7b22696e646578223a302c2264656c7461223a7b22636f6e74656e74223a222063616e227d2c226c6f6770726f6273223a6e756c6c2c2266696e6973685f726561736f6e223a6e756c6c2c22746f6b656e5f696473223a6e756c6c7d5d7d0a0a"
+      },
+      {
+        "at_s": 0.09595841199916322,
+        "hex": "646174613a207b226964223a2263686174636d706c2d62613464656261363863393862656438222c226f626a656374223a22636861742e636f6d706c6574696f6e2e6368756e6b222c2263726561746564223a313739303839323335352c226d6f64656c223a22746f7069633034222c2263686f69636573223a5b7b22696e646578223a302c2264656c7461223a7b22636f6e74656e74223a222049227d2c226c6f6770726f6273223a6e756c6c2c2266696e6973685f726561736f6e223a6e756c6c2c22746f6b656e5f696473223a6e756c6c7d5d7d0a0a"
+      },
+      {
+        "at_s": 0.10532649800006766,
+        "hex": "646174613a207b226964223a2263686174636d706c2d62613464656261363863393862656438222c226f626a656374223a22636861742e636f6d706c6574696f6e2e6368756e6b222c2263726561746564223a313739303839323335352c226d6f64656c223a22746f7069633034222c2263686f69636573223a5b7b22696e646578223a302c2264656c7461223a7b22636f6e74656e74223a2220617373697374227d2c226c6f6770726f6273223a6e756c6c2c2266696e6973685f726561736f6e223a6e756c6c2c22746f6b656e5f696473223a6e756c6c7d5d7d0a0a"
+      },
+      {
+        "at_s": 0.11451939499966102,
+        "hex": "646174613a207b226964223a2263686174636d706c2d62613464656261363863393862656438222c226f626a656374223a22636861742e636f6d706c6574696f6e2e6368756e6b222c2263726561746564223a313739303839323335352c226d6f64656c223a22746f7069633034222c2263686f69636573223a5b7b22696e646578223a302c2264656c7461223a7b22636f6e74656e74223a2220796f75227d2c226c6f6770726f6273223a6e756c6c2c2266696e6973685f726561736f6e223a6e756c6c2c22746f6b656e5f696473223a6e756c6c7d5d7d0a0a"
+      },
+      {
+        "at_s": 0.12420863999977882,
+        "hex": "646174613a207b226964223a2263686174636d706c2d62613464656261363863393862656438222c226f626a656374223a22636861742e636f6d706c6574696f6e2e6368756e6b222c2263726561746564223a313739303839323335352c226d6f64656c223a22746f7069633034222c2263686f69636573223a5b7b22696e646578223a302c2264656c7461223a7b22636f6e74656e74223a2220746f646179227d2c226c6f6770726f6273223a6e756c6c2c2266696e6973685f726561736f6e223a6e756c6c2c22746f6b656e5f696473223a6e756c6c7d5d7d0a0a"
+      },
+      {
+        "at_s": 0.14300291300060053,
+        "hex": "646174613a207b226964223a2263686174636d706c2d62613464656261363863393862656438222c226f626a656374223a22636861742e636f6d706c6574696f6e2e6368756e6b222c2263726561746564223a313739303839323335352c226d6f64656c223a22746f7069633034222c2263686f69636573223a5b7b22696e646578223a302c2264656c7461223a7b22636f6e74656e74223a223f227d2c226c6f6770726f6273223a6e756c6c2c2266696e6973685f726561736f6e223a6e756c6c2c22746f6b656e5f696473223a6e756c6c7d5d7d0a0a"
+      },
+      {
+        "at_s": 0.17354318899924692,
+        "hex": "646174613a207b226964223a2263686174636d706c2d62613464656261363863393862656438222c226f626a656374223a22636861742e636f6d706c6574696f6e2e6368756e6b222c2263726561746564223a313739303839323335352c226d6f64656c223a22746f7069633034222c2263686f69636573223a5b7b22696e646578223a302c2264656c7461223a7b22636f6e74656e74223a22227d2c226c6f6770726f6273223a6e756c6c2c2266696e6973685f726561736f6e223a2273746f70222c2273746f705f726561736f6e223a6e756c6c2c22746f6b656e5f696473223a6e756c6c7d5d7d0a0a"
+      },
+      {
+        "at_s": 0.17358486999910383,
+        "hex": "646174613a207b226964223a2263686174636d706c2d62613464656261363863393862656438222c226f626a656374223a22636861742e636f6d706c6574696f6e2e6368756e6b222c2263726561746564223a313739303839323335352c226d6f64656c223a22746f7069633034222c2263686f69636573223a5b5d2c227573616765223a7b2270726f6d70745f746f6b656e73223a33332c22746f74616c5f746f6b656e73223a34332c22636f6d706c6574696f6e5f746f6b656e73223a31307d2c2273797374656d5f66696e6765727072696e74223a22766c6c6d2d302e32392e302d6e6f68617368227d0a0a"
+      },
+      {
+        "at_s": 0.17361840400008077,
+        "hex": "646174613a205b444f4e455d0a0a"
+      }
+    ]
+  },
+  "negative": {
+    "wrong_model": {
+      "status": 404
+    },
+    "over_context": {
+      "status": 400,
+      "rendered_prompt_tokens": 2329
+    }
+  },
+  "teardown": {
+    "owned_process_group_stopped": true,
+    "server_returncode": 0
+  },
+  "utc_finished": "2026-10-01T22:05:56.753374+00:00"
+}

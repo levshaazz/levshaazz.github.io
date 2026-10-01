@@ -125,13 +125,19 @@
   }
 
   // Teaching model: signed symmetric integer quantization, deliberately not NF4/AWQ.
+  // The CPU toy uses nearest-even, including negative ties. Math.round instead
+  // resolves half-integers toward +infinity and would disagree at 2.5 and -3.5.
+  function roundEven(value) {
+    const lower = Math.floor(value), fraction = value - lower;
+    return fraction === .5 ? (lower % 2 === 0 ? lower : lower + 1) : Math.round(value);
+  }
   function quant(root) {
     const x = val(root, 'value') / 100;
     const scale = Math.max(.01, val(root, 'scale') / 100);
     const bits = Math.max(2, val(root, 'bits'));
     const lo = -(2 ** (bits - 1));
     const hi = 2 ** (bits - 1) - 1;
-    const unclipped = Math.round(x / scale);
+    const unclipped = roundEven(x / scale);
     const code = Math.max(lo, Math.min(hi, unclipped));
     const reconstructed = code * scale;
     out(root, 'code', String(code));
@@ -147,7 +153,8 @@
     const reserve = Math.max(0, val(root, 'reserve'));
     const kvGib = Math.max(0, val(root, 'kv')) / 100;
     const weightBytes = params * bits / 8;
-    const scaleBytes = Math.ceil(params / group) * 2;
+    // The 16-bit branch represents plain BF16 weights, not a scaled integer code.
+    const scaleBytes = bits === 16 ? 0 : Math.ceil(params / group) * 2;
     const budget = Math.max(0, 16 - reserve - kvGib);
     const totalGib = (weightBytes + scaleBytes) / (2 ** 30);
     out(root, 'payload', `${fmt(weightBytes / 1e9, 2)} GB`);

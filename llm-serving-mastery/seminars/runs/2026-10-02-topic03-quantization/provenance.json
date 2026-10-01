@@ -1,0 +1,23 @@
+{
+  "source_commit": "7c23155bab5673c3f0406b805b8919b6140478a2",
+  "source_dirty": false,
+  "source_hashes_sha256": {
+    "scripts/run_topic0304_lab.py": "a3f99e58a7ffc0ac719b83dcdda08e7b730beb56e5f1455e75ec0ed1ddb44aa5",
+    "teaching/topic03_lab.py": "e5705efef4aeccba775fb686a92f328f6fa1080c6598621b7737ae802fe479a7"
+  },
+  "topic": "03",
+  "python": "3.12.13",
+  "hf_hub_offline": true,
+  "started_utc": "2026-10-01T22:01:18.228361+00:00",
+  "limits": {
+    "memory_max_bytes": 25769803776,
+    "memory_swap_max_bytes": 0,
+    "min_available_ram_gib": 24,
+    "max_device_used_gib": 12,
+    "external_wall_timeout_s": 600
+  },
+  "status": "complete",
+  "capture_sha256": "68115d7f454ccf0e507c24feb063610d277ecd576edd0056bda81da2c3514357",
+  "finished_utc": "2026-10-01T22:02:29.766723+00:00",
+  "duration_s": 71.538
+}

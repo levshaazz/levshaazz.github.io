@@ -1,0 +1,587 @@
+{
+  "schema": "topic03-int4-toy-v1",
+  "kind": "illustrative; invented weights, not Qwen or NF4",
+  "rounding": "nearest, ties to even",
+  "error_convention": "reconstructed minus original",
+  "scalar_examples": [
+    {
+      "value": 1.83,
+      "scale": 0.25,
+      "zero_point": 0,
+      "scaled": 7.32,
+      "rounded": 7,
+      "shifted": 7,
+      "clipped": false,
+      "q": 7,
+      "reconstructed": 1.75,
+      "error": -0.08000000000000007
+    },
+    {
+      "value": 2.25,
+      "scale": 0.25,
+      "zero_point": 0,
+      "scaled": 9.0,
+      "rounded": 9,
+      "shifted": 9,
+      "clipped": true,
+      "q": 7,
+      "reconstructed": 1.75,
+      "error": -0.5
+    }
+  ],
+  "ties": [
+    {
+      "scaled": -2.5,
+      "rounded": -2
+    },
+    {
+      "scaled": -1.5,
+      "rounded": -2
+    },
+    {
+      "scaled": 1.5,
+      "rounded": 2
+    },
+    {
+      "scaled": 2.5,
+      "rounded": 2
+    }
+  ],
+  "affine_example": {
+    "value": 0.6,
+    "scale": 0.2,
+    "zero_point": -2,
+    "scaled": 2.9999999999999996,
+    "rounded": 3,
+    "shifted": 1,
+    "clipped": false,
+    "q": 1,
+    "reconstructed": 0.6000000000000001,
+    "error": 1.1102230246251565e-16
+  },
+  "weights": [
+    [
+      -1.83,
+      -0.52,
+      0.24,
+      2.25
+    ],
+    [
+      0.13,
+      -0.88,
+      1.12,
+      -2.4
+    ]
+  ],
+  "input": [
+    1.0,
+    -2.0,
+    0.5,
+    1.5
+  ],
+  "scale": 0.25,
+  "rows": [
+    [
+      {
+        "value": -1.83,
+        "scale": 0.25,
+        "zero_point": 0,
+        "scaled": -7.32,
+        "rounded": -7,
+        "shifted": -7,
+        "clipped": false,
+        "q": -7,
+        "reconstructed": -1.75,
+        "error": 0.08000000000000007
+      },
+      {
+        "value": -0.52,
+        "scale": 0.25,
+        "zero_point": 0,
+        "scaled": -2.08,
+        "rounded": -2,
+        "shifted": -2,
+        "clipped": false,
+        "q": -2,
+        "reconstructed": -0.5,
+        "error": 0.020000000000000018
+      },
+      {
+        "value": 0.24,
+        "scale": 0.25,
+        "zero_point": 0,
+        "scaled": 0.96,
+        "rounded": 1,
+        "shifted": 1,
+        "clipped": false,
+        "q": 1,
+        "reconstructed": 0.25,
+        "error": 0.010000000000000009
+      },
+      {
+        "value": 2.25,
+        "scale": 0.25,
+        "zero_point": 0,
+        "scaled": 9.0,
+        "rounded": 9,
+        "shifted": 9,
+        "clipped": true,
+        "q": 7,
+        "reconstructed": 1.75,
+        "error": -0.5
+      }
+    ],
+    [
+      {
+        "value": 0.13,
+        "scale": 0.25,
+        "zero_point": 0,
+        "scaled": 0.52,
+        "rounded": 1,
+        "shifted": 1,
+        "clipped": false,
+        "q": 1,
+        "reconstructed": 0.25,
+        "error": 0.12
+      },
+      {
+        "value": -0.88,
+        "scale": 0.25,
+        "zero_point": 0,
+        "scaled": -3.52,
+        "rounded": -4,
+        "shifted": -4,
+        "clipped": false,
+        "q": -4,
+        "reconstructed": -1.0,
+        "error": -0.12
+      },
+      {
+        "value": 1.12,
+        "scale": 0.25,
+        "zero_point": 0,
+        "scaled": 4.48,
+        "rounded": 4,
+        "shifted": 4,
+        "clipped": false,
+        "q": 4,
+        "reconstructed": 1.0,
+        "error": -0.1200000000000001
+      },
+      {
+        "value": -2.4,
+        "scale": 0.25,
+        "zero_point": 0,
+        "scaled": -9.6,
+        "rounded": -10,
+        "shifted": -10,
+        "clipped": true,
+        "q": -8,
+        "reconstructed": -2.0,
+        "error": 0.3999999999999999
+      }
+    ]
+  ],
+  "codes": [
+    -7,
+    -2,
+    1,
+    7,
+    1,
+    -4,
+    4,
+    -8
+  ],
+  "packed_bytes": [
+    233,
+    113,
+    193,
+    132
+  ],
+  "packed_hex": [
+    "e9",
+    "71",
+    "c1",
+    "84"
+  ],
+  "unpacked": [
+    -7,
+    -2,
+    1,
+    7,
+    1,
+    -4,
+    4,
+    -8
+  ],
+  "packing": "two complement, low nibble first; logical count stored separately; NOT bnb packing",
+  "reconstructed": [
+    [
+      -1.75,
+      -0.5,
+      0.25,
+      1.75
+    ],
+    [
+      0.25,
+      -1.0,
+      1.0,
+      -2.0
+    ]
+  ],
+  "reference_output": [
+    2.705,
+    -1.1499999999999995
+  ],
+  "quantized_output": [
+    2.0,
+    -0.25
+  ],
+  "output_error": [
+    -0.7050000000000001,
+    0.8999999999999995
+  ],
+  "output_error_terms": [
+    [
+      0.08000000000000007,
+      -0.040000000000000036,
+      0.0050000000000000044,
+      -0.75
+    ],
+    [
+      0.12,
+      0.24,
+      -0.06000000000000005,
+      0.5999999999999999
+    ]
+  ],
+  "second_input": [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+  ],
+  "second_output_error": [
+    -0.5,
+    0.3999999999999999
+  ],
+  "outliers": {
+    "values": [
+      -0.1,
+      0.2,
+      -0.3,
+      0.4,
+      8.0,
+      9.0,
+      10.0,
+      11.0
+    ],
+    "global_scale": {
+      "groups": [
+        {
+          "offset": 0,
+          "scale": 1.5714285714285714,
+          "rows": [
+            {
+              "value": -0.1,
+              "scale": 1.5714285714285714,
+              "zero_point": 0,
+              "scaled": -0.06363636363636364,
+              "rounded": 0,
+              "shifted": 0,
+              "clipped": false,
+              "q": 0,
+              "reconstructed": 0.0,
+              "error": 0.1
+            },
+            {
+              "value": 0.2,
+              "scale": 1.5714285714285714,
+              "zero_point": 0,
+              "scaled": 0.1272727272727273,
+              "rounded": 0,
+              "shifted": 0,
+              "clipped": false,
+              "q": 0,
+              "reconstructed": 0.0,
+              "error": -0.2
+            },
+            {
+              "value": -0.3,
+              "scale": 1.5714285714285714,
+              "zero_point": 0,
+              "scaled": -0.19090909090909092,
+              "rounded": 0,
+              "shifted": 0,
+              "clipped": false,
+              "q": 0,
+              "reconstructed": 0.0,
+              "error": 0.3
+            },
+            {
+              "value": 0.4,
+              "scale": 1.5714285714285714,
+              "zero_point": 0,
+              "scaled": 0.2545454545454546,
+              "rounded": 0,
+              "shifted": 0,
+              "clipped": false,
+              "q": 0,
+              "reconstructed": 0.0,
+              "error": -0.4
+            },
+            {
+              "value": 8.0,
+              "scale": 1.5714285714285714,
+              "zero_point": 0,
+              "scaled": 5.090909090909091,
+              "rounded": 5,
+              "shifted": 5,
+              "clipped": false,
+              "q": 5,
+              "reconstructed": 7.857142857142857,
+              "error": -0.14285714285714324
+            },
+            {
+              "value": 9.0,
+              "scale": 1.5714285714285714,
+              "zero_point": 0,
+              "scaled": 5.7272727272727275,
+              "rounded": 6,
+              "shifted": 6,
+              "clipped": false,
+              "q": 6,
+              "reconstructed": 9.428571428571429,
+              "error": 0.4285714285714288
+            },
+            {
+              "value": 10.0,
+              "scale": 1.5714285714285714,
+              "zero_point": 0,
+              "scaled": 6.363636363636364,
+              "rounded": 6,
+              "shifted": 6,
+              "clipped": false,
+              "q": 6,
+              "reconstructed": 9.428571428571429,
+              "error": -0.5714285714285712
+            },
+            {
+              "value": 11.0,
+              "scale": 1.5714285714285714,
+              "zero_point": 0,
+              "scaled": 7.0,
+              "rounded": 7,
+              "shifted": 7,
+              "clipped": false,
+              "q": 7,
+              "reconstructed": 11.0,
+              "error": 0.0
+            }
+          ]
+        }
+      ],
+      "reconstructed": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        7.857142857142857,
+        9.428571428571429,
+        9.428571428571429,
+        11.0
+      ],
+      "mse": 0.10382653061224491,
+      "payload_bytes": 4,
+      "fp16_scale_bytes": 2
+    },
+    "group4": {
+      "groups": [
+        {
+          "offset": 0,
+          "scale": 0.05714285714285715,
+          "rows": [
+            {
+              "value": -0.1,
+              "scale": 0.05714285714285715,
+              "zero_point": 0,
+              "scaled": -1.75,
+              "rounded": -2,
+              "shifted": -2,
+              "clipped": false,
+              "q": -2,
+              "reconstructed": -0.1142857142857143,
+              "error": -0.01428571428571429
+            },
+            {
+              "value": 0.2,
+              "scale": 0.05714285714285715,
+              "zero_point": 0,
+              "scaled": 3.5,
+              "rounded": 4,
+              "shifted": 4,
+              "clipped": false,
+              "q": 4,
+              "reconstructed": 0.2285714285714286,
+              "error": 0.02857142857142858
+            },
+            {
+              "value": -0.3,
+              "scale": 0.05714285714285715,
+              "zero_point": 0,
+              "scaled": -5.249999999999999,
+              "rounded": -5,
+              "shifted": -5,
+              "clipped": false,
+              "q": -5,
+              "reconstructed": -0.28571428571428575,
+              "error": 0.014285714285714235
+            },
+            {
+              "value": 0.4,
+              "scale": 0.05714285714285715,
+              "zero_point": 0,
+              "scaled": 7.0,
+              "rounded": 7,
+              "shifted": 7,
+              "clipped": false,
+              "q": 7,
+              "reconstructed": 0.4,
+              "error": 0.0
+            }
+          ]
+        },
+        {
+          "offset": 4,
+          "scale": 1.5714285714285714,
+          "rows": [
+            {
+              "value": 8.0,
+              "scale": 1.5714285714285714,
+              "zero_point": 0,
+              "scaled": 5.090909090909091,
+              "rounded": 5,
+              "shifted": 5,
+              "clipped": false,
+              "q": 5,
+              "reconstructed": 7.857142857142857,
+              "error": -0.14285714285714324
+            },
+            {
+              "value": 9.0,
+              "scale": 1.5714285714285714,
+              "zero_point": 0,
+              "scaled": 5.7272727272727275,
+              "rounded": 6,
+              "shifted": 6,
+              "clipped": false,
+              "q": 6,
+              "reconstructed": 9.428571428571429,
+              "error": 0.4285714285714288
+            },
+            {
+              "value": 10.0,
+              "scale": 1.5714285714285714,
+              "zero_point": 0,
+              "scaled": 6.363636363636364,
+              "rounded": 6,
+              "shifted": 6,
+              "clipped": false,
+              "q": 6,
+              "reconstructed": 9.428571428571429,
+              "error": -0.5714285714285712
+            },
+            {
+              "value": 11.0,
+              "scale": 1.5714285714285714,
+              "zero_point": 0,
+              "scaled": 7.0,
+              "rounded": 7,
+              "shifted": 7,
+              "clipped": false,
+              "q": 7,
+              "reconstructed": 11.0,
+              "error": 0.0
+            }
+          ]
+        }
+      ],
+      "reconstructed": [
+        -0.1142857142857143,
+        0.2285714285714286,
+        -0.28571428571428575,
+        0.4,
+        7.857142857142857,
+        9.428571428571429,
+        9.428571428571429,
+        11.0
+      ],
+      "mse": 0.0664795918367347,
+      "payload_bytes": 4,
+      "fp16_scale_bytes": 4
+    },
+    "scale_policy": "absmax/7; zero group uses1"
+  },
+  "nf4": {
+    "source": "https://github.com/bitsandbytes-foundation/bitsandbytes/blob/0.50.2/bitsandbytes/functional.py",
+    "codebook": [
+      -1.0,
+      -0.6961928009986877,
+      -0.5250730514526367,
+      -0.39491748809814453,
+      -0.28444138169288635,
+      -0.18477343022823334,
+      -0.09105003625154495,
+      0.0,
+      0.07958029955625534,
+      0.16093020141124725,
+      0.24611230194568634,
+      0.33791524171829224,
+      0.44070982933044434,
+      0.5626170039176941,
+      0.7229568362236023,
+      1.0
+    ],
+    "description": "normalized nearest-code lookup only; not bnb packing or CUDA kernel",
+    "scaled_example": {
+      "weight": 0.5,
+      "absmax": 2.0,
+      "normalized": 0.25,
+      "index": 10,
+      "reconstructed": 0.4922246038913727,
+      "error": -0.007775396108627319
+    },
+    "examples": [
+      {
+        "value": -0.5,
+        "index": 2,
+        "reconstructed": -0.5250730514526367
+      },
+      {
+        "value": -0.1,
+        "index": 6,
+        "reconstructed": -0.09105003625154495
+      },
+      {
+        "value": 0.0,
+        "index": 7,
+        "reconstructed": 0.0
+      },
+      {
+        "value": 0.1,
+        "index": 8,
+        "reconstructed": 0.07958029955625534
+      },
+      {
+        "value": 0.25,
+        "index": 10,
+        "reconstructed": 0.24611230194568634
+      },
+      {
+        "value": 0.5,
+        "index": 12,
+        "reconstructed": 0.44070982933044434
+      }
+    ]
+  }
+}

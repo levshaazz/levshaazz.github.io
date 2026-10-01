@@ -403,6 +403,10 @@
     const body = slide.querySelector(':scope > .slide-body');
     if (!body) return;
 
+    // Fitter-owned geometry must never interpolate during synchronous layout.
+    // The reduced-motion stylesheet also gives otherwise static nodes a tiny
+    // transition duration, which is enough to make a reset read stale widths.
+    body.style.transitionProperty = 'none';
     // Reset prior scaling so we re-measure intrinsic size.
     body.style.transform = '';
     body.style.transformOrigin = '';
@@ -640,6 +644,7 @@
     const slide = el.closest('.slide');
     const body = slide && slide.querySelector(':scope > .slide-body');
     if (!body) return;
+    el.style.transitionProperty = 'none';
     // Reset any prior fit so we re-measure the intrinsic (unscaled) size.
     clearContainerFit(el);
     void el.offsetHeight;
@@ -674,6 +679,7 @@
       el.dataset.fitWrapped = '1';
       host = wrap;
     }
+    host.style.transitionProperty = 'none';
     host.style.transformOrigin = 'top left';
     host.style.transform = `scale(${s})`;
     host.style.width = (100 / s) + '%';
@@ -691,6 +697,19 @@
      dense box no longer drags the whole slide into the global shrink. */
   function fitElementsIn(slide) {
     if (!slide) return;
+    /* Local fitting must start in the natural body coordinate system. A prior
+       global fit widens .slide-body to 100/scale %. Measuring a container in
+       that widened body mistakes our own expansion for intrinsic overflow.
+       Repeated steps/re-entry then compound local and global scales forever.
+       autoFitSlide resets these too, but it runs AFTER the local measurement. */
+    const body = slide.querySelector(':scope > .slide-body');
+    if (body) {
+      body.style.transitionProperty = 'none';
+      body.style.transform = '';
+      body.style.transformOrigin = '';
+      body.style.width = '';
+      body.style.height = '';
+    }
     /* Recompute local-fit clipping fresh each pass: clear the slide-level flag
        BEFORE the per-element fitters run, so a box that no longer clips (content
        edited, step changed, fonts/KaTeX settled) drops the flag. The fitters only

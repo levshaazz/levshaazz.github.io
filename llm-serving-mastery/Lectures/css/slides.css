@@ -1251,9 +1251,12 @@ svg [data-arch-step][data-arch-color="red"].is-arch-current    { stroke: var(--c
    The deck then contradicted itself — its own headline said "what o_i is" above a table saying O_I —
    and the paper's notation was misquoted. A symbol is not a label: opt maths out of the transform
    (and out of the label letter-spacing, which shreds subscripts). Found on L16 s25, fixed globally
-   because every deck's first column is exposed to it. */
+   because every deck's first column is exposed to it. Code is also case-sensitive:
+   data: and literal \\r\\n must never turn into DATA: and \\R\\N. */
 .cmp-table tbody td:first-child .katex,
-.cmp-table thead th:first-child .katex {
+.cmp-table thead th:first-child .katex,
+.cmp-table tbody td:first-child code,
+.cmp-table thead th:first-child code {
   text-transform: none;
   letter-spacing: normal;
 }
