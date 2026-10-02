@@ -582,6 +582,18 @@ details > summary:focus-visible {
     margin-bottom: 12px;
   }
   [data-step].is-step-hidden { opacity: 1 !important; pointer-events: auto !important; }
+  /* Walkthrough rows already form an ordered stack. Keep their number/content/
+     value grid and let tall stacks paginate; size containment defeats auto height.
+     Inverted final rows need inherited foreground, including all KaTeX spans. */
+  .slide[data-type="walkthrough"] { container-type: normal !important; }
+  .slide[data-type="walkthrough"] .walk-flow {
+    transform: none !important;
+    width: 100% !important;
+    height: auto !important;
+  }
+  .walk-step { display: grid !important; }
+  :root .slide .walk-step[data-final="true"] .katex,
+  :root .slide .walk-step[data-final="true"] .katex * { color: inherit !important; }
   /* Derivation: show every step's content sequentially. */
   .slide[data-type="derivation"] .deriv-step[hidden] {
     display: block !important;

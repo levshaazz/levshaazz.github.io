@@ -231,7 +231,7 @@
     <div class="var-block"><span class="var-symbol">Δt̄</span><span class="var-unit">ms / gap</span><span class="var-desc"><span lang="en">Mean inter-token interval for this request</span></span></div>
   </div>
   <div class="formula-example"><span lang="en">323 ms + 127 × 22 ms = <strong>3,117 ms = 3.117 s</strong> to the last token.</span></div>
-  <div class="formula-limit"><span lang="en">A final protocol acknowledgement can arrive later: E2E = T_last + terminal delay. Stream chunks are not necessarily single tokens.</span></div>
+  <div class="formula-limit"><span lang="en">A final protocol acknowledgement can arrive later: \(\mathrm{E2E}=T_{\mathrm{last}}+T_{\mathrm{terminal}}\). The terminal delay follows the last content. Stream chunks need not be single tokens.</span></div>
   <aside class="slide-notes">The last user-visible content is not always a completed response. Ask what a missing terminal signal or failed validation does to an end-to-end success metric.</aside>
 </section>
 

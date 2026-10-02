@@ -325,9 +325,25 @@
 
 /* ---- Print: reveal everything, drop the transient ring ---- */
 @media print {
+  /* All captions remain available on paper. Size containment and a 100%-high
+     centered stage used to stack them outside the fixed canvas. Allow natural
+     pagination, keeping the diagram and each caption intact. */
+  .slide[data-type="archflow"] {
+    height: auto !important;
+    min-height: 1080px;
+    overflow: visible !important;
+    container-type: normal !important;
+  }
+  .slide[data-type="archflow"] > .slide-body {
+    height: auto !important;
+    transform: none !important;
+    width: 100% !important;
+  }
+  .slide[data-type="archflow"] .af-stage { height: auto; align-items: start; }
+  .slide[data-type="archflow"] .af-canvas { align-self: start; break-inside: avoid; }
   .slide[data-type="archflow"] .af-node,
   .slide[data-type="archflow"] .af-label { opacity: 1 !important; transform: translate(-50%, -50%) !important; }
   .slide[data-type="archflow"] .af-wires [data-from] { opacity: 0.9 !important; }
   .slide[data-type="archflow"] .af-focus { display: none !important; }
-  .slide[data-type="archflow"] .af-note { display: block !important; }
+  .slide[data-type="archflow"] .af-note { display: block !important; break-inside: avoid; }
 }
