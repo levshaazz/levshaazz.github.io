@@ -1,0 +1,25 @@
+{
+  "kind": "instructor notebook integration rehearsal; not learner validation",
+  "status": "complete",
+  "elapsed_s": 99.6992232309999,
+  "notebook_sha256": "35258369a417a0409fedcf4c2b26ad8e6be1a1cbfca6a1e6a8d0827d5e80eb04",
+  "runner_sha256": "d40cdaa393fe4122ced0a7f67a8dc86a42b452e4d14c535fee2e828d00422c87",
+  "capture_file": "notebook-capture.json",
+  "capture_sha256": "7eefdc72ecf1789b4193755e3e897b1abb31dab8529bf28f103563c50a2cdc62",
+  "capture_bytes": 98820,
+  "worker_environment": {
+    "prefix": "/content/lsm-topic03-pilot-env",
+    "base_prefix": "/usr",
+    "purelib": "/content/lsm-topic03-pilot-env/lib/python3.13/site-packages"
+  },
+  "missing_pins_installed": [],
+  "base_transformers_after": "5.17.0",
+  "external_device_after": "Tesla T4, 0 MiB",
+  "interventions": [
+    "Instructor filled the two TODO functions",
+    "Changed lengths from 24,24 to 24,96",
+    "Enabled RUN_GPU",
+    "Reused model download cache"
+  ],
+  "scope": "Executed every code cell of canonical student notebook in fresh namespace; reused repaired dedicated venv from first run, not fresh VM install."
+}

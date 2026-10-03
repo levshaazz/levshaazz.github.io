@@ -1,0 +1,76 @@
+{
+  "kind": "recorded instructor technical rehearsal",
+  "protocol": "topic03-engineering-pilot-v1",
+  "date": "2026-10-03",
+  "baseline_source_commit": "fe793df43a1a33408cd21499c52264147886a85f",
+  "source_tree_state": "local Topic 03 pilot implementation; not yet committed or published",
+  "runner": {
+    "path": "teaching/topic03_pilot.py",
+    "sha256": "d40cdaa393fe4122ced0a7f67a8dc86a42b452e4d14c535fee2e828d00422c87"
+  },
+  "capture": {
+    "file": "capture.json",
+    "bytes": 98847,
+    "sha256": "e0a92676995815433ff0e51c5ffdc636ba0a044b9e87074e301efa7893578c24"
+  },
+  "notebook_integration": {
+    "receipt": "notebook-rehearsal.json",
+    "receipt_sha256": "ca10308dc84c0c784b2b33b52df1ee218226636d29524a9fe607fa2b1f635b4f",
+    "capture": "notebook-capture.json",
+    "capture_sha256": "7eefdc72ecf1789b4193755e3e897b1abb31dab8529bf28f103563c50a2cdc62",
+    "notebook": "seminars/03-quantization-pilot.ipynb",
+    "notebook_sha256": "35258369a417a0409fedcf4c2b26ad8e6be1a1cbfca6a1e6a8d0827d5e80eb04",
+    "rehearsed_template": "rehearsed-notebook.ipynb",
+    "reviewed_prose_followup": {
+      "current_notebook_sha256": "3a5bc6663de7b187e19f961d14e90921979913cb09e3d119b2c6920a71e6406c",
+      "change": "Decision memo accepts a supported, revised or unresolved prediction instead of requiring a prediction to be wrong.",
+      "scope": "One Markdown-cell sentence changed after rehearsal; all code cells and notebook protocol metadata are identical. This current full-file hash was not executed on GPU."
+    },
+    "status": "complete",
+    "elapsed_s": 99.6992232309999,
+    "scope": "All student code cells executed with instructor TODO solutions and length intervention; existing dedicated venv and model cache reused. Not a human learner test or second clean-VM installation."
+  },
+  "execution": {
+    "interface": "Colab notebook UI; bounded subprocess worker",
+    "device": "Tesla T4",
+    "host_memory_tier": "standard",
+    "host_total_bytes": 13605830656,
+    "python": "3.13.15",
+    "torch": "2.11.0+cu130",
+    "driver": "580.82.07",
+    "timeout_s": 600,
+    "parent_timeout_s": 645,
+    "exit_code": 0,
+    "external_device_used_mib_after_worker": 0,
+    "high_ram_enabled": false,
+    "access_limit": "Teacher account could select this standard T4 runtime; no guarantee of free availability for every student."
+  },
+  "bootstrap": {
+    "base_packages_unchanged": true,
+    "observed_failure": "python -m venv with ensurepip failed in this Colab image",
+    "repair": "Dedicated --without-pip --system-site-packages venv; host Torch reused; only pinned dependencies installed inside venv",
+    "regression": "Notebook tests verify prefix and purelib are inside the dedicated venv before any pip installation"
+  },
+  "runtime_cleanup": {
+    "state": "disconnected and deleted after both captures were downloaded and verified",
+    "authority": "Owner explicitly confirmed releasing the test T4 on 3 October 2026",
+    "deleted": "Temporary Colab VM files, variables and model cache",
+    "preserved": "Drive notebook and downloaded captures/receipt in this directory"
+  },
+  "privacy": {
+    "included": "Synthetic prompts, model IDs, aggregate GPU/framework identity, token IDs, allocator/resource counters and operator names",
+    "excluded": "Account identifiers, notebook sharing URL, raw runtime logs, full profiler traces, credentials and model files"
+  },
+  "learner_validation": "pending",
+  "limitations": [
+    "one model, GPU and batch=1; two sequential format loads",
+    "format order can confound a small observed timing difference",
+    "five raw trials per condition, no tail percentile or population speed claim",
+    "12 synthetic natural samples do not certify production quality",
+    "allocator counters are not total process or device VRAM",
+    "fixed-length continuation is a synthetic timing workload, never scored as quality",
+    "sampled headroom is not an OS memory limit or continuous peak monitor",
+    "reserved pools persist across warmups and lengths; per-row counters are not independent fresh allocators",
+    "the format intervention changes representation AND execution path, not bit width alone"
+  ]
+}
