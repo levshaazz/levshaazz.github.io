@@ -24,7 +24,21 @@
     const k = phase === 'prefill' ? prompt : history;
     out(root, 'phase', phase);
     out(root, 'queries', `${batch} × ${q}`);
-    out(root, 'attention', `${batch} × H × ${q} × ${k}`);
+    const attention = root.querySelector('[data-pm-output="attention"]');
+    if(attention){
+      const shape = document.createElement('code');
+      shape.textContent = `${batch} × H_q × ${q} × ${k}`;
+      attention.replaceChildren(shape);
+    }
+    for (const name of ['prompt','history']) {
+      const input = root.querySelector(`[data-pm-input="${name}"]`);
+      input.disabled = (name === 'prompt') !== (phase === 'prefill');
+      input.setAttribute('aria-disabled', String(input.disabled));
+      const label = input.closest('.pm-control')?.querySelector('label');
+      if(label) label.innerHTML = name === 'prompt'
+        ? (input.disabled ? 'Prompt (inactive)' : 'Prompt positions <code>S_q</code>')
+        : (input.disabled ? 'Key length (inactive)' : 'Total keys <code>S_kv</code> (incl. new)');
+    }
     out(root, 'gemm', phase === 'prefill' ? `M = ${batch * prompt}` : `M = ${batch}`);
     root.querySelectorAll('[data-pm-phase]').forEach((b) => b.classList.toggle('is-active', b.dataset.pmPhase === phase));
     const bars = root.querySelectorAll('.pm-tensor-bar');
@@ -40,7 +54,7 @@
     const memoryRoof = bandwidth * intensity / 1000;
     const attainable = Math.min(compute, memoryRoof);
     const ridge = compute * 1000 / bandwidth;
-    const regime = intensity < ridge ? 'bandwidth-bound ceiling' : 'compute-bound ceiling';
+    const regime = Math.abs(intensity - ridge) < 1e-10 ? 'ridge: both ceilings equal' : intensity < ridge ? 'bandwidth-bound ceiling' : 'compute-bound ceiling';
     out(root, 'intensity', `${fmt(intensity)} FLOP/B`);
     out(root, 'attainable', `${fmt(attainable)} TFLOP/s`);
     out(root, 'ridge', `${fmt(ridge)} FLOP/B`);

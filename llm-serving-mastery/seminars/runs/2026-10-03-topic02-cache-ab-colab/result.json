@@ -1,0 +1,57 @@
+{
+  "protocol": "topic02-cache-ab-colab-v1",
+  "status": "complete",
+  "source_sha256": "ecdf3270ed64df14238f9af30e1cb365114f54e50b3a4a403f1c963733f1c164",
+  "source_commit": "49596ce40ce8c8c1bb73bfe7984f6fa00e91089b",
+  "model": {"id":"Qwen/Qwen2.5-1.5B-Instruct","revision":"989aa7980e4cf806f80c7fef2b1adb7bc71aa306"},
+  "input": {
+    "prompt_ids": [151644,8948,198,2610,525,264,10950,17847,13,17841,448,1172,279,11223,5109,13,151645,198,151644,872,198,23526,279,8500,448,2326,5109,25,220,17,11,220,19,11,220,21,11,151645,198,151644,77091,198],
+    "fixed_continuation_ids": [23,11,220,16,15,11,220,16,17,151645],
+    "prompt_text": "Continue the sequence with three numbers: 2, 4, 6,",
+    "system_text": "You are a helpful assistant. Reply with only the requested numbers."
+  },
+  "contract": {
+    "pairs": 5, "warmup_paths_per_mode": 1, "dtype": "float16", "attention": "sdpa", "logits_to_keep": 1,
+    "atol": 0.05, "rtol": 0.01,
+    "input_policy": "teacher forcing of the same recorded IDs; no free generation",
+    "timing": "one prefill plus nine following forwards; synchronized wall and CUDA stream interval; GPU output selection in both paths",
+    "excluded": "load, download, tokenization, GPU-to-CPU copies, validation, profiler and resource checks",
+    "limits": [
+      "five pairs on one runtime are not a latency distribution or production capacity",
+      "CUDA interval is not summed kernel execution time; no HBM counters measured",
+      "cache changes forward shapes; SDPA may select different kernels",
+      "Colab runtime is managed; no claim of the WSL cgroup sandbox",
+      "Hugging Face cache persists in this runtime, not across Colab runtime deletion"
+    ],
+    "hard_timeout_seconds": 600, "allocator_cap_gib": 12, "minimum_host_available_gib": 24
+  },
+  "environment": {"torch":"2.11.0+cu130","transformers":"4.51.3","cuda":"13.0","gpu":"Tesla T4","driver":"580.82.07","attention_selected":"sdpa"},
+  "trials": [
+    {"pair":0,"mode":"no_cache","wall_ms":287.86574599996584,"cuda_interval_ms":287.7914123535156,"peak_allocated_bytes":3104052736,"peak_reserved_bytes":3311403008,"retained_kv_positions":0,"argmax_ids":[23,11,220,16,15,11,220,16,17,151645],"max_abs_logit_difference":0,"logits_allclose":true,"argmax_equal":true},
+    {"pair":0,"mode":"cache","wall_ms":289.4718490000514,"cuda_interval_ms":289.3953552246094,"peak_allocated_bytes":3102449664,"peak_reserved_bytes":3311403008,"retained_kv_positions":51,"argmax_ids":[23,11,220,16,15,11,220,16,17,151645],"max_abs_logit_difference":0.05078125,"logits_allclose":true,"argmax_equal":true},
+    {"pair":1,"mode":"cache","wall_ms":275.0380549999818,"cuda_interval_ms":274.97735595703125,"peak_allocated_bytes":3102449664,"peak_reserved_bytes":3311403008,"retained_kv_positions":51,"argmax_ids":[23,11,220,16,15,11,220,16,17,151645],"max_abs_logit_difference":0.05078125,"logits_allclose":true,"argmax_equal":true},
+    {"pair":1,"mode":"no_cache","wall_ms":288.54271499994866,"cuda_interval_ms":288.4834289550781,"peak_allocated_bytes":3104052736,"peak_reserved_bytes":3311403008,"retained_kv_positions":0,"argmax_ids":[23,11,220,16,15,11,220,16,17,151645],"max_abs_logit_difference":0,"logits_allclose":true,"argmax_equal":true},
+    {"pair":2,"mode":"no_cache","wall_ms":282.51553600000534,"cuda_interval_ms":282.4532775878906,"peak_allocated_bytes":3104052736,"peak_reserved_bytes":3311403008,"retained_kv_positions":0,"argmax_ids":[23,11,220,16,15,11,220,16,17,151645],"max_abs_logit_difference":0,"logits_allclose":true,"argmax_equal":true},
+    {"pair":2,"mode":"cache","wall_ms":282.89401500001077,"cuda_interval_ms":282.83477783203125,"peak_allocated_bytes":3102449664,"peak_reserved_bytes":3311403008,"retained_kv_positions":51,"argmax_ids":[23,11,220,16,15,11,220,16,17,151645],"max_abs_logit_difference":0.05078125,"logits_allclose":true,"argmax_equal":true},
+    {"pair":3,"mode":"cache","wall_ms":281.5351179999652,"cuda_interval_ms":281.476318359375,"peak_allocated_bytes":3102449664,"peak_reserved_bytes":3311403008,"retained_kv_positions":51,"argmax_ids":[23,11,220,16,15,11,220,16,17,151645],"max_abs_logit_difference":0.05078125,"logits_allclose":true,"argmax_equal":true},
+    {"pair":3,"mode":"no_cache","wall_ms":287.0293800000354,"cuda_interval_ms":286.9710998535156,"peak_allocated_bytes":3104052736,"peak_reserved_bytes":3311403008,"retained_kv_positions":0,"argmax_ids":[23,11,220,16,15,11,220,16,17,151645],"max_abs_logit_difference":0,"logits_allclose":true,"argmax_equal":true},
+    {"pair":4,"mode":"no_cache","wall_ms":303.14881200001764,"cuda_interval_ms":303.0867614746094,"peak_allocated_bytes":3104052736,"peak_reserved_bytes":3311403008,"retained_kv_positions":0,"argmax_ids":[23,11,220,16,15,11,220,16,17,151645],"max_abs_logit_difference":0,"logits_allclose":true,"argmax_equal":true},
+    {"pair":4,"mode":"cache","wall_ms":291.71950399995694,"cuda_interval_ms":291.6569519042969,"peak_allocated_bytes":3102449664,"peak_reserved_bytes":3311403008,"retained_kv_positions":51,"argmax_ids":[23,11,220,16,15,11,220,16,17,151645],"max_abs_logit_difference":0.05078125,"logits_allclose":true,"argmax_equal":true}
+  ],
+  "downloaded_missing_snapshot": true,
+  "logical_kv_bytes": 1462272,
+  "summary": {
+    "median_wall_ms": {"no_cache":287.86574599996584,"cache":282.89401500001077},
+    "ratio_of_medians": 1.0175745358202608,
+    "paired_wall_ratios": [0.9944516090057335,1.0491010598514003,0.9986621173303881,1.019515370015299,1.0391791013056926],
+    "median_paired_wall_ratio": 1.019515370015299
+  },
+  "cleanup": {"after_process_exit_gpu_used_mib":0,"compute_processes":0},
+  "provenance": {
+    "run_started_utc": "2026-10-03T09:58:23Z",
+    "full_export_sha256": "ab49e90b11961044368febca8a30a9b15157fc8fe6633062a1734d8517aa389f",
+    "export_policy": "Allowlisted excerpt of Colab result.json; all timed trials unchanged; resource samples and profiler names omitted. Raw traces stay private.",
+    "minimum_host_available_bytes": 48914300928,
+    "maximum_device_used_bytes": 3463315456
+  }
+}
