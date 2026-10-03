@@ -26,8 +26,9 @@
     out(root, 'queries', `${batch} × ${q}`);
     const attention = root.querySelector('[data-pm-output="attention"]');
     if(attention){
-      const shape = document.createElement('code');
-      shape.textContent = `${batch} × H_q × ${q} × ${k}`;
+      const shape = document.createElement('span');
+      // This is a mathematical shape, not a literal programming identifier.
+      shape.innerHTML = `${batch} × H<sub>q</sub> × ${q} × ${k}`;
       attention.replaceChildren(shape);
     }
     for (const name of ['prompt','history']) {
@@ -36,8 +37,8 @@
       input.setAttribute('aria-disabled', String(input.disabled));
       const label = input.closest('.pm-control')?.querySelector('label');
       if(label) label.innerHTML = name === 'prompt'
-        ? (input.disabled ? 'Prompt (inactive)' : 'Prompt positions <code>S_q</code>')
-        : (input.disabled ? 'Key length (inactive)' : 'Total keys <code>S_kv</code> (incl. new)');
+        ? (input.disabled ? 'Prompt (inactive)' : 'Prompt positions S<sub>q</sub>')
+        : (input.disabled ? 'Key length (inactive)' : 'Total keys S<sub>kv</sub> (incl. new)');
     }
     out(root, 'gemm', phase === 'prefill' ? `M = ${batch * prompt}` : `M = ${batch}`);
     root.querySelectorAll('[data-pm-phase]').forEach((b) => b.classList.toggle('is-active', b.dataset.pmPhase === phase));
