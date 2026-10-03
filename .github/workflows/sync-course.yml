@@ -75,13 +75,13 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
-          key: ubuntu24-playwright-${{ hashFiles('course/package-lock.json') }}
+          key: ubuntu24-playwright-all-v1-${{ hashFiles('course/package-lock.json') }}
       - name: Install course dependencies
         if: steps.version.outputs.changed == 'true'
         working-directory: course
         run: |
           npm ci
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps chromium firefox webkit
           python -m pip install PyYAML==6.0.2
       - name: Verify every gate and build
         if: steps.version.outputs.changed == 'true'
