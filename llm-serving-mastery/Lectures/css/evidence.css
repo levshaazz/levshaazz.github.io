@@ -13,3 +13,16 @@
   .evidence-figure .evidence-light { display:block !important; }
   .evidence-figure .evidence-dark { display:none !important; }
 }
+/* Reusable scientific state controls; figures keep the original evidence canvas. */
+.evidence-controls { display:flex; align-items:center; flex-wrap:wrap; gap:12px; margin:12px 0; }
+.slide[data-type="evidence"] .evidence-controls { font-size:var(--fs-small); line-height:1.2; }
+.evidence-controls button { font:inherit; color:inherit; background:transparent; border:1px solid currentColor; border-radius:4px; padding:4px 12px; cursor:pointer; }
+.evidence-controls button:disabled { opacity:.45; cursor:default; }
+.evidence-controls button:focus-visible { outline:3px solid currentColor; outline-offset:3px; }
+.evidence-state-label { font-size:inherit; }
+.evidence-figure .evidence-print { display:none; }
+@media print {
+  .evidence-controls { display:none; }
+  .evidence-figure[data-evidence-explorer] .evidence-light { display:none !important; }
+  .evidence-figure .evidence-print { display:block !important; }
+}

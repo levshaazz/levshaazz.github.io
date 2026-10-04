@@ -170,7 +170,8 @@
     const weightBytes = params * bits / 8;
     // The 16-bit branch represents plain BF16 weights, not a scaled integer code.
     const scaleBytes = bits === 16 ? 0 : Math.ceil(params / group) * 2;
-    const budget = Math.max(0, 16 - reserve - kvGib);
+    const capacity = Number(root.dataset.capacityGib || 16);
+    const budget = Math.max(0, capacity - reserve - kvGib);
     const totalGib = (weightBytes + scaleBytes) / (2 ** 30);
     out(root, 'payload', `${fmt(weightBytes / 1e9, 2)} GB`);
     out(root, 'scales', `${fmt(scaleBytes / 1e6, 2)} MB`);
