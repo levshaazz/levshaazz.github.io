@@ -1,1 +1,0 @@
-function e(e){let t=e.target;t instanceof HTMLElement&&t.matches(`pre[tabindex="0"], .table-scroll[tabindex="0"], .evidence-scroll[tabindex="0"]`)&&(e.altKey||e.ctrlKey||e.metaKey||e.shiftKey||![`ArrowLeft`,`ArrowRight`].includes(e.key)||t.scrollWidth<=t.clientWidth||(e.preventDefault(),t.scrollLeft+=e.key===`ArrowRight`?48:-48))}export{e as t};

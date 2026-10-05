@@ -1,1 +1,0 @@
-import{t as e}from"./book-keyboard.DZYFfeia.js";document.querySelector(`.book-article`)?.addEventListener(`keydown`,e);
