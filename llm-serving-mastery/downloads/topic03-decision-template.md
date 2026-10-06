@@ -1,47 +1,26 @@
 # Topic 03 engineering decision
 
-Fill this template using your own lab. The twelve synthetic tickets and five timing trials per condition do not certify production quality or tail latency. Submit privately; do not include names, accounts, credentials or model caches. This memo does not change the judge submission contract.
+Write about half a page using your own evidence. Detailed tables and mechanism answers stay in the notebook and attachments. Twelve synthetic tickets and five timing trials per condition do not certify production quality or tail latency. Submit privately; this does not change the judge contract.
 
-## Scope and prediction
+## Short memo: fill these four paragraphs
 
-- Model and immutable revision:
-- GPU, host RAM, Torch/CUDA, Transformers and bitsandbytes versions:
-- Batch, exact input IDs/prompt reference, stopping modes and trial count:
-- Prediction made before inspecting results:
-- Evidence that supports it, changes it or leaves it unresolved:
+**Question and prediction.** What constraint matters in your router scenario? Name one pre-run prediction and evidence that supports it, revises it or leaves it unresolved.
 
-## Frozen layer decision
+**Evidence.** State the frozen calibration group and held-out output error. Separately cite FP16/NF4 time and allocated/reserved memory at 24 and 96 IDs, and whether each meets your frozen classroom screening rule. The reconstructed layer was not installed into the GPU model.
 
-- Data SHA-256 and [out,in] shape; which positions and outputs were included:
-- Candidate groups, the 4.30 ideal bits/weight budget, calibration criterion and frozen choice:
-- Calibration versus held-out error; link to `topic03-layer-decision.json`:
-- Separate clipping comparison: weight-MSE choice versus calibration-output choice; no joint group/clipping search:
-- Uniform group64 versus supplied NF4 QDQ on the same weights and inputs:
-- Why AWQ rescales two sides before rounding; how GPTQ uses inputs to compensate a fixed weight's error:
-- What the histogram and scatter show, and what they cannot establish:
+**Decision.** Keep FP16 as experimental control, choose NF4 conditionally, reject both for the application, or defer. State which constraint decides the choice. Passing the small smoke check is not deployment approval.
 
-## Whole-model GPU comparison
+**Limit and next test.** Name one unresolved issue and one controlled experiment that could change your decision.
 
-Copy measurements without changing the original artifact. Report median and observed min–max in milliseconds, based on five raw wall-time trials per condition. Peak memory columns refer to the largest respective peak across the five trials; use MiB. Do not replace natural ticket answers with forced-length timing outputs.
+## Evidence checklist: attach, do not repeat in the memo
 
-| Format | Output IDs | Median ms | Min–max ms | Peak allocated MiB | Peak reserved MiB |
-| --- | --- | --- | --- | --- | --- |
-| FP16 | 24 | | | | |
-| NF4 | 24 | | | | |
-| FP16 | 96 | | | | |
-| NF4 | 96 | | | | |
+- Edited notebook: predictions, tested quantizer/output metric, grouping comparisons, AWQ/GPTQ/NF4 explanations and plot readings.
+- `topic03-layer-decision.json`: payload hash, calibration budget and frozen group/clipping choices, held-out and same-W/X NF4 results.
+- `topic03-weights-full.png`, `topic03-weights-center.png`, `topic03-output-scatter.png`.
+- `topic03-preflight.json`: context, minimum correct out of twelve, maximum invalid count and rationale, fixed before execution.
+- `topic03-screening.json`: application of that rule, not a new production threshold.
+- Original `evidence/<your attempt>/result.json`: model revision, GPU/runtime, all raw seconds, natural outputs and cleanup. Preserve failed attempts separately as partial.
+- `topic03-timing.png`, both `topic03-confusion-*.png` plots; profiles and all mismatches remain in notebook/JSON.
+- This completed memo as `topic03-decision.md`.
 
-- Fresh attempt directory and original `result.json`:
-- What stayed fixed; how representation and execution both changed:
-- Natural quality counts out of twelve per format; invalid/truncated outputs and paired changes:
-- Profile status; one observed operator change and a testable hypothesis, not a causal proof:
-- Cleanup result; preserved incomplete attempts or infrastructure limitations:
-
-## Decision and limits
-
-- Keep FP16 as control, retain NF4 conditionally, reject both, or defer: which constraint and evidence justify the choice?
-- What small layer error, allocated/reserved counters and the synthetic quality set do NOT prove:
-- One next experiment that could change the decision:
-- Location of the edited notebook, plots and original artifacts:
-
-Do not manufacture a GPU result when GPU access fails. State the missing measurement and preserve real partial evidence. Full AWQ/GPTQ implementations and extra GPU runs are optional, not hidden acceptance conditions.
+Download and open every deliverable before disconnecting Colab. Do not export credentials or model caches. If GPU access fails, say **not run**, preserve real partial evidence and name the missing measurement; do not substitute teacher results. Full method implementations and extra GPU runs remain optional.
