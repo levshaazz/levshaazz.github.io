@@ -1,0 +1,199 @@
+{
+  "kind": "reviewed actual instructor execution; not learner validation",
+  "date_moscow": "2026-10-06",
+  "source_baseline_commit": "35140c315e6e7f7a3a4f18028d0c8845648700bd",
+  "student_notebook_sha256": "0f10cbf03c60ffaf5fea2d3db14d6992e6f5f2f3e884b2accb46e6fe366c37a7",
+  "runner_sha256": "85e9a4c30ea0e8dde746ed77b8f7fa7cbb38728d094c9c8fc743dc7b7f31ec2e",
+  "private_downloaded_export_sha256": "08eb3a8b3323ae88fe463fb7808086553260c1d6b899aa5ea354be14018f4c0b",
+  "private_executed_notebook_sha256": "80d3c1520b8c7a06300a53ee505cdba6009f7d9a6f2101993ed27ee94852fa69",
+  "private_prepared_notebook_sha256": "b5c4de4525b87d480d91bc50fa552531ef67c56aad647ea60e2f1aaf38059e96",
+  "preparation_script_sha256": "64d301bf789420bf5c2ec96208ddbfd9d966fa25534fa006caf10b81d6d117b0",
+  "public_artifacts": {
+    "result.json": {
+      "bytes": 193815,
+      "sha256": "81787fa588cd9c742415bb09d26b909b60cb66ce75540b3bbda8b65b6fc0900f"
+    },
+    "gpu-capture.json": {
+      "bytes": 176469,
+      "sha256": "4c60bf81758053d1ae90cfbce3770f13c325ed7173e15b739c98318b9e259ed2"
+    },
+    "layer-decision.json": {
+      "bytes": 1960,
+      "sha256": "803859d0186aaca04642a8aefd8020cd177e42c95dc177a76ea414e0800e3611"
+    },
+    "rehearsed-notebook.ipynb": {
+      "bytes": 75216,
+      "sha256": "0f10cbf03c60ffaf5fea2d3db14d6992e6f5f2f3e884b2accb46e6fe366c37a7"
+    }
+  },
+  "exact_executed_cells": [
+    {
+      "id": "instructor-payload-bootstrap",
+      "source_sha256": "af12dbcafb9fcb82c83c262aee9e0a4055acd00a8a0166cba7ed99b85e09944d",
+      "execution_count": 1,
+      "error_count": 0
+    },
+    {
+      "id": "topic03-pilot-03",
+      "source_sha256": "a93716c427931e2b97dad7cca455f4af1f330088a0b3abe6c56b17347f69afc3",
+      "execution_count": 2,
+      "error_count": 0
+    },
+    {
+      "id": "topic03-pilot-04",
+      "source_sha256": "fcc0c55bfb442b5930f7b22cc191274ccd3b535425d41f7d37d87e88a996c15b",
+      "execution_count": 3,
+      "error_count": 0
+    },
+    {
+      "id": "topic03-pilot-05",
+      "source_sha256": "af992e131188b6d5c57b8f4d75cddc9fcd1e55daf30e281e14e65db4bfc3e38a",
+      "execution_count": 4,
+      "error_count": 0
+    },
+    {
+      "id": "topic03-pilot-06",
+      "source_sha256": "fc13ab5143b3554210b6f55947d7bc0ce134bed94ca6d30de98c49e399e639e9",
+      "execution_count": 5,
+      "error_count": 0
+    },
+    {
+      "id": "topic03-pilot-08",
+      "source_sha256": "b5b2c00640bcfaf4d19e10473009622b3e1064a3492ecf548984665fcfcec8aa",
+      "execution_count": 6,
+      "error_count": 0
+    },
+    {
+      "id": "topic03-pilot-09",
+      "source_sha256": "731fd9513208f08444428b21b4aadf2e3c385086b638b3e6fa6e8710cc9093ab",
+      "execution_count": 7,
+      "error_count": 0
+    },
+    {
+      "id": "topic03-pilot-12",
+      "source_sha256": "37c1b5d6d03bca8666517df3666fb458c9d7f11d36dd53519f1fdab4f63dd79d",
+      "execution_count": 8,
+      "error_count": 0
+    },
+    {
+      "id": "topic03-pilot-14",
+      "source_sha256": "d832fe2670023657605e68caf9ad3c2349914d8493a765eee4670301eda9b357",
+      "execution_count": 9,
+      "error_count": 0
+    },
+    {
+      "id": "topic03-pilot-16",
+      "source_sha256": "ad14d180e3bdd8531d4aac15faa73538ac2ea93e812545879cc62612b10821aa",
+      "execution_count": 10,
+      "error_count": 0
+    },
+    {
+      "id": "topic03-pilot-18",
+      "source_sha256": "0061845605f5bcdf53e83702824c74b9d3cad160c5c656495fb8ed482dc38019",
+      "execution_count": 11,
+      "error_count": 0
+    },
+    {
+      "id": "topic03-pilot-20",
+      "source_sha256": "e958ca0233c500c2f13b7f0764f39ea744f19cb8f7d66d26d9f311d5ed199230",
+      "execution_count": 12,
+      "error_count": 0
+    },
+    {
+      "id": "topic03-pilot-22",
+      "source_sha256": "8f41b47ea138dc7ade67cb2831941307abca517899baf431768f11203e625465",
+      "execution_count": 13,
+      "error_count": 0
+    },
+    {
+      "id": "topic03-pilot-24",
+      "source_sha256": "be6fe2fe03c39bd69ca31785cd76880428f8d7af299d227e8dde3470acec23c6",
+      "execution_count": 14,
+      "error_count": 0
+    },
+    {
+      "id": "topic03-pilot-26",
+      "source_sha256": "ea365a5ec8172fc35101650010d9e0bdb17b5e91d76b9fd604ecc89fdfe344be",
+      "execution_count": 15,
+      "error_count": 0
+    },
+    {
+      "id": "topic03-pilot-28",
+      "source_sha256": "6916ef9531d15db3ae7db64c97eb8b397093af0090a7d5ec2146852b1e67bc27",
+      "execution_count": 16,
+      "error_count": 0
+    },
+    {
+      "id": "topic03-pilot-29",
+      "source_sha256": "e2bc6df0dd58db1f76d9d7e4b53de08ff14d2c043ced62c42ff760562f65a891",
+      "execution_count": 17,
+      "error_count": 0
+    },
+    {
+      "id": "topic03-pilot-31",
+      "source_sha256": "339f7f2ad8d6bdb1168a29d81b4a5bfda9a8e7db2851b508d0bc779870f037a1",
+      "execution_count": 18,
+      "error_count": 0
+    },
+    {
+      "id": "topic03-pilot-34",
+      "source_sha256": "7fe27679adc7917aee0d2ff55db29751c570349f974e782f0710ec71ba4632d2",
+      "execution_count": 19,
+      "error_count": 0
+    },
+    {
+      "id": "topic03-pilot-35",
+      "source_sha256": "2234c8499456eafb4bb9106eb4559f613a246b9a287b94d88000723f90d5928c",
+      "execution_count": 20,
+      "error_count": 0
+    },
+    {
+      "id": "topic03-pilot-37",
+      "source_sha256": "c7fbd34be74fa2c75aa32b1334155f7bf42a985f012893338fdb3690253fc89e",
+      "execution_count": 21,
+      "error_count": 0
+    },
+    {
+      "id": "topic03-pilot-40",
+      "source_sha256": "a1d9d628a26f23ab11f03866db561829f1696417b502a6bfcdb9f4d87af97d9c",
+      "execution_count": 22,
+      "error_count": 0
+    },
+    {
+      "id": "topic03-pilot-41",
+      "source_sha256": "0f583fed17c4f06d8827353f4f4c4887f811244415fb053aae53289fce217557",
+      "execution_count": 23,
+      "error_count": 0
+    },
+    {
+      "id": "topic03-pilot-42",
+      "source_sha256": "6723e74bf4e5cc0aacac33c8e6745d7474760467f0d84a8bf45ac06f01701215",
+      "execution_count": 24,
+      "error_count": 0
+    },
+    {
+      "id": "topic03-pilot-44",
+      "source_sha256": "b293efa4094ce0d3f70f224b1e0228bd38aa83ec04afe00373e2291040dd61ac",
+      "execution_count": 25,
+      "error_count": 0
+    },
+    {
+      "id": "topic03-pilot-46",
+      "source_sha256": "aa8e654056231c083b00ae23369d616229cc34d6f5f383eb154a25002041f1dd",
+      "execution_count": 26,
+      "error_count": 0
+    },
+    {
+      "id": "instructor-evidence-export",
+      "source_sha256": "9005ed70d577eca82b826d0e812e4f5ae55989df5fa652a61968d3c49f531881",
+      "execution_count": 27,
+      "error_count": 0
+    }
+  ],
+  "execution": {
+    "external_device_used_mib_after_worker": 0,
+    "host_memory_tier": "standard",
+    "high_ram_enabled": false
+  },
+  "learner_validation": "pending"
+}
