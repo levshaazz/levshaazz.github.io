@@ -14,13 +14,6 @@ Write about half a page using your own evidence. Detailed tables and mechanism a
 
 ## Evidence checklist: attach, do not repeat in the memo
 
-- Edited notebook: predictions, tested quantizer/output metric, grouping comparisons, AWQ/GPTQ/NF4 explanations and plot readings.
-- `topic03-layer-decision.json`: payload hash, calibration budget and frozen group/clipping choices, held-out and same-W/X NF4 results.
-- `topic03-weights-full.png`, `topic03-weights-center.png`, `topic03-output-scatter.png`.
-- `topic03-preflight.json`: context, minimum correct out of twelve, maximum invalid count and rationale, fixed before execution.
-- `topic03-screening.json`: application of that rule, not a new production threshold.
-- Original `evidence/<your attempt>/result.json`: model revision, GPU/runtime, all raw seconds, natural outputs and cleanup. Preserve failed attempts separately as partial.
-- `topic03-timing.png`, both `topic03-confusion-*.png` plots; profiles and all mismatches remain in notebook/JSON.
-- This completed memo as `topic03-decision.md`.
+Use the [canonical Topic 03 acceptance checklist](https://levshaazz.github.io/llm-serving-mastery/en/topics/03/#acceptance-checklist), also embedded from the same source in your matching notebook. It includes the separate clipping and same-W/X NF4 investigations and the frozen pre-run screening rule. Do not maintain a second checklist in this memo.
 
 Download and open every deliverable before disconnecting Colab. Do not export credentials or model caches. If GPU access fails, say **not run**, preserve real partial evidence and name the missing measurement; do not substitute teacher results. Full method implementations and extra GPU runs remain optional.

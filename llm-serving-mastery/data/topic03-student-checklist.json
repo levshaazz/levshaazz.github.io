@@ -1,0 +1,14 @@
+{
+  "schema": "topic03-student-checklist-v1",
+  "items": [
+    "Keep your edited notebook: predictions, tested scale/group functions, output metric, AWQ/GPTQ/NF4 explanations and plot readings.",
+    "Save topic03-layer-decision.json with the payload hash, candidate list, 4.30-bit uniform budget, calibration choice and unchanged held-out result.",
+    "Include the separate 100/99/99.5 clipping investigation and same-W/X uniform group64 versus block64 NF4 comparison. Distinguish their metadata costs; do not claim equal storage or GPU execution.",
+    "Save topic03-weights-full.png, topic03-weights-center.png, topic03-nf4-blocks.png and topic03-output-scatter.png. Keep matched bins, all-weight denominators, tail disclosures and labelled scopes.",
+    "Save topic03-preflight.json: application context, minimum correct out of twelve, maximum invalid count, rationale and CPU answers, frozen BEFORE GPU execution.",
+    "Keep the original evidence/<your attempt>/result.json: model/runtime/device identity, five trials per length and format, twelve natural answers per format, separate allocated/reserved memory and cleanup.",
+    "Save topic03-screening.json, topic03-timing.png and both topic03-confusion-*.png plots. Preserve individual mismatches and profiles in notebook/JSON; this small screen is not production approval.",
+    "Write topic03-decision.md using the short memo template: prediction, bounded decision, limitation and next experiment. Full tables and method answers remain attachments, not repeated in the memo.",
+    "Download and open every deliverable before disconnecting Colab. Preserve failed attempts separately as partial. Missing GPU execution is not run, never replaced by teacher results. Submit privately; do not export credentials or model caches."
+  ]
+}

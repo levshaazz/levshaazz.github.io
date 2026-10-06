@@ -1,0 +1,16 @@
+{
+  "schema": "topic03-transfer-check-v1",
+  "status": "learner-pilot prototype; not yet validated; no grading change",
+  "scope": "New educational matrix, not Qwen weights; CPU only",
+  "weights_out_in": [[0.46, 0.4, 0.73, 7.0]],
+  "calibration_samples_in": [[1.0, -1.15, 0.0, 1.0], [2.0, -2.3, 0.0, 1.0]],
+  "candidate_groups": [4, 2],
+  "ideal_budget_bytes": 6,
+  "arithmetic": "Use absmax/7, nearest-even signed INT4, row-local groups and unrounded scales for arithmetic. Budget ideal packed codes plus FP16 scales; no GPU allocation claim.",
+  "questions": [
+    "Before computing: can a setting with larger weight MSE have smaller calibration output MSE? Predict and explain using signs of inputs.",
+    "For both candidates, report scales, reconstructed weights, weight MSE, signed output errors and output MSE. W is [1,4], X is [2,4], Y=X@W.T is [2,1]; average squared output error over both samples.",
+    "Count four-bit code bytes and two-byte scales. Choose only by calibration output MSE among candidates inside the six-byte budget; freeze the choice before receiving new inputs.",
+    "After the instructor supplies two new inputs, evaluate the frozen choice without reselecting. Explain any ranking reversal and propose a calibration improvement as a NEW experiment, not a retuned test result."
+  ]
+}

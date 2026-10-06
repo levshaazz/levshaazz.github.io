@@ -16,6 +16,13 @@
 /* Reusable scientific state controls; figures keep the original evidence canvas. */
 .evidence-controls { display:flex; align-items:center; flex-wrap:wrap; gap:12px; margin:12px 0; }
 .slide[data-type="evidence"] .evidence-controls { font-size:var(--fs-small); line-height:1.2; }
+/* A proportional full-width SVG does not get shorter when the global fitter
+   widens its body. Reserve room for state controls, caption and footer in this
+   shared component, rather than shrinking text or adding a per-lecture rule. */
+.slide[data-type="evidence"] [data-evidence-explorer] .evidence-canvas img {
+  max-height:480px;
+  object-fit:contain;
+}
 .evidence-controls button { font:inherit; color:inherit; background:transparent; border:1px solid currentColor; border-radius:4px; padding:4px 12px; cursor:pointer; }
 .evidence-controls button:disabled { opacity:.45; cursor:default; }
 .evidence-controls button:focus-visible { outline:3px solid currentColor; outline-offset:3px; }
