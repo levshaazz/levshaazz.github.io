@@ -82,7 +82,7 @@ jobs:
         run: |
           npm ci
           npx playwright install --with-deps chromium firefox webkit
-          python -m pip install PyYAML==6.0.2
+          python -m pip install PyYAML==6.0.2 matplotlib==3.10.7
       - name: Verify every gate and build
         if: steps.version.outputs.changed == 'true'
         working-directory: course
@@ -145,6 +145,10 @@ jobs:
           done
           echo "::error::Pages receipt does not match the verified source"
           exit 1
+      - name: Verify delivered Topic 04 artifacts and public notebook
+        if: steps.version.outputs.changed == 'true'
+        working-directory: course
+        run: node scripts/check-published-topic04.mjs ${{ steps.version.outputs.source_sha }}
       - name: Report actual delivery result to private source
         if: always() && steps.version.outputs.changed == 'true'
         env:
