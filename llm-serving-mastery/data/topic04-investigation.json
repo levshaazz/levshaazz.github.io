@@ -1,0 +1,24 @@
+{
+  "contract": "topic04-client-investigation-v3",
+  "question": "The classifier responds. Is its answer complete, valid and correct?",
+  "exemplar": "Topic 03, owner decision 2026-10-07",
+  "skills": ["admission", "completion", "diagnosis"],
+  "coreOrigins": ["1","2","3","5","6","8","9","10","11","12","13","16","17","19","20","21","22","23","25","26","26-0","27","29","30","31","32","33","35-0","36","37","38","42","43","45","46","48","51","52","54","55","57","58","61","66","68","74","77","78","82","84"],
+  "coreDeckFile": "Lectures/04-vllm-serving-core.html",
+  "downloadBundle": "seminars/04-client-investigation.zip",
+  "runtimeRehearsal": "passed",
+  "runtimeEvidence": "seminars/runs/2026-10-08-topic04-v3-colab/provenance.json",
+  "formatRuntimeEvidence": "seminars/runs/2026-10-08-topic04-v3-format-colab/provenance.json",
+  "runtimeScope": "Two separate v3 instructor runs passed on T4 / Colab High RAM, each with 17 code cells: baseline versus prompt, and baseline versus format on 12 calibration cases each. Each froze baseline before six held-out cases and stopped both owned servers. Format was exercised on calibration; only selected baseline was evaluated on held-out. Standard-RAM Colab and independent learner completion remain untested",
+  "learnerValidation": "pending",
+  "historicalServiceEvidence": "seminars/runs/2026-10-02-topic04-serving/capture.json",
+  "historicalScope": "v3 service runner on RTX 5070 Ti; not this new notebook on a student T4",
+  "checklist": [
+    "Implement the rendered-token admission guard; all 11 CPU checks pass.",
+    "Implement all-attempt classifier scoring; six fixtures check rates and the 3x4 confusion matrix.",
+    "Change temperature/top_p in the numerical toy; distinguish next-token probability from class confidence.",
+    "Inspect actual Qwen FP16 errors and explain the measured confusion matrix.",
+    "Declare one-factor candidates, compare fresh calibration results, then freeze a chosen policy before loading held-out.",
+    "Save CPU work, fresh GPU evidence and a boundary-aware engineering memo separately."
+  ]
+}

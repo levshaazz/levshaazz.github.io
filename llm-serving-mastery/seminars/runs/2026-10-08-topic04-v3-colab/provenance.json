@@ -1,0 +1,209 @@
+{
+  "status": "passed",
+  "contract": "topic04-client-investigation-v3",
+  "scope": "Exact 32-cell notebook; 17 ordered code cells executed once; private instructor functions/explanations and calibration-only selection rule; GPU=True; prompt challenger only",
+  "student_notebook_sha256": "a44b7be231be16d94a5e573892fa6688e5fe92babdf1f0cdef28ba2337a976e0",
+  "prepared_sha256": "92647a1227620ee97681abe72212044e923edde3dd6dd953bc508e3142f88c5e",
+  "export_zip_sha256": "55fd29a3e4f775b08bc134ac6c7c05ff5b6d20c96c992f3f2f6149add8e7220f",
+  "colab_url": "https://colab.research.google.com/drive/1Q77j-f0LNVn7URBCS7XaTk9_J27h6q-5",
+  "export_method": "Exact ZIP bytes decoded from the visible Colab output data link; embedded notebook obtained by Colab get_ipynb; native downloads unavailable",
+  "original_code_execution_counts": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+  ],
+  "source_equality": true,
+  "runtime": {
+    "gpu": "Tesla T4",
+    "vllm": "0.29.0",
+    "torch": "2.13.0+cu130",
+    "cuda": "13.0",
+    "transformers": "5.18.0"
+  },
+  "python": "3.13.15",
+  "utc_started": "2026-10-08T08:55:46.439548+00:00",
+  "utc_finished": "2026-10-08T08:57:44.426082+00:00",
+  "calibration": [
+    {
+      "policy": "baseline",
+      "summary": {
+        "constant_access_correct": 4,
+        "constant_access_accuracy": 0.3333333333333333,
+        "recall": {
+          "billing": 0.0,
+          "access": 1.0,
+          "bug": 0.5
+        },
+        "scores": {
+          "attempts": 12,
+          "correct": 6,
+          "valid": 12,
+          "complete": 12,
+          "accuracy": 0.5,
+          "valid_rate": 1.0,
+          "completion_rate": 1.0,
+          "confusion": [
+            [
+              0,
+              3,
+              1,
+              0
+            ],
+            [
+              0,
+              4,
+              0,
+              0
+            ],
+            [
+              0,
+              2,
+              2,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "policy": "prompt",
+      "summary": {
+        "constant_access_correct": 4,
+        "constant_access_accuracy": 0.3333333333333333,
+        "recall": {
+          "billing": 0.0,
+          "access": 0.25,
+          "bug": 1.0
+        },
+        "scores": {
+          "attempts": 12,
+          "correct": 5,
+          "valid": 12,
+          "complete": 12,
+          "accuracy": 0.4166666666666667,
+          "valid_rate": 1.0,
+          "completion_rate": 1.0,
+          "confusion": [
+            [
+              0,
+              1,
+              3,
+              0
+            ],
+            [
+              0,
+              1,
+              3,
+              0
+            ],
+            [
+              0,
+              0,
+              4,
+              0
+            ]
+          ]
+        }
+      }
+    }
+  ],
+  "selected_policy": "baseline",
+  "heldout": {
+    "constant_access_correct": 2,
+    "constant_access_accuracy": 0.3333333333333333,
+    "recall": {
+      "billing": 0.0,
+      "access": 1.0,
+      "bug": 0.0
+    },
+    "scores": {
+      "attempts": 6,
+      "correct": 2,
+      "valid": 6,
+      "complete": 6,
+      "accuracy": 0.3333333333333333,
+      "valid_rate": 1.0,
+      "completion_rate": 1.0,
+      "confusion": [
+        [
+          0,
+          2,
+          0,
+          0
+        ],
+        [
+          0,
+          2,
+          0,
+          0
+        ],
+        [
+          0,
+          2,
+          0,
+          0
+        ]
+      ]
+    }
+  },
+  "resources_before": {
+    "available_ram_gib": 48.693599700927734,
+    "device_used_mib": 0
+  },
+  "resources_after": {
+    "available_ram_gib": 48.41451644897461,
+    "device_used_mib": 3
+  },
+  "external_after": {
+    "python": "3.13.15",
+    "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+    "post_worker_gpu": "Tesla T4, 3 MiB, 15360 MiB",
+    "post_worker_compute_apps": ""
+  },
+  "teardown": [
+    {
+      "owned_process_group_stopped": true,
+      "server_returncode": 0
+    },
+    {
+      "owned_process_group_stopped": true,
+      "server_returncode": 0
+    }
+  ],
+  "learner_validation": "pending",
+  "publication": "not-published",
+  "limitations": [
+    "High RAM only; ordinary standard-RAM Colab not certified",
+    "Prompt challenger executed; alternative format challenger not exercised",
+    "Handwritten 12 calibration / 6 public held-out tickets; not production accuracy",
+    "Instructor reference execution, not independent learner validation or latency A/B"
+  ],
+  "artifact_sha256": {
+    "calibration-service.json": "8d103f4556f45b816e5f9c616a389648d255ebcd69ebb564b453b4490d1e9db9",
+    "task.json": "f56e83b4ab387885138b41f277cc115f232c8eb64f602c758cb37c1acb7a46c8",
+    "capture.json": "d3d955e1395275a7ecf7c4b39a8a46f550e584c968277b6f8258d4de6babfeca",
+    "student-template.ipynb": "a44b7be231be16d94a5e573892fa6688e5fe92babdf1f0cdef28ba2337a976e0",
+    "decision.json": "ddf98a91f140349a3d4abd9ed19b63cb0b9226410cda97671cc4467d3a460915"
+  },
+  "implementation_sha256": {
+    "teaching/topic04_lab.py": "ed87fa65d40a51fa9f026c71cf5ac112ecd396309f0d85560d5779f094b37c5d",
+    "teaching/topic04_task.py": "df68d556e1451ad9f5602b3678547e7cf561f000c4d9e95609c3bf7dded7ee03",
+    "teaching/topic04_sse.py": "bb72bc0197084fc10d83b60112214bcb7dae1cae174a2b6a27820b03b6ad865b",
+    "teaching/topic04_investigation.py": "f88243d0278178e9b067b06d22a54194b084f4178bffa78be45e5dd94abff344",
+    "teaching/topic04_plots.py": "473c82d624278c839f0a12bb0449787d893efdd7ec05d1fdeebe4b3f7739c47d"
+  }
+}

@@ -92,6 +92,11 @@
   font-size: 20px; color: var(--c-amber-ink, #8A5A00);
 }
 .seq-msg.is-step-hidden, .funnel-stage.is-step-hidden { /* uses global ghost (opacity .08) */ }
+/* Sparse teaching sequences need readable labels, not the dense trace default. */
+.seq-stage[data-size="body"] .seq-actor,
+.seq-stage[data-size="body"] .seq-msg .seq-msg-label,
+.seq-stage[data-size="body"] .seq-msg .seq-lat { font-size: var(--fs-small); }
+.seq-stage[data-size="body"] .seq-msg .seq-msg-label { top: -40px; }
 
 /* running latency budget (right gutter) */
 .seq-budget {

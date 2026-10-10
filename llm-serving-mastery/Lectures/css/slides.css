@@ -1035,6 +1035,10 @@ interactive-demo {
   line-height: 1.35;
   color: var(--ink-3);
 }
+/* Opt-in readable walkthrough: shorten the copy instead of shrinking labels. */
+.walk-flow[data-size="body"] .walk-label { font-size: var(--fs-body); }
+.walk-flow[data-size="body"] .walk-detail { font-size: var(--fs-small); }
+.walk-flow[data-size="body"] .walk-step { padding-top: 12px; padding-bottom: 12px; }
 .walk-step .walk-detail code,
 .walk-step .walk-state {
   font-family: var(--font-mono);
