@@ -1,0 +1,115 @@
+{
+  "schema": "notebook-browser-release-v1",
+  "scope": "Technical execution only. Private results and instructor solutions are not published. Free GPU quota and independent learner completion are not certified.",
+  "notebooks": [
+    {
+      "route": "00",
+      "topic": "00",
+      "notebook": "seminars/00-live-demo-pipeline-vs-vllm.ipynb",
+      "date": "2026-10-11",
+      "status": "passed",
+      "execution": "live-browser-colab",
+      "profile": "Tesla T4 / 12.67 GB standard RAM / paid account; High RAM disabled",
+      "learnerValidation": "pending",
+      "freeQuota": "unverified",
+      "rehearsedTemplateSha256": "92014221e33062011d0885af91fd38737eb65fea7db00746e6fab233a80851dd",
+      "deliveredSha256": "92014221e33062011d0885af91fd38737eb65fea7db00746e6fab233a80851dd",
+      "proseOnlyFollowUp": false,
+      "codeCells": 12,
+      "variants": [
+        "default"
+      ]
+    },
+    {
+      "route": "01",
+      "topic": "01",
+      "notebook": "seminars/01-serving-system-baseline.ipynb",
+      "date": "2026-10-11",
+      "status": "passed",
+      "execution": "live-browser-colab",
+      "profile": "Tesla T4 / 12.67 GB standard RAM / paid account; High RAM disabled",
+      "learnerValidation": "pending",
+      "freeQuota": "unverified",
+      "rehearsedTemplateSha256": "3e8c6e0b707f6ff5b599232cc4cb7c7be9f442d3cd35962ead4d452989066aec",
+      "deliveredSha256": "f067d48716e44ab06fbbb9438db63b7606b770e3e9c9e309454d4ceab15f19af",
+      "proseOnlyFollowUp": true,
+      "codeCells": 15,
+      "variants": [
+        "default"
+      ]
+    },
+    {
+      "route": "02",
+      "topic": "02",
+      "notebook": "seminars/02-gpu-profiling-and-bottlenecks.ipynb",
+      "date": "2026-10-11",
+      "status": "passed",
+      "execution": "live-browser-colab",
+      "profile": "Tesla T4 / 12.67 GB standard RAM / paid account; High RAM disabled",
+      "learnerValidation": "pending",
+      "freeQuota": "unverified",
+      "rehearsedTemplateSha256": "a8816243300212d5d63cfdbb692c7902d1a64df812ce7679d4baa8b037dc3ec5",
+      "deliveredSha256": "a8816243300212d5d63cfdbb692c7902d1a64df812ce7679d4baa8b037dc3ec5",
+      "proseOnlyFollowUp": false,
+      "codeCells": 28,
+      "variants": [
+        "default"
+      ]
+    },
+    {
+      "route": "03",
+      "topic": "03",
+      "notebook": "seminars/03-quantization-pilot.ipynb",
+      "date": "2026-10-11",
+      "status": "passed",
+      "execution": "live-browser-colab",
+      "profile": "Tesla T4 / 12.67 GB standard RAM / paid account; High RAM disabled",
+      "learnerValidation": "pending",
+      "freeQuota": "unverified",
+      "rehearsedTemplateSha256": "f737569fae85d33f9faba213dc997710c983f93e415a16aab0d1de252f5bc5a9",
+      "deliveredSha256": "afe4ff7599ba046d929105db11b377914feb4534f39596190a23e8aef386fe17",
+      "proseOnlyFollowUp": true,
+      "codeCells": 49,
+      "variants": [
+        "default"
+      ]
+    },
+    {
+      "route": "03-historical",
+      "topic": "03",
+      "notebook": "seminars/03-quantization-tradeoffs.ipynb",
+      "date": "2026-10-11",
+      "status": "passed",
+      "execution": "live-browser-colab",
+      "profile": "CPU / standard RAM; optional 24 GiB GPU route not tested",
+      "learnerValidation": "pending",
+      "freeQuota": "unverified",
+      "rehearsedTemplateSha256": "a8f4decc3510e27a092bdc4e19ba87d175aa57f100093fc9abb7a8a6b03a9db9",
+      "deliveredSha256": "1d76b5f996e8e4fdc14da8021492b302845ca70e3ac21a45a46a5916031c1a7d",
+      "proseOnlyFollowUp": true,
+      "codeCells": 15,
+      "variants": [
+        "default"
+      ]
+    },
+    {
+      "route": "04",
+      "topic": "04",
+      "notebook": "seminars/04-vllm-openai-serving.ipynb",
+      "date": "2026-10-11",
+      "status": "passed",
+      "execution": "live-browser-colab",
+      "profile": "Tesla T4 / 12.67 GB standard RAM / paid account; High RAM disabled",
+      "learnerValidation": "pending",
+      "freeQuota": "unverified",
+      "rehearsedTemplateSha256": "e72dd583827d84f83fe8961b316617c973c324102d47b781ca70a6e67122dcea",
+      "deliveredSha256": "0aac86197b5c314285139fe771728999ebfba728dfc73cb07e9c5ba2c28d44ac",
+      "proseOnlyFollowUp": true,
+      "codeCells": 43,
+      "variants": [
+        "prompt",
+        "format"
+      ]
+    }
+  ]
+}
