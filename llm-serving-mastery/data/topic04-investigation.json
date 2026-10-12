@@ -9,7 +9,7 @@
   "runtimeRehearsal": "passed",
   "runtimeEvidence": "data/notebook-release.json",
   "formatRuntimeEvidence": "data/notebook-release.json",
-  "runtimeScope": "The current v3 code passed separate prompt and format live-browser Colab instructor runs on Tesla T4 / standard 12.67 GB RAM on 11 October 2026, High RAM disabled. Each retained calibration, froze a decision before held-out and stopped both owned servers. Results and instructor solutions remain private. This is technical execution, not free GPU quota, learner validation, useful classifier quality or latency superiority.",
+  "runtimeScope": "The current v3 code in managed Python 3.11.17 passed two exact live-browser Colab runs per prompt/format route on Tesla T4 / standard 12.67 GB RAM on 12 October 2026 (UTC), High RAM disabled. Frozen CPU and serving profiles inherit no Colab scientific packages. Each retained calibration, froze a decision before held-out and stopped both owned servers. Results and instructor solutions remain private. This is technical execution, not free GPU quota, learner validation, useful classifier quality or latency superiority. Provider kernel, OS and driver are outside the dependency lock.",
   "learnerValidation": "pending",
   "historicalServiceEvidence": "seminars/runs/2026-10-02-topic04-serving/capture.json",
   "historicalScope": "v3 service runner on RTX 5070 Ti; not this new notebook on a student T4",

@@ -1,21 +1,21 @@
 {
-  "schema": "notebook-browser-release-v1",
+  "schema": "notebook-browser-release-v2",
   "scope": "Technical execution only. Private results and instructor solutions are not published. Free GPU quota and independent learner completion are not certified.",
   "notebooks": [
     {
       "route": "00",
       "topic": "00",
       "notebook": "seminars/00-live-demo-pipeline-vs-vllm.ipynb",
-      "date": "2026-10-11",
+      "date": "2026-10-12",
       "status": "passed",
       "execution": "live-browser-colab",
       "profile": "Tesla T4 / 12.67 GB standard RAM / paid account; High RAM disabled",
       "learnerValidation": "pending",
       "freeQuota": "unverified",
-      "rehearsedTemplateSha256": "92014221e33062011d0885af91fd38737eb65fea7db00746e6fab233a80851dd",
-      "deliveredSha256": "92014221e33062011d0885af91fd38737eb65fea7db00746e6fab233a80851dd",
-      "proseOnlyFollowUp": false,
-      "codeCells": 12,
+      "rehearsedTemplateSha256": "17aa067696c406fd2bdb96a02fa9ad1cfb41c4bd24948ee2fe282a3229a527f3",
+      "deliveredSha256": "90e4db08ad0591f00ef45887f93747202c8e863d5f08498f7e71a95ff0237e7a",
+      "proseOnlyFollowUp": true,
+      "codeCells": 16,
       "variants": [
         "default"
       ]
@@ -24,16 +24,16 @@
       "route": "01",
       "topic": "01",
       "notebook": "seminars/01-serving-system-baseline.ipynb",
-      "date": "2026-10-11",
+      "date": "2026-10-12",
       "status": "passed",
       "execution": "live-browser-colab",
       "profile": "Tesla T4 / 12.67 GB standard RAM / paid account; High RAM disabled",
       "learnerValidation": "pending",
       "freeQuota": "unverified",
-      "rehearsedTemplateSha256": "3e8c6e0b707f6ff5b599232cc4cb7c7be9f442d3cd35962ead4d452989066aec",
-      "deliveredSha256": "f067d48716e44ab06fbbb9438db63b7606b770e3e9c9e309454d4ceab15f19af",
+      "rehearsedTemplateSha256": "aa3359ff731bfd5a7d8cc83a5dfc9a148710acd9d8e89c4d66992d73f24dca3e",
+      "deliveredSha256": "61b34f33614a5cc838605391e7cda90cd133162bb8288c6192bb66e8057f9b8f",
       "proseOnlyFollowUp": true,
-      "codeCells": 15,
+      "codeCells": 19,
       "variants": [
         "default"
       ]
@@ -42,16 +42,16 @@
       "route": "02",
       "topic": "02",
       "notebook": "seminars/02-gpu-profiling-and-bottlenecks.ipynb",
-      "date": "2026-10-11",
+      "date": "2026-10-12",
       "status": "passed",
       "execution": "live-browser-colab",
       "profile": "Tesla T4 / 12.67 GB standard RAM / paid account; High RAM disabled",
       "learnerValidation": "pending",
       "freeQuota": "unverified",
-      "rehearsedTemplateSha256": "a8816243300212d5d63cfdbb692c7902d1a64df812ce7679d4baa8b037dc3ec5",
-      "deliveredSha256": "a8816243300212d5d63cfdbb692c7902d1a64df812ce7679d4baa8b037dc3ec5",
-      "proseOnlyFollowUp": false,
-      "codeCells": 28,
+      "rehearsedTemplateSha256": "4465bf2108edc91e0ac0481707591dd82f1f7bba89c29a40b4220bbeee99d3a7",
+      "deliveredSha256": "1cd7b287f8883dd3cee3ca782a3d21341d0026b5424a3a453b77a7390127a882",
+      "proseOnlyFollowUp": true,
+      "codeCells": 32,
       "variants": [
         "default"
       ]
@@ -60,16 +60,16 @@
       "route": "03",
       "topic": "03",
       "notebook": "seminars/03-quantization-pilot.ipynb",
-      "date": "2026-10-11",
+      "date": "2026-10-12",
       "status": "passed",
       "execution": "live-browser-colab",
       "profile": "Tesla T4 / 12.67 GB standard RAM / paid account; High RAM disabled",
       "learnerValidation": "pending",
       "freeQuota": "unverified",
-      "rehearsedTemplateSha256": "f737569fae85d33f9faba213dc997710c983f93e415a16aab0d1de252f5bc5a9",
-      "deliveredSha256": "afe4ff7599ba046d929105db11b377914feb4534f39596190a23e8aef386fe17",
+      "rehearsedTemplateSha256": "f2f914b3fcfbc94ced810106ed669e2d824e453494a38da757477e1cc5bda1b1",
+      "deliveredSha256": "dad05de24cb2c3ed30e9962cfff7b697528971306caf3ac839d0289e02c19916",
       "proseOnlyFollowUp": true,
-      "codeCells": 49,
+      "codeCells": 54,
       "variants": [
         "default"
       ]
@@ -78,16 +78,16 @@
       "route": "03-historical",
       "topic": "03",
       "notebook": "seminars/03-quantization-tradeoffs.ipynb",
-      "date": "2026-10-11",
+      "date": "2026-10-12",
       "status": "passed",
       "execution": "live-browser-colab",
       "profile": "CPU / standard RAM; optional 24 GiB GPU route not tested",
       "learnerValidation": "pending",
       "freeQuota": "unverified",
-      "rehearsedTemplateSha256": "a8f4decc3510e27a092bdc4e19ba87d175aa57f100093fc9abb7a8a6b03a9db9",
-      "deliveredSha256": "1d76b5f996e8e4fdc14da8021492b302845ca70e3ac21a45a46a5916031c1a7d",
+      "rehearsedTemplateSha256": "ae8688ca593230337cdd6b638ae8c226bf7a9467432ed224a4c0bce16e79a287",
+      "deliveredSha256": "bf057b7d68277651bc3284a29e00544b2bee8a864f1b1b1f0e7de3f48f2c34d8",
       "proseOnlyFollowUp": true,
-      "codeCells": 15,
+      "codeCells": 19,
       "variants": [
         "default"
       ]
@@ -96,16 +96,16 @@
       "route": "04",
       "topic": "04",
       "notebook": "seminars/04-vllm-openai-serving.ipynb",
-      "date": "2026-10-11",
+      "date": "2026-10-12",
       "status": "passed",
       "execution": "live-browser-colab",
       "profile": "Tesla T4 / 12.67 GB standard RAM / paid account; High RAM disabled",
       "learnerValidation": "pending",
       "freeQuota": "unverified",
-      "rehearsedTemplateSha256": "e72dd583827d84f83fe8961b316617c973c324102d47b781ca70a6e67122dcea",
-      "deliveredSha256": "0aac86197b5c314285139fe771728999ebfba728dfc73cb07e9c5ba2c28d44ac",
+      "rehearsedTemplateSha256": "5e23c67d9a9baf91845e84b620036988f6598399c4c8768ce288821c2431a17a",
+      "deliveredSha256": "76a936284dda8c1cdc9bd651a5377d6e39e4afa1026d252daeb389de0551a5a8",
       "proseOnlyFollowUp": true,
-      "codeCells": 43,
+      "codeCells": 47,
       "variants": [
         "prompt",
         "format"
