@@ -110,6 +110,24 @@
         "prompt",
         "format"
       ]
+    },
+    {
+      "route": "05",
+      "topic": "05",
+      "notebook": "seminars/05-paged-attention-and-batching.ipynb",
+      "date": "2026-10-13",
+      "status": "passed",
+      "execution": "live-browser-colab",
+      "profile": "Tesla T4 / 12.67 GB standard RAM / paid account; High RAM disabled",
+      "learnerValidation": "pending",
+      "freeQuota": "unverified",
+      "rehearsedTemplateSha256": "30d8d30df678977b23de04664931a21f7234870bb6a740495c1685e442a99215",
+      "deliveredSha256": "30d8d30df678977b23de04664931a21f7234870bb6a740495c1685e442a99215",
+      "proseOnlyFollowUp": false,
+      "codeCells": 38,
+      "variants": [
+        "default"
+      ]
     }
   ]
 }

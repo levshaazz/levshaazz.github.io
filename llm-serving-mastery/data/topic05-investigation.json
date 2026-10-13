@@ -1,0 +1,16 @@
+{
+  "schema": "topic05-investigation-v1",
+  "status": "released",
+  "materials": "ready",
+  "cpuRehearsal": "passed",
+  "gpuRehearsal": "passed",
+  "learnerValidation": "pending",
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "logicalKV": {"layers":24,"kvHeads":2,"queryHeads":14,"headWidth":64,"elementBytes":2,"bytesPerPosition":12288},
+  "pageExample": {"kind":"invented","lengths":[17,31,33],"blockSizes":[8,16,32],"blockCounts":[12,7,4],"unusedSlots":[15,31,47]},
+  "scheduleExample": {"kind":"invented decode-only unit-time model","slots":2,"prefillCost":0,"requests":[{"id":"A","arrival":0,"decode_steps":5},{"id":"B","arrival":0,"decode_steps":1},{"id":"C","arrival":0,"decode_steps":1},{"id":"D","arrival":2,"decode_steps":2}],"staticFinish":{"A":5,"B":1,"C":6,"D":7},"continuousFinish":{"A":5,"B":1,"C":2,"D":4}},
+  "gpuProtocol": {"status":"two-exact-reference-browser-runs-passed","comparison":"matched pipeline/vLLM OFFLINE burst comparison; not HTTP client latency or an isolated PagedAttention ablation","studentChange":"submitted burst cohort size1 versus4","repeats":3,"caseCount":12,"requestRowsPerEngine":72,"cohortIntervalsPerEngine":45,"outputCap":16,"prefixCaching":"explicitly disabled in control","requiredIdentity":["model revision","dtype","rendered token IDs","request population","EOS and output cap","warmup","clock boundaries"],"resourceProfile":"Observed T4 / standard RAM, paid account; startup6GiB free host/device, running2GiB host/512MiB device. Sampled bounds are not peak memory; free quota unverified.","results":"private"},
+  "sources": ["https://arxiv.org/abs/2309.06180","https://www.usenix.org/conference/osdi22/presentation/yu","https://docs.vllm.ai/en/v0.30.0/configuration/optimization/","https://github.com/vllm-project/vllm/blob/v0.30.0/vllm/v1/core/sched/scheduler.py","https://github.com/vllm-project/vllm/blob/v0.30.0/vllm/v1/core/kv_cache_manager.py"],
+  "publication": "Student release; exact Pages source receipt required; teacher books and execution results remain private"
+}
