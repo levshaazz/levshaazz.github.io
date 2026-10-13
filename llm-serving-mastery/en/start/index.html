@@ -62,15 +62,23 @@ Copy the resulting files from Colab to your private repository before the runtim
 <strong>not observed</strong>; a diagram is not permission to invent internal timestamps. Save the completed
 notebook without credentials or cached weights. Study Topic 02 and save its artifacts as listed on
 its topic page. Keep <code>JOURNAL.md</code> as the record of changes, measurements and failed hypotheses.</p>
-<p>Topics 03–04 begin with CPU-only worked examples and explicitly labeled recorded instructor
-replays. Those cells need no network, weights or GPU; they do not count as your own experiment.
-Their bounded CUDA routes require Linux/WSL, an idle GPU and at least 24 GiB available host RAM.
+<p>Topics 03–04 begin with supplied frozen CPU setup, then small student-owned
+functions, numerical mechanisms and labelled recorded model data. Installation
+can need network access; CPU work does not count as your own GPU experiment.
+GPU work is opt-in after CPU completion. Current student startup checks require
+5 GiB host/device headroom; during work Topic03 requires 2 GiB host/1 GiB device,
+Topic04 2 GiB host/512 MiB device. These are workload-specific measured profiles,
+not the historical operator’s 24 GiB gate or a guarantee of free Colab quota.
 Keep the paired natural-EOS/forced-length evidence separate in Topic 03, and complete/partial/failed
 streams separate in Topic 04. After your own successful run, validate the JSON before submission:</p>
-<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">python</span><span style="color:#9ECBFF"> scripts/validate_topic03.py</span><span style="color:#9ECBFF"> evidence/topic-03-comparison.json</span></span>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">python</span><span style="color:#9ECBFF"> scripts/validate_topic02.py</span><span style="color:#9ECBFF"> path/to/topic02-benchmark.json</span></span>
+<span class="line"><span style="color:#B392F0">python</span><span style="color:#9ECBFF"> scripts/validate_topic03_pilot.py</span><span style="color:#79B8FF"> --validate</span><span style="color:#9ECBFF"> path/to/topic03-pilot.json</span></span>
 <span class="line"><span style="color:#B392F0">python</span><span style="color:#9ECBFF"> scripts/validate_topic04.py</span><span style="color:#9ECBFF"> evidence/topic-04-service.json</span></span></code></pre>
 <p>Include <code>evidence/topic-03-decision.md</code> and <code>evidence/topic-04-analysis.md</code> as directed in the notebooks.
 Passing these CPU validators proves artifact consistency, not production quality, speed or a score.
+Historical02/04 artifacts use the explicitly named <code>_historical.py</code> scripts;
+historical03 uses <code>validate_topic03.py</code>. They do not accept current artifacts and
+are not instructions to install an old environment. Keep the judge separate.
 Preserve failed attempts locally, stop on resource pressure, and never delete model caches to retry.</p>
 <h2 id="5-run-the-gpu-streaming-smoke">5. Run the GPU streaming smoke</h2>
 <p>On Linux or a suitable Colab environment, run <code>bash serve.sh</code> from your submission checkout.
@@ -116,7 +124,7 @@ tokens or hidden judge material. Reviewed results are due within five calendar d
 deadline; request review within three calendar days of publication. A judge error receives no zero
 and is rerun under the course incident policy. See the
 <a href="https://levshaazz.github.io/llm-serving-mastery/en/syllabus/">syllabus</a> for the complete policy.</p>
-</article></div></main><footer class="site-footer"><div class="wrap" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;width:100%"><div>LLM Serving Mastery · vLLM, Multi-GPU, and Production Deployment</div><div><a href="/llm-serving-mastery/en/changelog">Changelog</a> · <a href="/llm-serving-mastery/en/provenance">Provenance</a> · <a href="https://github.com/levshaazz/llm-serving-mastery-submission-example">Student example</a></div><div>Updated 2026-10-13 · course build 5030413</div></div></footer><script>
+</article></div></main><footer class="site-footer"><div class="wrap" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;width:100%"><div>LLM Serving Mastery · vLLM, Multi-GPU, and Production Deployment</div><div><a href="/llm-serving-mastery/en/changelog">Changelog</a> · <a href="/llm-serving-mastery/en/provenance">Provenance</a> · <a href="https://github.com/levshaazz/llm-serving-mastery-submission-example">Student example</a></div><div>Updated 2026-10-13 · course build 8f3cc6c</div></div></footer><script>
     document.getElementById('theme-toggle')?.addEventListener('click', () => {
       const root = document.documentElement;
       const next = root.dataset.theme === 'dark' ? 'light' : 'dark';

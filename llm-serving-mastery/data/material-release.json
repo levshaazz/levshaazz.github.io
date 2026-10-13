@@ -1,0 +1,70 @@
+{
+  "schema": "material-status-release-v1",
+  "date": "2026-10-13",
+  "scope": "Editorial material acceptance is separate from technical execution, learner validation and judge calibration. Independent reviewers are agents, not human experts.",
+  "judge": "New host calibration is a separate owner-coordinated stage; this release changes no round policy.",
+  "topics": [
+    {
+      "topic": "01",
+      "materials": {
+        "book": "ready",
+        "slides": "ready",
+        "lab": "ready",
+        "assignment": "ready",
+        "reading": "ready",
+        "evidence": "ready"
+      },
+      "reviewerKind": "independent-agent",
+      "notebookRehearsal": "passed",
+      "learnerValidation": "pending",
+      "freeGpuQuota": "unverified"
+    },
+    {
+      "topic": "02",
+      "materials": {
+        "book": "ready",
+        "slides": "ready",
+        "lab": "ready",
+        "assignment": "ready",
+        "reading": "ready",
+        "evidence": "ready"
+      },
+      "reviewerKind": "independent-agent",
+      "notebookRehearsal": "passed",
+      "learnerValidation": "pending",
+      "freeGpuQuota": "unverified",
+      "optionalLivePrompt": "historical-unavailable; keep RUN_CONCRETE_PROMPT_LIVE=False; migration pending"
+    },
+    {
+      "topic": "03",
+      "materials": {
+        "book": "ready",
+        "slides": "ready",
+        "lab": "ready",
+        "assignment": "ready",
+        "reading": "ready",
+        "evidence": "ready"
+      },
+      "reviewerKind": "independent-agent",
+      "notebookRehearsal": "passed",
+      "learnerValidation": "pending",
+      "freeGpuQuota": "unverified",
+      "historicalOptionalGpu": "blocked; default CPU only"
+    },
+    {
+      "topic": "04",
+      "materials": {
+        "book": "ready",
+        "slides": "ready",
+        "lab": "ready",
+        "assignment": "ready",
+        "reading": "ready",
+        "evidence": "ready"
+      },
+      "reviewerKind": "independent-agent",
+      "notebookRehearsal": "passed",
+      "learnerValidation": "pending",
+      "freeGpuQuota": "unverified"
+    }
+  ]
+}
