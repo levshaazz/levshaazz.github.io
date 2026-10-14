@@ -1,0 +1,9 @@
+{
+  "schema": "classroom-preview-v1",
+  "topic": "05",
+  "notebook": "classroom/topic05-student-v2.ipynb",
+  "sha256": "0540c86a79b7761813f407cfd349e4082af96562332b1f7fc7ee0d2d0742afa1",
+  "status": "in-revision",
+  "exactTemplateBrowserRehearsal": "pending",
+  "scope": "Emergency classroom replacement requested by course owner. Historical acceptance does not transfer to the changed template. Solutions and raw results remain private."
+}
