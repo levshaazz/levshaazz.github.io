@@ -1,0 +1,62 @@
+{
+  "round": 2,
+  "source_round": 1,
+  "kind": "inherited-verified-reference-not-a-new-run",
+  "measured_at": "2026-09-30T15:08:16+00:00",
+  "original_reference_sha256": "2dcd5475edba1a0bdbc418bc8a91569c6c1b7505387037ca75715ee21735f929",
+  "reference": {
+    "gpu": "NVIDIA GeForce RTX 5070 Ti",
+    "submission": {
+      "author": "your-github-handle",
+      "model": "Qwen/Qwen2.5-3B-Instruct",
+      "model_revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "stack": "vllm",
+      "notes": "reference submission — plain vLLM defaults, FP16"
+    },
+    "quality": {
+      "gsm8k": 0.59,
+      "ifeval": 0.595,
+      "mmlu_pro": 0.4643
+    },
+    "speed": {
+      "32": {
+        "output_tok_s": 2145.05,
+        "ttft_p50_s": 0.4131,
+        "ttft_p95_s": 0.5524,
+        "tpot_p50_ms": 14.81,
+        "output_tokens_mean": 256.0,
+        "output_tokens_expected": 256,
+        "requests_ok": 282,
+        "requests_failed": 0,
+        "measured_s": 27.2
+      },
+      "64": {
+        "output_tok_s": 2925.86,
+        "ttft_p50_s": 0.437,
+        "ttft_p95_s": 0.5857,
+        "tpot_p50_ms": 21.27,
+        "output_tokens_mean": 256.0,
+        "output_tokens_expected": 256,
+        "requests_ok": 314,
+        "requests_failed": 0,
+        "measured_s": 18.6
+      }
+    },
+    "measured_at": "2026-09-30T15:08:16+00:00"
+  },
+  "thresholds": {
+    "quality_gates": {
+      "gsm8k": 0.531,
+      "ifeval": 0.5355,
+      "mmlu_pro": 0.4179
+    },
+    "speed_bar_S": 2505.2,
+    "ttft_p95_slo_s": 0.8,
+    "max_error_rate": 0.01,
+    "min_output_share": 0.95,
+    "canary_min_similarity": 0.8,
+    "canary_similarity_stat": "mean",
+    "canary_max_short_outputs": 0,
+    "canary_min_unique_share": 0.75
+  }
+}
