@@ -1,0 +1,102 @@
+{
+  "round": 3,
+  "note": "Round03 reference: Qwen2.5-3B-Instruct, vLLM0.29 FP16 FLASH_ATTN, max-num-seqs64; only speed bar changes; all non-speed gates inherited from Round02 by owner decision15October2026.",
+  "verified": true,
+  "judge_provenance": {
+    "complete": true,
+    "judge_commit": "212ea934960a6e39032aa81ecaa54d327c7eabbe",
+    "judge_dirty": false,
+    "config_sha256": "5dff7253ae0f8528fac1eba508826c02bae754b339a1fcfbb3bfd8e4ad650d97",
+    "dependency_lock_sha256": "45c069dd07090aca7ca3b95fec91c334005eaadd63bb0315b803ab2f0afdf5f9",
+    "runner_sha256": "742843e237b122c5096c50c1f4fcea0ec91ab6eb73d315820bcf0a45ec83d6e1",
+    "python": "3.12.13",
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+    "packages": {
+      "lm_eval": "0.4.13",
+      "guidellm": "0.7.4",
+      "datasets": "4.4.1",
+      "transformers": "4.51.3",
+      "PyYAML": "6.0.2"
+    },
+    "speed_assets": {
+      "tokenizer": "Qwen/Qwen2.5-3B-Instruct",
+      "tokenizer_revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "corpus": {
+        "path": "Salesforce/wikitext",
+        "name": "wikitext-103-raw-v1",
+        "split": "test",
+        "revision": "b08601e04326c79dfdd32d625aee71d232d685c3"
+      }
+    },
+    "quality_datasets": {
+      "gsm8k": {
+        "path": "openai/gsm8k",
+        "name": "main",
+        "revision": "740312add88f781978c0658806c59bc2815b9866"
+      },
+      "ifeval": {
+        "path": "google/IFEval",
+        "name": null,
+        "revision": "966cd89545d6b6acfd7638bc708b98261ca58e84"
+      },
+      "mmlu_pro": {
+        "path": "TIGER-Lab/MMLU-Pro",
+        "name": null,
+        "revision": "b189ec765aa7ed75c8acfea42df31fdae71f97be"
+      }
+    }
+  },
+  "reference": {
+    "gpu": "NVIDIA GeForce RTX 5070 Ti",
+    "submission": {
+      "author": "your-github-handle",
+      "model": "Qwen/Qwen2.5-3B-Instruct",
+      "model_revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "stack": "vllm",
+      "notes": "Round03 FP16 engineering candidate seq64; FLASH_ATTN; no quantization"
+    },
+    "quality": {
+      "gsm8k": 0.58,
+      "ifeval": 0.635,
+      "mmlu_pro": 0.4214
+    },
+    "speed": {
+      "32": {
+        "output_tok_s": 2122.29,
+        "ttft_p50_s": 0.3868,
+        "ttft_p95_s": 0.5502,
+        "tpot_p50_ms": 14.99,
+        "output_tokens_mean": 256.0,
+        "output_tokens_expected": 256,
+        "requests_ok": 282,
+        "requests_failed": 0,
+        "measured_s": 27.5
+      },
+      "64": {
+        "output_tok_s": 3094.97,
+        "ttft_p50_s": 0.4355,
+        "ttft_p95_s": 0.5832,
+        "tpot_p50_ms": 21.04,
+        "output_tokens_mean": 256.0,
+        "output_tokens_expected": 256,
+        "requests_ok": 317,
+        "requests_failed": 0,
+        "measured_s": 21.4
+      }
+    },
+    "measured_at": "2026-10-15T12:52:39+00:00"
+  },
+  "quality_gates": {
+    "gsm8k": 0.531,
+    "ifeval": 0.5355,
+    "mmlu_pro": 0.4179
+  },
+  "speed_bar_S": 2562.8,
+  "ttft_p95_slo_s": 0.8,
+  "max_error_rate": 0.01,
+  "min_output_share": 0.95,
+  "canary_min_similarity": 0.8,
+  "canary_similarity_stat": "mean",
+  "canary_max_short_outputs": 0,
+  "canary_min_unique_share": 0.75
+}
