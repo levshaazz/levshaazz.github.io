@@ -1,0 +1,57 @@
+{
+ "schema": "topic06-measured-saturation-v1",
+ "provenance": {
+  "run": "colab-gpu-v1",
+  "date": "2026-10-18",
+  "model": "Qwen/Qwen2.5-3B-Instruct@aa8e7253",
+  "device": "Colab Tesla T4 15360MiB",
+  "vllm": "0.30.0",
+  "profile": "gpu",
+  "corpus": "classroom/topic06-purpose-v4 D-split A-short",
+  "journal_sha256": "902aef48bb728bbbf2abf0303fbe796da11193fd152e7728c67a41080d828cba",
+  "note": "Single measured run; closed-loop burst waves (3 requests per client); natural EOS gives ~2 output tokens per request; no ignore_eos; single-run jitter retained"
+ },
+ "waves": {
+  "8": {
+   "n": 24,
+   "completed": 24,
+   "wall_s": 0.702,
+   "output_tokens_mean": 2.0,
+   "throughput_tok_per_s": 68.4,
+   "ttft_p50_ms": 186,
+   "ttft_p95_ms": 332
+  },
+  "32": {
+   "n": 96,
+   "completed": 96,
+   "wall_s": 1.821,
+   "output_tokens_mean": 2.0,
+   "throughput_tok_per_s": 105.5,
+   "ttft_p50_ms": 306,
+   "ttft_p95_ms": 1241
+  },
+  "64": {
+   "n": 192,
+   "completed": 192,
+   "wall_s": 1.108,
+   "output_tokens_mean": 2.0,
+   "throughput_tok_per_s": 346.6,
+   "ttft_p50_ms": 334,
+   "ttft_p95_ms": 358
+  },
+  "128": {
+   "n": 384,
+   "completed": 384,
+   "wall_s": 1.67,
+   "output_tokens_mean": 2.0,
+   "throughput_tok_per_s": 459.9,
+   "ttft_p50_ms": 487,
+   "ttft_p95_ms": 676
+  }
+ },
+ "knee": {
+  "gamma": 0.5,
+  "wave": 64,
+  "explanation": "last doubling with >=50% throughput gain; curve still rising at 128 with zero errors for this workload"
+ }
+}
