@@ -1,0 +1,17 @@
+{
+ "schema": "topic07-search-mock-v1",
+ "date": "2026-10-20",
+ "profile": "mock",
+ "plan_frozen_before_run": true,
+ "configurations": 5,
+ "frozen_profile": "seqs-32",
+ "frozen_forecast": "p95 ~460ms on held-out",
+ "heldout": {
+  "thr": 4438.5,
+  "p95_ms": 460,
+  "timeouts": 0,
+  "n": 192,
+  "verdict": "accept"
+ },
+ "limits": "mock=declared synthetic; gpu=measured; single run; burst waves"
+}
