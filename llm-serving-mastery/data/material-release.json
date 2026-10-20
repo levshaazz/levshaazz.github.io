@@ -80,6 +80,22 @@
       "notebookRehearsal": "passed",
       "learnerValidation": "pending",
       "freeGpuQuota": "unverified"
+    },
+    {
+      "topic": "06",
+      "materials": {
+        "book": "ready",
+        "slides": "ready",
+        "lab": "ready",
+        "assignment": "ready",
+        "reading": "ready",
+        "evidence": "ready"
+      },
+      "reviewerKind": "independent-agent",
+      "notebookRehearsal": "pending-browser",
+      "learnerValidation": "pending",
+      "freeGpuQuota": "unverified",
+      "measuredRun": "single T4 saturation run bound 2026-10-18; mock profile validated end-to-end"
     }
   ]
 }
