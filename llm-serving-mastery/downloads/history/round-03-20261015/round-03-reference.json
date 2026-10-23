@@ -1,0 +1,70 @@
+{
+  "round": 3,
+  "kind": "new-measured-fp16-seq64-reference",
+  "measured_at": "2026-10-15T12:52:39+00:00",
+  "gpu": "NVIDIA GeForce RTX 5070 Ti",
+  "model": "Qwen/Qwen2.5-3B-Instruct",
+  "model_revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+  "vllm": "0.29.0",
+  "dtype": "FP16",
+  "attention_backend": "FLASH_ATTN",
+  "max_num_seqs": 64,
+  "weight_quantization": null,
+  "kv_quantization": null,
+  "source_commit": "4123db7b65adadc5dbe8011493a434131af09b4b",
+  "runtime_files_sha256": {
+    "prepare.sh": "e682f5bda6a5c337c8b63c9d76433fa75bb6c6885470aac7f77f36bad884dbac",
+    "serve.sh": "6d536969c3cdc21454d9859f0074fdb8ae67ca364cfa5e3461c3fa9d21b5753b",
+    "pyproject.toml": "85bce4dfc514e51af0d6a10d445581c3d91878dbd65a0e60e010f6f5259538c7",
+    "uv.lock": "995671be8432e7cffcd0e0e8a8e0b1ec27a73f20dc3a599086e3bd84e4467f04"
+  },
+  "S": 2562.893653919335,
+  "gain_vs_round02_percent": 2.2992176273351594,
+  "quality": {
+    "gsm8k": 0.58,
+    "ifeval": 0.635,
+    "mmlu_pro": 0.4214
+  },
+  "speed": {
+    "32": {
+      "output_tok_s": 2122.29,
+      "ttft_p50_s": 0.3868,
+      "ttft_p95_s": 0.5502,
+      "tpot_p50_ms": 14.99,
+      "output_tokens_mean": 256.0,
+      "output_tokens_expected": 256,
+      "requests_ok": 282,
+      "requests_failed": 0,
+      "measured_s": 27.5
+    },
+    "64": {
+      "output_tok_s": 3094.97,
+      "ttft_p50_s": 0.4355,
+      "ttft_p95_s": 0.5832,
+      "tpot_p50_ms": 21.04,
+      "output_tokens_mean": 256.0,
+      "output_tokens_expected": 256,
+      "requests_ok": 317,
+      "requests_failed": 0,
+      "measured_s": 21.4
+    }
+  },
+  "thresholds": {
+    "speed_bar_S": 2562.8,
+    "quality_gates": {
+      "gsm8k": 0.531,
+      "ifeval": 0.5355,
+      "mmlu_pro": 0.4179
+    },
+    "ttft_p95_slo_s": 0.8,
+    "max_error_rate": 0.01,
+    "min_output_share": 0.95,
+    "canary_min_similarity": 0.8,
+    "canary_similarity_stat": "mean",
+    "canary_max_short_outputs": 0,
+    "canary_min_unique_share": 0.75
+  },
+  "threshold_policy": "only speed changes; all non-speed gates remain exactly Round02",
+  "validation_scope": "Paired public speed confirmation and fixed-seed operational acceptance; not a fresh unseen holdout or statistical quality-equivalence claim.",
+  "private_reference_sha256": "8d4f9ed6587921186488b9d36a16616976c29d6f66d7f5a4572a851be31cc2e1"
+}

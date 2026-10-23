@@ -1,6 +1,6 @@
 {
   "round": 3,
-  "note": "Round03 reference: Qwen2.5-3B-Instruct, vLLM0.29 FP16 FLASH_ATTN, max-num-seqs64; only speed bar changes; all non-speed gates inherited from Round02 by owner decision15October2026.",
+  "note": "Round03 quality correction approved23October2026 after deadline: min(original published floor, round(0.90 * published Round03 reference quality, 4)) per benchmark. No stricter gate, new measurement, reference or seed. Speed2562.8, TTFT0.8s and all other gates unchanged; original thresholds retained in history/round-03.20261015.json.",
   "verified": true,
   "judge_provenance": {
     "complete": true,
@@ -87,9 +87,9 @@
     "measured_at": "2026-10-15T12:52:39+00:00"
   },
   "quality_gates": {
-    "gsm8k": 0.531,
+    "gsm8k": 0.522,
     "ifeval": 0.5355,
-    "mmlu_pro": 0.4179
+    "mmlu_pro": 0.3793
   },
   "speed_bar_S": 2562.8,
   "ttft_p95_slo_s": 0.8,

@@ -52,9 +52,9 @@
   "thresholds": {
     "speed_bar_S": 2562.8,
     "quality_gates": {
-      "gsm8k": 0.531,
+      "gsm8k": 0.522,
       "ifeval": 0.5355,
-      "mmlu_pro": 0.4179
+      "mmlu_pro": 0.3793
     },
     "ttft_p95_slo_s": 0.8,
     "max_error_rate": 0.01,
@@ -64,7 +64,47 @@
     "canary_max_short_outputs": 0,
     "canary_min_unique_share": 0.75
   },
-  "threshold_policy": "only speed changes; all non-speed gates remain exactly Round02",
+  "threshold_policy": "23October2026 quality-only correction: min(original published floor, rounded90percent of the published Round03 reference); no raised floors, all other published gates unchanged",
+  "quality_correction": {
+    "schema": "round03-student-favorable-quality-correction-v1",
+    "round": 3,
+    "approved_date_msk": "2026-10-23",
+    "formula": "min(original_published_floor, round(0.90 * published_round03_reference_quality, 4))",
+    "reference_sha256": "8d4f9ed6587921186488b9d36a16616976c29d6f66d7f5a4572a851be31cc2e1",
+    "original_thresholds_sha256": "38037637916e17fd4b7136afa1928347b604ff33f8cc2fdc09cd1d100fc684eb",
+    "corrected_thresholds_sha256": "bdb7b9a8e2cc40071d46fed5753d69584029d4e87b7ab0fcdaf2374b1f405514",
+    "original_thresholds_path": "judge/thresholds/history/round-03.20261015.json",
+    "original_public_downloads": "/downloads/history/round-03-20261015/",
+    "previous_quality_gates": {
+      "gsm8k": 0.531,
+      "ifeval": 0.5355,
+      "mmlu_pro": 0.4179
+    },
+    "reference_quality": {
+      "gsm8k": 0.58,
+      "ifeval": 0.635,
+      "mmlu_pro": 0.4214
+    },
+    "corrected_quality_gates": {
+      "gsm8k": 0.522,
+      "ifeval": 0.5355,
+      "mmlu_pro": 0.3793
+    },
+    "unchanged": [
+      "speed_bar_S",
+      "ttft_p95_slo_s",
+      "max_error_rate",
+      "min_output_share",
+      "canary_min_similarity",
+      "canary_similarity_stat",
+      "canary_max_short_outputs",
+      "canary_min_unique_share",
+      "reference",
+      "judge_provenance"
+    ],
+    "application": "All admitted frozen Round03 submissions, including quality failures; no retag or new solution needed. Preserve original commits, measurement records and protected seed. Rescore complete retained measurements; missing measurements require a qualified-host run. No late-submission exception is introduced.",
+    "award_protection": "The correction must not reduce any already officially awarded base points or Overdrive."
+  },
   "validation_scope": "Paired public speed confirmation and fixed-seed operational acceptance; not a fresh unseen holdout or statistical quality-equivalence claim.",
   "private_reference_sha256": "8d4f9ed6587921186488b9d36a16616976c29d6f66d7f5a4572a851be31cc2e1"
 }
