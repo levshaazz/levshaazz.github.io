@@ -1,0 +1,102 @@
+{
+  "round": 4,
+  "note": "Round04 Topic04 attention worker: FP16 TRITON_ATTN, same model/runtime and seq64. Speed bar is actual S floored to0.1 and capped at +5percent versus2562.8. Quality=min(corrected Round03 floor, rounded90percent of THIS reference); no floor increases. TTFT/error/output/canary gates unchanged.",
+  "verified": true,
+  "judge_provenance": {
+    "complete": true,
+    "judge_commit": "e546943547411c3f8a297778b7995bcf78d78c67",
+    "judge_dirty": false,
+    "config_sha256": "5dff7253ae0f8528fac1eba508826c02bae754b339a1fcfbb3bfd8e4ad650d97",
+    "dependency_lock_sha256": "45c069dd07090aca7ca3b95fec91c334005eaadd63bb0315b803ab2f0afdf5f9",
+    "runner_sha256": "d635509b33279f790931fc07e89c3b9a8b27b2920d3c9bf93b34089ad84cb900",
+    "python": "3.12.13",
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+    "packages": {
+      "lm_eval": "0.4.13",
+      "guidellm": "0.7.4",
+      "datasets": "4.4.1",
+      "transformers": "4.51.3",
+      "PyYAML": "6.0.2"
+    },
+    "speed_assets": {
+      "tokenizer": "Qwen/Qwen2.5-3B-Instruct",
+      "tokenizer_revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "corpus": {
+        "path": "Salesforce/wikitext",
+        "name": "wikitext-103-raw-v1",
+        "split": "test",
+        "revision": "b08601e04326c79dfdd32d625aee71d232d685c3"
+      }
+    },
+    "quality_datasets": {
+      "gsm8k": {
+        "path": "openai/gsm8k",
+        "name": "main",
+        "revision": "740312add88f781978c0658806c59bc2815b9866"
+      },
+      "ifeval": {
+        "path": "google/IFEval",
+        "name": null,
+        "revision": "966cd89545d6b6acfd7638bc708b98261ca58e84"
+      },
+      "mmlu_pro": {
+        "path": "TIGER-Lab/MMLU-Pro",
+        "name": null,
+        "revision": "b189ec765aa7ed75c8acfea42df31fdae71f97be"
+      }
+    }
+  },
+  "reference": {
+    "gpu": "NVIDIA GeForce RTX 5070 Ti",
+    "submission": {
+      "author": "your-github-handle",
+      "model": "Qwen/Qwen2.5-3B-Instruct",
+      "model_revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "stack": "vllm",
+      "notes": "Round03 reference: vLLM0.29 FP16 FLASH_ATTN, max-num-seqs64; no weight or KV quantization"
+    },
+    "quality": {
+      "gsm8k": 0.545,
+      "ifeval": 0.58,
+      "mmlu_pro": 0.4643
+    },
+    "speed": {
+      "32": {
+        "output_tok_s": 2175.06,
+        "ttft_p50_s": 0.5113,
+        "ttft_p95_s": 0.6722,
+        "tpot_p50_ms": 14.73,
+        "output_tokens_mean": 256.0,
+        "output_tokens_expected": 256,
+        "requests_ok": 315,
+        "requests_failed": 0,
+        "measured_s": 30.5
+      },
+      "64": {
+        "output_tok_s": 3164.84,
+        "ttft_p50_s": 0.4097,
+        "ttft_p95_s": 0.5471,
+        "tpot_p50_ms": 20.47,
+        "output_tokens_mean": 256.0,
+        "output_tokens_expected": 256,
+        "requests_ok": 381,
+        "requests_failed": 0,
+        "measured_s": 26.0
+      }
+    },
+    "measured_at": "2026-10-24T08:35:15+00:00"
+  },
+  "quality_gates": {
+    "gsm8k": 0.4905,
+    "ifeval": 0.522,
+    "mmlu_pro": 0.3793
+  },
+  "speed_bar_S": 2623.6,
+  "ttft_p95_slo_s": 0.8,
+  "max_error_rate": 0.01,
+  "min_output_share": 0.95,
+  "canary_min_similarity": 0.8,
+  "canary_similarity_stat": "mean",
+  "canary_max_short_outputs": 0,
+  "canary_min_unique_share": 0.75
+}

@@ -1,0 +1,100 @@
+{
+  "round": 4,
+  "kind": "measured-fp16-attention-backend-reference",
+  "topic": 4,
+  "measured_at": "2026-10-24T08:35:15+00:00",
+  "gpu": "NVIDIA GeForce RTX 5070 Ti",
+  "model": "Qwen/Qwen2.5-3B-Instruct",
+  "model_revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+  "vllm": "0.29.0",
+  "dtype": "FP16",
+  "attention_backend": "TRITON_ATTN",
+  "max_num_seqs": 64,
+  "weight_quantization": null,
+  "kv_quantization": null,
+  "benchmark_driver": "guidellm074-terminal-warmup-boundary-v1",
+  "source_commit": "c9076ecd1de1616a4aaa56be6ec12b87b62a984e",
+  "runtime_files_sha256": {
+    "prepare.sh": "e682f5bda6a5c337c8b63c9d76433fa75bb6c6885470aac7f77f36bad884dbac",
+    "serve.sh": "b49d88af595f5455c054d950a8c7a46d6a7879aacd48d7717411f9bac07936ab",
+    "pyproject.toml": "85bce4dfc514e51af0d6a10d445581c3d91878dbd65a0e60e010f6f5259538c7",
+    "uv.lock": "995671be8432e7cffcd0e0e8a8e0b1ec27a73f20dc3a599086e3bd84e4467f04"
+  },
+  "S": 2623.683839642269,
+  "quality": {
+    "gsm8k": 0.545,
+    "ifeval": 0.58,
+    "mmlu_pro": 0.4643
+  },
+  "speed": {
+    "32": {
+      "output_tok_s": 2175.06,
+      "ttft_p50_s": 0.5113,
+      "ttft_p95_s": 0.6722,
+      "tpot_p50_ms": 14.73,
+      "output_tokens_mean": 256.0,
+      "output_tokens_expected": 256,
+      "requests_ok": 315,
+      "requests_failed": 0,
+      "measured_s": 30.5
+    },
+    "64": {
+      "output_tok_s": 3164.84,
+      "ttft_p50_s": 0.4097,
+      "ttft_p95_s": 0.5471,
+      "tpot_p50_ms": 20.47,
+      "output_tokens_mean": 256.0,
+      "output_tokens_expected": 256,
+      "requests_ok": 381,
+      "requests_failed": 0,
+      "measured_s": 26.0
+    }
+  },
+  "public_speed_pairs": [
+    {
+      "control_S": 2566.6791710301463,
+      "candidate_S": 2631.994761886885,
+      "gain_percent": 2.5447508825391596
+    },
+    {
+      "control_S": 2577.7687605757037,
+      "candidate_S": 2630.502595208756,
+      "gain_percent": 2.045716258167185
+    }
+  ],
+  "negative_public_screens": [
+    {
+      "max_num_batched_tokens": 4096,
+      "S": 2580.603823526579,
+      "TTFT64_s": 1.0931,
+      "status": "rejected-public-screen",
+      "reason": "TTFT above unchanged0.8s SLO"
+    },
+    {
+      "max_num_batched_tokens": 8192,
+      "S": 2566.744371475274,
+      "TTFT64_s": 1.9003,
+      "status": "rejected-public-screen",
+      "reason": "TTFT above unchanged0.8s SLO"
+    }
+  ],
+  "thresholds": {
+    "speed_bar_S": 2623.6,
+    "quality_gates": {
+      "gsm8k": 0.4905,
+      "ifeval": 0.522,
+      "mmlu_pro": 0.3793
+    },
+    "ttft_p95_slo_s": 0.8,
+    "max_error_rate": 0.01,
+    "min_output_share": 0.95,
+    "canary_min_similarity": 0.8,
+    "canary_similarity_stat": "mean",
+    "canary_max_short_outputs": 0,
+    "canary_min_unique_share": 0.75
+  },
+  "quality_floor_rule": "min(corrected Round03 floor, rounded90percent of THIS actual Round04 reference),4decimal fractions; no floor increases",
+  "threshold_policy": "Speed floored from actual S and capped at +5percent versus2562.8, without rescaling. min(corrected Round03 floor, rounded90percent of THIS actual Round04 reference),4decimal fractions; no floor increases. TTFT and all other non-quality gates unchanged.",
+  "validation_scope": "Two matched public speed pairs on the same corrected measurement driver, then ONE protected Round04 full acceptance. Not statistical quality equivalence, a specific bandwidth mechanism or long-term hardware stability.",
+  "sanitized_reference_sha256": "581ff02ce5b3e63e36f3e80c50aa0c5536bc970e131b6a9b7191befc464faa3d"
+}
