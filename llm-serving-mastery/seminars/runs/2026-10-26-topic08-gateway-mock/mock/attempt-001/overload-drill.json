@@ -1,0 +1,133 @@
+{
+ "rows": [
+  {
+   "request_id": "r5",
+   "http_status": 200,
+   "outcome": "completed"
+  },
+  {
+   "request_id": "r6",
+   "http_status": 200,
+   "outcome": "completed"
+  },
+  {
+   "request_id": "r7",
+   "http_status": 200,
+   "outcome": "completed"
+  },
+  {
+   "request_id": "r8",
+   "http_status": 200,
+   "outcome": "completed"
+  },
+  {
+   "request_id": "r18",
+   "http_status": 429,
+   "outcome": "rejected"
+  },
+  {
+   "request_id": "r11",
+   "http_status": 200,
+   "outcome": "completed"
+  },
+  {
+   "request_id": "r15",
+   "http_status": 429,
+   "outcome": "rejected"
+  },
+  {
+   "request_id": "r12",
+   "http_status": 200,
+   "outcome": "completed"
+  },
+  {
+   "request_id": "r10",
+   "http_status": 200,
+   "outcome": "completed"
+  },
+  {
+   "request_id": "r9",
+   "http_status": 200,
+   "outcome": "completed"
+  },
+  {
+   "request_id": "r14",
+   "http_status": 429,
+   "outcome": "rejected"
+  },
+  {
+   "request_id": "r19",
+   "http_status": 429,
+   "outcome": "rejected"
+  },
+  {
+   "request_id": "r13",
+   "http_status": 429,
+   "outcome": "rejected"
+  },
+  {
+   "request_id": "r16",
+   "http_status": 429,
+   "outcome": "rejected"
+  },
+  {
+   "request_id": "r17",
+   "http_status": 429,
+   "outcome": "rejected"
+  },
+  {
+   "request_id": "r20",
+   "http_status": 429,
+   "outcome": "rejected"
+  },
+  {
+   "request_id": "r21",
+   "http_status": 429,
+   "outcome": "rejected"
+  },
+  {
+   "request_id": "r22",
+   "http_status": 429,
+   "outcome": "rejected"
+  },
+  {
+   "request_id": "r23",
+   "http_status": 429,
+   "outcome": "rejected"
+  },
+  {
+   "request_id": "r24",
+   "http_status": 429,
+   "outcome": "rejected"
+  },
+  {
+   "request_id": "r26",
+   "http_status": 429,
+   "outcome": "rejected"
+  },
+  {
+   "request_id": "r25",
+   "http_status": 429,
+   "outcome": "rejected"
+  },
+  {
+   "request_id": "r27",
+   "http_status": 429,
+   "outcome": "rejected"
+  },
+  {
+   "request_id": "r28",
+   "http_status": 429,
+   "outcome": "rejected"
+  }
+ ],
+ "counts": {
+  "completed": 8,
+  "rejected": 16
+ },
+ "envelope": {
+  "admitted": 4,
+  "queued": 4,
+  "rejected": 16
+ }
+}

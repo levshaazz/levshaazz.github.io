@@ -1,0 +1,32 @@
+[
+ {
+  "situation": "запрос без обязательного поля prompt",
+  "mechanism": "валидация на входе: планирование по факту",
+  "predicted_code": 400
+ },
+ {
+  "situation": "max_tokens = 999 при потолке 64",
+  "mechanism": "жёсткий кап на входе — admission control до очереди",
+  "predicted_code": 400
+ },
+ {
+  "situation": "свободных слотов нет, очередь полна",
+  "mechanism": "ограниченная очередь из лабы насыщения",
+  "predicted_code": "429 + Retry-After"
+ },
+ {
+  "situation": "клиент закрыл соединение посреди генерации",
+  "mechanism": "preemption: брошенная работа прекращается",
+  "predicted_code": "отмена: ответ не доставляется, журнал зовёт cancelled"
+ },
+ {
+  "situation": "движок поднял флаг down",
+  "mechanism": "терминальный исход: честный отказ без внутренностей",
+  "predicted_code": 503
+ },
+ {
+  "situation": "запрос ждёт в очереди дольше бюджета",
+  "mechanism": "бюджет запроса: timeout из Topic 06",
+  "predicted_code": 504
+ }
+]

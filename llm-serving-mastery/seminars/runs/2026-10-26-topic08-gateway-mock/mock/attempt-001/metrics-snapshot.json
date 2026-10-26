@@ -1,0 +1,52 @@
+[
+ {
+  "metric": "outcome:completed",
+  "value": 12,
+  "feeds": "растить нагрузку, пока хвост в SLO"
+ },
+ {
+  "metric": "outcome:invalid",
+  "value": 1,
+  "feeds": "чинить клиента или капы на входе"
+ },
+ {
+  "metric": "outcome:overloaded",
+  "value": 16,
+  "feeds": "отпускать нагрузку или пересматривать пул"
+ },
+ {
+  "metric": "outcome:deadline",
+  "value": 0,
+  "feeds": "пересматривать бюджет очереди"
+ },
+ {
+  "metric": "outcome:cancelled",
+  "value": 0,
+  "feeds": "искать брошенные генерации и отходы"
+ },
+ {
+  "metric": "queue:admitted",
+  "value": 5,
+  "feeds": "ёмкость шлюза против прихода"
+ },
+ {
+  "metric": "queue:queued",
+  "value": 4,
+  "feeds": "длина обещанной задержки"
+ },
+ {
+  "metric": "queue:rejected",
+  "value": 16,
+  "feeds": "backpressure работает: 429 видны"
+ },
+ {
+  "metric": "wasted_tokens",
+  "value": 0,
+  "feeds": "цена отмен: сколько токенов ушло в никуда"
+ },
+ {
+  "metric": "in_flight_now",
+  "value": 0,
+  "feeds": "сколько генераций живо прямо сейчас"
+ }
+]

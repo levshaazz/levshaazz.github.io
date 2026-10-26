@@ -1,0 +1,8 @@
+[
+ {
+  "request_id": "r32",
+  "outcome": "cancelled",
+  "wasted_tokens": 8,
+  "generated_tokens": 0
+ }
+]

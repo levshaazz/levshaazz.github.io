@@ -1,0 +1,13 @@
+{
+ "profile": "mock",
+ "attempt": "attempt-001",
+ "artifacts": {
+  "api-contract.json": "22bc5506fd1f8d4d4bef3d73163d050ec7c78f7510b96745f8b739afec8d3e1f",
+  "overload-drill.json": "c3b20702819f4aebbec06614f546324b015d355acca7bf01f611ca0f2eef3cf1",
+  "error-drills.json": "7582196780b23944823d3c045f156da4a8b617634f90b8bbbc50aee8f3da661d",
+  "metrics-snapshot.json": "f56b28f09a42a95b8eca2fb3ea8d44188f9722224b1962c31638605cf0b9301f",
+  "cancel-drill.json": "a915692be85e7c0e93337cea823006d0ebd0be106ecfe0eb27ef7ca432076a8f",
+  "wave-shares.png": "4ee0c64a39d29414f2b570fb220a94a348ed1b742b5797eb74a2c303b915efe8",
+  "gateway-memo.json": "4a4908fe732b07a6d51599da12f6b417e3dde3afa2891137e62b021d9caef888"
+ }
+}

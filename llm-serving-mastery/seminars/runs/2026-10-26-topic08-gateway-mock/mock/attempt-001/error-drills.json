@@ -1,0 +1,14 @@
+[
+ {
+  "drill": "невалидный запрос (промпт 600 символов)",
+  "observed": 400,
+  "mapped": 400,
+  "request_id": "r30"
+ },
+ {
+  "drill": "движок с флагом down",
+  "observed": 503,
+  "mapped": 503,
+  "request_id": "r29"
+ }
+]
