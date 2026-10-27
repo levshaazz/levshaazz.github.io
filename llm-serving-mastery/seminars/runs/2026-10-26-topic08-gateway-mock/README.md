@@ -14,7 +14,9 @@ owner run and is not part of this record.
   the orphan probe (watcher off) shows the same generation burning to completion.
 - Honest errors: invalid request → 400; stopped engine → 503; never 200-with-error-body.
 - Waves over the gateway: wave 8 → 75/0/25 % completed/rejected/cancelled,
-  wave 24 → 29/67/4 % — inside the prediction envelope computed before building.
+  wave 24 → 29/67/4 % (7/16/1 of 24 rows; the single cancelled row is the cancel
+  drill's r32). Run-to-run the shares jitter — the cancelled slice especially —
+  so read the shape (a third completed, two-thirds refused), not the exact digits.
 
 ## Artifacts
 - `mock/attempt-001/api-contract.json` — Block-0 prediction, frozen before any gateway code.
