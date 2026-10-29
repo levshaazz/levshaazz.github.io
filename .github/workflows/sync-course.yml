@@ -32,7 +32,19 @@ jobs:
         with:
           ref: main
           path: public
+      - name: Restore bounded publisher failure state
+        uses: actions/cache/restore@v4
+        with:
+          path: .course-publisher/state.json
+          key: course-publisher-state-v1-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: course-publisher-state-v1-
+      - name: Check private-source access and scheduled retry admission
+        id: admission
+        env:
+          COURSE_TOKEN: ${{ secrets.COURSE_REPO_TOKEN }}
+        run: python public/.github/scripts/publisher-preflight.py preflight
       - name: Check out current private course source
+        if: steps.admission.outputs.allowed == 'true'
         uses: actions/checkout@v4
         with:
           repository: levshaazz/llm-serving-mastery
@@ -42,14 +54,16 @@ jobs:
           path: course
       - name: Detect unpublished source against the live site
         id: version
+        if: steps.admission.outputs.allowed == 'true'
         env:
           EVENT_NAME: ${{ github.event_name }}
+          RETRY_FAILED: ${{ steps.admission.outputs.retry_failed }}
         run: |
           set -euo pipefail
           source_sha=$(git -C course rev-parse HEAD)
           live_sha=$(curl --fail --silent --show-error --max-time 20 "https://levshaazz.github.io/.course-source-sha?run=$GITHUB_RUN_ID" || true)
           echo "source_sha=$source_sha" >> "$GITHUB_OUTPUT"
-          if [[ "$source_sha" == "$live_sha" && "$EVENT_NAME" != push ]]; then
+          if [[ "$source_sha" == "$live_sha" && "$EVENT_NAME" != push && "$RETRY_FAILED" != true ]]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
@@ -161,3 +175,16 @@ jobs:
           else
             python public/.github/scripts/course-status.py failure
           fi
+      - name: Record actual publisher outcome for bounded retries
+        id: outcome
+        if: always()
+        env:
+          RESULT: ${{ job.status }}
+          SOURCE_SHA: ${{ steps.version.outputs.source_sha }}
+        run: python public/.github/scripts/publisher-preflight.py record
+      - name: Retain publisher outcome without private data
+        if: always() && steps.outcome.outputs.recorded == 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .course-publisher/state.json
+          key: course-publisher-state-v1-${{ github.run_id }}-${{ github.run_attempt }}
