@@ -188,3 +188,5 @@ jobs:
         with:
           path: .course-publisher/state.json
           key: course-publisher-state-v1-${{ github.run_id }}-${{ github.run_attempt }}
+
+# Publisher-change bypass: immediate publish of course source f235240 (blog T01-T10).
