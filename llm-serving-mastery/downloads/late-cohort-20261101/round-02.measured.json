@@ -1,0 +1,420 @@
+{
+  "round": 2,
+  "thresholds": {
+    "round": 2,
+    "note": "Round 02 reuses the verified 30 September 2026 Round 01 reference and all original gates; no new calibration or moved bars.",
+    "verified": true,
+    "judge_provenance": {
+      "complete": true,
+      "judge_commit": "be27f60ad97584d0e43f8e022fee2f5d7a4d65ac",
+      "judge_dirty": false,
+      "config_sha256": "5dff7253ae0f8528fac1eba508826c02bae754b339a1fcfbb3bfd8e4ad650d97",
+      "dependency_lock_sha256": "45c069dd07090aca7ca3b95fec91c334005eaadd63bb0315b803ab2f0afdf5f9",
+      "python": "3.12.13",
+      "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+      "packages": {
+        "lm_eval": "0.4.13",
+        "guidellm": "0.7.4",
+        "datasets": "4.4.1",
+        "transformers": "4.51.3",
+        "PyYAML": "6.0.2"
+      },
+      "speed_assets": {
+        "tokenizer": "Qwen/Qwen2.5-3B-Instruct",
+        "tokenizer_revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+        "corpus": {
+          "path": "Salesforce/wikitext",
+          "name": "wikitext-103-raw-v1",
+          "split": "test",
+          "revision": "b08601e04326c79dfdd32d625aee71d232d685c3"
+        }
+      },
+      "quality_datasets": {
+        "gsm8k": {
+          "path": "openai/gsm8k",
+          "name": "main",
+          "revision": "740312add88f781978c0658806c59bc2815b9866"
+        },
+        "ifeval": {
+          "path": "google/IFEval",
+          "name": null,
+          "revision": "966cd89545d6b6acfd7638bc708b98261ca58e84"
+        },
+        "mmlu_pro": {
+          "path": "TIGER-Lab/MMLU-Pro",
+          "name": null,
+          "revision": "b189ec765aa7ed75c8acfea42df31fdae71f97be"
+        }
+      }
+    },
+    "reference": {
+      "gpu": "NVIDIA GeForce RTX 5070 Ti",
+      "submission": {
+        "author": "your-github-handle",
+        "model": "Qwen/Qwen2.5-3B-Instruct",
+        "model_revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+        "stack": "vllm",
+        "notes": "reference submission — plain vLLM defaults, FP16"
+      },
+      "quality": {
+        "gsm8k": 0.59,
+        "ifeval": 0.595,
+        "mmlu_pro": 0.4643
+      },
+      "speed": {
+        "32": {
+          "output_tok_s": 2145.05,
+          "ttft_p50_s": 0.4131,
+          "ttft_p95_s": 0.5524,
+          "tpot_p50_ms": 14.81,
+          "output_tokens_mean": 256,
+          "output_tokens_expected": 256,
+          "requests_ok": 282,
+          "requests_failed": 0,
+          "measured_s": 27.2
+        },
+        "64": {
+          "output_tok_s": 2925.86,
+          "ttft_p50_s": 0.437,
+          "ttft_p95_s": 0.5857,
+          "tpot_p50_ms": 21.27,
+          "output_tokens_mean": 256,
+          "output_tokens_expected": 256,
+          "requests_ok": 314,
+          "requests_failed": 0,
+          "measured_s": 18.6
+        }
+      },
+      "measured_at": "2026-09-30T15:08:16+00:00"
+    },
+    "quality_gates": {
+      "gsm8k": 0.531,
+      "ifeval": 0.5355,
+      "mmlu_pro": 0.4179
+    },
+    "speed_bar_S": 2505.2,
+    "ttft_p95_slo_s": 0.8,
+    "max_error_rate": 0.01,
+    "min_output_share": 0.95,
+    "canary_min_similarity": 0.8,
+    "canary_similarity_stat": "mean",
+    "canary_max_short_outputs": 0,
+    "canary_min_unique_share": 0.75
+  },
+  "rows": [
+    {
+      "student": "Ar2rito",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2484.2,
+      "mark": 4.96,
+      "points": 3.97,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "Arinapakalova",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2493.2,
+      "mark": 4.98,
+      "points": 3.98,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "Corbonat",
+      "passed": false,
+      "needs_rerun": false,
+      "S": 0.0,
+      "mark": 0.0,
+      "points": 0.0,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": [
+        "Required round tag was absent from the recorded snapshot."
+      ]
+    },
+    {
+      "student": "dh-lakpazhap",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2485.3,
+      "mark": 4.96,
+      "points": 3.97,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "ext11n7",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2504.7,
+      "mark": 5.0,
+      "points": 4.0,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "Frill13",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2488.6,
+      "mark": 4.97,
+      "points": 3.98,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "GreatDruk",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2504.5,
+      "mark": 5.0,
+      "points": 4.0,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "Impuls3gg",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2489.0,
+      "mark": 4.97,
+      "points": 3.98,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "klesov-labs",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2559.2,
+      "mark": 5.0,
+      "points": 4.0,
+      "rank": null,
+      "overdrive": null,
+      "cleared": true,
+      "reasons": []
+    },
+    {
+      "student": "KsAKarpeeva73",
+      "passed": null,
+      "needs_rerun": true,
+      "S": null,
+      "mark": null,
+      "points": null,
+      "rank": null,
+      "overdrive": null,
+      "cleared": null,
+      "reasons": [
+        "Awaiting judge access; no student grade or penalty assigned."
+      ]
+    },
+    {
+      "student": "leva-b",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2513.3,
+      "mark": 5.0,
+      "points": 4.0,
+      "rank": null,
+      "overdrive": null,
+      "cleared": true,
+      "reasons": []
+    },
+    {
+      "student": "LLM-erving-mastery",
+      "passed": false,
+      "needs_rerun": false,
+      "S": 0.0,
+      "mark": 0.0,
+      "points": 0.0,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": [
+        "Server preparation or startup failed; see private feedback."
+      ]
+    },
+    {
+      "student": "milterr-llm-serving",
+      "passed": false,
+      "needs_rerun": false,
+      "S": 0.0,
+      "mark": 0.0,
+      "points": 0.0,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": [
+        "Required round tag was absent from the recorded snapshot."
+      ]
+    },
+    {
+      "student": "mishin-mikhail",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2491.3,
+      "mark": 4.97,
+      "points": 3.98,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "osmanof",
+      "passed": false,
+      "needs_rerun": false,
+      "S": 0.0,
+      "mark": 0.0,
+      "points": 0.0,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": [
+        "p95 TTFT@64 1.69 s > SLO 0.80 s"
+      ]
+    },
+    {
+      "student": "pixel4lex",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2489.6,
+      "mark": 4.97,
+      "points": 3.98,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "Relator-001",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2489.4,
+      "mark": 4.97,
+      "points": 3.98,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "RenRGaming",
+      "passed": false,
+      "needs_rerun": false,
+      "S": 0.0,
+      "mark": 0.0,
+      "points": 0.0,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": [
+        "Required round tag was absent from the recorded snapshot."
+      ]
+    },
+    {
+      "student": "revlze",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2507.0,
+      "mark": 5.0,
+      "points": 4.0,
+      "rank": null,
+      "overdrive": null,
+      "cleared": true,
+      "reasons": []
+    },
+    {
+      "student": "SannyKary",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2491.6,
+      "mark": 4.97,
+      "points": 3.98,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "savov-labs",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2490.7,
+      "mark": 4.97,
+      "points": 3.98,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "shishechka-6",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2510.9,
+      "mark": 5.0,
+      "points": 4.0,
+      "rank": null,
+      "overdrive": null,
+      "cleared": true,
+      "reasons": []
+    },
+    {
+      "student": "somepatt-study",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2481.6,
+      "mark": 4.95,
+      "points": 3.96,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "z0sh22",
+      "passed": false,
+      "needs_rerun": false,
+      "S": 0.0,
+      "mark": 0.0,
+      "points": 0.0,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": [
+        "p95 TTFT@64 1.48 s > SLO 0.80 s"
+      ]
+    },
+    {
+      "student": "zv3zdochka",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2488.5,
+      "mark": 4.97,
+      "points": 3.98,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    }
+  ]
+}

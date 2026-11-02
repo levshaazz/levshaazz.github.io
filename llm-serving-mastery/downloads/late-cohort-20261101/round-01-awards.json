@@ -1,0 +1,291 @@
+{
+  "schema": "round01-participation-credit-nov01-v2",
+  "round": 1,
+  "approved_at": "2026-10-14T22:27:54Z",
+  "checked_at": "2026-11-01T20:29:14.076140+00:00",
+  "source_measurements_sha256": "45c94cf4392467c21c936bd3f41dc42ef6b91a748dd0df4d26ba92ab7c520d73",
+  "rule": "solution-in-registered-repository-no-tag-or-gate-requirement",
+  "overdrive_policy": "none",
+  "ranking": "alphabetical-not-speed",
+  "rows": [
+    {
+      "student": "Ar2rito",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "Arinapakalova",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "Corbonat",
+      "status": "no-solution",
+      "mark": 0,
+      "points": 0,
+      "overdrive": 0
+    },
+    {
+      "student": "dh-lakpazhap",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "ext11n7",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "Frill13",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "GreatDruk",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "Impuls3gg",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "klesov-labs",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "KsAKarpeeva73",
+      "status": "awaiting-access",
+      "mark": null,
+      "points": null,
+      "overdrive": 0
+    },
+    {
+      "student": "leva-b",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "LLM-erving-mastery",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "milterr-llm-serving",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "mishin-mikhail",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "osmanof",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "pixel4lex",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "Relator-001",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "RenRGaming",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "revlze",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "SannyKary",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "savov-labs",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "shishechka-6",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "somepatt-study",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "z0sh22",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "zv3zdochka",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    }
+  ],
+  "source_awards_sha256": "2198ba5aa1ec98cca6b49dab7a88f43482582aacc725f9882b3803a60973f8ce",
+  "cohort_policy": "nov01-2026-current-tags-no-late-penalty-no-worse-v1",
+  "observations": [
+    {
+      "student": "Ar2rito",
+      "status": "credited"
+    },
+    {
+      "student": "Arinapakalova",
+      "status": "credited"
+    },
+    {
+      "student": "Corbonat",
+      "status": "no-solution"
+    },
+    {
+      "student": "dh-lakpazhap",
+      "status": "credited"
+    },
+    {
+      "student": "ext11n7",
+      "status": "credited"
+    },
+    {
+      "student": "Frill13",
+      "status": "credited"
+    },
+    {
+      "student": "GreatDruk",
+      "status": "credited"
+    },
+    {
+      "student": "Impuls3gg",
+      "status": "credited"
+    },
+    {
+      "student": "klesov-labs",
+      "status": "credited"
+    },
+    {
+      "student": "KsAKarpeeva73",
+      "status": "awaiting-access"
+    },
+    {
+      "student": "leva-b",
+      "status": "credited"
+    },
+    {
+      "student": "LLM-erving-mastery",
+      "status": "credited"
+    },
+    {
+      "student": "milterr-llm-serving",
+      "status": "credited"
+    },
+    {
+      "student": "mishin-mikhail",
+      "status": "credited"
+    },
+    {
+      "student": "osmanof",
+      "status": "credited"
+    },
+    {
+      "student": "pixel4lex",
+      "status": "credited"
+    },
+    {
+      "student": "Relator-001",
+      "status": "credited"
+    },
+    {
+      "student": "RenRGaming",
+      "status": "credited"
+    },
+    {
+      "student": "revlze",
+      "status": "credited"
+    },
+    {
+      "student": "SannyKary",
+      "status": "credited"
+    },
+    {
+      "student": "savov-labs",
+      "status": "credited"
+    },
+    {
+      "student": "shishechka-6",
+      "status": "credited"
+    },
+    {
+      "student": "somepatt-study",
+      "status": "credited"
+    },
+    {
+      "student": "z0sh22",
+      "status": "credited"
+    },
+    {
+      "student": "zv3zdochka",
+      "status": "credited"
+    }
+  ]
+}
