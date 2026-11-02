@@ -1,0 +1,37 @@
+{
+  "schema": "nov02-two-request-late-followup-public-v1",
+  "capture_id": "nov02-somepatt-explicit-request-v1",
+  "approved_request_date_msk": "2026-11-01",
+  "captured_at": "2026-11-02T10:00:48.053Z",
+  "published_at": "2026-11-02T11:20:26.544Z",
+  "student": "somepatt-study",
+  "source_commit": "44c35d034ab6d095a5018a9520efd855b3d4783d",
+  "capture_receipt_sha256": "4862cf11501ba1660336e9ef903b85c734d142bad7b17f500474dd96258c265b",
+  "rounds": [
+    3,
+    4
+  ],
+  "base_files_sha256": {
+    "policy.json": "721a7c019693f84f0e3766dd16019f6259d83aaa68a20df90e1f58f6e7e82d9a",
+    "round-01-awards.json": "abf5536d17ffa948c9182ada15dee4c0be20a34367d1e09c952ca121f7188ced",
+    "round-02.measured.json": "69c624fb1ae8c1404c4d68cc79c91b48d842fe7170eba022213fc103120d5695",
+    "round-02.awarded.json": "6adad08a75dd1bdab5024ac09078b60715f3896ec9457af65620d868d9f34e41",
+    "round-03.measured.json": "e91c3312c008546c1d7493f3f6ded908e3d5b7beb9ba331eccc98cd72e3c11bc",
+    "round-03.awarded.json": "866cefd8907ada9a864433ae264dd19917c6d8876a21a80861f9be7305c75ce9",
+    "round-04.measured.json": "f87c07bdcfd4bda4bf69fc29504334d4bc14dc96f009708ab9ca4c86fa672f30",
+    "round-04.awarded.json": "f87c07bdcfd4bda4bf69fc29504334d4bc14dc96f009708ab9ca4c86fa672f30"
+  },
+  "reports_sha256": {
+    "round-03.json": "d52f70b90ff62ee306d4edc1b3b75bee7b16dea3cf59dbfd45f2d06695abd9c7",
+    "round-04.json": "e3f335196d13f575dd7efd2090fa161321c74b5c4e5f87aa4f5b675161e0e818"
+  },
+  "terminal_reviews_sha256": {
+    "3": "16c709bcc072d81dc5d5c890c4917f8b20fb9a08a348e861c3195687ce013ca2",
+    "4": "8e7febeee858fb0734ec7006993797ef3c776e680e8e6a709a94593156c62112"
+  },
+  "late_without_penalty": true,
+  "whole_awards_never_decrease": true,
+  "ranking_withheld": true,
+  "new_overdrive_withheld": true,
+  "appeal_until": null
+}
