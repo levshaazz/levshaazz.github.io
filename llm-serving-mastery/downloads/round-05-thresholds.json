@@ -1,0 +1,102 @@
+{
+  "quality_gates": {
+    "gsm8k": 0.4905,
+    "ifeval": 0.522,
+    "mmlu_pro": 0.3793
+  },
+  "ttft_p95_slo_s": 0.8,
+  "max_error_rate": 0.01,
+  "min_output_share": 0.95,
+  "canary_min_similarity": 0.8,
+  "canary_similarity_stat": "mean",
+  "canary_max_short_outputs": 0,
+  "canary_min_unique_share": 0.75,
+  "round": 5,
+  "note": "Round05 Topic05 scheduler token budget1024. Only speed changes: actual full S floored to0.1 and capped at5percent above2623.6. Exact Round04 quality/TTFT/error/output/canary gates are inherited unchanged; quality floors are not recomputed from this result.",
+  "verified": true,
+  "judge_provenance": {
+    "complete": true,
+    "judge_commit": "8dce958360d1d0b2140be102e419dcb768b5ccee",
+    "judge_dirty": false,
+    "config_sha256": "5dff7253ae0f8528fac1eba508826c02bae754b339a1fcfbb3bfd8e4ad650d97",
+    "dependency_lock_sha256": "45c069dd07090aca7ca3b95fec91c334005eaadd63bb0315b803ab2f0afdf5f9",
+    "runner_sha256": "583b0bd4e739675c690b9e1fb9f6a1a87ea8bc5e7d469d0dfb3fa51510bf6407",
+    "python": "3.12.13",
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+    "packages": {
+      "lm_eval": "0.4.13",
+      "guidellm": "0.7.4",
+      "datasets": "4.4.1",
+      "transformers": "4.51.3",
+      "PyYAML": "6.0.2"
+    },
+    "speed_assets": {
+      "tokenizer": "Qwen/Qwen2.5-3B-Instruct",
+      "tokenizer_revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "corpus": {
+        "path": "Salesforce/wikitext",
+        "name": "wikitext-103-raw-v1",
+        "split": "test",
+        "revision": "b08601e04326c79dfdd32d625aee71d232d685c3"
+      }
+    },
+    "quality_datasets": {
+      "gsm8k": {
+        "path": "openai/gsm8k",
+        "name": "main",
+        "revision": "740312add88f781978c0658806c59bc2815b9866"
+      },
+      "ifeval": {
+        "path": "google/IFEval",
+        "name": null,
+        "revision": "966cd89545d6b6acfd7638bc708b98261ca58e84"
+      },
+      "mmlu_pro": {
+        "path": "TIGER-Lab/MMLU-Pro",
+        "name": null,
+        "revision": "b189ec765aa7ed75c8acfea42df31fdae71f97be"
+      }
+    }
+  },
+  "speed_bar_S": 2671.8,
+  "reference": {
+    "gpu": "NVIDIA GeForce RTX 5070 Ti",
+    "submission": {
+      "author": "your-github-handle",
+      "model": "Qwen/Qwen2.5-3B-Instruct",
+      "model_revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "stack": "vllm",
+      "notes": "Round05 Topic05 continuous batching: FP16/TRITON_ATTN with max-num-batched-tokens1024; same model/revision, vLLM0.29.0, seq64 and unquantized automatic KV dtype"
+    },
+    "quality": {
+      "gsm8k": 0.585,
+      "ifeval": 0.565,
+      "mmlu_pro": 0.4643
+    },
+    "speed": {
+      "32": {
+        "output_tok_s": 2219.12,
+        "ttft_p50_s": 0.2651,
+        "ttft_p95_s": 0.3043,
+        "tpot_p50_ms": 14.36,
+        "output_tokens_mean": 256.0,
+        "output_tokens_expected": 256,
+        "requests_ok": 316,
+        "requests_failed": 0,
+        "measured_s": 30.3
+      },
+      "64": {
+        "output_tok_s": 3216.85,
+        "ttft_p50_s": 0.2755,
+        "ttft_p95_s": 0.2848,
+        "tpot_p50_ms": 20.31,
+        "output_tokens_mean": 256.0,
+        "output_tokens_expected": 256,
+        "requests_ok": 381,
+        "requests_failed": 0,
+        "measured_s": 25.8
+      }
+    },
+    "measured_at": "2026-11-02T09:58:25+00:00"
+  }
+}
