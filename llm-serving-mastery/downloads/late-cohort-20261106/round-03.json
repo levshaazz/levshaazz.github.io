@@ -1,0 +1,859 @@
+{
+  "schema": "nov06-reviewed-round-report-v1",
+  "round": 3,
+  "captured_at": "2026-11-06T07:43:18.320Z",
+  "published_at": "2026-11-06T14:43:44.143393+00:00",
+  "thresholds": {
+    "round": 3,
+    "note": "Round03 quality correction approved23October2026 after deadline: min(original published floor, round(0.90 * published Round03 reference quality, 4)) per benchmark. No stricter gate, new measurement, reference or seed. Speed2562.8, TTFT0.8s and all other gates unchanged; original thresholds retained in history/round-03.20261015.json.",
+    "verified": true,
+    "judge_provenance": {
+      "complete": true,
+      "judge_commit": "212ea934960a6e39032aa81ecaa54d327c7eabbe",
+      "judge_dirty": false,
+      "config_sha256": "5dff7253ae0f8528fac1eba508826c02bae754b339a1fcfbb3bfd8e4ad650d97",
+      "dependency_lock_sha256": "45c069dd07090aca7ca3b95fec91c334005eaadd63bb0315b803ab2f0afdf5f9",
+      "runner_sha256": "742843e237b122c5096c50c1f4fcea0ec91ab6eb73d315820bcf0a45ec83d6e1",
+      "python": "3.12.13",
+      "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+      "packages": {
+        "lm_eval": "0.4.13",
+        "guidellm": "0.7.4",
+        "datasets": "4.4.1",
+        "transformers": "4.51.3",
+        "PyYAML": "6.0.2"
+      },
+      "speed_assets": {
+        "tokenizer": "Qwen/Qwen2.5-3B-Instruct",
+        "tokenizer_revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+        "corpus": {
+          "path": "Salesforce/wikitext",
+          "name": "wikitext-103-raw-v1",
+          "split": "test",
+          "revision": "b08601e04326c79dfdd32d625aee71d232d685c3"
+        }
+      },
+      "quality_datasets": {
+        "gsm8k": {
+          "path": "openai/gsm8k",
+          "name": "main",
+          "revision": "740312add88f781978c0658806c59bc2815b9866"
+        },
+        "ifeval": {
+          "path": "google/IFEval",
+          "name": null,
+          "revision": "966cd89545d6b6acfd7638bc708b98261ca58e84"
+        },
+        "mmlu_pro": {
+          "path": "TIGER-Lab/MMLU-Pro",
+          "name": null,
+          "revision": "b189ec765aa7ed75c8acfea42df31fdae71f97be"
+        }
+      }
+    },
+    "reference": {
+      "gpu": "NVIDIA GeForce RTX 5070 Ti",
+      "submission": {
+        "author": "your-github-handle",
+        "model": "Qwen/Qwen2.5-3B-Instruct",
+        "model_revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+        "stack": "vllm",
+        "notes": "Round03 FP16 engineering candidate seq64; FLASH_ATTN; no quantization"
+      },
+      "quality": {
+        "gsm8k": 0.58,
+        "ifeval": 0.635,
+        "mmlu_pro": 0.4214
+      },
+      "speed": {
+        "32": {
+          "output_tok_s": 2122.29,
+          "ttft_p50_s": 0.3868,
+          "ttft_p95_s": 0.5502,
+          "tpot_p50_ms": 14.99,
+          "output_tokens_mean": 256,
+          "output_tokens_expected": 256,
+          "requests_ok": 282,
+          "requests_failed": 0,
+          "measured_s": 27.5
+        },
+        "64": {
+          "output_tok_s": 3094.97,
+          "ttft_p50_s": 0.4355,
+          "ttft_p95_s": 0.5832,
+          "tpot_p50_ms": 21.04,
+          "output_tokens_mean": 256,
+          "output_tokens_expected": 256,
+          "requests_ok": 317,
+          "requests_failed": 0,
+          "measured_s": 21.4
+        }
+      },
+      "measured_at": "2026-10-15T12:52:39+00:00"
+    },
+    "quality_gates": {
+      "gsm8k": 0.522,
+      "ifeval": 0.5355,
+      "mmlu_pro": 0.3793
+    },
+    "speed_bar_S": 2562.8,
+    "ttft_p95_slo_s": 0.8,
+    "max_error_rate": 0.01,
+    "min_output_share": 0.95,
+    "canary_min_similarity": 0.8,
+    "canary_similarity_stat": "mean",
+    "canary_max_short_outputs": 0,
+    "canary_min_unique_share": 0.75
+  },
+  "measured": [
+    {
+      "student": "Ar2rito",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2563.5,
+      "mark": 5,
+      "points": 4,
+      "rank": null,
+      "overdrive": null,
+      "cleared": true,
+      "reasons": []
+    },
+    {
+      "student": "Arinapakalova",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2485,
+      "mark": 4.85,
+      "points": 3.88,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "Corbonat",
+      "passed": false,
+      "needs_rerun": false,
+      "S": 0,
+      "mark": 0,
+      "points": 0,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": [
+        "Required round tag was absent from the recorded snapshot."
+      ]
+    },
+    {
+      "student": "dh-lakpazhap",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2558,
+      "mark": 4.99,
+      "points": 3.99,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "ext11n7",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2560.5,
+      "mark": 5,
+      "points": 4,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "Frill13",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2559.8,
+      "mark": 4.99,
+      "points": 3.99,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "GreatDruk",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2563.6,
+      "mark": 5,
+      "points": 4,
+      "rank": null,
+      "overdrive": null,
+      "cleared": true,
+      "reasons": []
+    },
+    {
+      "student": "Impuls3gg",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2558.4,
+      "mark": 4.99,
+      "points": 3.99,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "klesov-labs",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2558.9,
+      "mark": 4.99,
+      "points": 3.99,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "KsAKarpeeva73",
+      "passed": null,
+      "needs_rerun": true,
+      "S": null,
+      "mark": null,
+      "points": null,
+      "rank": null,
+      "overdrive": null,
+      "cleared": null,
+      "reasons": [
+        "Awaiting judge access; no student grade or penalty assigned."
+      ]
+    },
+    {
+      "student": "leva-b",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2555.8,
+      "mark": 4.99,
+      "points": 3.99,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "LLM-erving-mastery",
+      "passed": false,
+      "needs_rerun": false,
+      "S": 0,
+      "mark": 0,
+      "points": 0,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": [
+        "p95 TTFT@64 1.86 s > SLO 0.80 s"
+      ]
+    },
+    {
+      "student": "milterr-llm-serving",
+      "passed": false,
+      "needs_rerun": false,
+      "S": 0,
+      "mark": 0,
+      "points": 0,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": [
+        "Required round tag was absent from the recorded snapshot."
+      ]
+    },
+    {
+      "student": "mishin-mikhail",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2558.5,
+      "mark": 4.99,
+      "points": 3.99,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "osmanof",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2562.8,
+      "mark": 5,
+      "points": 4,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "pixel4lex",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2556.3,
+      "mark": 4.99,
+      "points": 3.99,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "Relator-001",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2558.1,
+      "mark": 4.99,
+      "points": 3.99,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "RenRGaming",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 3856.3,
+      "mark": 5,
+      "points": 4,
+      "rank": null,
+      "overdrive": null,
+      "cleared": true,
+      "reasons": []
+    },
+    {
+      "student": "revlze",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2560,
+      "mark": 4.99,
+      "points": 3.99,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "SannyKary",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2561,
+      "mark": 5,
+      "points": 4,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "savov-labs",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2556.1,
+      "mark": 4.99,
+      "points": 3.99,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "shishechka-6",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2559.2,
+      "mark": 4.99,
+      "points": 3.99,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "somepatt-study",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 6365.3,
+      "mark": 5,
+      "points": 4,
+      "rank": null,
+      "overdrive": null,
+      "cleared": true,
+      "reasons": []
+    },
+    {
+      "student": "z0sh22",
+      "passed": false,
+      "needs_rerun": false,
+      "S": 0,
+      "mark": 0,
+      "points": 0,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": [
+        "p95 TTFT@64 1.30 s > SLO 0.80 s"
+      ]
+    },
+    {
+      "student": "zv3zdochka",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2558.6,
+      "mark": 4.99,
+      "points": 3.99,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    }
+  ],
+  "awarded": [
+    {
+      "student": "Ar2rito",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2563.5,
+      "mark": 5,
+      "points": 4,
+      "rank": null,
+      "overdrive": null,
+      "cleared": true,
+      "reasons": []
+    },
+    {
+      "student": "Arinapakalova",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2485,
+      "mark": 4.85,
+      "points": 3.88,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "Corbonat",
+      "passed": false,
+      "needs_rerun": false,
+      "S": 0,
+      "mark": 0,
+      "points": 0,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": [
+        "Required round tag was absent from the recorded snapshot."
+      ]
+    },
+    {
+      "student": "dh-lakpazhap",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2558,
+      "mark": 4.99,
+      "points": 3.99,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "ext11n7",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2560.5,
+      "mark": 5,
+      "points": 4,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "Frill13",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2559.8,
+      "mark": 4.99,
+      "points": 3.99,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "GreatDruk",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2563.6,
+      "mark": 5,
+      "points": 4,
+      "rank": null,
+      "overdrive": null,
+      "cleared": true,
+      "reasons": []
+    },
+    {
+      "student": "Impuls3gg",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2558.4,
+      "mark": 4.99,
+      "points": 3.99,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "klesov-labs",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2558.9,
+      "mark": 4.99,
+      "points": 3.99,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "KsAKarpeeva73",
+      "passed": null,
+      "needs_rerun": true,
+      "S": null,
+      "mark": null,
+      "points": null,
+      "rank": null,
+      "overdrive": null,
+      "cleared": null,
+      "reasons": [
+        "Awaiting judge access; no student grade or penalty assigned."
+      ]
+    },
+    {
+      "student": "leva-b",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2555.8,
+      "mark": 4.99,
+      "points": 3.99,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "LLM-erving-mastery",
+      "passed": false,
+      "needs_rerun": false,
+      "S": 0,
+      "mark": 0,
+      "points": 0,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": [
+        "p95 TTFT@64 1.94 s > SLO 0.80 s"
+      ]
+    },
+    {
+      "student": "milterr-llm-serving",
+      "passed": false,
+      "needs_rerun": false,
+      "S": 0,
+      "mark": 0,
+      "points": 0,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": [
+        "Required round tag was absent from the recorded snapshot."
+      ]
+    },
+    {
+      "student": "mishin-mikhail",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2558.5,
+      "mark": 4.99,
+      "points": 3.99,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "osmanof",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2562.8,
+      "mark": 5,
+      "points": 4,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "pixel4lex",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2556.3,
+      "mark": 4.99,
+      "points": 3.99,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "Relator-001",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2558.1,
+      "mark": 4.99,
+      "points": 3.99,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "RenRGaming",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 3856.3,
+      "mark": 5,
+      "points": 4,
+      "rank": null,
+      "overdrive": null,
+      "cleared": true,
+      "reasons": []
+    },
+    {
+      "student": "revlze",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2560,
+      "mark": 4.99,
+      "points": 3.99,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "SannyKary",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2561,
+      "mark": 5,
+      "points": 4,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "savov-labs",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2556.1,
+      "mark": 4.99,
+      "points": 3.99,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "shishechka-6",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2559.2,
+      "mark": 4.99,
+      "points": 3.99,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    },
+    {
+      "student": "somepatt-study",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 6365.3,
+      "mark": 5,
+      "points": 4,
+      "rank": null,
+      "overdrive": null,
+      "cleared": true,
+      "reasons": []
+    },
+    {
+      "student": "z0sh22",
+      "passed": false,
+      "needs_rerun": false,
+      "S": 0,
+      "mark": 0,
+      "points": 0,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": [
+        "p95 TTFT@64 1.61 s > SLO 0.80 s"
+      ]
+    },
+    {
+      "student": "zv3zdochka",
+      "passed": true,
+      "needs_rerun": false,
+      "S": 2558.6,
+      "mark": 4.99,
+      "points": 3.99,
+      "rank": null,
+      "overdrive": null,
+      "cleared": false,
+      "reasons": []
+    }
+  ],
+  "evidence": [
+    {
+      "student": "Ar2rito",
+      "origin": "retained-unchanged",
+      "receipt_sha256": "70e7e554de2a74d083e1af5c087137dcfd366a677aef0f2d6976c9ffb8088468"
+    },
+    {
+      "student": "Arinapakalova",
+      "origin": "retained-unchanged",
+      "receipt_sha256": "186e3019b87b016a1ddb078c3b748ed0a5e6e3e6bc65a3002a5615970cdb183b"
+    },
+    {
+      "student": "Corbonat",
+      "origin": "no-submission",
+      "receipt_sha256": "a4fd08121e633ad44e3aa9b11441ad03ce02d53670da86e2a1451408c3442a91"
+    },
+    {
+      "student": "dh-lakpazhap",
+      "origin": "retained-unchanged",
+      "receipt_sha256": "79e723e19796f882c75cb2ba6eafe9b5be23e6ece8a6d1f87f7a14c156968556"
+    },
+    {
+      "student": "ext11n7",
+      "origin": "retained-unchanged",
+      "receipt_sha256": "2162de984b9f591f1564b6de3221377aa1837df282bbf29874a7ff62d1c425ec"
+    },
+    {
+      "student": "Frill13",
+      "origin": "retained-unchanged",
+      "receipt_sha256": "0dc007b2dc572aaf2f81edecd148a35e2bee5f4cff726295173ae5ec1e5cf95b"
+    },
+    {
+      "student": "GreatDruk",
+      "origin": "retained-unchanged",
+      "receipt_sha256": "e229cfc23937cea60b21ec8306ffc727feeadad43634649a8b4843d902abfb15"
+    },
+    {
+      "student": "Impuls3gg",
+      "origin": "retained-unchanged",
+      "receipt_sha256": "001e8d87b1e32f13cde57decc275a431096713a02436333501eb4b7b0213fe88"
+    },
+    {
+      "student": "klesov-labs",
+      "origin": "retained-unchanged",
+      "receipt_sha256": "2bf287e398959c6c63d73995212b226bbaf0bacd2f1c05c39d77d8b36ee212df"
+    },
+    {
+      "student": "KsAKarpeeva73",
+      "origin": "awaiting-access",
+      "receipt_sha256": "2676d5df95c78a18b4f3ee801da86d8e8e30cac2ac994ec937ab312e130a60dd"
+    },
+    {
+      "student": "leva-b",
+      "origin": "retained-unchanged",
+      "receipt_sha256": "b543f22b939588f945dddb8e92b853e2e4a033a2fede6640e1d96e2f5c41c28c"
+    },
+    {
+      "student": "LLM-erving-mastery",
+      "origin": "retained-terminal",
+      "receipt_sha256": "0407b29cab02d65ef29a864552ee31bed221ecbd6afbdf96fbebfe63921a065e"
+    },
+    {
+      "student": "milterr-llm-serving",
+      "origin": "no-submission",
+      "receipt_sha256": "3d7a9e15c9db13fe04b25d57eb20ef7b70d647a3dfc19a98f34df67999379f28"
+    },
+    {
+      "student": "mishin-mikhail",
+      "origin": "retained-unchanged",
+      "receipt_sha256": "7fe8aa9b10be8de4c7198d00973615c2a5041a7bcdecaf782e2c2838ced628e4"
+    },
+    {
+      "student": "osmanof",
+      "origin": "retained-unchanged",
+      "receipt_sha256": "562a3c364b998fbc819c6fa2cbec16f7eeee3ed3094812cd64dbf4c9a7ea76aa"
+    },
+    {
+      "student": "pixel4lex",
+      "origin": "retained-unchanged",
+      "receipt_sha256": "574cf055dad919a39ad3cb1e69d19af96563b4db9c1113c41b56309db29d6f36"
+    },
+    {
+      "student": "Relator-001",
+      "origin": "retained-unchanged",
+      "receipt_sha256": "cf5caea2fc19c74aa119318b94b5a06f08e3f0b26d819c7068c8d20704661cc5"
+    },
+    {
+      "student": "RenRGaming",
+      "origin": "retained-unchanged",
+      "receipt_sha256": "24b6b743fea82dec1eba6a52ba3257e9575912ac3483d2abc14f2d70ba92458e"
+    },
+    {
+      "student": "revlze",
+      "origin": "retained-unchanged",
+      "receipt_sha256": "db420473b88e57af0f50bb8f4695b769517f583988b3d921967f550287b18be8"
+    },
+    {
+      "student": "SannyKary",
+      "origin": "retained-unchanged",
+      "receipt_sha256": "b516194ea97ce7f515f06f72a6ebd01460a39f6b4dd4a36b827992a20f9369a9"
+    },
+    {
+      "student": "savov-labs",
+      "origin": "retained-unchanged",
+      "receipt_sha256": "24efb2da915566d2cd498adbe2237a6a02ec49e6dd27ec2823c835bb1b5a5885"
+    },
+    {
+      "student": "shishechka-6",
+      "origin": "retained-unchanged",
+      "receipt_sha256": "4b9d7a988b95c26e8956353a9362027b5ec86c6f5483f8ce787face17ed21eeb"
+    },
+    {
+      "student": "somepatt-study",
+      "origin": "retained-unchanged",
+      "receipt_sha256": "15f258be7f6c47a5a817231465dd1f0126f09dd50b554456e18c8bcf521bb024"
+    },
+    {
+      "student": "z0sh22",
+      "origin": "retained-terminal",
+      "receipt_sha256": "15f6fc87a71a21a6622734bd98d66d1ab2b3d7b78ec1598e7b86034f53493f3d"
+    },
+    {
+      "student": "zv3zdochka",
+      "origin": "retained-unchanged",
+      "receipt_sha256": "8ab09f672d6f785eb7328b51934e0fe85dc3935ddb563a4f328428e56d6aab61"
+    }
+  ]
+}

@@ -1,0 +1,312 @@
+{
+  "schema": "nov06-round01-participation-report-v1",
+  "round": 1,
+  "captured_at": "2026-11-06T07:43:18.320Z",
+  "published_at": "2026-11-06T14:43:44.143393+00:00",
+  "rule": "solution-in-registered-repository-no-tag-or-gate-requirement",
+  "approved_at": "2026-10-14T22:27:54Z",
+  "observations": [
+    {
+      "student": "Ar2rito",
+      "status": "credited",
+      "receipt_sha256": "7ec352daa697701067417eeb27eea7a1fe5c5afd428832ec6619e5a0d6a91ae3"
+    },
+    {
+      "student": "Arinapakalova",
+      "status": "credited",
+      "receipt_sha256": "ae502393d8f0ee0640106699cf67e8ff5b1c8ca7d34974627a732634d0b073c4"
+    },
+    {
+      "student": "Corbonat",
+      "status": "no-solution",
+      "receipt_sha256": "0ef14e4a03fdfdf86e3b86b072758ea2498e44c4305a4dfbb864d1ea88503e99"
+    },
+    {
+      "student": "Frill13",
+      "status": "credited",
+      "receipt_sha256": "f6eddd4038d8054f99bc68724eb1d7480921c13c7c263d17b73d5739804137ea"
+    },
+    {
+      "student": "GreatDruk",
+      "status": "credited",
+      "receipt_sha256": "d9f0982c9a5eb68be9a202a0ebbc1322f3bc25a54f760efe12053bbe4c718443"
+    },
+    {
+      "student": "Impuls3gg",
+      "status": "credited",
+      "receipt_sha256": "aae4c39869b560dd3ddb72c75ca3b818a23f5a75b07bede2734d5233dc7d9517"
+    },
+    {
+      "student": "KsAKarpeeva73",
+      "status": "awaiting-access",
+      "receipt_sha256": "6b73ec5e3b284ef7c761946286e66e194b58211b938f2eed74a7e95042561346"
+    },
+    {
+      "student": "LLM-erving-mastery",
+      "status": "credited",
+      "receipt_sha256": "c40179d55fb03dde1222aade3b0c945c7c6909b6db2cfcdb05d69c8dd06b77f5"
+    },
+    {
+      "student": "Relator-001",
+      "status": "credited",
+      "receipt_sha256": "5e65a40d557279fcf12464a20e88d88b620e729e7873b9ec8ed6c941d9f329b3"
+    },
+    {
+      "student": "RenRGaming",
+      "status": "credited",
+      "receipt_sha256": "71a43c6cb03dc26ebe5f2a08a2637661ace860e37c4e66161a1efc42d303045b"
+    },
+    {
+      "student": "SannyKary",
+      "status": "credited",
+      "receipt_sha256": "7c1ae5eb689dcfaa5ffdaff4339bbae44e784f1fcd28c018500b1c6ec3b04af7"
+    },
+    {
+      "student": "dh-lakpazhap",
+      "status": "credited",
+      "receipt_sha256": "878b93f2d9eea6abe494302865af165372fd1dc4e9fcbaf28622d0088dff1758"
+    },
+    {
+      "student": "ext11n7",
+      "status": "credited",
+      "receipt_sha256": "5e78a66cebd33bf0235dc6a80b40e87730705124493cced2f57c041844c3aba9"
+    },
+    {
+      "student": "klesov-labs",
+      "status": "credited",
+      "receipt_sha256": "b95c8315fc3884fa7fd64d85a2dc0f82bd4c728ad3f4893469a50ddb082ec031"
+    },
+    {
+      "student": "leva-b",
+      "status": "credited",
+      "receipt_sha256": "d6eed78f54839519ff556b50f102f52d479023b7ae40b5a1940fbd22fd9ecc7d"
+    },
+    {
+      "student": "milterr-llm-serving",
+      "status": "credited",
+      "receipt_sha256": "c67bf989900dc69fdb66c2f21b66ca251f2b257c71fd47e0ac98a2481560fb72"
+    },
+    {
+      "student": "mishin-mikhail",
+      "status": "credited",
+      "receipt_sha256": "46b556ef6e365d666a5a9be8e35cfa62a93b149512318a6d51ebd1dfa173e6dd"
+    },
+    {
+      "student": "osmanof",
+      "status": "credited",
+      "receipt_sha256": "bb13b2a7fda12a36f80f4cb09e67694f23c802875e0e0625615464fc1face7c3"
+    },
+    {
+      "student": "pixel4lex",
+      "status": "credited",
+      "receipt_sha256": "f091e3342593822636a9af4c923efce0c6f2f874c04cfe34dad4dd27aad56cfb"
+    },
+    {
+      "student": "revlze",
+      "status": "credited",
+      "receipt_sha256": "20bb5ecc3b801a472b24493c1b61e66b488e48ecc331d0a524a14a849cb8f58a"
+    },
+    {
+      "student": "savov-labs",
+      "status": "credited",
+      "receipt_sha256": "bceee3e986ae14f5c619f248486274c494c28c66cabcbec75c720b1aaf07c788"
+    },
+    {
+      "student": "shishechka-6",
+      "status": "credited",
+      "receipt_sha256": "62bd311e81bed1512fe753b63277e8f0beaf944a30e8b8fe6532c1724b980d90"
+    },
+    {
+      "student": "somepatt-study",
+      "status": "credited",
+      "receipt_sha256": "28a0fb2d61afc9e6cae782aeb559cb00db9c24c697d440b1072b0d2285bd0f4e"
+    },
+    {
+      "student": "z0sh22",
+      "status": "credited",
+      "receipt_sha256": "b2143ec19e7835c14ed7f4de5b8cf7272f90b631fb60a9fd188b395648289f06"
+    },
+    {
+      "student": "zv3zdochka",
+      "status": "credited",
+      "receipt_sha256": "6f9a02852f40693e415b61d47e87374dac78ede92ff9f01ccb33d70609633b69"
+    }
+  ],
+  "awarded": [
+    {
+      "student": "Ar2rito",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "Arinapakalova",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "Corbonat",
+      "status": "no-solution",
+      "mark": 0,
+      "points": 0,
+      "overdrive": 0
+    },
+    {
+      "student": "dh-lakpazhap",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "ext11n7",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "Frill13",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "GreatDruk",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "Impuls3gg",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "klesov-labs",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "KsAKarpeeva73",
+      "status": "awaiting-access",
+      "mark": null,
+      "points": null,
+      "overdrive": 0
+    },
+    {
+      "student": "leva-b",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "LLM-erving-mastery",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "milterr-llm-serving",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "mishin-mikhail",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "osmanof",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "pixel4lex",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "Relator-001",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "RenRGaming",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "revlze",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "SannyKary",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "savov-labs",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "shishechka-6",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "somepatt-study",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "z0sh22",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    },
+    {
+      "student": "zv3zdochka",
+      "status": "credited",
+      "mark": 5,
+      "points": 4,
+      "overdrive": 0
+    }
+  ]
+}

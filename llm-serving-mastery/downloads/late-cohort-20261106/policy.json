@@ -1,0 +1,103 @@
+{
+  "schema": "nov06-current-cohort-public-policy-v1",
+  "policy": "nov06-2026-current-tags-round01-05-no-penalty-no-worse-v1",
+  "approved_date_msk": "2026-11-06",
+  "students": [
+    "Ar2rito",
+    "Arinapakalova",
+    "Corbonat",
+    "dh-lakpazhap",
+    "ext11n7",
+    "Frill13",
+    "GreatDruk",
+    "Impuls3gg",
+    "klesov-labs",
+    "KsAKarpeeva73",
+    "leva-b",
+    "LLM-erving-mastery",
+    "milterr-llm-serving",
+    "mishin-mikhail",
+    "osmanof",
+    "pixel4lex",
+    "Relator-001",
+    "RenRGaming",
+    "revlze",
+    "SannyKary",
+    "savov-labs",
+    "shishechka-6",
+    "somepatt-study",
+    "z0sh22",
+    "zv3zdochka"
+  ],
+  "rounds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "captured_at": "2026-11-06T07:43:18.320Z",
+  "published_at": "2026-11-06T14:43:44.143393+00:00",
+  "capture_receipt_sha256": "b9711d780db2af14db530f2a9db2f457f75ea2d28d7713026516782fb99b2f84",
+  "historical_files_sha256": {
+    "late-cohort-20261101/policy.json": "721a7c019693f84f0e3766dd16019f6259d83aaa68a20df90e1f58f6e7e82d9a",
+    "late-cohort-20261101/round-01-awards.json": "abf5536d17ffa948c9182ada15dee4c0be20a34367d1e09c952ca121f7188ced",
+    "late-cohort-20261101/round-02.awarded.json": "6adad08a75dd1bdab5024ac09078b60715f3896ec9457af65620d868d9f34e41",
+    "late-cohort-20261101/round-02.measured.json": "69c624fb1ae8c1404c4d68cc79c91b48d842fe7170eba022213fc103120d5695",
+    "late-cohort-20261101/round-03.awarded.json": "866cefd8907ada9a864433ae264dd19917c6d8876a21a80861f9be7305c75ce9",
+    "late-cohort-20261101/round-03.measured.json": "e91c3312c008546c1d7493f3f6ded908e3d5b7beb9ba331eccc98cd72e3c11bc",
+    "late-cohort-20261101/round-04.awarded.json": "f87c07bdcfd4bda4bf69fc29504334d4bc14dc96f009708ab9ca4c86fa672f30",
+    "late-cohort-20261101/round-04.measured.json": "f87c07bdcfd4bda4bf69fc29504334d4bc14dc96f009708ab9ca4c86fa672f30",
+    "late-followup-20261102/policy.json": "a7188f63c2f637f2fea54bce3b72e403f8d36f09269c4e3a9dbfd9e73849acb5",
+    "late-followup-20261102/round-03.json": "d52f70b90ff62ee306d4edc1b3b75bee7b16dea3cf59dbfd45f2d06695abd9c7",
+    "late-followup-20261102/round-04.json": "e3f335196d13f575dd7efd2090fa161321c74b5c4e5f87aa4f5b675161e0e818"
+  },
+  "late_without_penalty": true,
+  "whole_awards_never_decrease": true,
+  "round01_rule": "solution-in-registered-repository-no-tag-or-gate-requirement",
+  "ranking_withheld": true,
+  "new_overdrive_withheld": true,
+  "appeal_until": null,
+  "releases": [
+    {
+      "round": 1,
+      "report_file": "round-01.json",
+      "report_sha256": "826e4157c3e3ca1814d4647ce574be148508fbd2dd086c615234ac3856b964e7",
+      "pending_access": 1,
+      "pending_measurement": 0,
+      "missing_tags": 0
+    },
+    {
+      "round": 2,
+      "report_file": "round-02.json",
+      "report_sha256": "48a1ab2886ae2770cc6a8f3cd116a4a634c846bc0d6f6ebefde1e8ba2349356b",
+      "pending_access": 1,
+      "pending_measurement": 0,
+      "missing_tags": 3
+    },
+    {
+      "round": 3,
+      "report_file": "round-03.json",
+      "report_sha256": "d3b7295d84d26dee75145ca51a4a907a3ed1cc787201a98a0f2fb3dee0b8a941",
+      "pending_access": 1,
+      "pending_measurement": 0,
+      "missing_tags": 2
+    },
+    {
+      "round": 4,
+      "report_file": "round-04.json",
+      "report_sha256": "6afdd409cf61f6fddd6efbf4e4765f0f315c8e6c91f95b10ccb1dc5297e0a6f2",
+      "pending_access": 1,
+      "pending_measurement": 0,
+      "missing_tags": 1
+    },
+    {
+      "round": 5,
+      "report_file": "round-05.json",
+      "report_sha256": "e654865f2324635ed304d46cf8a0b41dce125e40e5d5f28a0b6292e5d04e2f77",
+      "pending_access": 1,
+      "pending_measurement": 0,
+      "missing_tags": 2
+    }
+  ]
+}
