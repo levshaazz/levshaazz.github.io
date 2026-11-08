@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 506" role="img" aria-label="A knob pushes the whole throughput-latency curve outward">
+  <rect width="900" height="506" fill="#FAF6ED"/>
+  <!-- axes: throughput vs tail latency -->
+  <line x1="110" y1="420" x2="830" y2="420" stroke="#14181F" stroke-width="3" stroke-linecap="round"/>
+  <line x1="110" y1="420" x2="110" y2="60" stroke="#14181F" stroke-width="3" stroke-linecap="round"/>
+  <text x="470" y="478" font-family="Georgia, serif" font-size="24" fill="#6B7280" text-anchor="middle">tail latency</text>
+  <text x="62" y="240" font-family="Georgia, serif" font-size="24" fill="#6B7280" text-anchor="middle" transform="rotate(-90 62 240)">throughput</text>
+  <!-- old curve -->
+  <path d="M150 130 C 260 190, 420 330, 800 400" fill="none" stroke="#B8B19E" stroke-width="5" stroke-dasharray="10 10" stroke-linecap="round"/>
+  <text x="205" y="105" font-family="Georgia, serif" font-size="22" fill="#6B7280">before</text>
+  <!-- new curve pushed outward -->
+  <path d="M190 84 C 330 130, 540 270, 810 372" fill="none" stroke="#2A6FDB" stroke-width="7" stroke-linecap="round"/>
+  <text x="235" y="66" font-family="Georgia, serif" font-size="22" fill="#1B4FA0">after tuning</text>
+  <!-- the knob -->
+  <circle cx="640" cy="150" r="58" fill="#FBE6D8" stroke="#E8743B" stroke-width="6"/>
+  <line x1="640" y1="150" x2="678" y2="112" stroke="#B4521F" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="640" cy="150" r="8" fill="#B4521F"/>
+  <!-- arrows from the knob to the new curve -->
+  <g stroke="#E8743B" stroke-width="4" fill="none" stroke-linecap="round">
+    <path d="M580 130 C 500 110, 420 96, 330 96"/>
+    <path d="M700 190 C 720 240, 730 290, 736 330"/>
+  </g>
+  <path d="M330 96 l30 -14 l4 30 z" fill="#E8743B"/>
+  <path d="M736 330 l-26 -20 l28 -14 z" fill="#E8743B"/>
+  <!-- knob labels -->
+  <text x="640" y="248" font-family="Georgia, serif" font-size="21" fill="#B4521F" text-anchor="middle">max_num_seqs</text>
+  <text x="640" y="276" font-family="Georgia, serif" font-size="21" fill="#B4521F" text-anchor="middle">gpu-mem-util</text>
+</svg>

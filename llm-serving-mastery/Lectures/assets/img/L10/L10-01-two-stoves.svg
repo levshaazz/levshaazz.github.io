@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 506" role="img" aria-label="Two stoves each hold half of every weight; all-reduce joins the halves into one dish">
+  <rect width="900" height="506" fill="#FAF6ED"/>
+  <!-- two stoves -->
+  <g>
+    <rect x="120" y="150" width="260" height="30" rx="8" fill="#14181F"/>
+    <rect x="520" y="150" width="260" height="30" rx="8" fill="#14181F"/>
+    <rect x="90" y="180" width="320" height="150" rx="16" fill="#EBE7DA" stroke="#B8B19E" stroke-width="4"/>
+    <rect x="490" y="180" width="320" height="150" rx="16" fill="#EBE7DA" stroke="#B8B19E" stroke-width="4"/>
+    <circle cx="160" cy="235" r="12" fill="#B8B19E"/><circle cx="250" cy="235" r="12" fill="#B8B19E"/><circle cx="340" cy="235" r="12" fill="#B8B19E"/>
+    <circle cx="560" cy="235" r="12" fill="#B8B19E"/><circle cx="650" cy="235" r="12" fill="#B8B19E"/><circle cx="740" cy="235" r="12" fill="#B8B19E"/>
+  </g>
+  <!-- one weight matrix split into halves -->
+  <g font-family="Georgia, serif" font-size="24" text-anchor="middle">
+    <rect x="150" y="286" width="100" height="34" rx="8" fill="#DCE8F8" stroke="#2A6FDB" stroke-width="4"/>
+    <text x="200" y="310" fill="#1B4FA0">W[:, :½]</text>
+    <rect x="650" y="286" width="100" height="34" rx="8" fill="#DCE8F8" stroke="#2A6FDB" stroke-width="4"/>
+    <text x="700" y="310" fill="#1B4FA0">W[:, ½:]</text>
+  </g>
+  <text x="250" y="372" font-family="Georgia, serif" font-size="23" fill="#6B7280" text-anchor="middle">GPU 0</text>
+  <text x="650" y="372" font-family="Georgia, serif" font-size="23" fill="#6B7280" text-anchor="middle">GPU 1</text>
+  <!-- all-reduce: both halves summed into the same result on both sides -->
+  <g stroke="#E8743B" stroke-width="5" fill="none" stroke-linecap="round">
+    <path d="M330 120 C 400 70, 500 70, 570 120"/>
+    <path d="M570 132 C 500 182, 400 182, 330 132"/>
+  </g>
+  <path d="M570 120 l-14 -22 l30 4 z" fill="#E8743B"/>
+  <path d="M330 132 l14 22 l-30 -4 z" fill="#E8743B"/>
+  <text x="450" y="52" font-family="Georgia, serif" font-size="26" fill="#B4521F" text-anchor="middle">all-reduce after every block</text>
+  <!-- one dish served from both halves -->
+  <ellipse cx="450" cy="440" rx="120" ry="26" fill="#FFFFFF" stroke="#14181F" stroke-width="4"/>
+  <path d="M356 440 a94 18 0 0 1 188 0" fill="none" stroke="#2A6FDB" stroke-width="4"/>
+  <text x="450" y="486" font-family="Georgia, serif" font-size="23" fill="#6B7280" text-anchor="middle">one dish, split the work</text>
+</svg>

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 506" role="img" aria-label="A serving hatch with a bounded queue; overflow gets an explicit 429">
+  <rect width="900" height="506" fill="#FAF6ED"/>
+  <!-- the hatch: engine room on the left, window in the middle -->
+  <rect x="60" y="120" width="330" height="270" rx="18" fill="#DCE8F8" stroke="#2A6FDB" stroke-width="5"/>
+  <rect x="120" y="170" width="210" height="120" rx="12" fill="#FAF6ED" stroke="#14181F" stroke-width="4"/>
+  <text x="225" y="240" font-family="Georgia, serif" font-size="26" fill="#14181F" text-anchor="middle">engine</text>
+  <!-- cook silhouette -->
+  <circle cx="150" cy="310" r="16" fill="#14181F"/>
+  <path d="M150 326 v34 M150 336 l-20 16 M150 336 l20 16" stroke="#14181F" stroke-width="5" stroke-linecap="round" fill="none"/>
+  <!-- bounded queue: fixed ticket slots with a wall at the end -->
+  <g>
+    <rect x="440" y="212" width="88" height="110" rx="10" fill="#FFFFFF" stroke="#14181F" stroke-width="4"/>
+    <rect x="548" y="212" width="88" height="110" rx="10" fill="#FFFFFF" stroke="#14181F" stroke-width="4"/>
+    <rect x="656" y="212" width="88" height="110" rx="10" fill="#FFFFFF" stroke="#14181F" stroke-width="4"/>
+    <rect x="764" y="212" width="88" height="110" rx="10" fill="#EBE7DA" stroke="#B8B19E" stroke-width="4" stroke-dasharray="8 8"/>
+  </g>
+  <!-- tickets in the slots -->
+  <g fill="#2A6FDB">
+    <rect x="462" y="240" width="44" height="28" rx="5"/>
+    <rect x="570" y="240" width="44" height="28" rx="5"/>
+    <rect x="678" y="240" width="44" height="28" rx="5"/>
+  </g>
+  <!-- arrival arrow into the queue -->
+  <path d="M430 267 h-38" stroke="#14181F" stroke-width="5" stroke-linecap="round"/>
+  <path d="M392 267 l22 -13 v26 z" fill="#14181F"/>
+  <!-- the wall: explicit 429 backpressure -->
+  <g>
+    <rect x="812" y="140" width="76" height="46" rx="9" fill="#FBE6D8" stroke="#E8743B" stroke-width="5"/>
+    <text x="850" y="172" font-family="Georgia, serif" font-size="27" fill="#B4521F" text-anchor="middle" font-weight="bold">429</text>
+    <line x1="850" y1="186" x2="850" y2="212" stroke="#E8743B" stroke-width="5"/>
+  </g>
+  <text x="700" y="370" font-family="Georgia, serif" font-size="23" fill="#6B7280" text-anchor="middle">full queue answers now,</text>
+  <text x="700" y="398" font-family="Georgia, serif" font-size="23" fill="#6B7280" text-anchor="middle">instead of hiding in a timeout</text>
+  <!-- health heartbeat -->
+  <path d="M120 448 h70 l16 -24 l20 46 l16 -22 h60" fill="none" stroke="#2A6FDB" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="330" y="455" font-family="Georgia, serif" font-size="21" fill="#6B7280">/health</text>
+</svg>
