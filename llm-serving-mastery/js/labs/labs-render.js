@@ -37,7 +37,11 @@
     if (count) count.textContent = n + " / " + IDS.length;
     IDS.forEach((id) => {
       const el = document.querySelector('[data-lab-checkpoint="' + id + '"]');
-      if (el) el.dataset.state = p[id] ? "pass" : "";
+      if (el) {
+        el.dataset.state = p[id] ? "pass" : "";
+        const dot = el.querySelector(".lab-dot");
+        if (dot) dot.classList.toggle("done", !!p[id]);
+      }
     });
     // reward unlocks at 100 % (labs declare content.reward with a caption)
     const reward = document.querySelector("[data-lab-reward]");
@@ -162,6 +166,7 @@
     IDS.push(ex.id);
     const card = el("div", "lab-card lab-exercise lab-code");
     card.dataset.labCheckpoint = ex.id;
+    card.appendChild(el("span", "lab-dot", ""));
     card.appendChild(el("span", "lab-ex-status", ex.id.toUpperCase()));
     card.appendChild(el("h3", "", tr(ex.title)));
     card.appendChild(el("p", "", tr(ex.brief)));
@@ -373,6 +378,20 @@
         table.appendChild(tr_);
       });
       modelHost.appendChild(table);
+    }
+    const figHost = document.querySelector("[data-lab-figures]");
+    if (figHost && (content.figures || []).length) {
+      figHost.hidden = false;
+      content.figures.forEach((f) => {
+        const fig = el("figure", "lab-figure");
+        const img = document.createElement("img");
+        img.loading = "lazy";
+        img.src = "/llm-serving-mastery/Lectures/assets/figures/" + f.id + "-dark.svg";
+        img.alt = tr(f.caption);
+        fig.appendChild(img);
+        fig.appendChild(el("figcaption", "", tr(f.caption)));
+        figHost.appendChild(fig);
+      });
     }
     const outcomesHost = document.querySelector("[data-lab-outcomes]");
     if (outcomesHost && (content.outcomes || []).length) {

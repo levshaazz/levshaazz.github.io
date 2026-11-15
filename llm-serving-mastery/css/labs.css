@@ -194,3 +194,16 @@
 /* ------------------------------------------------------------------ misc */
 .lab-note { font-size: 0.85rem; color: var(--lab-muted); }
 .lab-page .block { margin-top: 1.6rem; }
+
+/* Figures (deck SVGs, dark variants) */
+.lab-figure { margin: 0.9rem 0; }
+.lab-figure img { width: 100%; border: 1px solid var(--lab-line); border-radius: 12px; display: block; }
+.lab-figure figcaption { font-size: 0.85rem; color: var(--lab-muted); margin-top: 0.4rem; }
+
+/* Exercise completion dots (donor-style) */
+.lab-dot { float: right; width: 14px; height: 14px; border-radius: 50%; margin-left: 0.5rem; margin-right: 0.4rem; background: rgba(148, 163, 184, 0.25); border: 1px solid var(--lab-line); }
+.lab-dot.done { background: var(--lab-good); border-color: var(--lab-good); box-shadow: 0 0 10px rgba(52, 211, 153, 0.55); }
+
+/* Demo page scenes */
+.lab-demo { border: 1px solid var(--lab-line); border-radius: 14px; overflow: hidden; background: rgba(11, 14, 21, 0.8); }
+.lab-demo canvas { width: 100%; height: 260px; display: block; }
