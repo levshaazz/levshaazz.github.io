@@ -182,13 +182,14 @@
   }
 
   const SCENES = { stream, kv, tp, burst };
-  const ACCENTS = { stream: "#38e1ff", kv: "#4ade80", tp: "#a78bfa", burst: "#fb923c" };
+  const liveAccent = (canvas) =>
+    (getComputedStyle(canvas.closest(".lab-shell") || document.documentElement).getPropertyValue("--lab-accent") || "#38e1ff").trim();
 
   document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".lab-demo[data-demo]").forEach((host) => {
       const kind = host.dataset.demo;
       const canvas = host.querySelector("canvas");
-      if (canvas && SCENES[kind]) SCENES[kind](canvas, ACCENTS[kind] || "#38e1ff");
+      if (canvas && SCENES[kind]) SCENES[kind](canvas, liveAccent(canvas));
     });
   });
 })();

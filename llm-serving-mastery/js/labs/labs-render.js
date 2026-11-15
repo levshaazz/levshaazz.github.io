@@ -406,7 +406,7 @@
     const exRoot = document.querySelector("[data-lab-exercises]");
     (content.exercises || []).forEach((ex) => renderExercise(exRoot, ex));
     const heroHost = document.querySelector("[data-lab-hero]");
-    if (heroHost) renderHero(heroHost, heroHost.dataset.labAccent || "#38e1ff", tr(content.heroCaption) || "");
+    if (heroHost) renderHero(heroHost, null, tr(content.heroCaption) || "");
     const footer = document.querySelector("[data-lab-footer]");
     if (footer) footer.textContent = tr(content.footer) || "";
     renderProgress();
