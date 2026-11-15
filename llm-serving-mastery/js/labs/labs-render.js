@@ -167,8 +167,15 @@
     card.appendChild(el("p", "", tr(ex.brief)));
 
     const grid = el("div", "lab-editor");
-    const left = el("div");
-    left.appendChild(el("div", "lab-panel-title", T.editor));
+    const mkPanel = (titleText) => {
+      const panel = el("div", "lab-panel");
+      const bar = el("div", "lab-panel-bar");
+      bar.appendChild(el("i", "")); bar.appendChild(el("i", "")); bar.appendChild(el("i", ""));
+      bar.appendChild(el("span", "lab-panel-title", titleText));
+      panel.appendChild(bar);
+      return panel;
+    };
+    const leftPanel = mkPanel(T.editor);
     const ta = document.createElement("textarea");
     ta.spellcheck = false;
     ta.value = tr(ex.starter);
@@ -184,24 +191,24 @@
         ta.selectionStart = ta.selectionEnd = s + 2;
       }
     });
-    left.appendChild(ta);
+    leftPanel.appendChild(ta);
     // Upgrade to CodeMirror when the vendored editor is on the page.
     if (window.CodeMirror) {
       editor = window.CodeMirror.fromTextArea(ta, {
-        mode: "python", lineNumbers: true, indentUnit: 4, viewportMargin: 12,
+        mode: "python", lineNumbers: true, indentUnit: 4, viewportMargin: 12, theme: "dracula",
       });
-      editor.setSize("100%", "260px");
+      editor.setSize("100%", "296px");
     }
-    grid.appendChild(left);
+    grid.appendChild(leftPanel);
 
-    const right = el("div");
-    right.appendChild(el("div", "lab-panel-title", T.tests));
+    const rightPanel = mkPanel(T.tests);
     const results = el("div", "lab-tests");
-    right.appendChild(results);
+    results.style.padding = "0.6rem 0.8rem 0";
+    rightPanel.appendChild(results);
     const stdoutBox = el("div", "lab-timeline");
     stdoutBox.setAttribute("aria-live", "polite");
-    right.appendChild(stdoutBox);
-    grid.appendChild(right);
+    rightPanel.appendChild(stdoutBox);
+    grid.appendChild(rightPanel);
     card.appendChild(grid);
 
     const controls = el("div", "lab-controls");
@@ -327,6 +334,22 @@
     root.appendChild(card);
   }
 
+
+  // ------------------------------------------------------------------- hero
+  // Seeded "requests → edge → engine → tokens" flow, one accent color per lab.
+  function renderHero(host, accent, captionText) {
+    const canvas = host.querySelector("canvas");
+    if (!canvas) return;
+    const caption = host.querySelector("[data-lab-hero-caption]");
+    if (caption) caption.textContent = captionText;
+    if (window.LSMHero) {
+      const labels = lang === "ru"
+        ? ["клиент", "edge", "движок", "токены"]
+        : ["client", "edge", "engine", "tokens"];
+      window.LSMHero.mount(canvas, accent, labels, (parseInt(labId, 10) || 1) * 9176 + 13);
+    }
+  }
+
   // ------------------------------------------------------------------ init
   document.addEventListener("DOMContentLoaded", () => {
     if (!content) {
@@ -363,6 +386,8 @@
     (content.quizzes || []).forEach((q) => renderQuiz(quizRoot, q));
     const exRoot = document.querySelector("[data-lab-exercises]");
     (content.exercises || []).forEach((ex) => renderExercise(exRoot, ex));
+    const heroHost = document.querySelector("[data-lab-hero]");
+    if (heroHost) renderHero(heroHost, heroHost.dataset.labAccent || "#38e1ff", tr(content.heroCaption) || "");
     const footer = document.querySelector("[data-lab-footer]");
     if (footer) footer.textContent = tr(content.footer) || "";
     renderProgress();
