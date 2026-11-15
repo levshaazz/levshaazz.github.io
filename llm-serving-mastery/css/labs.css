@@ -1,0 +1,81 @@
+/* labs.css — practice lab pages. Consumes tokens from tokens/design-tokens.css
+   (single source); declares no :root tokens (token-gate G2). */
+
+.lab-page .lab-hero { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between; }
+.lab-progress { display: flex; align-items: center; gap: .75rem; min-width: 220px; }
+.lab-progress-track { flex: 1; height: 10px; border-radius: 999px; background: var(--line-soft, color-mix(in oklab, var(--ink) 12%, transparent)); overflow: hidden; }
+.lab-progress-fill { height: 100%; width: 0%; background: var(--accent); transition: width .3s ease; }
+.lab-progress-count { font-variant-numeric: tabular-nums; font-size: .9rem; }
+
+.lab-card { border: 1px solid color-mix(in oklab, var(--ink) 15%, transparent); border-radius: 12px; padding: 1rem 1.1rem; margin: .9rem 0; background: var(--card, color-mix(in oklab, var(--ink) 4%, transparent)); }
+.lab-card h3 { margin-top: 0; }
+
+.lab-model-table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.lab-model-table th, .lab-model-table td { border: 1px solid color-mix(in oklab, var(--ink) 15%, transparent); padding: .35rem .6rem; text-align: left; }
+.lab-model-table td:last-child { font-variant-numeric: tabular-nums; }
+
+/* Lifecycle demo */
+.lab-lifecycle { display: grid; gap: .4rem; margin-top: .6rem; }
+.lab-lc-row { display: grid; grid-template-columns: 170px 1fr 90px; gap: .6rem; align-items: center; font-size: .92rem; }
+.lab-lc-bar { height: 16px; border-radius: 6px; background: color-mix(in oklab, var(--ink) 8%, transparent); position: relative; overflow: hidden; }
+.lab-lc-bar i { position: absolute; inset: 0 auto 0 0; width: 0%; background: var(--accent); display: block; }
+.lab-lc-bar i.done { background: color-mix(in oklab, var(--accent) 55%, var(--ink)); }
+.lab-lc-ms { text-align: right; font-variant-numeric: tabular-nums; }
+.lab-lc-row[data-phase="cold-only"] i { background: #b8860b; }
+.lab-controls { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .7rem; }
+
+/* Quizzes */
+.lab-quiz fieldset { border: none; padding: 0; margin: 0; }
+.lab-quiz .lab-answer-row { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; margin-top: .5rem; }
+.lab-quiz input[type="text"], .lab-quiz input[type="number"] { font: inherit; padding: .4rem .6rem; border-radius: 8px; border: 1px solid color-mix(in oklab, var(--ink) 30%, transparent); background: var(--bg); color: var(--ink); width: 9.5rem; }
+.lab-verdict { font-weight: 600; min-height: 1.4em; }
+.lab-verdict[data-state="pass"] { color: #1d7a3e; }
+.lab-verdict[data-state="fail"] { color: #b03030; }
+.lab-verdict[data-state="pass"] { color: var(--accent-ink); }
+.lab-hint { display: none; margin-top: .4rem; }
+.lab-hint[data-open="1"] { display: block; }
+.lab-unit { color: color-mix(in oklab, var(--ink) 65%, transparent); }
+
+/* Sandbox */
+.lab-editor { display: grid; grid-template-columns: 1fr 1fr; gap: .9rem; }
+@media (max-width: 900px) { .lab-editor { grid-template-columns: 1fr; } }
+.lab-editor textarea { width: 100%; min-height: 210px; resize: vertical; font: 0.88rem/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; padding: .7rem .8rem; border-radius: 10px; border: 1px solid color-mix(in oklab, var(--ink) 30%, transparent); background: var(--bg); color: var(--ink); tab-size: 2; }
+.lab-panel-title { font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; color: color-mix(in oklab, var(--ink) 65%, transparent); margin-bottom: .35rem; }
+.lab-timeline { font: 0.82rem/1.55 ui-monospace, SFMono-Regular, Menlo, monospace; background: color-mix(in oklab, var(--ink) 7%, transparent); border-radius: 10px; padding: .7rem .8rem; min-height: 210px; max-height: 320px; overflow: auto; white-space: pre-wrap; }
+.lab-timeline .ok { color: #1d7a3e; }
+.lab-timeline .err { color: #b03030; }
+.lab-timeline .chunk { color: var(--accent-ink); }
+.lab-metrics { display: flex; gap: .6rem; flex-wrap: wrap; margin-top: .6rem; }
+.lab-metric { border: 1px solid color-mix(in oklab, var(--ink) 15%, transparent); border-radius: 10px; padding: .4rem .7rem; min-width: 8.5rem; }
+.lab-metric b { display: block; font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+.lab-metric span { font-size: .78rem; color: color-mix(in oklab, var(--ink) 65%, transparent); }
+.lab-exercise[data-state="pass"] { border-color: #1d7a3e; }
+.lab-exercise .lab-ex-status { float: right; font-size: .82rem; font-weight: 600; }
+.lab-exercise[data-state="pass"] .lab-ex-status::after { content: " ✓"; color: #1d7a3e; }
+
+.lab-note { font-size: .85rem; color: color-mix(in oklab, var(--ink) 70%, transparent); }
+.lab-page .block { margin-top: 1.6rem; }
+
+/* Code exercises (LeetCode-style tests) */
+.lab-tests { display: grid; gap: .3rem; margin-bottom: .5rem; }
+.lab-test { display: flex; gap: .5rem; align-items: baseline; font-size: .88rem; }
+.lab-test-mark { width: 1.1em; font-weight: 700; }
+.lab-test.pass .lab-test-mark { color: #1d7a3e; }
+.lab-test.fail .lab-test-mark { color: #b03030; }
+.lab-test-name { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .82rem; }
+.lab-test-msg { color: #b03030; font-size: .82rem; }
+.lab-solution { margin-top: .6rem; padding: .7rem .8rem; border-radius: 10px; background: color-mix(in oklab, var(--ink) 7%, transparent); font: 0.82rem/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre-wrap; overflow: auto; max-height: 320px; }
+.lab-code .lab-timeline { min-height: 90px; }
+
+/* Layer-2 runtime section */
+.lab-runtime-chip { display: inline-block; padding: .3rem .7rem; border-radius: 999px; font-size: .85rem; font-weight: 600; border: 1px solid color-mix(in oklab, var(--ink) 25%, transparent); }
+.lab-runtime-on { color: #1d7a3e; border-color: #1d7a3e; }
+.lab-runtime-wait { color: #b8860b; border-color: #b8860b; }
+.lab-runtime-off { color: #b03030; border-color: #b03030; }
+.lab-runtime-status { margin: .4rem 0 .6rem; }
+
+/* Reward at 100% */
+.lab-reward { display: none; margin-top: 1rem; border: 1px solid var(--accent); border-radius: 12px; padding: .9rem 1rem; }
+.lab-reward[data-open="1"] { display: block; }
+.lab-reward canvas { width: 100%; height: 120px; display: block; border-radius: 8px; background: color-mix(in oklab, var(--ink) 6%, transparent); }
+.lab-reward .lab-reward-caption { font-size: .88rem; margin: .5rem 0 0; }
