@@ -351,6 +351,14 @@
       });
       modelHost.appendChild(table);
     }
+    const outcomesHost = document.querySelector("[data-lab-outcomes]");
+    if (outcomesHost && (content.outcomes || []).length) {
+      outcomesHost.hidden = false;
+      outcomesHost.appendChild(el("h2", "", T.outcomesH || "Learning outcomes"));
+      const list = el("ul", "reading");
+      content.outcomes.forEach((o) => list.appendChild(el("li", "", tr(o))));
+      outcomesHost.appendChild(list);
+    }
     const quizRoot = document.querySelector("[data-lab-quizzes]");
     (content.quizzes || []).forEach((q) => renderQuiz(quizRoot, q));
     const exRoot = document.querySelector("[data-lab-exercises]");

@@ -22,6 +22,10 @@
       ru: `<p>Полный перебор невозможен (4 ручки × 3 значения × 4 волны), поэтому поиск ограничен замороженным планом: baseline default, по одной OFAT-ветке на ручку и одна подтверждающая пара — пять конфигураций, ни больше; неудачные конфигурации остаются строками таблицы, а не стёртыми сносками. Допустимость — заявленная конъюнкция: <strong>feasible = thr ≥ floor AND p95 ≤ SLO</strong>, обе границы включительные. Не прошло ничего? «Замораживать нечего» — полноценный исход.</p>
 <p>Рабочая точка среди допустимых — самая быстрая по throughput, а запасы — <code>thr − floor</code> и <code>SLO − p95</code> — показывают, насколько выбор хрупок: точка, сидящая ровно на SLO, сломается на первом же held-out. Здесь кусаются единицы: p95 приходит в миллисекундах, и сравнение его с порогом в других единицах переворачивает все решения в 1000 раз — медленный профиль проходит как «допустимый».</p>`,
     },
+    outcomes: [
+      { en: "Formulate feasibility as a testable predicate (throughput floor AND p95 ceiling).", ru: "\u0424\u043e\u0440\u043c\u0443\u043b\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0434\u043e\u043f\u0443\u0441\u0442\u0438\u043c\u043e\u0441\u0442\u044c \u043a\u0430\u043a \u043f\u0440\u043e\u0432\u0435\u0440\u044f\u0435\u043c\u044b\u0439 \u043f\u0440\u0435\u0434\u0438\u043a\u0430\u0442 (\u043f\u043e\u043b \u043f\u043e throughput \u0418 \u043f\u043e\u0442\u043e\u043b\u043e\u043a p95)." },
+      { en: "Pick a working point with named margins and freeze it before held-out.", ru: "\u0412\u044b\u0431\u0438\u0440\u0430\u0442\u044c \u0440\u0430\u0431\u043e\u0447\u0443\u044e \u0442\u043e\u0447\u043a\u0443 \u0441 \u0438\u043c\u0435\u043d\u043e\u0432\u0430\u043d\u043d\u044b\u043c\u0438 \u0437\u0430\u043f\u0430\u0441\u0430\u043c\u0438 \u0438 \u0437\u0430\u043c\u043e\u0440\u0430\u0436\u0438\u0432\u0430\u0442\u044c \u0435\u0451 \u0434\u043e held-out." },
+    ],
     model: [
       ["feasible", "thr ≥ floor AND p95 ≤ SLO", "teaching thresholds", "floor 1200 tok/s, SLO 800 ms"],
       ["working point", "max-throughput feasible config, first on ties", "search plan", "default + 3 OFAT + 1 pair = 5 configs"],

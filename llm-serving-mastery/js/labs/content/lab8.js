@@ -21,6 +21,10 @@
       ru: `<p>Шлюз — тонкий HTTP-слой между клиентами и движком, и его работа — превратить механизмы Темы 06 в контракт: валидация до очереди, <strong>ограниченная очередь</strong>, отвечающая 429 с <code>Retry-After</code> вместо обещания вечного ожидания, карта <strong>«исход → код»</strong> (invalid 400, overloaded 429, движок лежит 503, deadline 504, остальное 500 без внутренностей) и отмена, которая перестаёт платить за брошенные токены. HTTP 200 означает «ответ отправлен», а не «запрос успешен» — таймаут клиента, засчитанный как успех, — это ложь, которую метрики повторят в 3 часа ночи.</p>
 <p>Привычка лабы: заморозить таблицу контракта (ситуация → механизм → ожидаемый код) ДО кода шлюза, потом дать drill'ам и журналу её проверить. Все числа здесь — объявленный мок движка: ttft 0.15 с, 0.02 с за токен, 4 слота обслуживания + 4 места очереди, — арифметика, которую можно проверить руками, а не измерение vLLM.</p>`,
     },
+    outcomes: [
+      { en: "Map every failure outcome to a status code and a client action.", ru: "\u041c\u0430\u043f\u043f\u0438\u0442\u044c \u043a\u0430\u0436\u0434\u044b\u0439 \u043e\u0442\u043a\u0430\u0437 \u043d\u0430 \u043a\u043e\u0434 \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u044f \u0438 \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435 \u043a\u043b\u0438\u0435\u043d\u0442\u0430." },
+      { en: "Keep rejection honest: a 429 is a decision, never a disguised success.", ru: "\u0414\u0435\u0440\u0436\u0430\u0442\u044c \u043e\u0442\u043a\u0430\u0437 \u0447\u0435\u0441\u0442\u043d\u044b\u043c: 429 \u2014 \u044d\u0442\u043e \u0440\u0435\u0448\u0435\u043d\u0438\u0435, \u0430 \u043d\u0435 \u0437\u0430\u043c\u0430\u0441\u043a\u0438\u0440\u043e\u0432\u0430\u043d\u043d\u044b\u0439 \u0443\u0441\u043f\u0435\u0445." },
+    ],
     model: [
       ["service seats", "capacity 4 + queue 4 = 8", "burst 24 → honest 429s", "24 − 8 = 16"],
       ["mock request time W", "0.15 s + 0.02 s × tokens", "64-token request", "0.15 + 1.28 = 1.43 s"],
@@ -67,6 +71,31 @@
       },
     ],
     exercises: [
+    {
+      id: "ex0",
+      title: { en: "Exercise 0 · Warm-up: what counts as success", ru: "Упражнение 0 · Разогрев: что считается успехом" },
+      brief: {
+        en: "One line to start: implement <code>status_is_success(status)</code> — exactly <code>true</code> for HTTP 200 and <code>false</code> for everything else. The whole gateway contract hangs on this single predicate; anything that is not 200 is a decision, not a success.",
+        ru: "Одна строка для старта: реализуй <code>status_is_success(status)</code> — ровно <code>true</code> для HTTP 200 и <code>false</code> для всего остального. На этом одном предикате держится весь контракт шлюза; всё, что не 200, — это решение, а не успех.",
+      },
+      starter: `def status_is_success(status):
+    """True only for HTTP 200."""
+    # TODO: одна строка
+`,
+      tests: [
+        { name: "200 is success", hidden: false, code: "eq(status_is_success(200), True)" },
+        { name: "429 is not", hidden: false, code: "eq(status_is_success(429), False)" },
+        { name: "504 is not", hidden: false, code: "eq(status_is_success(504), False)" },
+        { name: "0 (cancelled) is not", hidden: true, code: "eq(status_is_success(0), False)" },
+      ],
+      solution: `def status_is_success(status):
+    return status == 200`,
+      hints: [
+        { en: "One comparison. 200, and nothing else.", ru: "Одно сравнение. 200 — и ничего больше." },
+      ],
+      numpy: false,
+      timeoutMs: 4000,
+    },
       {
         id: "ex1",
         title: { en: "Exercise 1 · Outcome → status map", ru: "Упражнение 1 · Карта «исход → код»" },

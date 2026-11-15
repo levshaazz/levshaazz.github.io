@@ -21,6 +21,10 @@
       ru: `<p>Decode — это поток шагов; каждый шаг перетаскивает веса из памяти и делает немного арифметики. Шаг ограничивают две крыши: <strong>вычисления</strong> (TFLOP/s) и <strong>пропускная способность памяти</strong> (GB/s). Модель <em>roofline</em>: attainable = min(compute, intensity × bandwidth), где арифметическая интенсивность = FLOP на байт перемещённых данных. Слева от хребта ты упираешься в память, справа — в вычисления; после хребта повторное использование данных перестаёт помогать.</p>
 <p>Vторой бюджет — KV-кэш: каждый живой токен платит <strong>2 × layers × kv_heads × head_dim × bytes</strong> (двойка — это K и V). Этот платёж — не память весов, и он растёт с каждым клиентом и каждым токеном контекста. Привычка лабы: сначала выписать арифметику, дать тестам её проверить, и только потом спорить про реальный GPU.</p>`,
     },
+    outcomes: [
+      { en: "Predict which roof (bandwidth or compute) bounds a decode step before measuring.", ru: "\u041f\u0440\u0435\u0434\u0441\u043a\u0430\u0437\u044b\u0432\u0430\u0442\u044c, \u043a\u0430\u043a\u0430\u044f \u043a\u0440\u044b\u0448\u0430 \u2014 \u043f\u0430\u043c\u044f\u0442\u044c \u0438\u043b\u0438 \u0432\u044b\u0447\u0438\u0441\u043b\u0435\u043d\u0438\u044f \u2014 \u043e\u0433\u0440\u0430\u043d\u0438\u0447\u0438\u0432\u0430\u0435\u0442 decode-\u0448\u0430\u0433, \u0434\u043e \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u044f." },
+      { en: "Compute the exact KV payload per token and the tokens that fit a fixed pool.", ru: "\u0421\u0447\u0438\u0442\u0430\u0442\u044c \u0442\u043e\u0447\u043d\u044b\u0439 KV-\u043f\u043b\u0430\u0442\u0451\u0436 \u0437\u0430 \u0442\u043e\u043a\u0435\u043d \u0438 \u0447\u0438\u0441\u043b\u043e \u0442\u043e\u043a\u0435\u043d\u043e\u0432, \u043f\u043e\u043c\u0435\u0449\u0430\u044e\u0449\u0438\u0445\u0441\u044f \u0432 \u0444\u0438\u043a\u0441\u0438\u0440\u043e\u0432\u0430\u043d\u043d\u044b\u0439 \u043f\u0443\u043b." },
+    ],
     model: [
       ["compute ceiling", "60 TFLOP/s", "bandwidth", "600 GB/s"],
       ["ridge intensity", "compute / bandwidth = 100 FLOP/B", "attainable", "min(compute, intensity × bandwidth)"],

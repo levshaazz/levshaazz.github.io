@@ -22,6 +22,10 @@
       ru: `<p>Один GPU заканчивается дважды: стена памяти (веса 8B fp16 ≈ 16 ГБ плюс KV против бюджета 15 ГБ) и пол латентности последовательного decode. Тензорный параллелизм (TP) отвечает разрезом матриц весов: <strong>column-parallel</strong> режет <code>W</code> по выходным столбцам — каждый шард видит весь <code>X</code> и возвращает свои столбцы <code>Y</code>, стыковать внутри блока не надо; <strong>row-parallel</strong> режет <code>W</code> по строкам (и <code>X</code> по столбцам на те же части) — каждый шард даёт <strong>частичную сумму</strong>, и all-reduce соединяет их точной поэлементной суммой. Разрез — не иллюстрация: собранные шарды равны полному matmul с точностью до float-шума (≤ 1e-10 в тетради, здесь 1e-9).</p>
 <p>Модель шага заявлена: <code>t(p) = C/p + B·(p−1)/p + beat·(p−1)</code>. Вычисления делятся на степень, байтовая доля all-reduce растёт к <code>B</code>, и каждый лишний GPU добавляет такты синхронизации — член, которого забывает чистый план. Привычка лабы: заморозить план (колено, минимальная подходящая степень) до свипа, доказать разрез числом и считать такт именованным членом, а не шумом.</p>`,
     },
+    outcomes: [
+      { en: "Prove split equals full within tolerance for column- and row-parallel layers.", ru: "\u0414\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0442\u044c \u0440\u0430\u0432\u0435\u043d\u0441\u0442\u0432\u043e \u0441\u043f\u043b\u0438\u0442\u0430 \u0438 \u043f\u043e\u043b\u043d\u043e\u0433\u043e \u043f\u0440\u043e\u0445\u043e\u0434\u0430 \u0432 \u0434\u043e\u043f\u0443\u0441\u043a\u0435 \u0434\u043b\u044f column/row-parallel \u0441\u043b\u043e\u0451\u0432." },
+      { en: "Predict the TP knee from the sync beat and keep an honest per-GPU ledger.", ru: "\u041f\u0440\u0435\u0434\u0441\u043a\u0430\u0437\u044b\u0432\u0430\u0442\u044c \u043a\u043e\u043b\u0435\u043d\u043e TP \u0438\u0437 \u0442\u0430\u043a\u0442\u0430 \u0441\u0438\u043d\u0445\u0440\u043e\u043d\u0438\u0437\u0430\u0446\u0438\u0438 \u0438 \u0432\u0435\u0441\u0442\u0438 \u0447\u0435\u0441\u0442\u043d\u044b\u0439 per-GPU ledger." },
+    ],
     model: [
       ["step model", "t(p) = C/p + B·(p−1)/p + beat·(p−1)", "declared knobs", "C = 800 ms, B = 120 ms, beat = 25 ms"],
       ["column-parallel", "W split by columns (axis=1)", "every shard reads all of X", "own columns of Y"],
@@ -213,6 +217,52 @@ def mlp_forward_tp(x, w_up, w_down, parts):
         hints: [
           { en: "Keep both splits; replace np.hstack with the elementwise sum of the partials (start from partials[0], add the rest).", ru: "Оба разреза оставь; замени np.hstack на поэлементную сумму частичных результатов (начни с partials[0], добавь остальные)." },
         ],
+        numpy: true,
+        timeoutMs: 4000,
+      },
+      {
+        id: "ex4",
+        title: { en: "Exercise 4 · Wrap it into a class: TPSim", ru: "Упражнение 4 · Собери в класс: TPSim" },
+        brief: {
+          en: "The lab's final boss: wrap the declared model into a class. <code>new TPSim(compute_ms, bytes_term_ms, beat_ms)</code> with two methods: <code>step_time(degree)</code> — the knee formula you already know — and <code>fits(degree, weights_gib, per_gpu_gib)</code> — the per-GPU ledger from the quizzes: <code>(16 + 4) / degree + 1.5 &lt;= per_gpu_gib</code>. Real classes, real NumPy, real tests.",
+          ru: "Финальный босс лабы: заверши заявленную модель в класс. <code>new TPSim(compute_ms, bytes_term_ms, beat_ms)</code> с двумя методами: <code>step_time(degree)</code> — уже знакомая формула колена — и <code>fits(degree, weights_gib, per_gpu_gib)</code> — per-GPU ledger из квизов: <code>(16 + 4) / degree + 1.5 &lt;= per_gpu_gib</code>. Настоящие классы, настоящий NumPy, настоящие тесты.",
+        },
+        starter: `class TPSim:
+    def __init__(self, compute_ms, bytes_term_ms, beat_ms):
+        # TODO: сохрани три константы модели
+        ...
+
+    def step_time(self, degree):
+        # TODO: t(p) = C/p + B*(p-1)/p + beat*(p-1)
+        ...
+
+    def fits(self, degree, weights_gib, per_gpu_gib):
+        # TODO: (16 + 4) / degree + 1.5 <= per_gpu_gib
+        ...`,
+        tests: [
+          { name: "single GPU: no split, no sync", hidden: false, code: "sim = TPSim(800, 120, 25);\napprox(sim.step_time(1), 800, 1e-9)" },
+          { name: "four GPUs: the known knee number", hidden: false, code: "sim = TPSim(800, 120, 25);\napprox(sim.step_time(4), 365, 1e-9)" },
+          { name: "ledger admits degree 2 at 15 GiB", hidden: false, code: "sim = TPSim(800, 120, 25);\neq(sim.fits(2, 16, 15), True)" },
+          { name: "ledger rejects degree 1", hidden: true, code: "sim = TPSim(800, 120, 25);\neq(sim.fits(1, 16, 15), False)" },
+          { name: "another machine, same class", hidden: true, code: "sim = TPSim(400, 80, 10);\napprox(sim.step_time(2), 250, 1e-9)" },
+        ],
+        solution: `class TPSim:
+    def __init__(self, compute_ms, bytes_term_ms, beat_ms):
+        self.compute = compute_ms
+        self.bytes_term = bytes_term_ms
+        self.beat = beat_ms
+
+    def step_time(self, degree):
+        p = degree
+        return self.compute / p + self.bytes_term * (p - 1) / p + self.beat * (p - 1)
+
+    def fits(self, degree, weights_gib, per_gpu_gib):
+        return (16 + 4) / degree + 1.5 <= per_gpu_gib`,
+        hints: [
+          { en: "Store the three constants in __init__; both methods read them from self.", ru: "Сохрани три константы в __init__; оба метода читают их из self." },
+          { en: "fits is a single boolean expression — no if needed.", ru: "fits — одно булево выражение, if не нужен." },
+        ],
+        injectEntries: false,
         numpy: true,
         timeoutMs: 4000,
       },

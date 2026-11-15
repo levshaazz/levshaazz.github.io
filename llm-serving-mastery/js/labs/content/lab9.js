@@ -22,6 +22,10 @@
       ru: `<p>Образ — упорядоченная стопка слоёв, и у build-кэша один закон: hit слоя живёт, пока не изменились ни он сам, ни что-либо <em>под</em> ним — правка слоя пересобирает его и всё выше. Для LLM-образа бухгалтерия размера жёсткая: бинарник — мегабайты, а веса (Qwen2.5-0.5B Q4_K_M — 0.491 ГБ) доминируют, что бы ты ни делал с Dockerfile. Когда под касается страниц за стеной <code>--memory</code>, ядро его убивает: exit 137 — не код приложения, а 128 + 9 (SIGKILL), restart-политика поднимает контейнер снова с <strong>растущим backoff</strong> (100 мс → … → 1 мин; в Kubernetes это CrashLoopBackOff), и только код выхода, хвост журнала и <code>OOMKilled</code> рассказывают историю.</p>
 <p>Привычка лабы: заморозить план сборки (порядок слоёв, инвалидация по правке, члены рестарта) до первой сборки; диагностировать по доказательствам, а не по ощущениям — код + лог + inspect; считать «упал → снова отвечает» суммой именованных членов: extract слоёв + загрузка весов + init сервера + первый <code>/health</code>. Минимизация размера — это скорость восстановления.</p>`,
     },
+    outcomes: [
+      { en: "Predict cache invalidation before a build and read exit codes like an incident.", ru: "\u041f\u0440\u0435\u0434\u0441\u043a\u0430\u0437\u044b\u0432\u0430\u0442\u044c \u0438\u043d\u0432\u0430\u043b\u0438\u0434\u0430\u0446\u0438\u044e \u043a\u044d\u0448\u0430 \u0434\u043e \u0441\u0431\u043e\u0440\u043a\u0438 \u0438 \u0447\u0438\u0442\u0430\u0442\u044c exit-\u043a\u043e\u0434\u044b \u043a\u0430\u043a \u0438\u043d\u0446\u0438\u0434\u0435\u043d\u0442." },
+      { en: "Size recovery from resident memory and verify a measurement journal with your own hash walk.", ru: "\u0421\u0430\u0439\u0437\u0438\u0442\u044c \u0432\u043e\u0441\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u0435 \u043e\u0442 \u0440\u0435\u0437\u0438\u0434\u0435\u043d\u0442\u043d\u043e\u0439 \u043f\u0430\u043c\u044f\u0442\u0438 \u0438 \u0432\u0435\u0440\u0438\u0444\u0438\u0446\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0436\u0443\u0440\u043d\u0430\u043b \u0441\u0432\u043e\u0438\u043c \u0445\u044d\u0448-\u0445\u043e\u0434\u043e\u043c." },
+    ],
     model: [
       ["signal deaths", "exit ≥ 128 → killed by signal (exit − 128)", "137 = 128 + 9 (SIGKILL)", "143 = 128 + 15 (SIGTERM)"],
       ["crash-loop backoff", "docker: 0.1 s × 2^k, cap 60 s", "k8s CrashLoopBackOff", "10 s → cap 300 s"],
@@ -68,6 +72,40 @@
       },
     ],
     exercises: [
+      {
+        id: "ex3",
+        title: { en: "Exercise 3 · Crash-loop backoff", ru: "Упражнение 3 · Backoff crash-loop" },
+        brief: {
+          en: "Implement <code>backoff_delays(restarts, base_s=0.1, cap_s=60.0)</code> — the crash-loop restart schedule: restart k (0-based) waits <code>min(base_s × 2^k, cap_s)</code>. The intervals GROW — that is the docker-side twin of Kubernetes <code>CrashLoopBackOff</code> (10 s → cap 5 min). Return the list of delays; zero restarts means an empty list. Try the docker knobs (0.1, cap 60) and the k8s knobs (10, cap 300) — the shape is the same.",
+          ru: "Реализуй <code>backoff_delays(restarts, base_s=0.1, cap_s=60.0)</code> — расписание рестартов crash-loop: рестарт k (с нуля) ждёт <code>min(base_s × 2^k, cap_s)</code>. Интервалы РАСТУТ — это docker-версия kubernetes <code>CrashLoopBackOff</code> (10 с → cap 5 мин). Верни список задержек; ноль рестартов — пустой список. Примерь ручки docker (0.1, cap 60) и k8s (10, cap 300) — форма одна.",
+        },
+        starter: `def backoff_delays(restarts, base_s=0.1, cap_s=60.0):
+    """Delays between crash-loop restarts: doubling, capped.
+
+    Returns a list of restarts delays in seconds.
+    """
+    # TODO: restart k waits min(base_s * 2**k, cap_s), k = 0..restarts-1
+    return []
+`,
+        tests: [
+          { name: "docker-style first five", hidden: false, code: `d = backoff_delays(5, 0.1, 60.0)
+eq([round(x, 2) for x in d], [0.1, 0.2, 0.4, 0.8, 1.6])` },
+          { name: "capped at one minute", hidden: false, code: `d = backoff_delays(12, 0.1, 60.0)
+eq(len(d), 12)
+eq([round(x, 1) for x in d[-3:]], [51.2, 60.0, 60.0])` },
+          { name: "k8s-style backoff", hidden: true, code: `d = backoff_delays(6, 10.0, 300.0)
+eq([round(x, 1) for x in d], [10.0, 20.0, 40.0, 80.0, 160.0, 300.0])` },
+          { name: "zero restarts, zero waiting", hidden: true, code: `eq(backoff_delays(0, 0.1, 60.0), [])
+eq(len(backoff_delays(1, 0.1, 60.0)), 1)` },
+        ],
+        solution: `def backoff_delays(restarts, base_s=0.1, cap_s=60.0):
+    return [min(base_s * 2 ** k, cap_s) for k in range(restarts)]`,
+        hints: [
+          { en: "One list comprehension: min of the doubling base and the cap, over range(restarts).", ru: "Одно list comprehension: min от удвоенной базы и потолка, по range(restarts)." },
+        ],
+        numpy: false,
+        timeoutMs: 4000,
+      },
       {
         id: "ex1",
         title: { en: "Exercise 1 · Freeze the build plan", ru: "Упражнение 1 · Заморозь план сборки" },
@@ -212,40 +250,6 @@ eq(d['sig'], None)` },
         timeoutMs: 4000,
       },
       {
-        id: "ex3",
-        title: { en: "Exercise 3 · Crash-loop backoff", ru: "Упражнение 3 · Backoff crash-loop" },
-        brief: {
-          en: "Implement <code>backoff_delays(restarts, base_s=0.1, cap_s=60.0)</code> — the crash-loop restart schedule: restart k (0-based) waits <code>min(base_s × 2^k, cap_s)</code>. The intervals GROW — that is the docker-side twin of Kubernetes <code>CrashLoopBackOff</code> (10 s → cap 5 min). Return the list of delays; zero restarts means an empty list. Try the docker knobs (0.1, cap 60) and the k8s knobs (10, cap 300) — the shape is the same.",
-          ru: "Реализуй <code>backoff_delays(restarts, base_s=0.1, cap_s=60.0)</code> — расписание рестартов crash-loop: рестарт k (с нуля) ждёт <code>min(base_s × 2^k, cap_s)</code>. Интервалы РАСТУТ — это docker-версия kubernetes <code>CrashLoopBackOff</code> (10 с → cap 5 мин). Верни список задержек; ноль рестартов — пустой список. Примерь ручки docker (0.1, cap 60) и k8s (10, cap 300) — форма одна.",
-        },
-        starter: `def backoff_delays(restarts, base_s=0.1, cap_s=60.0):
-    """Delays between crash-loop restarts: doubling, capped.
-
-    Returns a list of restarts delays in seconds.
-    """
-    # TODO: restart k waits min(base_s * 2**k, cap_s), k = 0..restarts-1
-    return []
-`,
-        tests: [
-          { name: "docker-style first five", hidden: false, code: `d = backoff_delays(5, 0.1, 60.0)
-eq([round(x, 2) for x in d], [0.1, 0.2, 0.4, 0.8, 1.6])` },
-          { name: "capped at one minute", hidden: false, code: `d = backoff_delays(12, 0.1, 60.0)
-eq(len(d), 12)
-eq([round(x, 1) for x in d[-3:]], [51.2, 60.0, 60.0])` },
-          { name: "k8s-style backoff", hidden: true, code: `d = backoff_delays(6, 10.0, 300.0)
-eq([round(x, 1) for x in d], [10.0, 20.0, 40.0, 80.0, 160.0, 300.0])` },
-          { name: "zero restarts, zero waiting", hidden: true, code: `eq(backoff_delays(0, 0.1, 60.0), [])
-eq(len(backoff_delays(1, 0.1, 60.0)), 1)` },
-        ],
-        solution: `def backoff_delays(restarts, base_s=0.1, cap_s=60.0):
-    return [min(base_s * 2 ** k, cap_s) for k in range(restarts)]`,
-        hints: [
-          { en: "One list comprehension: min of the doubling base and the cap, over range(restarts).", ru: "Одно list comprehension: min от удвоенной базы и потолка, по range(restarts)." },
-        ],
-        numpy: false,
-        timeoutMs: 4000,
-      },
-      {
         id: "rt1",
         title: { en: "Exercise 4 · Verify the runtime journal with your own hash walk", ru: "Упражнение 4 · Пересчитай журнал рантайма своим хэш-ходом" },
         brief: {
@@ -352,13 +356,13 @@ def verify_chain(entries):
         en: "In one short sentence, explain what an image digest pins.",
         ru: "Одним коротким предложением объясни, что пиннет дайджест образа.",
       },
-      reward: {
-      caption: { en: "Pinned, lean, healthchecked \u2014 and you verified the journal with your own hash walk.", ru: "\u041f\u0438\u043d\u043d\u0443\u0442\u044b\u0439, \u043a\u043e\u043c\u043f\u0430\u043a\u0442\u043d\u044b\u0439, \u0441 healthcheck \u2014 \u0438 \u0442\u044b \u043f\u0435\u0440\u0435\u0441\u0447\u0438\u0442\u0430\u043b \u0436\u0443\u0440\u043d\u0430\u043b \u0441\u0432\u043e\u0438\u043c \u0445\u044d\u0448-\u0445\u043e\u0434\u043e\u043c." },
-    },
-    footer: {
+      footer: {
         en: "Measurements are machine-local and honest — the course cites them only as your own. The chain-walk exercise above recomputes the gateway's journal with your Python; the gateway's own verifier is at GET /journal/verify.",
         ru: "Измерения машинно-локальные и честные — курс цитирует их только как твои собственные. Упражнение с проходом по цепочке пересчитывает журнал шлюза твоим Python; собственный верификатор шлюза — GET /journal/verify.",
       },
+    },
+    reward: {
+      caption: { en: "Pinned, lean, healthchecked — and you verified the journal with your own hash walk.", ru: "Пиннутый, компактный, с healthcheck — и ты пересчитал журнал своим хэш-ходом." },
     },
     footer: {
       en: "Teaching arithmetic with declared constants (137 = 128+9, backoff 0.1 s × 2^k cap 60 s, sizes from the course reference table) — not a measurement of your machine. The measured fleet runs live in the Topic 09 evidence runs (runs/2026-11-07-topic09-fleet-mac and runs/2026-11-14-topic09-fleet-mac); this lab does not execute them.",
