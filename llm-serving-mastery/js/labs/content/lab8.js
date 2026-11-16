@@ -240,13 +240,36 @@ eq(classify_outcome(400), 'failed')` },
           ru: "Ответь одним коротким предложением.",
         },
       },
-      reward: {
-      caption: { en: "Errors mapped, admission bounded, 429 honest \u2014 your gateway survives a burst.", ru: "\u041e\u0448\u0438\u0431\u043a\u0438 \u0440\u0430\u0437\u043c\u0435\u0447\u0435\u043d\u044b, \u0434\u043e\u043f\u0443\u0441\u043a \u043e\u0433\u0440\u0430\u043d\u0438\u0447\u0435\u043d, 429 \u0447\u0435\u0441\u0442\u043d\u044b\u0439 \u2014 \u0442\u0432\u043e\u0439 \u0448\u043b\u044e\u0437 \u043f\u0435\u0440\u0435\u0436\u0438\u0432\u0451\u0442 \u0431\u0443\u0440\u0441\u0442." },
-    },
-    footer: {
+      footer: {
         en: "Bursts are machine-local and honest. The gateway's own verifier is GET /journal/verify; each burst lands in the hash chain (kind=burst).",
         ru: "Бурсты машинно-локальные и честные. Собственный верификатор шлюза — GET /journal/verify; каждый бурст попадает в хэш-цепочку (kind=burst).",
       },
+    },
+    posttest: [
+      {
+        id: "p1",
+        q: { en: "HTTP 429 with Retry-After is\u2026", ru: "HTTP 429 \u0441 Retry-After \u2014 \u044d\u0442\u043e\u2026" },
+        options: [{ en: "an honest admission decision: try again later", ru: "\u0447\u0435\u0441\u0442\u043d\u043e\u0435 \u0440\u0435\u0448\u0435\u043d\u0438\u0435 \u0434\u043e\u043f\u0443\u0441\u043a\u0430: \u043f\u043e\u0432\u0442\u043e\u0440\u0438 \u043f\u043e\u0437\u0436\u0435" }, { en: "an engine bug", ru: "\u0431\u0430\u0433 \u0434\u0432\u0438\u0436\u043a\u0430" }, { en: "a successful answer", ru: "\u0443\u0441\u043f\u0435\u0448\u043d\u044b\u0439 \u043e\u0442\u0432\u0435\u0442" }],
+        answer: 0,
+        explain: { en: "429 separates rejection from success. Hiding overload in timeouts is the failure mode the lab drills.", ru: "429 \u043e\u0442\u0434\u0435\u043b\u044f\u0435\u0442 \u043e\u0442\u043a\u0430\u0437 \u043e\u0442 \u0443\u0441\u043f\u0435\u0445\u0430. \u041f\u0440\u044f\u0442\u0430\u0442\u044c \u043f\u0435\u0440\u0435\u0433\u0440\u0443\u0437\u043a\u0443 \u0432 \u0442\u0430\u0439\u043c\u0430\u0443\u0442\u0430\u0445 \u2014 \u0442\u043e\u0442 \u0430\u043d\u0442\u0438\u043f\u0430\u0442\u0442\u0435\u0440\u043d, \u043a\u043e\u0442\u043e\u0440\u044b\u0439 \u0433\u043e\u043d\u044f\u0435\u0442 \u043b\u0430\u0431\u0430." },
+      },
+      {
+        id: "p2",
+        q: { en: "Which outcome counts as success for the client ledger?", ru: "\u041a\u0430\u043a\u043e\u0439 \u0438\u0441\u0445\u043e\u0434 \u0441\u0447\u0438\u0442\u0430\u0435\u0442\u0441\u044f \u0443\u0441\u043f\u0435\u0445\u043e\u043c \u0432 \u043a\u043b\u0438\u0435\u043d\u0442\u0441\u043a\u043e\u043c ledger?" },
+        options: [{ en: "only HTTP 200 with a full response", ru: "\u0442\u043e\u043b\u044c\u043a\u043e HTTP 200 \u0441 \u043f\u043e\u043b\u043d\u044b\u043c \u043e\u0442\u0432\u0435\u0442\u043e\u043c" }, { en: "200 and 429", ru: "200 \u0438 429" }, { en: "anything but 500", ru: "\u0432\u0441\u0451, \u043a\u0440\u043e\u043c\u0435 500" }],
+        answer: 0,
+        explain: { en: "Cancellation (0) and timeouts are not successes either \u2014 the map is outcome \u2192 status \u2192 client action.", ru: "\u041e\u0442\u043c\u0435\u043d\u0430 (0) \u0438 \u0442\u0430\u0439\u043c\u0430\u0443\u0442\u044b \u2014 \u0442\u043e\u0436\u0435 \u043d\u0435 \u0443\u0441\u043f\u0435\u0445\u0438: \u043a\u0430\u0440\u0442\u0430 \u00ab\u0438\u0441\u0445\u043e\u0434 \u2192 \u0441\u0442\u0430\u0442\u0443\u0441 \u2192 \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435 \u043a\u043b\u0438\u0435\u043d\u0442\u0430\u00bb." },
+      },
+      {
+        id: "p3",
+        q: { en: "Bounded queue with 4 slots + 4 queue places gets 24 arrivals. The gateway\u2026", ru: "\u041e\u0433\u0440\u0430\u043d\u0438\u0447\u0435\u043d\u043d\u0430\u044f \u043e\u0447\u0435\u0440\u0435\u0434\u044c \u0441 4 \u043c\u0435\u0441\u0442\u0430\u043c\u0438 + 4 \u0432 \u043e\u0447\u0435\u0440\u0435\u0434\u0438 \u043f\u043e\u043b\u0443\u0447\u0430\u0435\u0442 24 \u0437\u0430\u044f\u0432\u043a\u0438. \u0428\u043b\u044e\u0437\u2026" },
+        options: [{ en: "admits 8, rejects 16 with 429", ru: "\u0434\u043e\u043f\u0443\u0441\u043a\u0430\u0435\u0442 8, \u043e\u0442\u0431\u0438\u0432\u0430\u0435\u0442 16 \u0441 429" }, { en: "admits all 24", ru: "\u0434\u043e\u043f\u0443\u0441\u043a\u0430\u0435\u0442 \u0432\u0441\u0435 24" }, { en: "rejects all 24", ru: "\u043e\u0442\u0431\u0438\u0432\u0430\u0435\u0442 \u0432\u0441\u0435 24" }],
+        answer: 0,
+        explain: { en: "admitted = min(arrivals, slots + queue) = 8; the rest get immediate 429 instead of hidden waiting.", ru: "admitted = min(\u0437\u0430\u044f\u0432\u043a\u0438, \u0441\u043b\u043e\u0442\u044b + \u043e\u0447\u0435\u0440\u0435\u0434\u044c) = 8; \u043e\u0441\u0442\u0430\u043b\u044c\u043d\u044b\u0435 \u043f\u043e\u043b\u0443\u0447\u0430\u044e\u0442 \u043d\u0435\u043c\u0435\u0434\u043b\u0435\u043d\u043d\u044b\u0439 429 \u0432\u043c\u0435\u0441\u0442\u043e \u0441\u043a\u0440\u044b\u0442\u043e\u0433\u043e \u043e\u0436\u0438\u0434\u0430\u043d\u0438\u044f." },
+      },
+    ],
+    reward: {
+      caption: { en: "Errors mapped, admission bounded, 429 honest \u2014 your gateway survives a burst.", ru: "\u041e\u0448\u0438\u0431\u043a\u0438 \u0440\u0430\u0437\u043c\u0435\u0447\u0435\u043d\u044b, \u0434\u043e\u043f\u0443\u0441\u043a \u043e\u0433\u0440\u0430\u043d\u0438\u0447\u0435\u043d, 429 \u0447\u0435\u0441\u0442\u043d\u044b\u0439 \u2014 \u0442\u0432\u043e\u0439 \u0448\u043b\u044e\u0437 \u043f\u0435\u0440\u0435\u0436\u0438\u0432\u0451\u0442 \u0431\u0443\u0440\u0441\u0442." },
     },
     footer: {
       en: "Teaching arithmetic on a declared mock engine (ttft 0.15 s, 0.02 s per token, seats 4+4) — not a vLLM measurement. The recorded gateway drills live in the Topic 08 evidence run (runs/2026-10-26-topic08-gateway-mock); this lab does not execute them.",

@@ -401,6 +401,22 @@
       content.outcomes.forEach((o) => list.appendChild(el("li", "", tr(o))));
       outcomesHost.appendChild(list);
     }
+    const postHost = document.querySelector("[data-lab-posttest-host]");
+    if (postHost && (content.posttest || []).length) {
+      const ptSection = document.querySelector("[data-lab-posttest]");
+      if (ptSection) ptSection.hidden = false;
+      (content.posttest || []).forEach((it) => IDS.push(it.id));
+      window.LSMPosttest.render(postHost, content.posttest, {
+        lang,
+        onCorrect: (id) => {
+          const p = loadProgress(); p[id] = 1;
+          try { localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) {}
+          renderProgress();
+        },
+      });
+      // IDS уже содержит posttest-ids: перерисовать прогресс после регистрации
+      renderProgress();
+    }
     const quizRoot = document.querySelector("[data-lab-quizzes]");
     (content.quizzes || []).forEach((q) => renderQuiz(quizRoot, q));
     const exRoot = document.querySelector("[data-lab-exercises]");

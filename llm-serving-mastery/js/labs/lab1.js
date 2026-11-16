@@ -98,7 +98,7 @@
 
   // --------------------------------------------------------------- progress
   var KEY = "lsm.lab1";
-  var IDS = ["q1", "q2", "q3", "ex1", "ex2", "ex3"];
+  var IDS = ["q1", "q2", "q3", "ex1", "ex2", "ex3", "p1", "p2", "p3"];
   function loadProgress() {
     try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; }
   }
@@ -300,6 +300,15 @@
   // ------------------------------------------------------------------ init
   document.addEventListener("DOMContentLoaded", function () {
     renderProgress();
+    if (window.LSMPosttest && window.LAB1_POSTTEST) {
+      var host = document.querySelector("[data-lab-posttest-host]");
+      if (host) {
+        window.LSMPosttest.render(host, window.LAB1_POSTTEST, {
+          lang: (document.documentElement.dataset.lang === "ru") ? "ru" : "en",
+          onCorrect: markDone,
+        });
+      }
+    }
     initLifecycle();
     initQuiz("q1", 16.16, 0.5, "s");
     initQuiz("q2", 160, 10, "ms");

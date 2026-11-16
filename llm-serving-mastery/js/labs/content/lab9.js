@@ -365,6 +365,29 @@ def verify_chain(entries):
         ru: "Измерения машинно-локальные и честные — курс цитирует их только как твои собственные. Упражнение с проходом по цепочке пересчитывает журнал шлюза твоим Python; собственный верификатор шлюза — GET /journal/verify.",
       },
     },
+    posttest: [
+      {
+        id: "p1",
+        q: { en: "A container exits with code 137 after a memory limit. 137 means\u2026", ru: "\u041a\u043e\u043d\u0442\u0435\u0439\u043d\u0435\u0440 \u0432\u044b\u0448\u0435\u043b \u0441 \u043a\u043e\u0434\u043e\u043c 137 \u043f\u043e\u0441\u043b\u0435 \u043b\u0438\u043c\u0438\u0442\u0430 \u043f\u0430\u043c\u044f\u0442\u0438. 137 \u043e\u0437\u043d\u0430\u0447\u0430\u0435\u0442\u2026" },
+        options: [{ en: "128 + SIGKILL(9): the kernel killed it", ru: "128 + SIGKILL(9): \u0443\u0431\u0438\u043b\u043e \u044f\u0434\u0440\u043e" }, { en: "an application error 137", ru: "\u043e\u0448\u0438\u0431\u043a\u0430 \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u044f 137" }, { en: "a docker bug", ru: "\u0431\u0430\u0433 docker" }],
+        answer: 0,
+        explain: { en: "137 = 128 + 9: the cgroup OOM kill delivers SIGKILL \u2014 an incident, not an app crash.", ru: "137 = 128 + 9: cgroup OOM-kill \u0434\u043e\u0441\u0442\u0430\u0432\u043b\u044f\u0435\u0442 SIGKILL \u2014 \u044d\u0442\u043e \u0438\u043d\u0446\u0438\u0434\u0435\u043d\u0442, \u0430 \u043d\u0435 \u043f\u0430\u0434\u0435\u043d\u0438\u0435 \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u044f." },
+      },
+      {
+        id: "p2",
+        q: { en: "Layer order \u00abB\u00bb (context before the heavy dependency layer) protects\u2026", ru: "\u041f\u043e\u0440\u044f\u0434\u043e\u043a \u0441\u043b\u043e\u0451\u0432 \u00abB\u00bb (\u043a\u043e\u043d\u0442\u0435\u043a\u0441\u0442 \u0434\u043e \u0442\u044f\u0436\u0451\u043b\u043e\u0433\u043e \u0441\u043b\u043e\u044f \u0437\u0430\u0432\u0438\u0441\u0438\u043c\u043e\u0441\u0442\u0435\u0439) \u0431\u0435\u0440\u0435\u0436\u0451\u0442\u2026" },
+        options: [{ en: "the layer cache: source edits rebuild less", ru: "\u043a\u044d\u0448 \u0441\u043b\u043e\u0451\u0432: \u043f\u0440\u0430\u0432\u043a\u0438 \u0438\u0441\u0445\u043e\u0434\u043d\u0438\u043a\u043e\u0432 \u043f\u0435\u0440\u0435\u0441\u043e\u0431\u0438\u0440\u0430\u044e\u0442 \u043c\u0435\u043d\u044c\u0448\u0435" }, { en: "image size", ru: "\u0440\u0430\u0437\u043c\u0435\u0440 \u043e\u0431\u0440\u0430\u0437\u0430" }, { en: "the model weights", ru: "\u0432\u0435\u0441\u0430 \u043c\u043e\u0434\u0435\u043b\u0438" }],
+        answer: 0,
+        explain: { en: "Fewer-changing context above the heavy layer keeps cache hits for dependencies; the compile layer still rebuilds.", ru: "\u0420\u0435\u0436\u0435 \u043c\u0435\u043d\u044f\u044e\u0449\u0438\u0439\u0441\u044f \u043a\u043e\u043d\u0442\u0435\u043a\u0441\u0442 \u0432\u044b\u0448\u0435 \u0442\u044f\u0436\u0451\u043b\u043e\u0433\u043e \u0441\u043b\u043e\u044f \u0441\u043e\u0445\u0440\u0430\u043d\u044f\u0435\u0442 cache hit \u0437\u0430\u0432\u0438\u0441\u0438\u043c\u043e\u0441\u0442\u0435\u0439; \u0441\u043b\u043e\u0439 \u043a\u043e\u043c\u043f\u0438\u043b\u044f\u0446\u0438\u0438 \u0432\u0441\u0451 \u0440\u0430\u0432\u043d\u043e \u043f\u0435\u0440\u0435\u0441\u043e\u0431\u0438\u0440\u0430\u0435\u0442\u0441\u044f." },
+      },
+      {
+        id: "p3",
+        q: { en: "After the sizing fix the limit is set from\u2026", ru: "\u041f\u043e\u0441\u043b\u0435 \u043f\u043e\u0447\u0438\u043d\u043a\u0438 \u043b\u0438\u043c\u0438\u0442 \u0441\u0430\u0439\u0437\u0438\u0442\u0441\u044f \u043e\u0442\u2026" },
+        options: [{ en: "measured resident memory \u00d7 ~1.5 headroom", ru: "\u0438\u0437\u043c\u0435\u0440\u0435\u043d\u043d\u043e\u0439 \u0440\u0435\u0437\u0438\u0434\u0435\u043d\u0442\u043d\u043e\u0439 \u043f\u0430\u043c\u044f\u0442\u0438 \u00d7 \u0437\u0430\u043f\u0430\u0441 ~1.5" }, { en: "a random 2 GB", ru: "\u0441\u043b\u0443\u0447\u0430\u0439\u043d\u044b\u0445 2 \u0413\u0411" }, { en: "the number of CPUs", ru: "\u0447\u0438\u0441\u043b\u0430 CPU" }],
+        answer: 0,
+        explain: { en: "Resident ~760 MiB \u2192 1200 m limit: room to live, cgroup OOM never fires, crash-loop stops.", ru: "\u0420\u0435\u0437\u0438\u0434\u0435\u043d\u0442 ~760 \u041c\u0438\u0411 \u2192 \u043b\u0438\u043c\u0438\u0442 1200 m: \u0435\u0441\u0442\u044c \u0433\u0434\u0435 \u0436\u0438\u0442\u044c, cgroup OOM \u043d\u0435 \u0441\u0442\u0440\u0435\u043b\u044f\u0435\u0442, crash-loop \u043f\u0440\u0435\u043a\u0440\u0430\u0449\u0430\u0435\u0442\u0441\u044f." },
+      },
+    ],
     reward: {
       caption: { en: "Pinned, lean, healthchecked — and you verified the journal with your own hash walk.", ru: "Пиннутый, компактный, с healthcheck — и ты пересчитал журнал своим хэш-ходом." },
     },

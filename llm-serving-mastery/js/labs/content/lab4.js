@@ -164,6 +164,29 @@
         timeoutMs: 4000,
       },
     ],
+    posttest: [
+      {
+        id: "p1",
+        q: { en: "Nominal wall time for 256 tokens at TTFT 180 ms and 55 tok/s is\u2026", ru: "\u041d\u043e\u043c\u0438\u043d\u0430\u043b\u044c\u043d\u043e\u0435 \u0432\u0440\u0435\u043c\u044f \u043e\u0442\u0432\u0435\u0442\u0430 \u0438\u0437 256 \u0442\u043e\u043a\u0435\u043d\u043e\u0432 \u043f\u0440\u0438 TTFT 180 \u043c\u0441 \u0438 55 \u0442\u043e\u043a/\u0441 \u2014 \u044d\u0442\u043e\u2026" },
+        options: [{ en: "256 / 55", ru: "256 / 55" }, { en: "0.18 + 255 / 55", ru: "0.18 + 255 / 55" }, { en: "0.18 + 256 / 55", ru: "0.18 + 256 / 55" }],
+        answer: 1,
+        explain: { en: "The first token arrives inside TTFT; only the remaining 255 pay the decode cadence.", ru: "\u041f\u0435\u0440\u0432\u044b\u0439 \u0442\u043e\u043a\u0435\u043d \u043f\u0440\u0438\u0445\u043e\u0434\u0438\u0442 \u0432\u043d\u0443\u0442\u0440\u0438 TTFT; \u043e\u0441\u0442\u0430\u043b\u044c\u043d\u044b\u0435 255 \u043f\u043b\u0430\u0442\u044f\u0442 \u043a\u0430\u0434\u0435\u043d\u0441 decode." },
+      },
+      {
+        id: "p2",
+        q: { en: "What has already happened by the time the first token arrives?", ru: "\u0427\u0442\u043e \u0443\u0436\u0435 \u043f\u0440\u043e\u0438\u0437\u043e\u0448\u043b\u043e \u043a \u043c\u043e\u043c\u0435\u043d\u0442\u0443 \u043f\u0440\u0438\u0445\u043e\u0434\u0430 \u043f\u0435\u0440\u0432\u043e\u0433\u043e \u0442\u043e\u043a\u0435\u043d\u0430?" },
+        options: [{ en: "prefill of the prompt + one decode step", ru: "prefill \u043f\u0440\u043e\u043c\u043f\u0442\u0430 + \u043e\u0434\u0438\u043d decode-\u0448\u0430\u0433" }, { en: "the whole generation", ru: "\u0432\u0441\u044f \u0433\u0435\u043d\u0435\u0440\u0430\u0446\u0438\u044f" }, { en: "weight download", ru: "\u0441\u043a\u0430\u0447\u0438\u0432\u0430\u043d\u0438\u0435 \u0432\u0435\u0441\u043e\u0432" }],
+        answer: 0,
+        explain: { en: "TTFT = prefill + a single step; everything after that is decode cadence.", ru: "TTFT = prefill + \u043e\u0434\u0438\u043d \u0448\u0430\u0433; \u0432\u0441\u0451 \u0434\u0430\u043b\u044c\u043d\u0435\u0439\u0448\u0435\u0435 \u2014 \u043a\u0430\u0434\u0435\u043d\u0441 decode." },
+      },
+      {
+        id: "p3",
+        q: { en: "A log shows the first chunk at 0.30 s and the 11th at 2.30 s. The measured decode rate is\u2026", ru: "\u041b\u043e\u0433: \u043f\u0435\u0440\u0432\u044b\u0439 \u0447\u0430\u043d\u043a \u043d\u0430 0.30 \u0441, 11-\u0439 \u043d\u0430 2.30 \u0441. \u0418\u0437\u043c\u0435\u0440\u0435\u043d\u043d\u0430\u044f \u0441\u043a\u043e\u0440\u043e\u0441\u0442\u044c decode \u2014 \u044d\u0442\u043e\u2026" },
+        options: [{ en: "11 / 2.30", ru: "11 / 2.30" }, { en: "(11\u22121) / (2.30\u22120.30)", ru: "(11\u22121) / (2.30\u22120.30)" }, { en: "10 / 2.30", ru: "10 / 2.30" }],
+        answer: 1,
+        explain: { en: "Client-observed rate counts gaps BETWEEN chunks: 10 gaps over 2.0 s = 5 tok/s. TTFT is not decode time.", ru: "\u041a\u043b\u0438\u0435\u043d\u0442\u0441\u043a\u0430\u044f \u0441\u043a\u043e\u0440\u043e\u0441\u0442\u044c \u0441\u0447\u0438\u0442\u0430\u0435\u0442 \u043f\u0440\u043e\u043c\u0435\u0436\u0443\u0442\u043a\u0438 \u041c\u0415\u0416\u0414\u0423 \u0447\u0430\u043d\u043a\u0430\u043c\u0438: 10 \u043f\u0440\u043e\u043c\u0435\u0436\u0443\u0442\u043a\u043e\u0432 \u0437\u0430 2.0 \u0441 = 5 \u0442\u043e\u043a/\u0441. TTFT \u2014 \u043d\u0435 \u0432\u0440\u0435\u043c\u044f decode." },
+      },
+    ],
     reward: {
       caption: { en: "One request walked end to end: prefill, decode, and the streaming timeline.", ru: "\u041e\u0434\u0438\u043d \u0437\u0430\u043f\u0440\u043e\u0441 \u043f\u0440\u043e\u0448\u0451\u043b \u043e\u0442 \u043d\u0430\u0447\u0430\u043b\u0430 \u0434\u043e \u043a\u043e\u043d\u0446\u0430: prefill, decode \u0438 \u0441\u0442\u0440\u0438\u043c\u0438\u043d\u0433\u043e\u0432\u0430\u044f \u0448\u043a\u0430\u043b\u0430." },
     },
