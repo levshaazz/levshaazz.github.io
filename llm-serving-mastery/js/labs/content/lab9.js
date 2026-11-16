@@ -22,13 +22,95 @@
       ru: `<p>Образ — упорядоченная стопка слоёв, и у build-кэша один закон: hit слоя живёт, пока не изменились ни он сам, ни что-либо <em>под</em> ним — правка слоя пересобирает его и всё выше. Для LLM-образа бухгалтерия размера жёсткая: бинарник — мегабайты, а веса (Qwen2.5-0.5B Q4_K_M — 0.491 ГБ) доминируют, что бы ты ни делал с Dockerfile. Когда под касается страниц за стеной <code>--memory</code>, ядро его убивает: exit 137 — не код приложения, а 128 + 9 (SIGKILL), restart-политика поднимает контейнер снова с <strong>растущим backoff</strong> (100 мс → … → 1 мин; в Kubernetes это CrashLoopBackOff), и только код выхода, хвост журнала и <code>OOMKilled</code> рассказывают историю.</p>
 <p>Привычка лабы: заморозить план сборки (порядок слоёв, инвалидация по правке, члены рестарта) до первой сборки; диагностировать по доказательствам, а не по ощущениям — код + лог + inspect; считать «упал → снова отвечает» суммой именованных членов: extract слоёв + загрузка весов + init сервера + первый <code>/health</code>. Минимизация размера — это скорость восстановления.</p>`,
     },
+    heroTag: { en: "layers, exit codes, backoff", ru: "слои, exit-коды, backoff" },
     figures: [
-      { id: "t9-layer-stack", caption: { en: "Layer stack: order decides the cache bill.", ru: "\u0421\u0442\u043e\u043f\u043a\u0430 \u0441\u043b\u043e\u0451\u0432: \u043f\u043e\u0440\u044f\u0434\u043e\u043a \u043e\u043f\u0440\u0435\u0434\u0435\u043b\u044f\u0435\u0442 \u0441\u0447\u0451\u0442 \u0437\u0430 \u043a\u044d\u0448." } },
-      { id: "t9-startup-economics", caption: { en: "Startup economics: extract, weights, init, health.", ru: "\u042d\u043a\u043e\u043d\u043e\u043c\u0438\u043a\u0430 \u0441\u0442\u0430\u0440\u0442\u0430: extract, \u0432\u0435\u0441\u0430, init, health." } },
+      {
+        id: "lab9-layer-stack",
+        title: { en: "Layer order decides the cache bill", ru: "Порядок слоёв решает счёт за кэш" },
+        w: 760, h: 420,
+        svg: `<svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
+  <g id="g-stack">
+    <text x="60" y="60" font-size="14" fill="var(--lab-muted)" data-en="an image is an ordered stack" data-ru="образ — упорядоченная стопка">an image is an ordered stack</text>
+    <rect x="60" y="286" width="300" height="48" rx="8" fill="none" stroke="var(--lab-muted)" stroke-width="2"/>
+    <text x="210" y="316" text-anchor="middle" font-size="15" fill="var(--lab-ink)" class="mono">base (llama.cpp 1.18 GB)</text>
+    <rect x="60" y="232" width="300" height="48" rx="8" fill="none" stroke="var(--lab-muted)" stroke-width="2"/>
+    <text x="210" y="262" text-anchor="middle" font-size="15" fill="var(--lab-ink)" class="mono">os libs</text>
+    <rect x="60" y="178" width="300" height="48" rx="8" fill="none" stroke="var(--lab-muted)" stroke-width="2"/>
+    <text x="210" y="208" text-anchor="middle" font-size="15" fill="var(--lab-ink)" class="mono">deps (requirements.txt)</text>
+    <rect x="60" y="124" width="300" height="48" rx="8" fill="none" stroke="var(--lab-accent)" stroke-width="2"/>
+    <text x="210" y="154" text-anchor="middle" font-size="15" fill="var(--lab-accent)" class="mono">app code</text>
+  </g>
+  <g id="g-edit-app">
+    <circle cx="210" cy="148" r="11" fill="none" stroke="var(--lab-bad)" stroke-width="2.5" class="fig-pulse"/>
+    <text x="390" y="140" font-size="15" fill="var(--lab-bad)" data-en="edit app → app rebuilds" data-ru="правка app → пересборка app">edit app → app rebuilds</text>
+    <text x="390" y="166" font-size="14" fill="var(--lab-good)" data-en="everything below: cache hit" data-ru="всё ниже: cache hit">everything below: cache hit</text>
+    <path d="M 372 132 L 286 140" fill="none" stroke="var(--lab-bad)" stroke-width="2" class="fig-flow"/>
+    <text x="390" y="196" font-size="14" fill="var(--lab-good)" class="mono">✓ deps · os · base</text>
+  </g>
+  <g id="g-edit-deps">
+    <circle cx="210" cy="202" r="11" fill="none" stroke="var(--lab-bad)" stroke-width="2.5" class="fig-pulse"/>
+    <circle cx="210" cy="148" r="11" fill="none" stroke="var(--lab-bad)" stroke-width="2.5" class="fig-pulse"/>
+    <text x="390" y="230" font-size="15" fill="var(--lab-bad)" data-en="edit deps → deps + app rebuild" data-ru="правка deps → пересборка deps и app">edit deps → deps + app rebuild</text>
+    <text x="390" y="256" font-size="14" fill="var(--lab-good)" class="mono">✓ os · base</text>
+    <path d="M 372 222 L 292 250" fill="none" stroke="var(--lab-bad)" stroke-width="2" class="fig-flow"/>
+    <path d="M 372 226 L 292 202" fill="none" stroke="var(--lab-bad)" stroke-width="2" class="fig-flow"/>
+  </g>
+  <g id="g-law">
+    <text x="380" y="316" font-size="16" fill="var(--lab-ink)" data-en="the law: a hit survives while nothing below changed" data-ru="закон: hit живёт, пока не изменилось ничего ниже">the law: a hit survives while nothing below changed</text>
+    <text x="380" y="344" font-size="14" fill="var(--lab-muted)" data-en="rarely-changing layers go low — order decides the bill" data-ru="редко меняющиеся слои — вниз; порядок решает счёт">rarely-changing layers go low — order decides the bill</text>
+  </g>
+</svg>`,
+        stages: [
+          { cap: { en: "An image is an ordered stack: base → os libs → deps → app code.", ru: "Образ — упорядоченная стопка: base → os libs → deps → app code." }, show: ["g-stack"] },
+          { cap: { en: "Edit the app: one layer rebuilds; everything below stays a cache hit.", ru: "Правка app: пересобирается один слой; всё ниже остаётся cache hit." }, show: ["g-stack", "g-edit-app"] },
+          { cap: { en: "Edit deps: the invalidation wave climbs — deps and app rebuild.", ru: "Правка deps: волна инвалидации поднимается — пересобираются deps и app." }, show: ["g-stack", "g-edit-app", "g-edit-deps"] },
+          { cap: { en: "The law: a hit survives while nothing below it changed.", ru: "Закон: hit живёт, пока не изменилось ничего ниже него." }, show: ["g-stack", "g-edit-app", "g-edit-deps", "g-law"] },
+        ],
+      },
+      {
+        id: "lab9-startup-economics",
+        title: { en: "Crashed → answering again, member by member", ru: "«Упал → снова отвечает», член за членом" },
+        w: 760, h: 420,
+        svg: `<svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
+  <g id="g-cold">
+    <text x="60" y="72" font-size="15" fill="var(--lab-ink)" data-en="cold restart = the sum of named members" data-ru="холодный рестарт = сумма именованных членов">cold restart = the sum of named members</text>
+    <rect x="60" y="90" width="90" height="40" rx="7" fill="var(--lab-accent)" opacity="0.55"/>
+    <text x="105" y="115" text-anchor="middle" font-size="14" fill="var(--lab-ink)" data-en="extract" data-ru="extract">extract</text>
+    <rect x="154" y="90" width="330" height="40" rx="7" fill="var(--fig-warm)" opacity="0.75"/>
+    <text x="319" y="115" text-anchor="middle" font-size="14" fill="var(--lab-bg)" class="mono" data-en="weight loading 0.491 GB" data-ru="загрузка весов 0.491 ГБ">weight loading 0.491 GB</text>
+    <rect x="488" y="90" width="110" height="40" rx="7" fill="var(--lab-accent)" opacity="0.35"/>
+    <text x="543" y="115" text-anchor="middle" font-size="14" fill="var(--lab-ink)" data-en="server init" data-ru="init сервера">server init</text>
+    <rect x="602" y="90" width="98" height="40" rx="7" fill="var(--lab-good)" opacity="0.45"/>
+    <text x="651" y="115" text-anchor="middle" font-size="14" fill="var(--lab-ink)" class="mono">/health</text>
+    <text x="60" y="156" font-size="13" fill="var(--lab-muted)" data-en="the dominant member is whatever you do with the weights" data-ru="доминирующий член — то, что ты делаешь с весами">the dominant member is whatever you do with the weights</text>
+  </g>
+  <g id="g-warm">
+    <text x="60" y="206" font-size="15" fill="var(--lab-ink)" data-en="warm restart: layers are local — extract shrinks" data-ru="тёплый рестарт: слои локальны — extract сжимается">warm restart: layers are local — extract shrinks</text>
+    <rect x="60" y="224" width="36" height="40" rx="7" fill="var(--lab-muted)" opacity="0.5"/>
+    <text x="78" y="249" text-anchor="middle" font-size="13" fill="var(--lab-muted)" class="mono">~0</text>
+    <rect x="100" y="224" width="330" height="40" rx="7" fill="var(--fig-warm)" opacity="0.75"/>
+    <text x="265" y="249" text-anchor="middle" font-size="14" fill="var(--lab-bg)" class="mono">weights 0.491 GB</text>
+    <rect x="434" y="224" width="110" height="40" rx="7" fill="var(--lab-accent)" opacity="0.35"/>
+    <rect x="548" y="224" width="98" height="40" rx="7" fill="var(--lab-good)" opacity="0.45"/>
+    <text x="660" y="249" font-size="13" fill="var(--lab-muted)" data-en="still pays weights" data-ru="веса платить всё равно">still pays weights</text>
+  </g>
+  <g id="g-bake">
+    <text x="60" y="308" font-size="15" fill="var(--lab-ink)" data-en="bake the weights into the image" data-ru="запечь веса в образ">bake the weights into the image</text>
+    <text x="60" y="342" font-size="16" fill="var(--lab-ink)" class="mono">1.18 + 0.491 ≈ 1.67 GB</text>
+    <text x="330" y="342" font-size="14" fill="var(--lab-good)" data-en="heavy pull once, light start every time" data-ru="тяжёлый pull один раз, лёгкий старт каждый раз">heavy pull once, light start every time</text>
+    <text x="60" y="376" font-size="15" fill="var(--fig-warm)" data-en="minimizing the image is recovery speed" data-ru="минимизация образа — это скорость восстановления">minimizing the image is recovery speed</text>
+  </g>
+</svg>`,
+        stages: [
+          { cap: { en: "«Crashed → answering again» = extract + weight loading + server init + first /health.", ru: "«Упал → снова отвечает» = extract + загрузка весов + init сервера + первый /health." }, show: ["g-cold"] },
+          { cap: { en: "Warm restart: extract is already local; the weights still get paid.", ru: "Тёплый рестарт: extract уже локален; за веса платить всё равно." }, show: ["g-cold", "g-warm"] },
+          { cap: { en: "Bake the weights: 1.18 + 0.491 ≈ 1.67 GB — heavy pull once, light start.", ru: "Запечь веса: 1.18 + 0.491 ≈ 1.67 ГБ — тяжёлый pull один раз, лёгкий старт." }, show: ["g-cold", "g-warm", "g-bake"] },
+        ],
+      },
     ],
     outcomes: [
       { en: "Predict cache invalidation before a build and read exit codes like an incident.", ru: "\u041f\u0440\u0435\u0434\u0441\u043a\u0430\u0437\u044b\u0432\u0430\u0442\u044c \u0438\u043d\u0432\u0430\u043b\u0438\u0434\u0430\u0446\u0438\u044e \u043a\u044d\u0448\u0430 \u0434\u043e \u0441\u0431\u043e\u0440\u043a\u0438 \u0438 \u0447\u0438\u0442\u0430\u0442\u044c exit-\u043a\u043e\u0434\u044b \u043a\u0430\u043a \u0438\u043d\u0446\u0438\u0434\u0435\u043d\u0442." },
-      { en: "Size recovery from resident memory and verify a measurement journal with your own hash walk.", ru: "\u0421\u0430\u0439\u0437\u0438\u0442\u044c \u0432\u043e\u0441\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u0435 \u043e\u0442 \u0440\u0435\u0437\u0438\u0434\u0435\u043d\u0442\u043d\u043e\u0439 \u043f\u0430\u043c\u044f\u0442\u0438 \u0438 \u0432\u0435\u0440\u0438\u0444\u0438\u0446\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0436\u0443\u0440\u043d\u0430\u043b \u0441\u0432\u043e\u0438\u043c \u0445\u044d\u0448-\u0445\u043e\u0434\u043e\u043c." },
+      { en: "Size recovery from resident memory and verify a measurement journal with your own hash walk.", ru: "\u041e\u0446\u0435\u043d\u0438\u0432\u0430\u0442\u044c \u0432\u043e\u0441\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u0435 \u043e\u0442 \u0440\u0435\u0437\u0438\u0434\u0435\u043d\u0442\u043d\u043e\u0439 \u043f\u0430\u043c\u044f\u0442\u0438 \u0438 \u0432\u0435\u0440\u0438\u0444\u0438\u0446\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0436\u0443\u0440\u043d\u0430\u043b \u0441\u0432\u043e\u0438\u043c \u0445\u044d\u0448-\u0445\u043e\u0434\u043e\u043c." },
     ],
     model: [
       ["signal deaths", "exit ≥ 128 → killed by signal (exit − 128)", "137 = 128 + 9 (SIGKILL)", "143 = 128 + 15 (SIGTERM)"],
@@ -77,8 +159,8 @@
     ],
     exercises: [
       {
-        id: "ex3",
-        title: { en: "Exercise 3 · Crash-loop backoff", ru: "Упражнение 3 · Backoff crash-loop" },
+        id: "ex1",
+        title: { en: "Exercise 1 · Crash-loop backoff", ru: "Упражнение 1 · Backoff crash-loop" },
         brief: {
           en: "Implement <code>backoff_delays(restarts, base_s=0.1, cap_s=60.0)</code> — the crash-loop restart schedule: restart k (0-based) waits <code>min(base_s × 2^k, cap_s)</code>. The intervals GROW — that is the docker-side twin of Kubernetes <code>CrashLoopBackOff</code> (10 s → cap 5 min). Return the list of delays; zero restarts means an empty list. Try the docker knobs (0.1, cap 60) and the k8s knobs (10, cap 300) — the shape is the same.",
           ru: "Реализуй <code>backoff_delays(restarts, base_s=0.1, cap_s=60.0)</code> — расписание рестартов crash-loop: рестарт k (с нуля) ждёт <code>min(base_s × 2^k, cap_s)</code>. Интервалы РАСТУТ — это docker-версия kubernetes <code>CrashLoopBackOff</code> (10 с → cap 5 мин). Верни список задержек; ноль рестартов — пустой список. Примерь ручки docker (0.1, cap 60) и k8s (10, cap 300) — форма одна.",
@@ -111,8 +193,8 @@ eq(len(backoff_delays(1, 0.1, 60.0)), 1)` },
         timeoutMs: 4000,
       },
       {
-        id: "ex1",
-        title: { en: "Exercise 1 · Freeze the build plan", ru: "Упражнение 1 · Заморозь план сборки" },
+        id: "ex2",
+        title: { en: "Exercise 2 · Freeze the build plan", ru: "Упражнение 2 · Заморозь план сборки" },
         brief: {
           en: "Implement <code>plan_cache_order()</code> — freeze the build plan BEFORE the first build. Fill in <code>chosen_order</code> (one letter: 'A', 'B' or 'C' from <code>options</code>), the <code>predictions</code> dict (keys <code>edit_source</code>, <code>change_source_pin</code>, <code>change_base</code> — which layers rebuild and why), the <code>restart_terms</code> dict (<code>cold</code> = the members of “crashed → answering”, <code>dominant</code> = which member rules for 0.491 GB of weights) and <code>why</code> (one sentence about the cache). No <code>TODO</code> may survive in any string.",
           ru: "Реализуй <code>plan_cache_order()</code> — заморозь план сборки ДО первой сборки. Заполни <code>chosen_order</code> (одна буква: 'A', 'B' или 'C' из <code>options</code>), dict <code>predictions</code> (ключи <code>edit_source</code>, <code>change_source_pin</code>, <code>change_base</code> — какие слои пересоберутся и почему), dict <code>restart_terms</code> (<code>cold</code> = члены «упал → снова отвечает», <code>dominant</code> = какой член правит при 0.491 ГБ весов) и <code>why</code> (одно предложение про cache). Ни одного <code>TODO</code> в строках остаться не должно.",
@@ -147,7 +229,9 @@ eq(sorted(p.keys()), ['change_base', 'change_source_pin', 'edit_source'])
 eq(all(isinstance(v, str) and v and 'TODO' not in v for v in p.values()), True)` },
           { name: "restart terms are filled", hidden: true, code: `r = plan_cache_order()['restart_terms']
 eq(sorted(r.keys()), ['cold', 'dominant'])
-eq(all(isinstance(v, str) and v and 'TODO' not in v for v in r.values()), True)` },
+eq(all(isinstance(v, str) and v and 'TODO' not in v for v in r.values()), True)
+eq('weight' in r['dominant'].lower() or '0.491' in r['dominant'], True)
+eq('+' in r['cold'], True)` },
           { name: "why names the cache", hidden: true, code: `why = plan_cache_order()['why']
 eq(bool(why) and 'TODO' not in why, True)
 eq('cache' in why.lower(), True)` },
@@ -178,8 +262,8 @@ eq('cache' in why.lower(), True)` },
         timeoutMs: 4000,
       },
       {
-        id: "ex2",
-        title: { en: "Exercise 2 · Fix the bug: 137 is not an app code", ru: "Упражнение 2 · Почини баг: 137 — это не код приложения" },
+        id: "ex3",
+        title: { en: "Exercise 3 · Fix the bug: 137 is not an app code", ru: "Упражнение 3 · Почини баг: 137 — это не код приложения" },
         brief: {
           en: "This <code>diagnose_exit(exit_code, log_tail, oomkilled=None)</code> treats 137 as an application exit code. It is not: codes ≥ 128 encode a signal death — 137 = 128 + 9 (SIGKILL), 143 = 128 + 15 (SIGTERM). Fix it to the contract: <code>oomkilled</code> true, exit 137, or an <code>oom</code>/<code>sigkill</code> hint in the log → kind <code>'oom'</code> with sig 9 (memory cgroup limit); any other signal death → <code>'sigterm'</code> for 15 (a graceful stop, not a crash; other signals → <code>'signalled'</code>); exit 1 with <code>manifest unknown</code> / <code>not found</code> in the log → <code>'tag_drift'</code>; 125 → <code>'daemon_error'</code>; 127 → <code>'command_not_found'</code>; otherwise <code>'unclassified'</code>. Return <code>{'kind': …, 'sig': signal or None, 'fix': …}</code> with a non-empty <code>fix</code>.",
           ru: "Эта <code>diagnose_exit(exit_code, log_tail, oomkilled=None)</code> трактует 137 как код приложения. Это не так: коды ≥ 128 кодируют смерть от сигнала — 137 = 128 + 9 (SIGKILL), 143 = 128 + 15 (SIGTERM). Починь по контракту: <code>oomkilled</code> истинно, exit 137 или подсказка <code>oom</code>/<code>sigkill</code> в логе → kind <code>'oom'</code> с sig 9 (лимит memory cgroup); любая другая смерть от сигнала → <code>'sigterm'</code> для 15 (штатная остановка, не падение; прочие сигналы → <code>'signalled'</code>); exit 1 с <code>manifest unknown</code> / <code>not found</code> в логе → <code>'tag_drift'</code>; 125 → <code>'daemon_error'</code>; 127 → <code>'command_not_found'</code>; иначе <code>'unclassified'</code>. Верни <code>{'kind': …, 'sig': сигнал или None, 'fix': …}</code> с непустым <code>fix</code>.",
@@ -313,6 +397,36 @@ def verify_chain(entries):
             "eq(ok, False)\n" +
             "eq(at, 2)"
           )},
+          { name: "prev-link broken but hashes self-consistent is caught", hidden: true, code: (
+            "import hashlib, json\n" +
+            "def _h(seq, ts, kind, payload, prev):\n" +
+            "    canon = json.dumps(payload, sort_keys=True, ensure_ascii=False)\n" +
+            "    return hashlib.sha256((f\"{seq}|{ts}|{kind}|{canon}|{prev}\").encode()).hexdigest()\n" +
+            "P = '0'*64\n" +
+            "chain = []\n" +
+            "for i, (ts, kind, payload) in enumerate([('t0','genesis',{'note':'n'}),('t1','experiment',{'wall_s':0.9}),('t2','note',{'note':'x'})]):\n" +
+            "    e = {'seq': i, 'ts': ts, 'kind': kind, 'payload': payload, 'prev': P}\n" +
+            "    e['hash'] = _h(i, ts, kind, payload, P); chain.append(e); P = e['hash']\n" +
+            "chain[2]['prev'] = 'f'*64\n" +
+            "ok, at = verify_chain(chain)\n" +
+            "eq(ok, False)\n" +
+            "eq(at, 2)"
+          )},
+          { name: "first breakage wins (seq hole at 1, tamper at 3)", hidden: true, code: (
+            "import hashlib, json\n" +
+            "def _h(seq, ts, kind, payload, prev):\n" +
+            "    canon = json.dumps(payload, sort_keys=True, ensure_ascii=False)\n" +
+            "    return hashlib.sha256((f\"{seq}|{ts}|{kind}|{canon}|{prev}\").encode()).hexdigest()\n" +
+            "P = '0'*64\n" +
+            "chain = []\n" +
+            "for seq, (ts, kind, payload) in zip([0, 2, 3, 4], [('t0','genesis',{}),('t2','note',{}),('t3','note',{}),('t4','note',{})]):\n" +
+            "    e = {'seq': seq, 'ts': ts, 'kind': kind, 'payload': payload, 'prev': P}\n" +
+            "    e['hash'] = _h(seq, ts, kind, payload, P); chain.append(e); P = e['hash']\n" +
+            "chain[3]['payload']['note'] = 'rewritten'\n" +
+            "ok, at = verify_chain(chain)\n" +
+            "eq(ok, False)\n" +
+            "eq(at, 1)"
+          )},
           { name: "genesis-only chain verifies", hidden: true, code: (
             "import hashlib, json\n" +
             "def _h(seq, ts, kind, payload, prev):\n" +
@@ -343,6 +457,7 @@ def verify_chain(entries):
           { en: "Return the FIRST broken index — walk in order, not sorted by seq.", ru: "Возвращай ПЕРВЫЙ сломанный индекс — идём по порядку списка, а не по сортировке seq." },
         ],
         injectEntries: true,
+        fixtureEntries: [{"seq": 0, "ts": "2026-11-14T10:00:00Z", "kind": "genesis", "payload": {"note": "fixture build"}, "prev": "0000000000000000000000000000000000000000000000000000000000000000", "hash": "25b4d9889cf032d0ac61e44733c49c521a24f150175c6e4fff3cb37320037655"}, {"seq": 1, "ts": "2026-11-14T10:01:12Z", "kind": "experiment", "payload": {"wall_s": 1.2}, "prev": "25b4d9889cf032d0ac61e44733c49c521a24f150175c6e4fff3cb37320037655", "hash": "77c50a7e2bfd4e0a46c12a0d24db6a05d9190b2da167463d185ce157a2bb4a1a"}, {"seq": 2, "ts": "2026-11-14T10:02:03Z", "kind": "note", "payload": {"note": "gateway up"}, "prev": "77c50a7e2bfd4e0a46c12a0d24db6a05d9190b2da167463d185ce157a2bb4a1a", "hash": "e5ab4d6b1f22ceaf059e4d4b3e0f457a32292a400a7b7dcc36f1362b99402957"}, {"seq": 3, "ts": "2026-11-14T10:03:40Z", "kind": "burst", "payload": {"admitted": 8, "rejected": 16}, "prev": "e5ab4d6b1f22ceaf059e4d4b3e0f457a32292a400a7b7dcc36f1362b99402957", "hash": "616675fd803a5e669b930c9bea04aa0f89c5100acb4cb40945cfd0274b2c6222"}],
         numpy: false,
         timeoutMs: 4000,
       },
@@ -383,7 +498,7 @@ def verify_chain(entries):
       {
         id: "p3",
         q: { en: "After the sizing fix the limit is set from\u2026", ru: "\u041f\u043e\u0441\u043b\u0435 \u043f\u043e\u0447\u0438\u043d\u043a\u0438 \u043b\u0438\u043c\u0438\u0442 \u0441\u0430\u0439\u0437\u0438\u0442\u0441\u044f \u043e\u0442\u2026" },
-        options: [{ en: "measured resident memory \u00d7 ~1.5 headroom", ru: "\u0438\u0437\u043c\u0435\u0440\u0435\u043d\u043d\u043e\u0439 \u0440\u0435\u0437\u0438\u0434\u0435\u043d\u0442\u043d\u043e\u0439 \u043f\u0430\u043c\u044f\u0442\u0438 \u00d7 \u0437\u0430\u043f\u0430\u0441 ~1.5" }, { en: "a random 2 GB", ru: "\u0441\u043b\u0443\u0447\u0430\u0439\u043d\u044b\u0445 2 \u0413\u0411" }, { en: "the number of CPUs", ru: "\u0447\u0438\u0441\u043b\u0430 CPU" }],
+        options: [{ en: "measured resident memory \u00d7 ~1.5 headroom", ru: "\u0438\u0437\u043c\u0435\u0440\u0435\u043d\u043d\u043e\u0439 \u0440\u0435\u0437\u0438\u0434\u0435\u043d\u0442\u043d\u043e\u0439 \u043f\u0430\u043c\u044f\u0442\u0438 \u00d7 \u0437\u0430\u043f\u0430\u0441 ~1.5" }, { en: "budget ÷ 2 with no KV headroom", ru: "budget ÷ 2 без запаса на KV" }, { en: "peak RSS with zero headroom", ru: "пиковый RSS без запаса" }],
         answer: 0,
         explain: { en: "Resident ~760 MiB \u2192 1200 m limit: room to live, cgroup OOM never fires, crash-loop stops.", ru: "\u0420\u0435\u0437\u0438\u0434\u0435\u043d\u0442 ~760 \u041c\u0438\u0411 \u2192 \u043b\u0438\u043c\u0438\u0442 1200 m: \u0435\u0441\u0442\u044c \u0433\u0434\u0435 \u0436\u0438\u0442\u044c, cgroup OOM \u043d\u0435 \u0441\u0442\u0440\u0435\u043b\u044f\u0435\u0442, crash-loop \u043f\u0440\u0435\u043a\u0440\u0430\u0449\u0430\u0435\u0442\u0441\u044f." },
       },
@@ -393,7 +508,7 @@ def verify_chain(entries):
     },
     footer: {
       en: "Teaching arithmetic with declared constants (137 = 128+9, backoff 0.1 s × 2^k cap 60 s, sizes from the course reference table) — not a measurement of your machine. The measured fleet runs live in the Topic 09 evidence runs (runs/2026-11-07-topic09-fleet-mac and runs/2026-11-14-topic09-fleet-mac); this lab does not execute them.",
-      ru: "Учебная арифметика с заявленными константами (137 = 128+9, backoff 0.1 с × 2^k cap 60 с, размеры из эталонной таблицы курса) — не измерение твоей машины. Измеренные флет-прогоны живут в evidence-прогонах Темы 09 (runs/2026-11-07-topic09-fleet-mac и runs/2026-11-14-topic09-fleet-mac); эта лаба их не исполняет.",
+      ru: "Учебная арифметика с заявленными константами (137 = 128+9, backoff 0.1 с × 2^k cap 60 с, размеры из эталонной таблицы курса) — не измерение твоей машины. Измеренные прогоны флота живут в evidence-прогонах Темы 09 (runs/2026-11-07-topic09-fleet-mac и runs/2026-11-14-topic09-fleet-mac); эта лаба их не исполняет.",
     },
   };
 })();

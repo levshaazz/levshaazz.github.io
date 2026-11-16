@@ -18,6 +18,29 @@
 
   const LETTERS = ["A", "B", "C", "D", "E"];
 
+  // Deterministic per-item option shuffle: content authors should not have to
+  // hand-place correct answers (all-A/all-B was a real audit finding), and the
+  // same seed keeps RU/EN order identical. Seed = stable hash of the item id.
+  function shuffleOptions(it) {
+    let h = 2166136261;
+    const key = String(it.id || "");
+    for (let i = 0; i < key.length; i += 1) {
+      h ^= key.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    const rnd = () => {
+      h = Math.imul(h ^ (h >>> 15), 2246822519);
+      h = Math.imul(h ^ (h >>> 13), 3266489917);
+      return ((h ^= h >>> 16) >>> 0) / 4294967296;
+    };
+    const pairs = it.options.map((opt, i) => ({ opt, ok: i === it.answer }));
+    for (let i = pairs.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(rnd() * (i + 1));
+      [pairs[i], pairs[j]] = [pairs[j], pairs[i]];
+    }
+    return pairs;
+  }
+
   window.LSMPosttest = {
     /**
      * render(host, items, opts)
@@ -43,15 +66,16 @@
         verdict.setAttribute("aria-live", "polite");
         const explain = el("p", "lab-mc-explain");
         explain.style.display = "none";
-        it.options.forEach((opt, i) => {
+        const pairs = shuffleOptions(it);
+        pairs.forEach((pair, i) => {
           const btn = el("button", "lab-mc-opt");
           btn.type = "button";
           btn.appendChild(el("span", "lab-mc-letter", LETTERS[i]));
-          btn.appendChild(el("span", "lab-mc-text", trl(opt)));
+          btn.appendChild(el("span", "lab-mc-text", trl(pair.opt)));
           btn.addEventListener("click", () => {
             if (solved) return;
             attempts += 1;
-            if (i === it.answer) {
+            if (pair.ok) {
               solved = true;
               btn.classList.add("right");
               list.querySelectorAll(".lab-mc-opt").forEach((b) => { b.disabled = true; });

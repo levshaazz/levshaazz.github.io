@@ -19,20 +19,97 @@
       en: `<p>Decode is a stream of steps; each step moves weights from memory and does a little math. Two ceilings bound the step: <strong>compute</strong> (TFLOP/s) and <strong>memory bandwidth</strong> (GB/s). The <em>roofline</em> model says attainable = min(compute, intensity × bandwidth), where arithmetic intensity = FLOP per byte moved. Left of the ridge you are bandwidth-bound; right of it, compute-bound — more reuse stops helping after the ridge.</p>
 <p>The KV cache is the other budget: every live token pays <strong>2 × layers × kv_heads × head_dim × bytes</strong> (the 2 is K and V). This payload is not model-weight memory and it grows with every client and every context token. The lab habit: write the arithmetic down first, let the tests check it, only then argue about a real GPU.</p>`,
       ru: `<p>Decode — это поток шагов; каждый шаг перетаскивает веса из памяти и делает немного арифметики. Шаг ограничивают две крыши: <strong>вычисления</strong> (TFLOP/s) и <strong>пропускная способность памяти</strong> (GB/s). Модель <em>roofline</em>: attainable = min(compute, intensity × bandwidth), где арифметическая интенсивность = FLOP на байт перемещённых данных. Слева от хребта ты упираешься в память, справа — в вычисления; после хребта повторное использование данных перестаёт помогать.</p>
-<p>Vторой бюджет — KV-кэш: каждый живой токен платит <strong>2 × layers × kv_heads × head_dim × bytes</strong> (двойка — это K и V). Этот платёж — не память весов, и он растёт с каждым клиентом и каждым токеном контекста. Привычка лабы: сначала выписать арифметику, дать тестам её проверить, и только потом спорить про реальный GPU.</p>`,
+<p>Второй бюджет — KV-кэш: каждый живой токен платит <strong>2 × layers × kv_heads × head_dim × bytes</strong> (двойка — это K и V). Этот платёж — не память весов, и он растёт с каждым клиентом и каждым токеном контекста. Привычка лабы: сначала выписать арифметику, дать тестам её проверить, и только потом спорить про реальный GPU.</p>`,
     },
+    heroTag: { en: "roofline, KV budget", ru: "крыши, KV-бюджет" },
     figures: [
-      { id: "t2-below", caption: { en: "Below the ridge: the bandwidth roof bounds the step.", ru: "\u041d\u0438\u0436\u0435 \u0445\u0440\u0435\u0431\u0442\u0430: \u0448\u0430\u0433 \u043e\u0433\u0440\u0430\u043d\u0438\u0447\u0438\u0432\u0430\u0435\u0442 \u043a\u0440\u044b\u0448\u0430 \u043f\u0430\u043c\u044f\u0442\u0438." } },
-      { id: "t2-flash", caption: { en: "Where the flops actually go inside a block.", ru: "\u041a\u0443\u0434\u0430 \u0440\u0435\u0430\u043b\u044c\u043d\u043e \u0443\u0445\u043e\u0434\u044f\u0442 \u0444\u043b\u043e\u043f\u0441\u044b \u0432\u043d\u0443\u0442\u0440\u0438 \u0431\u043b\u043e\u043a\u0430." } },
+      {
+        id: "lab2-roofline",
+        title: { en: "Roofline: which roof bounds the decode step", ru: "Roofline: какая крыша ограничивает decode-шаг" },
+        w: 760, h: 420,
+        svg: `<svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
+  <g id="g-axes">
+    <line x1="80" y1="340" x2="700" y2="340" stroke="var(--lab-muted)" stroke-width="1.5"/>
+    <line x1="80" y1="340" x2="80" y2="60" stroke="var(--lab-muted)" stroke-width="1.5"/>
+    <text x="700" y="366" text-anchor="end" font-size="14" fill="var(--lab-muted)" data-en="arithmetic intensity, FLOP/B" data-ru="арифметическая интенсивность, FLOP/Б">arithmetic intensity, FLOP/B</text>
+    <text x="88" y="52" font-size="14" fill="var(--lab-muted)" data-en="attainable, TFLOP/s" data-ru="достижимо, TFLOP/s">attainable, TFLOP/s</text>
+    <text x="200" y="360" text-anchor="middle" font-size="13" fill="var(--lab-muted)" class="mono">100</text>
+  </g>
+  <g id="g-bw">
+    <line x1="80" y1="340" x2="200" y2="86" stroke="var(--lab-accent)" stroke-width="2.5" class="fig-flow"/>
+    <text x="112" y="216" font-size="14" fill="var(--lab-accent)">600 GB/s</text>
+    <text x="88" y="90" font-size="13" fill="var(--lab-accent)" class="mono">60</text>
+  </g>
+  <g id="g-comp">
+    <line x1="200" y1="86" x2="680" y2="86" stroke="var(--lab-accent)" stroke-width="2.5"/>
+    <line x1="200" y1="86" x2="200" y2="340" stroke="var(--fig-warm)" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <text x="676" y="76" text-anchor="end" font-size="14" fill="var(--lab-accent)" data-en="compute roof 60" data-ru="крыша вычислений 60">compute roof 60</text>
+    <text x="208" y="332" font-size="13" fill="var(--fig-warm)" data-en="ridge 100" data-ru="хребет 100">ridge 100</text>
+  </g>
+  <g id="g-pt1">
+    <circle cx="104" cy="289" r="7" fill="var(--lab-accent)"/>
+    <text x="120" y="284" font-size="15" fill="var(--lab-ink)" class="mono">20 → 12</text>
+    <text x="120" y="304" font-size="13" fill="var(--lab-muted)" data-en="decode step" data-ru="decode-шаг">decode step</text>
+  </g>
+  <g id="g-pt2">
+    <circle cx="260" cy="86" r="7" fill="var(--fig-warm)"/>
+    <text x="276" y="112" font-size="15" fill="var(--lab-ink)" class="mono">150 → 60</text>
+  </g>
+</svg>`,
+        stages: [
+          { cap: { en: "Axes: attainable TFLOP/s against arithmetic intensity — the roofline frame.", ru: "Оси: достижимые TFLOP/s против арифметической интенсивности — каркас roofline." }, show: ["g-axes"] },
+          { cap: { en: "Two roofs: the bandwidth roof climbs to the ridge, then compute pins flat at 60.", ru: "Две крыши: память растёт до хребта, дальше вычисления запирают на 60." }, show: ["g-axes", "g-bw", "g-comp"] },
+          { cap: { en: "Decode sits left of the ridge: 20 × 600 GB/s caps the step at 12 TFLOP/s.", ru: "Decode левее хребта: 20 × 600 GB/s запирает шаг на 12 TFLOP/s." }, show: ["g-axes", "g-bw", "g-comp", "g-pt1"] },
+          { cap: { en: "Right of the ridge more reuse stops helping: intensity 150 still pins at 60.", ru: "За хребтом повторное использование перестаёт помогать: интенсивность 150 — всё те же 60." }, show: ["g-axes", "g-bw", "g-comp", "g-pt1", "g-pt2"] },
+        ],
+      },
+      {
+        id: "lab2-kv-budget",
+        title: { en: "KV budget: the per-token bill against the pool", ru: "KV-бюджет: платёж за токен против пула" },
+        w: 760, h: 420,
+        svg: `<svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
+  <g id="g-token">
+    <text x="60" y="70" font-size="16" fill="var(--lab-ink)" class="mono">2 × 36 × 2 × 128 × 2 B</text>
+    <text x="60" y="94" font-size="14" fill="var(--lab-muted)" data-en="K + V per live token = 36 KiB" data-ru="K + V за живой токен = 36 КиБ">K + V per live token = 36 KiB</text>
+    <rect x="60" y="110" width="60" height="26" rx="5" fill="var(--lab-accent)" opacity="0.85"/>
+    <text x="128" y="128" font-size="14" fill="var(--lab-accent)" class="mono">36 KiB</text>
+  </g>
+  <g id="g-pool">
+    <rect x="330" y="60" width="380" height="300" rx="12" fill="none" stroke="var(--lab-muted)" stroke-width="2" stroke-dasharray="7 5"/>
+    <text x="520" y="88" text-anchor="middle" font-size="15" fill="var(--lab-muted)" data-en="KV pool: 6 GiB" data-ru="пул KV: 6 ГиБ">KV pool: 6 GiB</text>
+    <text x="520" y="382" text-anchor="middle" font-size="13" fill="var(--lab-muted)" class="mono">6 × 1024³ B</text>
+  </g>
+  <g id="g-fit">
+    <rect x="350" y="100" width="340" height="240" rx="8" fill="var(--lab-accent)" opacity="0.14"/>
+    <text x="520" y="212" text-anchor="middle" font-size="21" fill="var(--lab-accent)" class="mono">174 762</text>
+    <text x="520" y="240" text-anchor="middle" font-size="14" fill="var(--lab-ink)" data-en="whole tokens fit" data-ru="целых токенов помещается">whole tokens fit</text>
+    <text x="520" y="262" text-anchor="middle" font-size="13" fill="var(--lab-muted)" class="mono">6 × 1024³ / 36 864</text>
+  </g>
+  <g id="g-double">
+    <rect x="350" y="100" width="170" height="240" rx="8" fill="var(--lab-accent)" opacity="0.07"/>
+    <rect x="350" y="220" width="170" height="120" rx="8" fill="var(--fig-warm)" opacity="0.14"/>
+    <text x="435" y="170" text-anchor="middle" font-size="15" fill="var(--lab-muted)" class="mono">72 KiB</text>
+    <text x="435" y="192" text-anchor="middle" font-size="13" fill="var(--lab-muted)" data-en="kv_heads 2 → 4" data-ru="kv_heads 2 → 4">kv_heads 2 → 4</text>
+    <text x="435" y="290" text-anchor="middle" font-size="16" fill="var(--fig-warm)" class="mono">87 381</text>
+    <text x="435" y="312" text-anchor="middle" font-size="13" fill="var(--fig-warm)" data-en="tokens — half" data-ru="токенов — вдвое меньше">tokens — half</text>
+  </g>
+</svg>`,
+        stages: [
+          { cap: { en: "Every live token pays 2 × 36 × 2 × 128 × 2 B = 36 KiB of K and V.", ru: "Каждый живой токен платит 2 × 36 × 2 × 128 × 2 Б = 36 КиБ за K и V." }, show: ["g-token"] },
+          { cap: { en: "The pool is fixed: 6 GiB reserved for the KV cache.", ru: "Пул фиксирован: 6 ГиБ выделено под KV-кэш." }, show: ["g-token", "g-pool"] },
+          { cap: { en: "Whole tokens that fit: 6 × 1024³ / 36 864 = 174 762.", ru: "Целых токенов помещается: 6 × 1024³ / 36 864 = 174 762." }, show: ["g-token", "g-pool", "g-fit"] },
+          { cap: { en: "The lever: kv_heads 2 → 4 doubles the bill to 72 KiB — the pool holds half.", ru: "Ручка: kv_heads 2 → 4 удваивает платёж до 72 КиБ — пул вмещает вдвое меньше." }, show: ["g-pool", "g-double"] },
+        ],
+      },
     ],
     outcomes: [
       { en: "Predict which roof (bandwidth or compute) bounds a decode step before measuring.", ru: "\u041f\u0440\u0435\u0434\u0441\u043a\u0430\u0437\u044b\u0432\u0430\u0442\u044c, \u043a\u0430\u043a\u0430\u044f \u043a\u0440\u044b\u0448\u0430 \u2014 \u043f\u0430\u043c\u044f\u0442\u044c \u0438\u043b\u0438 \u0432\u044b\u0447\u0438\u0441\u043b\u0435\u043d\u0438\u044f \u2014 \u043e\u0433\u0440\u0430\u043d\u0438\u0447\u0438\u0432\u0430\u0435\u0442 decode-\u0448\u0430\u0433, \u0434\u043e \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u044f." },
       { en: "Compute the exact KV payload per token and the tokens that fit a fixed pool.", ru: "\u0421\u0447\u0438\u0442\u0430\u0442\u044c \u0442\u043e\u0447\u043d\u044b\u0439 KV-\u043f\u043b\u0430\u0442\u0451\u0436 \u0437\u0430 \u0442\u043e\u043a\u0435\u043d \u0438 \u0447\u0438\u0441\u043b\u043e \u0442\u043e\u043a\u0435\u043d\u043e\u0432, \u043f\u043e\u043c\u0435\u0449\u0430\u044e\u0449\u0438\u0445\u0441\u044f \u0432 \u0444\u0438\u043a\u0441\u0438\u0440\u043e\u0432\u0430\u043d\u043d\u044b\u0439 \u043f\u0443\u043b." },
     ],
     model: [
-      ["compute ceiling", "60 TFLOP/s", "bandwidth", "600 GB/s"],
-      ["ridge intensity", "compute / bandwidth = 100 FLOP/B", "attainable", "min(compute, intensity × bandwidth)"],
-      ["kv per token", "2 × layers × kv_heads × head_dim × bytes", "1 GiB", "1024³ bytes"],
+      [{ en: "compute ceiling", ru: "потолок вычислений" }, "60 TFLOP/s", { en: "bandwidth", ru: "пропускная способность" }, "600 GB/s"],
+      [{ en: "ridge intensity", ru: "интенсивность хребта" }, { en: "compute / bandwidth = 100 FLOP/B", ru: "вычисления / память = 100 FLOP/Б" }, { en: "attainable", ru: "достижимо" }, "min(compute, intensity × bandwidth)"],
+      [{ en: "kv per token", ru: "KV-платёж за токен" }, { en: "2 × layers × kv_heads × head_dim × bytes", ru: "2 × layers × kv_heads × head_dim × байты" }, "1 GiB", { en: "1024³ bytes", ru: "1024³ байта" }],
     ],
     scenario: null,
     quizzes: [
@@ -127,19 +204,19 @@
         id: "ex3",
         title: { en: "Exercise 3 · Fix the bug: pool capacity", ru: "Упражнение 3 · Почини баг: ёмкость пула" },
         brief: {
-          en: "This <code>kv_pool_tokens(pool_gib, per_token_bytes)</code> undercounts: it treats GiB as 10⁹ bytes and forgets that <code>per_token_bytes</code> already includes K <em>and</em> V while the author divided K and V separately. Fix it to return whole tokens that fit: <code>int(pool_gib × 1024³ / per_token_bytes)</code>.",
-          ru: "Эта <code>kv_pool_tokens(pool_gib, per_token_bytes)</code> занижает: считает GiB как 10⁹ байт и делит K и V по отдельности, хотя <code>per_token_bytes</code> уже включает оба. Почини: целое число токенов, помещающихся в пул, — <code>int(pool_gib × 1024³ / per_token_bytes)</code>.",
+          en: "This <code>kv_pool_tokens(pool_gib, per_token_bytes)</code> undercounts: it treats GiB as 10⁹ bytes and shrinks the pool by an unexplained 0.75 reserve. Fix it to return whole tokens that fit: <code>int(pool_gib × 1024³ / per_token_bytes)</code>.",
+          ru: "Эта <code>kv_pool_tokens(pool_gib, per_token_bytes)</code> занижает: считает GiB как 10⁹ байт и сжимает пул необъяснённым резервом 0.75. Почини: целое число токенов, помещающихся в пул, — <code>int(pool_gib × 1024³ / per_token_bytes)</code>.",
         },
         starter: `def kv_pool_tokens(pool_gib, per_token_bytes):
     """How many whole live tokens fit in a pool of pool_gib GiB."""
-    # BUG: 1e9 instead of GiB, and the K+V split is applied twice
+    # BUG: 1e9 instead of GiB, and an unexplained 0.75 reserve
     k = per_token_bytes / 2
     return int(pool_gib * 1e9 / (k + k) * 0.75)
 `,
         tests: [
           { name: "6 GiB pool, 36 KiB per token", hidden: false, code: "eq(kv_pool_tokens(6, 36864), 174762)" },
           { name: "1 GiB pool, 64 KiB per token", hidden: false, code: "eq(kv_pool_tokens(1, 65536), 16384)" },
-          { name: "fractionalGiB floor", hidden: true, code: "eq(kv_pool_tokens(0.5, 1024), 524288)" },
+          { name: "fractional GiB floor", hidden: true, code: "eq(kv_pool_tokens(0.5, 1024), 524288)" },
         ],
         solution: `def kv_pool_tokens(pool_gib, per_token_bytes):
     return int(pool_gib * 1024**3 / per_token_bytes)`,

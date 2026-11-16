@@ -21,9 +21,95 @@
       ru: `<p>Шлюз — тонкий HTTP-слой между клиентами и движком, и его работа — превратить механизмы Темы 06 в контракт: валидация до очереди, <strong>ограниченная очередь</strong>, отвечающая 429 с <code>Retry-After</code> вместо обещания вечного ожидания, карта <strong>«исход → код»</strong> (invalid 400, overloaded 429, движок лежит 503, deadline 504, остальное 500 без внутренностей) и отмена, которая перестаёт платить за брошенные токены. HTTP 200 означает «ответ отправлен», а не «запрос успешен» — таймаут клиента, засчитанный как успех, — это ложь, которую метрики повторят в 3 часа ночи.</p>
 <p>Привычка лабы: заморозить таблицу контракта (ситуация → механизм → ожидаемый код) ДО кода шлюза, потом дать drill'ам и журналу её проверить. Все числа здесь — объявленный мок движка: ttft 0.15 с, 0.02 с за токен, 4 слота обслуживания + 4 места очереди, — арифметика, которую можно проверить руками, а не измерение vLLM.</p>`,
     },
+    heroTag: { en: "429, envelope, error map", ru: "429, конверт допуска, карта ошибок" },
     figures: [
-      { id: "t8-error-map", caption: { en: "Error map: outcome \u2192 status \u2192 client action.", ru: "\u041a\u0430\u0440\u0442\u0430 \u043e\u0448\u0438\u0431\u043e\u043a: \u0438\u0441\u0445\u043e\u0434 \u2192 \u0441\u0442\u0430\u0442\u0443\u0441 \u2192 \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435 \u043a\u043b\u0438\u0435\u043d\u0442\u0430." } },
-      { id: "t8-queue-economy", caption: { en: "Queue economy: admitted, queued, rejected.", ru: "\u042d\u043a\u043e\u043d\u043e\u043c\u0438\u043a\u0430 \u043e\u0447\u0435\u0440\u0435\u0434\u0438: \u0434\u043e\u043f\u0443\u0449\u0435\u043d\u044b, \u0436\u0434\u0443\u0442, \u043e\u0442\u0431\u0438\u0442\u044b." } },
+      {
+        id: "lab8-error-map",
+        title: { en: "Outcome → status → client action", ru: "Исход → статус → действие клиента" },
+        w: 760, h: 420,
+        svg: `<svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
+  <g id="g-head">
+    <text x="70" y="66" font-size="13" fill="var(--lab-muted)" class="mono" data-en="OUTCOME" data-ru="ИСХОД">OUTCOME</text>
+    <text x="280" y="66" font-size="13" fill="var(--lab-muted)" class="mono">STATUS</text>
+    <text x="470" y="66" font-size="13" fill="var(--lab-muted)" class="mono" data-en="CLIENT ACTION" data-ru="ДЕЙСТВИЕ КЛИЕНТА">CLIENT ACTION</text>
+    <line x1="55" y1="78" x2="705" y2="78" stroke="var(--lab-muted)" stroke-width="1"/>
+  </g>
+  <g id="g-r12">
+    <text x="70" y="112" font-size="15" fill="var(--lab-ink)" data-en="invalid request" data-ru="невалидный запрос">invalid request</text>
+    <text x="280" y="112" font-size="15" fill="var(--lab-accent)" class="mono">400</text>
+    <text x="470" y="112" font-size="15" fill="var(--lab-muted)" data-en="fix the fields" data-ru="почини поля">fix the fields</text>
+    <text x="70" y="162" font-size="15" fill="var(--lab-ink)" data-en="overloaded" data-ru="перегрузка">overloaded</text>
+    <text x="280" y="162" font-size="15" fill="var(--fig-warm)" class="mono">429 + Retry-After</text>
+    <text x="470" y="162" font-size="15" fill="var(--lab-muted)" data-en="retry later" data-ru="повтори позже">retry later</text>
+    <line x1="55" y1="180" x2="705" y2="180" stroke="var(--lab-line)" stroke-width="1"/>
+  </g>
+  <g id="g-r34">
+    <text x="70" y="212" font-size="15" fill="var(--lab-ink)" data-en="engine down" data-ru="движок лежит">engine down</text>
+    <text x="280" y="212" font-size="15" fill="var(--lab-bad)" class="mono">503</text>
+    <text x="470" y="212" font-size="15" fill="var(--lab-muted)" data-en="back off, then retry" data-ru="отступи, потом повтори">back off, then retry</text>
+    <text x="70" y="262" font-size="15" fill="var(--lab-ink)" data-en="deadline passed" data-ru="дедлайн истёк">deadline passed</text>
+    <text x="280" y="262" font-size="15" fill="var(--lab-bad)" class="mono">504</text>
+    <text x="470" y="262" font-size="15" fill="var(--lab-muted)" data-en="cancel, do not retry blindly" data-ru="отмена, не повторяй вслепую">cancel, do not retry blindly</text>
+    <line x1="55" y1="280" x2="705" y2="280" stroke="var(--lab-line)" stroke-width="1"/>
+  </g>
+  <g id="g-r5">
+    <text x="70" y="312" font-size="15" fill="var(--lab-ink)" data-en="everything else" data-ru="всё остальное">everything else</text>
+    <text x="280" y="312" font-size="15" fill="var(--lab-bad)" class="mono">500</text>
+    <text x="470" y="312" font-size="15" fill="var(--lab-muted)" data-en="page the owner — no internals leaked" data-ru="буди владельца — без внутренностей">page the owner — no internals leaked</text>
+  </g>
+  <g id="g-ribbon">
+    <rect x="55" y="344" width="650" height="44" rx="9" fill="var(--fig-warm)" opacity="0.14"/>
+    <text x="380" y="371" text-anchor="middle" font-size="16" fill="var(--fig-warm)" data-en="never 200-with-error-body — a client timeout is not a success" data-ru="никогда 200-с-телом-ошибки — таймаут клиента не есть успех">never 200-with-error-body — a client timeout is not a success</text>
+  </g>
+</svg>`,
+        stages: [
+          { cap: { en: "The contract table: outcome → status → the action the client should take.", ru: "Таблица контракта: исход → статус → действие, которое должен предпринять клиент." }, show: ["g-head"] },
+          { cap: { en: "Validation before the queue: 400 for invalid, 429 + Retry-After for overload.", ru: "Валидация до очереди: 400 за невалидность, 429 + Retry-After за перегрузку." }, show: ["g-head", "g-r12"] },
+          { cap: { en: "Engine down is 503 (retry later); a passed deadline is 504 (cancel).", ru: "Лежащий движок — 503 (повтори позже); истёкший дедлайн — 504 (отмена)." }, show: ["g-head", "g-r12", "g-r34"] },
+          { cap: { en: "Everything else is 500 without internals — and never a 200 with an error body.", ru: "Всё остальное — 500 без внутренностей — и никогда 200 с телом ошибки." }, show: ["g-head", "g-r12", "g-r34", "g-r5", "g-ribbon"] },
+        ],
+      },
+      {
+        id: "lab8-queue-economy",
+        title: { en: "Queue economy: Little's law meets bounded seats", ru: "Экономика очереди: закон Литтла против ограниченных мест" },
+        w: 760, h: 420,
+        svg: `<svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
+  <g id="g-little">
+    <line x1="80" y1="340" x2="700" y2="340" stroke="var(--lab-muted)" stroke-width="1.5"/>
+    <line x1="80" y1="340" x2="80" y2="70" stroke="var(--lab-muted)" stroke-width="1.5"/>
+    <text x="700" y="364" text-anchor="end" font-size="14" fill="var(--lab-muted)" data-en="arrival rate λ, req/s" data-ru="темп прихода λ, req/s">arrival rate λ, req/s</text>
+    <text x="88" y="62" font-size="14" fill="var(--lab-muted)" data-en="requests in system, L" data-ru="заявок в системе, L">requests in system, L</text>
+    <path d="M 80 340 L 519 116" fill="none" stroke="var(--lab-accent)" stroke-width="2.5" class="fig-flow"/>
+    <text x="150" y="240" font-size="14" fill="var(--lab-accent)" class="mono">L = λ × W, W = 0.47 s</text>
+    <text x="300" y="362" text-anchor="middle" font-size="13" fill="var(--lab-muted)" class="mono">16-token requests</text>
+  </g>
+  <g id="g-seats">
+    <line x1="80" y1="228" x2="519" y2="228" stroke="var(--lab-good)" stroke-width="2.5"/>
+    <text x="90" y="220" font-size="13" fill="var(--lab-good)" data-en="4 in service" data-ru="4 в обслуживании">4 in service</text>
+    <line x1="519" y1="228" x2="80" y2="228" stroke="var(--lab-muted)" stroke-width="0"/>
+    <line x1="300" y1="228" x2="519" y2="116" stroke="var(--fig-warm)" stroke-width="0"/>
+    <text x="330" y="160" font-size="13" fill="var(--fig-warm)" data-en="+ 4 queue seats" data-ru="+ 4 места очереди">+ 4 queue seats</text>
+    <line x1="519" y1="116" x2="519" y2="228" stroke="var(--fig-warm)" stroke-width="1.5" stroke-dasharray="4 3"/>
+  </g>
+  <g id="g-knee">
+    <line x1="519" y1="340" x2="519" y2="70" stroke="var(--fig-warm)" stroke-width="2" stroke-dasharray="5 4"/>
+    <text x="528" y="88" font-size="15" fill="var(--fig-warm)" class="mono">λ* = 8 / 0.47 ≈ 17.0</text>
+    <text x="528" y="108" font-size="13" fill="var(--lab-muted)" data-en="demand hits the seats" data-ru="спрос упирается в места">demand hits the seats</text>
+  </g>
+  <g id="g-reject">
+    <rect x="519" y="70" width="181" height="270" fill="var(--lab-bad)" opacity="0.1"/>
+    <text x="610" y="190" text-anchor="middle" font-size="15" fill="var(--lab-bad)" data-en="past the knee:" data-ru="за коленом:">past the knee:</text>
+    <text x="610" y="214" text-anchor="middle" font-size="15" fill="var(--lab-bad)" class="mono">429 + Retry-After</text>
+    <text x="380" y="392" text-anchor="middle" font-size="14" fill="var(--lab-muted)" data-en="burst of 24 → 8 in system, 16 honest refusals" data-ru="бурст из 24 → 8 в системе, 16 честных отказов">burst of 24 → 8 in system, 16 honest refusals</text>
+  </g>
+</svg>`,
+        stages: [
+          { cap: { en: "Little's law: L = λ × W with the mock's W = 0.47 s for 16-token requests.", ru: "Закон Литтла: L = λ × W при W = 0.47 с для запросов на 16 токенов (мок)." }, show: ["g-little"] },
+          { cap: { en: "Seats are bounded: 4 in service plus 4 queue places — 8 in system.", ru: "Мест ограничено: 4 в обслуживании плюс 4 места очереди — 8 в системе." }, show: ["g-little", "g-seats"] },
+          { cap: { en: "The knee: λ* = 8 / 0.47 ≈ 17.0 req/s, where demand hits the seats.", ru: "Колено: λ* = 8 / 0.47 ≈ 17.0 req/s — где спрос упирается в места." }, show: ["g-little", "g-seats", "g-knee"] },
+          { cap: { en: "Past the knee: honest 429 + Retry-After — a burst of 24 loses 16.", ru: "За коленом: честный 429 + Retry-After — бурст из 24 теряет 16." }, show: ["g-little", "g-seats", "g-knee", "g-reject"] },
+        ],
+      },
     ],
     outcomes: [
       { en: "Map every failure outcome to a status code and a client action.", ru: "\u041c\u0430\u043f\u043f\u0438\u0442\u044c \u043a\u0430\u0436\u0434\u044b\u0439 \u043e\u0442\u043a\u0430\u0437 \u043d\u0430 \u043a\u043e\u0434 \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u044f \u0438 \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435 \u043a\u043b\u0438\u0435\u043d\u0442\u0430." },
@@ -84,13 +170,14 @@
       },
       starter: `def status_is_success(status):
     """True only for HTTP 200."""
-    # TODO: одна строка
+    # TODO: one comparison
 `,
       tests: [
         { name: "200 is success", hidden: false, code: "eq(status_is_success(200), True)" },
         { name: "429 is not", hidden: false, code: "eq(status_is_success(429), False)" },
         { name: "504 is not", hidden: false, code: "eq(status_is_success(504), False)" },
         { name: "0 (cancelled) is not", hidden: true, code: "eq(status_is_success(0), False)" },
+        { name: "201 is also not 200", hidden: true, code: "eq(status_is_success(201), False)" },
       ],
       solution: `def status_is_success(status):
     return status == 200`,
@@ -263,7 +350,7 @@ eq(classify_outcome(400), 'failed')` },
       {
         id: "p3",
         q: { en: "Bounded queue with 4 slots + 4 queue places gets 24 arrivals. The gateway\u2026", ru: "\u041e\u0433\u0440\u0430\u043d\u0438\u0447\u0435\u043d\u043d\u0430\u044f \u043e\u0447\u0435\u0440\u0435\u0434\u044c \u0441 4 \u043c\u0435\u0441\u0442\u0430\u043c\u0438 + 4 \u0432 \u043e\u0447\u0435\u0440\u0435\u0434\u0438 \u043f\u043e\u043b\u0443\u0447\u0430\u0435\u0442 24 \u0437\u0430\u044f\u0432\u043a\u0438. \u0428\u043b\u044e\u0437\u2026" },
-        options: [{ en: "admits 8, rejects 16 with 429", ru: "\u0434\u043e\u043f\u0443\u0441\u043a\u0430\u0435\u0442 8, \u043e\u0442\u0431\u0438\u0432\u0430\u0435\u0442 16 \u0441 429" }, { en: "admits all 24", ru: "\u0434\u043e\u043f\u0443\u0441\u043a\u0430\u0435\u0442 \u0432\u0441\u0435 24" }, { en: "rejects all 24", ru: "\u043e\u0442\u0431\u0438\u0432\u0430\u0435\u0442 \u0432\u0441\u0435 24" }],
+        options: [{ en: "admits 4 and queues 4 (8 in system), rejects 16 with 429", ru: "допускает 4 и ставит в очередь 4 (8 в системе), отбивает 16 с 429" }, { en: "admits all 24", ru: "\u0434\u043e\u043f\u0443\u0441\u043a\u0430\u0435\u0442 \u0432\u0441\u0435 24" }, { en: "rejects all 24", ru: "\u043e\u0442\u0431\u0438\u0432\u0430\u0435\u0442 \u0432\u0441\u0435 24" }],
         answer: 0,
         explain: { en: "admitted = min(arrivals, slots + queue) = 8; the rest get immediate 429 instead of hidden waiting.", ru: "admitted = min(\u0437\u0430\u044f\u0432\u043a\u0438, \u0441\u043b\u043e\u0442\u044b + \u043e\u0447\u0435\u0440\u0435\u0434\u044c) = 8; \u043e\u0441\u0442\u0430\u043b\u044c\u043d\u044b\u0435 \u043f\u043e\u043b\u0443\u0447\u0430\u044e\u0442 \u043d\u0435\u043c\u0435\u0434\u043b\u0435\u043d\u043d\u044b\u0439 429 \u0432\u043c\u0435\u0441\u0442\u043e \u0441\u043a\u0440\u044b\u0442\u043e\u0433\u043e \u043e\u0436\u0438\u0434\u0430\u043d\u0438\u044f." },
       },

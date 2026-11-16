@@ -22,8 +22,106 @@
 <p>Итерационный (continuous) батчинг подсаживает новый запрос в освободившийся слот на следующем тике: короткий запрос, завершившись раньше когорты, сразу открывает место следующему. В игрушке тетради (2 слота; A нужно 5 тиков, B и C — по 1; все пришли в тик 0) B завершается на границе тика 1, C стартует в тик 1 и завершается в тик 2, тогда как static-режим держал бы всю когорту до опустошения. Привычка лабы: сначала прочитай трассу руками, потом дай тестам проверить; тики — придуманные единицы, а не секунды GPU.</p>`,
     },
     figures: [
-      { id: "t5-page-16", caption: { en: "Pages of 16: block tails you pay for.", ru: "\u0421\u0442\u0440\u0430\u043d\u0438\u0446\u044b \u043f\u043e 16: \u0445\u0432\u043e\u0441\u0442\u044b \u0431\u043b\u043e\u043a\u043e\u0432, \u0437\u0430 \u043a\u043e\u0442\u043e\u0440\u044b\u0435 \u043f\u043b\u0430\u0442\u0438\u0448\u044c." } },
-      { id: "t5-batch-continuous", caption: { en: "Continuous batching: the scheduler decides per step.", ru: "\u041d\u0435\u043f\u0440\u0435\u0440\u044b\u0432\u043d\u044b\u0439 \u0431\u0430\u0442\u0447\u0438\u043d\u0433: \u0448\u0435\u0434\u0443\u043b\u0435\u0440 \u0440\u0435\u0448\u0430\u0435\u0442 \u043d\u0430 \u043a\u0430\u0436\u0434\u043e\u043c \u0448\u0430\u0433\u0435." } },
+      {
+        id: "lab5-pages",
+        title: { en: "Pages of 16: the tails you pay for", ru: "Страницы по 16: хвосты, за которые платишь" },
+        w: 760, h: 420,
+        svg: `<svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
+  <g id="g-reqs">
+    <text x="60" y="80" font-size="14" fill="var(--lab-muted)" data-en="3 requests: 17, 31, 33 positions; block = 16" data-ru="3 запроса: 17, 31 и 33 позиции; блок = 16">3 requests: 17, 31, 33 positions; block = 16</text>
+    <rect x="60" y="96" width="102" height="26" rx="6" fill="var(--lab-accent)" opacity="0.85"/>
+    <text x="180" y="115" font-size="14" fill="var(--lab-ink)" class="mono">17</text>
+    <rect x="60" y="146" width="186" height="26" rx="6" fill="var(--lab-accent)" opacity="0.6"/>
+    <text x="258" y="165" font-size="14" fill="var(--lab-ink)" class="mono">31</text>
+    <rect x="60" y="196" width="198" height="26" rx="6" fill="var(--lab-accent)" opacity="0.4"/>
+    <text x="270" y="215" font-size="14" fill="var(--lab-ink)" class="mono">33</text>
+    <text x="60" y="252" font-size="13" fill="var(--lab-muted)" data-en="1 position = 1 slot; blocks hold 16" data-ru="1 позиция = 1 слот; блок вмещает 16">1 position = 1 slot; blocks hold 16</text>
+  </g>
+  <g id="g-blocks">
+    <text x="60" y="292" font-size="14" fill="var(--lab-ink)" data-en="ceil to whole blocks: 2 + 2 + 3 = 7 blocks (112 slots)" data-ru="округление до целых блоков: 2 + 2 + 3 = 7 блоков (112 слотов)">ceil to whole blocks: 2 + 2 + 3 = 7 blocks (112 slots)</text>
+    <rect x="60" y="304" width="32" height="24" rx="4" fill="var(--lab-accent)" opacity="0.85"/>
+    <rect x="94" y="304" width="32" height="24" rx="4" fill="var(--fig-warm)" opacity="0.55"/>
+    <text x="140" y="321" font-size="13" fill="var(--fig-warm)" class="mono">+15</text>
+    <rect x="60" y="336" width="32" height="24" rx="4" fill="var(--lab-accent)" opacity="0.6"/>
+    <rect x="94" y="336" width="32" height="24" rx="4" fill="var(--fig-warm)" opacity="0.55"/>
+    <text x="140" y="353" font-size="13" fill="var(--fig-warm)" class="mono">+1</text>
+    <rect x="60" y="368" width="32" height="24" rx="4" fill="var(--lab-accent)" opacity="0.4"/>
+    <rect x="94" y="368" width="32" height="24" rx="4" fill="var(--lab-accent)" opacity="0.4"/>
+    <rect x="128" y="368" width="32" height="24" rx="4" fill="var(--fig-warm)" opacity="0.55"/>
+    <text x="174" y="385" font-size="13" fill="var(--fig-warm)" class="mono">+15</text>
+    <text x="330" y="345" font-size="16" fill="var(--fig-warm)" data-en="tails: 15 + 1 + 15 = 31 unused" data-ru="хвосты: 15 + 1 + 15 = 31 пустая">tails: 15 + 1 + 15 = 31 unused</text>
+  </g>
+  <g id="g-pool">
+    <rect x="380" y="80" width="330" height="150" rx="12" fill="none" stroke="var(--lab-muted)" stroke-width="1.5" stroke-dasharray="7 5" class="fig-ghost"/>
+    <text x="545" y="120" text-anchor="middle" font-size="15" fill="var(--lab-muted)" class="fig-ghost" data-en="one shared pool promises:" data-ru="один общий пул обещает:">one shared pool promises:</text>
+    <text x="545" y="156" text-anchor="middle" font-size="21" fill="var(--lab-muted)" class="mono fig-ghost">ceil(81 / 16) = 6</text>
+    <text x="545" y="188" text-anchor="middle" font-size="14" fill="var(--fig-warm)" class="fig-ghost" data-en="it hides the 31-slot tails" data-ru="он прячет хвосты в 31 слот">it hides the 31-slot tails</text>
+    <text x="380" y="262" font-size="15" fill="var(--lab-good)" data-en="real block tables: 7 blocks" data-ru="реальные block tables: 7 блоков">real block tables: 7 blocks</text>
+    <text x="380" y="288" font-size="13" fill="var(--lab-muted)" data-en="requests never share blocks" data-ru="запросы никогда не делят блоки">requests never share blocks</text>
+  </g>
+</svg>`,
+        stages: [
+          { cap: { en: "Three requests retain 17, 31 and 33 positions on blocks of 16.", ru: "Три запроса удерживают 17, 31 и 33 позиции при блоках по 16." }, show: ["g-reqs"] },
+          { cap: { en: "Each rounds up to whole blocks: 2 + 2 + 3 = 7 blocks, 112 slots.", ru: "Каждый округляется вверх до целых блоков: 2 + 2 + 3 = 7 блоков, 112 слотов." }, show: ["g-reqs", "g-blocks"] },
+          { cap: { en: "The tails — 15 + 1 + 15 = 31 positions — are allocated but never used.", ru: "Хвосты — 15 + 1 + 15 = 31 позиция — выделены, но никогда не используются." }, show: ["g-reqs", "g-blocks"] },
+          { cap: { en: "One shared pool would claim ceil(81/16) = 6 blocks and hide the tails.", ru: "Один общий пул обещал бы ceil(81/16) = 6 блоков и спрятал бы хвосты." }, show: ["g-blocks", "g-pool"] },
+        ],
+      },
+      {
+        id: "lab5-batching",
+        title: { en: "Continuous batching: the freed slot fills at the boundary", ru: "Непрерывный батчинг: освободившийся слот заполняется на границе" },
+        w: 760, h: 420,
+        svg: `<svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
+  <g id="g-queue">
+    <text x="60" y="80" font-size="14" fill="var(--lab-muted)" data-en="2 slots; A needs 5 ticks, B and C need 1; all arrive at tick 0" data-ru="2 слота; A нужно 5 тиков, B и C — по 1; все пришли в тик 0">2 slots; A needs 5 ticks, B and C need 1; all arrive at tick 0</text>
+    <rect x="60" y="96" width="46" height="30" rx="6" fill="none" stroke="var(--lab-accent)" stroke-width="1.5"/>
+    <text x="83" y="116" text-anchor="middle" font-size="14" fill="var(--lab-accent)" class="mono">A·5</text>
+    <rect x="114" y="96" width="46" height="30" rx="6" fill="none" stroke="var(--lab-accent)" stroke-width="1.5"/>
+    <text x="137" y="116" text-anchor="middle" font-size="14" fill="var(--lab-accent)" class="mono">B·1</text>
+    <rect x="168" y="96" width="46" height="30" rx="6" fill="none" stroke="var(--lab-accent)" stroke-width="1.5"/>
+    <text x="191" y="116" text-anchor="middle" font-size="14" fill="var(--lab-accent)" class="mono">C·1</text>
+  </g>
+  <g id="g-t0">
+    <text x="60" y="170" font-size="15" fill="var(--lab-ink)" class="mono">tick 0</text>
+    <rect x="150" y="150" width="450" height="26" rx="6" fill="var(--lab-accent)" opacity="0.85"/>
+    <text x="160" y="168" font-size="13" fill="var(--lab-bg)" class="mono">A</text>
+    <rect x="150" y="186" width="90" height="26" rx="6" fill="var(--lab-accent)" opacity="0.55"/>
+    <text x="160" y="204" font-size="13" fill="var(--lab-bg)" class="mono">B</text>
+  </g>
+  <g id="g-t1">
+    <text x="60" y="250" font-size="15" fill="var(--lab-ink)" class="mono">tick 1</text>
+    <rect x="240" y="150" width="360" height="26" rx="6" fill="var(--lab-accent)" opacity="0.85"/>
+    <rect x="240" y="186" width="90" height="26" rx="6" fill="var(--fig-warm)" opacity="0.7"/>
+    <text x="246" y="204" font-size="13" fill="var(--lab-bg)" class="mono">B✓</text>
+    <path d="M 330 199 L 372 199" fill="none" stroke="var(--lab-good)" stroke-width="2.5" class="fig-flow"/>
+    <rect x="374" y="186" width="90" height="26" rx="6" fill="var(--lab-good)" opacity="0.7"/>
+    <text x="384" y="204" font-size="13" fill="var(--lab-bg)" class="mono">C</text>
+    <text x="480" y="204" font-size="13" fill="var(--lab-good)" data-en="C takes the freed slot at the boundary" data-ru="C занимает освободившийся слот на границе">C takes the freed slot at the boundary</text>
+  </g>
+  <g id="g-marks">
+    <text x="60" y="300" font-size="15" fill="var(--lab-ink)" data-en="finish marks:" data-ru="отметки завершения:">finish marks:</text>
+    <text x="190" y="300" font-size="15" fill="var(--lab-ink)" class="mono">B → 1</text>
+    <text x="270" y="300" font-size="15" fill="var(--lab-ink)" class="mono">C → 2</text>
+    <text x="350" y="300" font-size="15" fill="var(--lab-ink)" class="mono">A → 5</text>
+    <line x1="150" y1="316" x2="600" y2="316" stroke="var(--lab-muted)" stroke-width="1"/>
+    <circle cx="240" cy="316" r="5" fill="var(--fig-warm)"/>
+    <circle cx="330" cy="316" r="5" fill="var(--lab-good)"/>
+    <circle cx="600" cy="316" r="5" fill="var(--lab-accent)"/>
+    <text x="640" y="321" font-size="13" fill="var(--lab-muted)" class="mono">tick</text>
+  </g>
+  <g id="g-static">
+    <text x="380" y="362" text-anchor="middle" font-size="16" fill="var(--fig-warm)" data-en="static batching: C would start only at tick 5 → finish at 6" data-ru="static-батчинг: C стартовал бы только в тик 5 → финал на 6">static batching: C would start only at tick 5 → finish at 6</text>
+    <text x="380" y="388" text-anchor="middle" font-size="14" fill="var(--lab-good)" data-en="continuous: C finished at 2" data-ru="continuous: C завершился на 2">continuous: C finished at 2</text>
+  </g>
+</svg>`,
+        stages: [
+          { cap: { en: "Two slots; A needs 5 ticks, B and C need 1 each — all queued at tick 0.", ru: "Два слота; A нужно 5 тиков, B и C — по одному — все в очереди с тика 0." }, show: ["g-queue"] },
+          { cap: { en: "Tick 0: A and B take the slots.", ru: "Тик 0: A и B занимают слоты." }, show: ["g-queue", "g-t0"] },
+          { cap: { en: "Tick 1: B finishes — C slips into the freed slot at the boundary.", ru: "Тик 1: B завершается — C встаёт в освободившийся слот на границе." }, show: ["g-queue", "g-t0", "g-t1"] },
+          { cap: { en: "Finish marks: B at 1, C at 2 — A keeps its slot until 5.", ru: "Отметки завершения: B на 1, C на 2 — A держит слот до 5." }, show: ["g-queue", "g-t0", "g-t1", "g-marks"] },
+          { cap: { en: "Static batching would idle the slot: C would finish at 6, not 2.", ru: "Static-батчинг простаивал бы слотом: C завершился бы на 6, а не на 2." }, show: ["g-queue", "g-t0", "g-t1", "g-marks", "g-static"] },
+        ],
+      },
     ],
     outcomes: [
       { en: "Compute blocks, tails and waste for paged KV allocation.", ru: "\u0421\u0447\u0438\u0442\u0430\u0442\u044c \u0431\u043b\u043e\u043a\u0438, \u0445\u0432\u043e\u0441\u0442\u044b \u0438 \u043e\u0442\u0445\u043e\u0434\u044b \u043f\u0440\u0438 paged-\u0430\u043b\u043b\u043e\u043a\u0430\u0446\u0438\u0438 KV." },
@@ -32,7 +130,6 @@
     model: [
       ["blocks per request", "ceil(L / B)", "tail waste", "blocks × B − L positions"],
       ["total allocation", "Σᵢ ceil(Lᵢ / B) × B", "one shared pool (wrong)", "ceil(Σᵢ Lᵢ / B) × B"],
-      ["KV bytes per position", "2 × layers × kv_heads × head_width × bytes", "Qwen toy (24 / 2 / 64 / fp16)", "12288 B = 12 KiB"],
       ["decode-only toy", "one decode step per tick, prefill = 0", "release", "finishing in [t, t+1) frees the slot at t+1"],
     ],
     scenario: null,
@@ -150,6 +247,38 @@
     return sum((L + block_size - 1) // block_size for L in lengths) * block_size`,
         hints: [
           { en: "The bug's 96 hides 16 wasted slots: the shared pool merges three tails into one. Round per request, then multiply by the block size.", ru: "В ошибочных 96 спрятаны 16 потерянных слотов: общий пул склеил три хвоста в один. Округляй по каждому запросу, затем умножай на размер блока." },
+        ],
+        numpy: false,
+        timeoutMs: 4000,
+      },
+    {
+        id: "ex4",
+        title: { en: "Exercise 4 · Finish the trace", ru: "Упражнение 4 · Дочитай трассу" },
+        brief: {
+          en: "Implement <code>finish_ticks(work, slots)</code> — the finish boundary tick of each request (FIFO, all arrive at tick 0, unit ticks, continuous batching): each request starts as soon as a slot is free and finishes at <code>start + work</code>. Notebook toy: [5, 1, 1] on 2 slots → [5, 1, 2] — B frees the slot at 1, C takes it immediately.",
+          ru: "Реализуй <code>finish_ticks(work, slots)</code> — границу завершения каждого запроса (FIFO, все пришли в тик 0, единичные тики, continuous-батчинг): запрос стартует, как только освободился слот, и завершается в <code>start + work</code>. Игрушка тетради: [5, 1, 1] на 2 слотах → [5, 1, 2] — B освобождает слот в тик 1, C занимает его сразу.",
+        },
+        starter: `def finish_ticks(work, slots):
+    """Finish boundary tick per request; FIFO, continuous batching, unit ticks."""
+    # TODO: slot_free per slot; take the earliest free, finish at start + work
+`,
+        tests: [
+          { name: "notebook toy", hidden: false, code: "eq(finish_ticks([5, 1, 1], 2), [5, 1, 2])" },
+          { name: "no contention", hidden: false, code: "eq(finish_ticks([5, 1, 1], 3), [5, 1, 1])" },
+          { name: "equal work, round-robin slots", hidden: true, code: "eq(finish_ticks([2, 2, 2], 2), [2, 2, 4])" },
+          { name: "single slot serialises", hidden: true, code: "eq(finish_ticks([1, 3], 1), [1, 4])" },
+        ],
+        solution: `def finish_ticks(work, slots):
+    slot_free = [0] * slots
+    finishes = []
+    for w in work:
+        t = min(slot_free)
+        i = slot_free.index(t)
+        finishes.append(t + w)
+        slot_free[i] = t + w
+    return finishes`,
+        hints: [
+          { en: "Keep slot_free[slots]; each request takes the earliest-free slot, not slot 0.", ru: "Держи slot_free[slots]; каждый запрос берёт самый ранний свободный слот, а не слот 0." },
         ],
         numpy: false,
         timeoutMs: 4000,

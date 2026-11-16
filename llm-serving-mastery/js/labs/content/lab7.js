@@ -22,9 +22,90 @@
       ru: `<p>Полный перебор невозможен (4 ручки × 3 значения × 4 волны), поэтому поиск ограничен замороженным планом: baseline default, по одной OFAT-ветке на ручку и одна подтверждающая пара — пять конфигураций, ни больше; неудачные конфигурации остаются строками таблицы, а не стёртыми сносками. Допустимость — заявленная конъюнкция: <strong>feasible = thr ≥ floor AND p95 ≤ SLO</strong>, обе границы включительные. Не прошло ничего? «Замораживать нечего» — полноценный исход.</p>
 <p>Рабочая точка среди допустимых — самая быстрая по throughput, а запасы — <code>thr − floor</code> и <code>SLO − p95</code> — показывают, насколько выбор хрупок: точка, сидящая ровно на SLO, сломается на первом же held-out. Здесь кусаются единицы: p95 приходит в миллисекундах, и сравнение его с порогом в других единицах переворачивает все решения в 1000 раз — медленный профиль проходит как «допустимый».</p>`,
     },
+    heroTag: { en: "floor, SLO, freeze", ru: "floor, SLO, заморозка" },
     figures: [
-      { id: "t7-pareto-sweep", caption: { en: "Pareto sweep: the front you pick a point from.", ru: "Pareto-\u0441\u0432\u0438\u043f: \u0444\u0440\u043e\u043d\u0442, \u0441 \u043a\u043e\u0442\u043e\u0440\u043e\u0433\u043e \u0432\u044b\u0431\u0438\u0440\u0430\u0435\u0448\u044c \u0442\u043e\u0447\u043a\u0443." } },
-      { id: "t7-search-plan", caption: { en: "The bounded search plan, frozen before runs.", ru: "\u041e\u0433\u0440\u0430\u043d\u0438\u0447\u0435\u043d\u043d\u044b\u0439 \u043f\u043b\u0430\u043d \u043f\u043e\u0438\u0441\u043a\u0430, \u0437\u0430\u043c\u043e\u0440\u043e\u0436\u0435\u043d\u043d\u044b\u0439 \u0434\u043e \u043f\u0440\u043e\u0433\u043e\u043d\u043e\u0432." } },
+      {
+        id: "lab7-pareto",
+        title: { en: "The bounded sweep: feasible = floor AND SLO", ru: "Ограниченный свип: допустимость = floor И SLO" },
+        w: 760, h: 420,
+        svg: `<svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
+  <g id="g-bounds">
+    <line x1="80" y1="340" x2="700" y2="340" stroke="var(--lab-muted)" stroke-width="1.5"/>
+    <text x="700" y="364" text-anchor="end" font-size="14" fill="var(--lab-muted)" data-en="throughput, tok/s" data-ru="throughput, ток/с">throughput, tok/s</text>
+    <line x1="200" y1="340" x2="200" y2="70" stroke="var(--fig-warm)" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <text x="200" y="362" text-anchor="middle" font-size="13" fill="var(--fig-warm)" class="mono">floor 1200</text>
+    <line x1="80" y1="110" x2="700" y2="110" stroke="var(--fig-warm)" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <text x="92" y="100" font-size="13" fill="var(--fig-warm)" class="mono" data-en="SLO 800 ms" data-ru="SLO 800 мс">SLO 800 ms</text>
+    <text x="60" y="60" font-size="14" fill="var(--lab-muted)" data-en="p95 latency ↑" data-ru="латентность p95 ↑">p95 latency ↑</text>
+  </g>
+  <g id="g-pts">
+    <circle cx="150" cy="95" r="7" fill="var(--lab-muted)"/>
+    <text x="150" y="80" text-anchor="middle" font-size="13" fill="var(--lab-muted)" class="mono">mem-085 1150·880</text>
+    <circle cx="200" cy="110" r="7" fill="var(--lab-muted)"/>
+    <text x="206" y="136" font-size="13" fill="var(--lab-muted)" class="mono">default 1200·860</text>
+    <circle cx="250" cy="115" r="7" fill="var(--lab-muted)"/>
+    <text x="256" y="141" font-size="13" fill="var(--lab-muted)" class="mono">chunked 1250·840</text>
+    <circle cx="500" cy="305" r="7" fill="var(--lab-good)"/>
+    <text x="500" y="290" text-anchor="middle" font-size="13" fill="var(--lab-good)" class="mono">seqs-32 1600·470</text>
+    <circle cx="550" cy="315" r="7" fill="var(--lab-good)"/>
+    <text x="550" y="336" text-anchor="middle" font-size="13" fill="var(--lab-good)" class="mono">pair 1650·450</text>
+  </g>
+  <g id="g-frozen">
+    <circle cx="550" cy="315" r="12" fill="none" stroke="var(--lab-good)" stroke-width="2.5" class="fig-pulse"/>
+    <text x="580" y="270" font-size="15" fill="var(--lab-good)" data-en="frozen: pair" data-ru="заморожено: pair">frozen: pair</text>
+    <text x="580" y="290" font-size="13" fill="var(--lab-muted)" class="mono">+450 tok/s · +350 ms</text>
+  </g>
+</svg>`,
+        stages: [
+          { cap: { en: "Bounds first: throughput floor 1200 tok/s, p95 SLO 800 ms.", ru: "Сначала границы: пол throughput 1200 ток/с, SLO по p95 800 мс." }, show: ["g-bounds"] },
+          { cap: { en: "Five planned configs — failed rows stay in the table.", ru: "Пять запланированных конфигураций — неудачные остаются строками таблицы." }, show: ["g-bounds", "g-pts"] },
+          { cap: { en: "Feasible = thr ≥ floor AND p95 ≤ SLO: only seqs-32 and pair survive.", ru: "Допустимость = thr ≥ floor И p95 ≤ SLO: выживают только seqs-32 и pair." }, show: ["g-bounds", "g-pts"] },
+          { cap: { en: "Max throughput among feasible wins: pair, frozen with margins 450 tok/s and 350 ms.", ru: "Максимум throughput среди допустимых: pair — заморожена с запасами 450 ток/с и 350 мс." }, show: ["g-bounds", "g-pts", "g-frozen"] },
+        ],
+      },
+      {
+        id: "lab7-plan",
+        title: { en: "The bounded search plan, frozen before runs", ru: "Ограниченный план поиска, замороженный до прогонов" },
+        w: 760, h: 420,
+        svg: `<svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
+  <g id="g-base">
+    <rect x="60" y="180" width="150" height="60" rx="9" fill="none" stroke="var(--lab-accent)" stroke-width="2"/>
+    <text x="135" y="206" text-anchor="middle" font-size="15" fill="var(--lab-accent)" class="mono">default</text>
+    <text x="135" y="226" text-anchor="middle" font-size="13" fill="var(--lab-muted)" class="mono">1200 · 860</text>
+  </g>
+  <g id="g-ofat">
+    <path d="M 210 200 C 260 200 260 110 310 110" fill="none" stroke="var(--lab-muted)" stroke-width="1.5"/>
+    <path d="M 210 210 C 260 210 260 210 310 210" fill="none" stroke="var(--lab-muted)" stroke-width="1.5"/>
+    <path d="M 210 220 C 260 220 260 310 310 310" fill="none" stroke="var(--lab-muted)" stroke-width="1.5"/>
+    <rect x="310" y="85" width="170" height="50" rx="8" fill="none" stroke="var(--lab-bad)" stroke-width="1.5"/>
+    <text x="395" y="106" text-anchor="middle" font-size="14" fill="var(--lab-ink)" class="mono">seqs-32 1600·470</text>
+    <text x="395" y="124" text-anchor="middle" font-size="13" fill="var(--lab-good)" data-en="feasible" data-ru="допустима">feasible</text>
+    <rect x="310" y="185" width="170" height="50" rx="8" fill="none" stroke="var(--lab-bad)" stroke-width="1.5"/>
+    <text x="395" y="206" text-anchor="middle" font-size="14" fill="var(--lab-ink)" class="mono">mem-085 1150·880</text>
+    <text x="395" y="224" text-anchor="middle" font-size="13" fill="var(--lab-bad)" data-en="fails both" data-ru="падает на обоих">fails both</text>
+    <rect x="310" y="285" width="170" height="50" rx="8" fill="none" stroke="var(--lab-bad)" stroke-width="1.5"/>
+    <text x="395" y="306" text-anchor="middle" font-size="14" fill="var(--lab-ink)" class="mono">chunked 1250·840</text>
+    <text x="395" y="324" text-anchor="middle" font-size="13" fill="var(--lab-bad)" data-en="fails SLO" data-ru="падает на SLO">fails SLO</text>
+  </g>
+  <g id="g-pair">
+    <path d="M 480 110 C 530 110 530 210 580 210" fill="none" stroke="var(--lab-good)" stroke-width="2"/>
+    <rect x="580" y="185" width="130" height="50" rx="8" fill="none" stroke="var(--lab-good)" stroke-width="2"/>
+    <text x="645" y="206" text-anchor="middle" font-size="14" fill="var(--lab-good)" class="mono">pair 1650·450</text>
+    <text x="645" y="224" text-anchor="middle" font-size="13" fill="var(--lab-good)" data-en="confirms" data-ru="подтверждает">confirms</text>
+  </g>
+  <g id="g-freeze">
+    <rect x="250" y="356" width="260" height="42" rx="9" fill="none" stroke="var(--lab-good)" stroke-width="2"/>
+    <text x="380" y="373" text-anchor="middle" font-size="14" fill="var(--lab-good)" data-en="freeze: pair · before held-out" data-ru="заморозка: pair · до held-out">freeze: pair · before held-out</text>
+    <text x="380" y="391" text-anchor="middle" font-size="12" fill="var(--lab-muted)" data-en="rejected rows stay in the table" data-ru="отклонённые строки остаются в таблице">rejected rows stay in the table</text>
+  </g>
+</svg>`,
+        stages: [
+          { cap: { en: "The plan starts with a default baseline, frozen before any run.", ru: "План начинается с baseline default, замороженного до всякого запуска." }, show: ["g-base"] },
+          { cap: { en: "One-factor-at-a-time: three branches, one knob each.", ru: "OFAT: три ветки, по одной ручке на каждую." }, show: ["g-base", "g-ofat"] },
+          { cap: { en: "One confirmatory pair combines the winning knobs.", ru: "Одна подтверждающая пара сочетает выигравшие ручки." }, show: ["g-base", "g-ofat", "g-pair"] },
+          { cap: { en: "Freeze the winner before held-out; failed rows stay in the table.", ru: "Заморозь победителя до held-out; неудачные строки остаются в таблице." }, show: ["g-base", "g-ofat", "g-pair", "g-freeze"] },
+        ],
+      },
     ],
     outcomes: [
       { en: "Formulate feasibility as a testable predicate (throughput floor AND p95 ceiling).", ru: "\u0424\u043e\u0440\u043c\u0443\u043b\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0434\u043e\u043f\u0443\u0441\u0442\u0438\u043c\u043e\u0441\u0442\u044c \u043a\u0430\u043a \u043f\u0440\u043e\u0432\u0435\u0440\u044f\u0435\u043c\u044b\u0439 \u043f\u0440\u0435\u0434\u0438\u043a\u0430\u0442 (\u043f\u043e\u043b \u043f\u043e throughput \u0418 \u043f\u043e\u0442\u043e\u043b\u043e\u043a p95)." },
@@ -104,7 +185,7 @@
         id: "ex2",
         title: { en: "Exercise 2 · Freeze the working point", ru: "Упражнение 2 · Заморозь рабочую точку" },
         brief: {
-          en: "Implement <code>pick_working_point(configs, floor_tps, slo_p95_ms)</code> — the frozen profile: among feasible configs (Exercise 1's conjunction) return the one with the max <code>thr_64</code>; ties go to the first in the list. When nothing qualifies, return <code>None</code> — «замораживать нечего» is a legitimate freeze.",
+          en: "Implement <code>pick_working_point(configs, floor_tps, slo_p95_ms)</code> — the frozen profile: among feasible configs (Exercise 1's conjunction) return the one with the max <code>thr_64</code>; ties go to the first in the list. When nothing qualifies, return <code>None</code> — freezing nothing is a legitimate freeze.",
           ru: "Реализуй <code>pick_working_point(configs, floor_tps, slo_p95_ms)</code> — замороженный профиль: среди допустимых конфигураций (конъюнкция из упражнения 1) верни ту, у которой максимум <code>thr_64</code>; при равенстве — первую в списке. Если не прошло ничего, верни <code>None</code> — «замораживать нечего» тоже заморозка.",
         },
         starter: `def pick_working_point(configs, floor_tps, slo_p95_ms):
@@ -115,6 +196,7 @@
           { name: "picks the fastest feasible", hidden: false, code: "eq(pick_working_point([{'name': 'default', 'thr_64': 1200, 'p95_64': 860}, {'name': 'seqs-32', 'thr_64': 1600, 'p95_64': 470}, {'name': 'pair', 'thr_64': 1650, 'p95_64': 450}, {'name': 'mem-085', 'thr_64': 1150, 'p95_64': 880}, {'name': 'chunked', 'thr_64': 1250, 'p95_64': 840}], 1200.0, 800.0)['name'], 'pair')" },
           { name: "nothing feasible freezes nothing", hidden: false, code: "eq(pick_working_point([{'name': 'slow', 'thr_64': 900, 'p95_64': 300}], 1200.0, 800.0), None)" },
           { name: "ties keep the first", hidden: true, code: "eq(pick_working_point([{'name': 'a', 'thr_64': 1500, 'p95_64': 500}, {'name': 'b', 'thr_64': 1500, 'p95_64': 600}], 1200.0, 800.0)['name'], 'a')" },
+          { name: "min-p95 rule among equal-throughput feasible", hidden: true, code: "eq(pick_working_point([{'name': 'a', 'thr_64': 1650, 'p95_64': 490}, {'name': 'b', 'thr_64': 1600, 'p95_64': 460}], 1200.0, 800.0)['name'], 'a')" },
           { name: "empty plan", hidden: true, code: "eq(pick_working_point([], 1200.0, 800.0), None)" },
         ],
         solution: `def pick_working_point(configs, floor_tps, slo_p95_ms):
@@ -151,6 +233,7 @@
           { name: "teaching sweep counts 2", hidden: false, code: "eq(feasible_count([{'thr_64': 1200, 'p95_64': 860}, {'thr_64': 1600, 'p95_64': 470}, {'thr_64': 1650, 'p95_64': 450}, {'thr_64': 1150, 'p95_64': 880}, {'thr_64': 1250, 'p95_64': 840}], 1200.0, 800.0), 2)" },
           { name: "tighter SLO 460 ms", hidden: false, code: "eq(feasible_count([{'thr_64': 1200, 'p95_64': 860}, {'thr_64': 1600, 'p95_64': 470}, {'thr_64': 1650, 'p95_64': 450}, {'thr_64': 1150, 'p95_64': 880}, {'thr_64': 1250, 'p95_64': 840}], 1200.0, 460.0), 1)" },
           { name: "boundary on both bounds", hidden: true, code: "eq(feasible_count([{'thr_64': 1200, 'p95_64': 800}], 1200.0, 800.0), 1)" },
+          { name: "below floor is not feasible", hidden: true, code: "eq(feasible_count([{'thr_64': 900, 'p95_64': 500}], 1200.0, 800.0), 0)" },
           { name: "empty plan", hidden: true, code: "eq(feasible_count([], 1200.0, 800.0), 0)" },
         ],
         solution: `def feasible_count(configs, floor_tps, slo_p95_ms):
@@ -194,10 +277,10 @@
     posttest: [
       {
         id: "p1",
-        q: { en: "A config gives 1650 tok/s and p95 450 ms under floor 1200 / SLO 800 ms. It is\u2026", ru: "\u041a\u043e\u043d\u0444\u0438\u0433 \u0434\u0430\u0451\u0442 1650 \u0442\u043e\u043a/\u0441 \u0438 p95 450 \u043c\u0441 \u043f\u0440\u0438 \u043f\u043e\u043b-\u0435 1200 / SLO 800 \u043c\u0441. \u041e\u043d\u2026" },
+        q: { en: "A config gives 1650 tok/s and p95 450 ms under floor 1200 / SLO 800 ms. It is\u2026", ru: "\u041a\u043e\u043d\u0444\u0438\u0433 \u0434\u0430\u0451\u0442 1650 \u0442\u043e\u043a/\u0441 \u0438 p95 450 \u043c\u0441 floor 1200 / SLO 800 \u043c\u0441. \u041e\u043d\u2026" },
         options: [{ en: "feasible with margin (450, 350)", ru: "\u0434\u043e\u043f\u0443\u0441\u0442\u0438\u043c \u0441 \u0437\u0430\u043f\u0430\u0441\u043e\u043c (450, 350)" }, { en: "infeasible: p95 too high", ru: "\u043d\u0435\u0434\u043e\u043f\u0443\u0441\u0442\u0438\u043c: p95 \u0441\u043b\u0438\u0448\u043a\u043e\u043c \u0432\u044b\u0441\u043e\u043a" }, { en: "feasible only after freeze", ru: "\u0434\u043e\u043f\u0443\u0441\u0442\u0438\u043c \u0442\u043e\u043b\u044c\u043a\u043e \u043f\u043e\u0441\u043b\u0435 \u0437\u0430\u043c\u043e\u0440\u043e\u0437\u043a\u0438" }],
         answer: 0,
-        explain: { en: "1650 \u2265 1200 AND 450 \u2264 400? No \u2014 450 \u2264 800 wait: with SLO 400 ms, p95 450 fails. Read the SLO twice: feasibility needs BOTH.", ru: "1650 \u2265 1200 \u0418 450 \u2264 400? \u041d\u0435\u0442 \u2014 \u043f\u0440\u0438 SLO 800 \u043c\u0441 p95 450 \u043f\u0440\u043e\u0432\u0430\u043b\u0438\u0432\u0430\u0435\u0442\u0441\u044f. \u0427\u0438\u0442\u0430\u0439 SLO \u0434\u0432\u0430\u0436\u0434\u044b: \u0434\u043e\u043f\u0443\u0441\u0442\u0438\u043c\u043e\u0441\u0442\u044c \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u043e\u0431\u0430." },
+        explain: { en: "1650 \u2265 1200 AND 450 \u2264 800 \u2014 both hold: feasible. Margins: thr \u2212 floor = 1650 \u2212 1200 = 450 tok/s, SLO \u2212 p95 = 800 \u2212 450 = 350 ms. Feasibility needs BOTH bounds.", ru: "1650 \u2265 1200 \u0418 450 \u2264 800 \u2014 \u043e\u0431\u0430 \u0443\u0441\u043b\u043e\u0432\u0438\u044f \u0432\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u044b: \u0434\u043e\u043f\u0443\u0441\u0442\u0438\u043c. \u0417\u0430\u043f\u0430\u0441\u044b: thr \u2212 floor = 1650 \u2212 1200 = 450 \u0442\u043e\u043a/\u0441, SLO \u2212 p95 = 800 \u2212 450 = 350 \u043c\u0441. \u0414\u043e\u043f\u0443\u0441\u0442\u0438\u043c\u043e\u0441\u0442\u044c \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u043e\u0431\u043e\u0438\u0445 \u0433\u0440\u0430\u043d\u0438\u0446." },
       },
       {
         id: "p2",

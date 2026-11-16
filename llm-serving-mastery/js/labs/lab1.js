@@ -53,7 +53,7 @@
       chunks.push({ t_s: t, text: answer[i] });
     }
     var total_s = chunks[chunks.length - 1].t_s;
-    var tokPerS = (tokens - 1) / (total_s - ttft_s);
+    var tokPerS = tokens > 1 ? (tokens - 1) / (total_s - ttft_s) : null;
     return { promptTokens: promptTokens, tokens: tokens, cold: cold, chunks: chunks, ttft_s: ttft_s, total_s: total_s, tokPerS: tokPerS };
   }
 
@@ -246,6 +246,7 @@
     Object.keys(map).forEach(function (k) {
       var el = document.querySelector("[data-lab-metric='" + k + "']");
       if (!el) return;
+      if (map[k] == null) { el.textContent = "—"; return; }
       el.textContent = k === "prompt" ? String(map[k]) : map[k].toFixed(k === "tok" ? 1 : 3);
     });
   }

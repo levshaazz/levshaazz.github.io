@@ -17,23 +17,119 @@
     },
     intro: {
       en: `<p>Symmetric INT4 keeps one <strong>scale</strong> per row of weights and stores each weight as a small integer code from <strong>−8 to 7</strong>. The declared policy of this topic is <em>absmax/7</em>: divide the row's largest magnitude by the largest positive code, so the biggest weight lands exactly on 7 and the code −8 stays unused. The round trip is <code>code = clip(round(v / scale))</code> — rounding to nearest with ties to even (Python's <code>round</code>), then clipping to the grid — and the reconstruction is <code>scale × code</code>. Error appears in two places: weights that fall between grid points, and outliers whose scaled value exceeds ±7 — those codes hit the clip, and a round trip without clipping would silently report them as error-free.</p>
-<p>The lab habit: declare the scale policy first, run the round trip on a tiny row, measure the signed error (reconstructed − original) and the mean squared error, and only then argue about NF4 or a real GPU. Every number here is deterministic toy arithmetic — the same one the notebook traces weight by weight — not a kernel measurement.</p>`,
+<p>The lab habit: declare the scale policy first, run the round trip on a tiny row, measure the signed error (reconstructed − original) and the mean squared error, and only then argue about NF4 or a real GPU. Errors are not equal: which codes actually move the output is decided by the input, not by the weight alone (the second figure follows this thought). Every number here is deterministic toy arithmetic — the same one the notebook traces weight by weight — not a kernel measurement.</p>`,
       ru: `<p>Симметричное INT4 хранит один <strong>scale</strong> на строку весов и записывает каждый вес маленьким целым кодом от <strong>−8 до 7</strong>. Заявленная политика темы — <em>absmax/7</em>: делим максимальный по модулю вес строки на наибольший положительный код, так что самый крупный вес попадает ровно в 7, а код −8 остаётся неиспользованным. Полный цикл: <code>code = clip(round(v / scale))</code> — округление к ближайшему, связи к чётному (Python-овский <code>round</code>), затем клип в сетку, — а реконструкция это <code>scale × code</code>. Ошибка живёт в двух местах: веса между узлами сетки и выбросы, чьё значение после деления на scale выходит за ±7 — такие коды упираются в клип, а цикл без клипа молча отчитался бы о них как о безошибочных.</p>
-<p>Привычка лабы: сначала объяви политику scale, прогони цикл квантования на крошечной строке, измерь знаковую ошибку (реконструкция − оригинал) и MSE, и только потом спорь про NF4 и реальный GPU. Каждое число здесь — детерминированная игрушечная арифметика, та же, что тетрадь трассирует вес за весом, а не измерение ядра.</p>`,
+<p>Привычка лабы: сначала объяви политику scale, прогони цикл квантования на крошечной строке, измерь знаковую ошибку (реконструкция − оригинал) и MSE, и только потом спорь про NF4 и реальный GPU. Ошибки неравноценны: какие коды реально сдвинут выход — решает вход, а не вес сам по себе (вторая фигура продолжает эту мысль). Каждое число здесь — детерминированная игрушечная арифметика, та же, что тетрадь трассирует вес за весом, а не измерение ядра.</p>`,
     },
+    heroTag: { en: "scales, codes, error", ru: "scale, коды, ошибка" },
     figures: [
-      { id: "t3-groups", caption: { en: "Grouped quantization: scales per group, error per group.", ru: "\u0413\u0440\u0443\u043f\u043f\u043e\u0432\u043e\u0435 \u043a\u0432\u0430\u043d\u0442\u043e\u0432\u0430\u043d\u0438\u0435: \u043c\u0430\u0441\u0448\u0442\u0430\u0431\u044b \u0438 \u043e\u0448\u0438\u0431\u043a\u0438 \u043f\u043e \u0433\u0440\u0443\u043f\u043f\u0430\u043c." } },
-      { id: "t3-active-error", caption: { en: "Active error: the codes that actually moved the output.", ru: "\u0410\u043a\u0442\u0438\u0432\u043d\u0430\u044f \u043e\u0448\u0438\u0431\u043a\u0430: \u043a\u043e\u0434\u044b, \u0440\u0435\u0430\u043b\u044c\u043d\u043e \u0441\u0434\u0432\u0438\u043d\u0443\u0432\u0448\u0438\u0435 \u0432\u044b\u0445\u043e\u0434." } },
+      {
+        id: "lab3-round-trip",
+        title: { en: "The quantization round trip, step by step", ru: "Цикл квантования шаг за шагом" },
+        w: 760, h: 420,
+        svg: `<svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
+  <g id="g-scale">
+    <text x="60" y="66" font-size="14" fill="var(--lab-muted)" data-en="TOY row" data-ru="TOY-строка">TOY row</text>
+    <rect x="60" y="80" width="150" height="40" rx="7" fill="none" stroke="var(--lab-accent)" stroke-width="1.5"/>
+    <text x="135" y="105" text-anchor="middle" font-size="15" fill="var(--lab-ink)" class="mono">2.25</text>
+    <rect x="218" y="80" width="150" height="40" rx="7" fill="none" stroke="var(--lab-muted)" stroke-width="1.5"/>
+    <text x="293" y="105" text-anchor="middle" font-size="15" fill="var(--lab-muted)" class="mono">−1.83</text>
+    <rect x="376" y="80" width="150" height="40" rx="7" fill="none" stroke="var(--lab-muted)" stroke-width="1.5"/>
+    <text x="451" y="105" text-anchor="middle" font-size="15" fill="var(--lab-muted)" class="mono">−0.52</text>
+    <rect x="534" y="80" width="150" height="40" rx="7" fill="none" stroke="var(--lab-muted)" stroke-width="1.5"/>
+    <text x="609" y="105" text-anchor="middle" font-size="15" fill="var(--lab-muted)" class="mono">0.24</text>
+    <text x="60" y="158" font-size="16" fill="var(--lab-accent)" class="mono">scale = absmax / 7 = 2.25 / 7</text>
+    <text x="60" y="182" font-size="14" fill="var(--lab-muted)" data-en="the biggest weight lands exactly on code 7" data-ru="крупнейший вес попадает ровно в код 7">the biggest weight lands exactly on code 7</text>
+    <text x="60" y="220" font-size="16" fill="var(--lab-ink)" class="mono">scale = 0.25</text>
+  </g>
+  <g id="g-div">
+    <line x1="60" y1="300" x2="700" y2="300" stroke="var(--lab-muted)" stroke-width="1.5"/>
+    <text x="240" y="326" text-anchor="middle" font-size="13" fill="var(--lab-muted)" class="mono">7</text>
+    <line x1="240" y1="294" x2="240" y2="306" stroke="var(--lab-muted)" stroke-width="1.5"/>
+    <text x="380" y="326" text-anchor="middle" font-size="13" fill="var(--lab-muted)" class="mono">8</text>
+    <line x1="380" y1="294" x2="380" y2="306" stroke="var(--lab-muted)" stroke-width="1.5"/>
+    <circle cx="586" cy="300" r="8" fill="var(--lab-accent)"/>
+    <text x="586" y="326" text-anchor="middle" font-size="13" fill="var(--lab-accent)" class="mono">9</text>
+    <text x="60" y="266" font-size="16" fill="var(--lab-ink)" class="mono">2.25 / 0.25 = 9 → round → 9</text>
+  </g>
+  <g id="g-clip">
+    <path d="M 586 292 L 586 232 L 452 232" fill="none" stroke="var(--fig-warm)" stroke-width="2.5" class="fig-flow"/>
+    <circle cx="447" cy="232" r="8" fill="var(--fig-warm)"/>
+    <text x="447" y="212" text-anchor="middle" font-size="14" fill="var(--fig-warm)" class="mono">clip → 7</text>
+    <text x="60" y="212" font-size="14" fill="var(--fig-warm)" data-en="INT4 cannot store 9" data-ru="INT4 не может хранить 9">INT4 cannot store 9</text>
+  </g>
+  <g id="g-recon">
+    <circle cx="447" cy="300" r="8" fill="var(--lab-good)"/>
+    <path d="M 447 292 L 447 252" fill="none" stroke="var(--lab-good)" stroke-width="2"/>
+    <text x="430" y="326" text-anchor="middle" font-size="13" fill="var(--lab-good)" class="mono">1.75</text>
+    <text x="60" y="366" font-size="16" fill="var(--lab-ink)" class="mono">7 × 0.25 = 1.75</text>
+    <text x="300" y="366" font-size="16" fill="var(--fig-warm)" class="mono">error = 1.75 − 2.25 = −0.50</text>
+    <text x="60" y="392" font-size="13" fill="var(--lab-muted)" data-en="the clip keeps the error in the MSE: 0.064225, not ≈ 0.0017" data-ru="клип сохраняет ошибку в MSE: 0.064225, а не ≈ 0.0017">the clip keeps the error in the MSE: 0.064225, not ≈ 0.0017</text>
+  </g>
+</svg>`,
+        stages: [
+          { cap: { en: "scale = absmax / 7: on the TOY row the outlier 2.25 sets the scale — 0.25.", ru: "scale = absmax / 7: на TOY-строке выброс 2.25 задаёт scale — 0.25." }, show: ["g-scale"] },
+          { cap: { en: "Divide and round: 2.25 / 0.25 = 9 — an integer the grid does not have.", ru: "Делим и округляем: 2.25 / 0.25 = 9 — целого, которого в сетке нет." }, show: ["g-scale", "g-div"] },
+          { cap: { en: "Clip to [−8, 7]: the illegal 9 is stored as 7.", ru: "Клип в [−8, 7]: нелегальная девятка сохраняется как 7." }, show: ["g-scale", "g-div", "g-clip"] },
+          { cap: { en: "Reconstruct 7 × 0.25 = 1.75; the signed error −0.50 stays in the MSE.", ru: "Реконструкция 7 × 0.25 = 1.75; знаковая ошибка −0.50 остаётся в MSE." }, show: ["g-scale", "g-div", "g-clip", "g-recon"] },
+        ],
+      },
+      {
+        id: "lab3-active-error",
+        title: { en: "Active error: the input decides which codes matter", ru: "Активная ошибка: вход решает, какие коды важны" },
+        w: 760, h: 420,
+        svg: `<svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
+  <g id="g-bars">
+    <text x="60" y="52" font-size="14" fill="var(--lab-muted)" data-en="reconstruction error per weight (TOY row, scale 0.25)" data-ru="ошибка реконструкции по весам (TOY-строка, scale 0.25)">reconstruction error per weight (TOY row, scale 0.25)</text>
+    <line x1="380" y1="150" x2="380" y2="330" stroke="var(--lab-muted)" stroke-width="1.5"/>
+    <rect x="288" y="178" width="92" height="10" rx="3" fill="var(--lab-accent)"/>
+    <text x="392" y="188" font-size="14" fill="var(--lab-ink)" class="mono">+0.08</text>
+    <text x="278" y="188" text-anchor="end" font-size="13" fill="var(--lab-muted)" class="mono">w0</text>
+    <rect x="342" y="216" width="38" height="10" rx="3" fill="var(--lab-accent)"/>
+    <text x="392" y="226" font-size="14" fill="var(--lab-ink)" class="mono">+0.02</text>
+    <text x="278" y="226" text-anchor="end" font-size="13" fill="var(--lab-muted)" class="mono">w1</text>
+    <rect x="358" y="254" width="22" height="10" rx="3" fill="var(--lab-accent)"/>
+    <text x="392" y="264" font-size="14" fill="var(--lab-ink)" class="mono">+0.01</text>
+    <text x="278" y="264" text-anchor="end" font-size="13" fill="var(--lab-muted)" class="mono">w2</text>
+    <rect x="288" y="296" width="92" height="10" rx="3" fill="var(--fig-warm)"/>
+    <text x="392" y="306" font-size="14" fill="var(--fig-warm)" class="mono">−0.50</text>
+    <text x="278" y="306" text-anchor="end" font-size="13" fill="var(--fig-warm)" class="mono">w3</text>
+    <text x="430" y="306" font-size="13" fill="var(--fig-warm)" data-en="the outlier" data-ru="выброс">the outlier</text>
+    <text x="60" y="382" font-size="13" fill="var(--lab-muted)" class="mono">MSE = (0.08² + 0.02² + 0.01² + 0.50²) / 4 = 0.064225</text>
+  </g>
+  <g id="g-inA">
+    <text x="60" y="72" font-size="15" fill="var(--lab-ink)" data-en="Input A reads w0 × 1" data-ru="Вход A читает w0 × 1">Input A reads w0 × 1</text>
+    <circle cx="84" cy="183" r="9" fill="none" stroke="var(--lab-accent)" stroke-width="2.5" class="fig-pulse"/>
+    <text x="520" y="120" font-size="21" fill="var(--lab-accent)" class="mono">out: +0.08</text>
+    <path d="M 96 183 C 260 183 400 150 508 122" fill="none" stroke="var(--lab-accent)" stroke-width="2" class="fig-flow"/>
+  </g>
+  <g id="g-inB">
+    <text x="240" y="72" font-size="15" fill="var(--lab-ink)" data-en="Input B reads w3 × 10" data-ru="Вход B читает w3 × 10">Input B reads w3 × 10</text>
+    <circle cx="84" cy="301" r="9" fill="none" stroke="var(--fig-warm)" stroke-width="2.5" class="fig-pulse"/>
+    <text x="520" y="352" font-size="21" fill="var(--fig-warm)" class="mono">out: −5.00</text>
+    <path d="M 96 301 C 300 345 420 360 508 350" fill="none" stroke="var(--fig-warm)" stroke-width="2" class="fig-flow"/>
+  </g>
+  <g id="g-verdict">
+    <text x="380" y="404" text-anchor="middle" font-size="15" fill="var(--lab-ink)" data-en="same weights, different error — the input decides" data-ru="те же веса, разная ошибка — решает вход">same weights, different error — the input decides</text>
+  </g>
+</svg>`,
+        stages: [
+          { cap: { en: "Per-weight reconstruction error: three small values and one outlier at −0.50.", ru: "Ошибка по каждому весу: три маленьких значения и один выброс на −0.50." }, show: ["g-bars"] },
+          { cap: { en: "Input A reads w0 × 1: the output moves by just +0.08.", ru: "Вход A читает w0 × 1: выход сдвигается всего на +0.08." }, show: ["g-bars", "g-inA"] },
+          { cap: { en: "Input B reads the outlier ×10: the output moves by −5.00.", ru: "Вход B читает выброс ×10: выход сдвигается на −5.00." }, show: ["g-bars", "g-inA", "g-inB"] },
+          { cap: { en: "Same weights, different error: the input decides which codes matter.", ru: "Те же веса, разная ошибка: какие коды важны — решает вход." }, show: ["g-bars", "g-inA", "g-inB", "g-verdict"] },
+        ],
+      },
     ],
     outcomes: [
       { en: "Derive a quantization scale from a value range and quantize with rounding and clipping.", ru: "\u0412\u044b\u0432\u043e\u0434\u0438\u0442\u044c \u043c\u0430\u0441\u0448\u0442\u0430\u0431 \u043a\u0432\u0430\u043d\u0442\u043e\u0432\u0430\u043d\u0438\u044f \u0438\u0437 \u0434\u0438\u0430\u043f\u0430\u0437\u043e\u043d\u0430 \u0438 \u043a\u0432\u0430\u043d\u0442\u043e\u0432\u0430\u0442\u044c \u0441 \u043e\u043a\u0440\u0443\u0433\u043b\u0435\u043d\u0438\u0435\u043c \u0438 \u043a\u043b\u0438\u043f\u043e\u043c." },
       { en: "Explain reconstruction error as a named mechanism, not a vague quality loss.", ru: "\u041e\u0431\u044a\u044f\u0441\u043d\u044f\u0442\u044c \u043e\u0448\u0438\u0431\u043a\u0443 \u0440\u0435\u043a\u043e\u043d\u0441\u0442\u0440\u0443\u043a\u0446\u0438\u0438 \u043a\u0430\u043a \u043d\u0430\u0437\u0432\u0430\u043d\u043d\u044b\u0439 \u043c\u0435\u0445\u0430\u043d\u0438\u0437\u043c, \u0430 \u043d\u0435 \u00ab\u043a\u0430\u043a\u0443\u044e-\u0442\u043e \u043f\u043e\u0442\u0435\u0440\u044e \u043a\u0430\u0447\u0435\u0441\u0442\u0432\u0430\u00bb." },
     ],
     model: [
-      ["signed INT4 grid", "codes [-8, 7]", "rounding", "nearest, ties to even"],
-      ["symmetric scale", "scale = absmax / 7", "all-zero group", "scale = 1.0"],
-      ["code", "clip(round(v / scale))", "reconstruction", "scale × code"],
-      ["signed error", "reconstructed − original", "row MSE", "mean of (v − recon)²"],
+      [{ en: "signed INT4 grid", ru: "знаковая сетка INT4" }, { en: "codes [-8, 7]", ru: "коды [-8, 7]" }, { en: "rounding", ru: "округление" }, { en: "nearest, ties to even", ru: "к ближайшему, связи к чётному" }],
+      [{ en: "symmetric scale", ru: "симметричный scale" }, { en: "scale = absmax / 7", ru: "scale = absmax / 7" }, { en: "all-zero group", ru: "нулевая группа" }, { en: "scale = 1.0", ru: "scale = 1.0" }],
+      [{ en: "code", ru: "код" }, { en: "clip(round(v / scale))", ru: "clip(round(v / scale))" }, { en: "reconstruction", ru: "реконструкция" }, { en: "scale × code", ru: "scale × код" }],
+      [{ en: "signed error", ru: "знаковая ошибка" }, { en: "reconstructed − original", ru: "реконструкция − оригинал" }, { en: "row MSE", ru: "MSE строки" }, { en: "mean of (v − recon)²", ru: "среднее (v − recon)²" }],
     ],
     scenario: null,
     quizzes: [
@@ -178,10 +274,10 @@
       },
       {
         id: "p3",
-        q: { en: "Reconstruction is scale \u00d7 code. The signed reconstruction error of weight 0.37 with scale 0.25 (code 2) is\u2026", ru: "\u0420\u0435\u043a\u043e\u043d\u0441\u0442\u0440\u0443\u043a\u0446\u0438\u044f = scale \u00d7 code. \u0417\u043d\u0430\u043a\u043e\u0432\u0430\u044f \u043e\u0448\u0438\u0431\u043a\u0430 \u0440\u0435\u043a\u043e\u043d\u0441\u0442\u0440\u0443\u043a\u0446\u0438\u0438 \u0432\u0435\u0441\u0430 0.37 \u043f\u0440\u0438 scale 0.25 (\u043a\u043e\u0434 2) \u2014 \u044d\u0442\u043e\u2026" },
+        q: { en: "Reconstruction is scale \u00d7 code. The signed reconstruction error of weight 0.37 with scale 0.2 (code 2) is\u2026", ru: "\u0420\u0435\u043a\u043e\u043d\u0441\u0442\u0440\u0443\u043a\u0446\u0438\u044f = scale \u00d7 code. \u0417\u043d\u0430\u043a\u043e\u0432\u0430\u044f \u043e\u0448\u0438\u0431\u043a\u0430 \u0440\u0435\u043a\u043e\u043d\u0441\u0442\u0440\u0443\u043a\u0446\u0438\u0438 \u0432\u0435\u0441\u0430 0.37 \u043f\u0440\u0438 scale 0.2 (\u043a\u043e\u0434 2) \u2014 \u044d\u0442\u043e\u2026" },
         options: [{ en: "+0.03 (recon \u2212 original)", ru: "+0.03 (\u0440\u0435\u043a\u043e\u043d \u2212 \u043e\u0440\u0438\u0433\u0438\u043d\u0430\u043b)" }, { en: "\u22120.03 (original \u2212 recon)", ru: "\u22120.03 (\u043e\u0440\u0438\u0433\u0438\u043d\u0430\u043b \u2212 \u0440\u0435\u043a\u043e\u043d)" }, { en: "0.03 / 0.37", ru: "0.03 / 0.37" }],
         answer: 0,
-        explain: { en: "Course convention: error = reconstruction \u2212 original = 0.50 \u2212 0.37 = +0.03. Sign conventions must match the journal.", ru: "\u041a\u043e\u043d\u0432\u0435\u043d\u0446\u0438\u044f \u043a\u0443\u0440\u0441\u0430: \u043e\u0448\u0438\u0431\u043a\u0430 = \u0440\u0435\u043a\u043e\u043d\u0441\u0442\u0440\u0443\u043a\u0446\u0438\u044f \u2212 \u043e\u0440\u0438\u0433\u0438\u043d\u0430\u043b = 0.50 \u2212 0.37 = +0.03. \u041a\u043e\u043d\u0432\u0435\u043d\u0446\u0438\u044f \u0437\u043d\u0430\u043a\u0430 \u0434\u043e\u043b\u0436\u043d\u0430 \u0441\u043e\u0432\u043f\u0430\u0434\u0430\u0442\u044c \u0441 \u0436\u0443\u0440\u043d\u0430\u043b\u043e\u043c." },
+        explain: { en: "Course convention: error = reconstruction \u2212 original = 0.40 \u2212 0.37 = +0.03. Sign conventions must match the journal.", ru: "\u041a\u043e\u043d\u0432\u0435\u043d\u0446\u0438\u044f \u043a\u0443\u0440\u0441\u0430: \u043e\u0448\u0438\u0431\u043a\u0430 = \u0440\u0435\u043a\u043e\u043d\u0441\u0442\u0440\u0443\u043a\u0446\u0438\u044f \u2212 \u043e\u0440\u0438\u0433\u0438\u043d\u0430\u043b = 0.40 \u2212 0.37 = +0.03. \u041a\u043e\u043d\u0432\u0435\u043d\u0446\u0438\u044f \u0437\u043d\u0430\u043a\u0430 \u0434\u043e\u043b\u0436\u043d\u0430 \u0441\u043e\u0432\u043f\u0430\u0434\u0430\u0442\u044c \u0441 \u0436\u0443\u0440\u043d\u0430\u043b\u043e\u043c." },
       },
     ],
     reward: {

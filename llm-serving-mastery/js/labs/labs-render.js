@@ -246,17 +246,24 @@
       stdoutBox.scrollTop = stdoutBox.scrollHeight;
     }
 
+    // one Pyodide worker serves all exercises: while a run is in flight every
+    // Run button is locked, otherwise a parallel run kills the first one's timer
+    const lockRuns = (on) => document.querySelectorAll("[data-lab-run]").forEach((b) => { b.disabled = !on; });
+
     runBtn.addEventListener("click", async () => {
-      // layer-2 exercises need the live journal injected from the local runtime
+      // layer-2 exercises need the live journal injected from the local runtime;
+      // offline, fall back to the declared synthetic fixture when the content
+      // ships one (marked in the output — a fixture is never evidence)
       if (ex.injectEntries && window.LSMRuntime) {
         const ready = await window.LSMRuntime.prepareExercise(ex, { get value() { return getCode(); }, set value(v) { setCode(v); } });
-        if (!ready) {
+        if (!ready || !ready.ok) {
           results.innerHTML = "";
           appendOut(T.runtimeOffline, "err");
           return;
         }
+        if (ready.fixture) appendOut(T.fixtureNote, "err");
       }
-      runBtn.disabled = true;
+      lockRuns(false);
       results.innerHTML = "";
       stdoutBox.textContent = "";
       appendOut(T.loading);
@@ -270,12 +277,12 @@
         appendOut(T.timeout.replace("{s}", wall), "err");
         results.appendChild(el("p", "lab-verdict", "")).dataset.state = "fail";
         results.querySelector(".lab-verdict").textContent = T.timeoutShort;
-        runBtn.disabled = false;
+        lockRuns(true);
         return;
       }
       if (res.status === "runner-error") {
         appendOut(T.runnerError + " " + (res.error || ""), "err");
-        runBtn.disabled = false;
+        lockRuns(true);
         return;
       }
       appendOut(T.done.replace("{s}", wall), "ok");
@@ -283,7 +290,7 @@
       if (res.status === "syntax" || res.status === "error") {
         appendOut((res.error || "error"), "err");
         results.appendChild(el("p", "lab-note", res.status === "syntax" ? T.syntax : T.exception));
-        runBtn.disabled = false;
+        lockRuns(true);
         return;
       }
 
@@ -321,7 +328,7 @@
           : T.hiddenFail.replace("{n}", String(hiddenFail));
       }
       results.appendChild(verdict);
-      runBtn.disabled = false;
+      lockRuns(true);
     });
 
     solBtn.addEventListener("click", () => {
@@ -346,7 +353,7 @@
     const canvas = host.querySelector("canvas");
     if (!canvas) return;
     const caption = host.querySelector("[data-lab-hero-caption]");
-    if (caption) caption.textContent = captionText;
+    if (caption && captionText) caption.textContent = captionText;
     if (window.LSMHero) {
       const labels = lang === "ru"
         ? ["клиент", "edge", "движок", "токены"]
@@ -383,6 +390,11 @@
     if (figHost && (content.figures || []).length) {
       figHost.hidden = false;
       content.figures.forEach((f) => {
+        if (window.LSMFigures && f.stages && f.svg) {
+          window.LSMFigures.mount(figHost, f, lang);
+          return;
+        }
+        // legacy static fallback (lecture assets) — kept for safety
         const fig = el("figure", "lab-figure");
         const img = document.createElement("img");
         img.loading = "lazy";

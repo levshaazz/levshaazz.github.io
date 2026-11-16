@@ -144,7 +144,7 @@
         const r = await fetchJson("/experiment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: tr(spec.experimentPrompt), max_tokens: 32 }),
+          body: JSON.stringify({ prompt: tr(spec.experimentPrompt || (spec.burst && spec.burst.prompt)), max_tokens: 32 }),
           timeoutMs: 120000,
         });
         setMetric("wall", r.metrics.wall_s.toFixed(3) + " s");
@@ -245,13 +245,21 @@
     // fetches the live journal and prepends it to the student code. Returns
     // false when the runtime is offline (the renderer reports that).
     async prepareExercise(ex, textarea) {
-      if (!ex.injectEntries) return true;
-      const inject = await journalInjection(ex);
-      if (!inject) return false;
+      if (!ex.injectEntries) return { ok: true, fixture: false };
+      let inject = await journalInjection(ex);
+      let fixture = false;
+      if (!inject && ex.fixtureEntries) {
+        // live journal unreachable — inject the declared synthetic fixture and
+        // say so in the output; a fixture is practice material, never evidence
+        fixture = true;
+        inject = "import json as _rtjson\n# FIXTURE (runtime offline): synthetic journal, not evidence\nentries = _rtjson.loads(_rtjson.dumps(" +
+          JSON.stringify(ex.fixtureEntries) + "))\n\n";
+      }
+      if (!inject) return { ok: false, fixture: false };
       if (!textarea.value.startsWith("import json as _rtjson")) {
         textarea.value = inject + textarea.value;
       }
-      return true;
+      return { ok: true, fixture: fixture };
     },
   };
 })();
