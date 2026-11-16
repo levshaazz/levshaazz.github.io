@@ -434,6 +434,7 @@
       (content.posttest || []).forEach((it) => IDS.push(it.id));
       window.LSMPosttest.render(postHost, content.posttest, {
         lang,
+        seedPrefix: labId,
         onCorrect: (id) => {
           const p = loadProgress(); p[id] = 1;
           try { localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) {}

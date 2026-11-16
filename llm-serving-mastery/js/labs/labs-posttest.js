@@ -21,9 +21,10 @@
   // Deterministic per-item option shuffle: content authors should not have to
   // hand-place correct answers (all-A/all-B was a real audit finding), and the
   // same seed keeps RU/EN order identical. Seed = stable hash of the item id.
-  function shuffleOptions(it) {
+  function shuffleOptions(it, seedPrefix) {
     let h = 2166136261;
-    const key = String(it.id || "");
+    // seed per lab+id: identical item ids across labs must not share a permutation
+    const key = String(seedPrefix || "") + ":" + String(it.id || "");
     for (let i = 0; i < key.length; i += 1) {
       h ^= key.charCodeAt(i);
       h = Math.imul(h, 16777619);
@@ -45,10 +46,11 @@
     /**
      * render(host, items, opts)
      *  items: [{id, q:{en,ru}, options:[{en,ru},...], answer: <index>, explain:{en,ru}}]
-     *  opts:  { lang, onCorrect(id) }
+     *  opts:  { lang, seedPrefix, onCorrect(id) }
      */
     render(host, items, opts) {
       const lang = (opts && opts.lang) || "en";
+      const seedPrefix = (opts && opts.seedPrefix) || "";
       const onCorrect = (opts && opts.onCorrect) || (() => {});
       const trl = (f) => tr(f, lang);
       items.forEach((it) => {
@@ -66,7 +68,7 @@
         verdict.setAttribute("aria-live", "polite");
         const explain = el("p", "lab-mc-explain");
         explain.style.display = "none";
-        const pairs = shuffleOptions(it);
+        const pairs = shuffleOptions(it, seedPrefix);
         pairs.forEach((pair, i) => {
           const btn = el("button", "lab-mc-opt");
           btn.type = "button";
