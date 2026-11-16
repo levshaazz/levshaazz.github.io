@@ -274,3 +274,8 @@ html[data-cb="mono"] .lab-shell { --lab-accent: #c9ced6 !important; --lab-accent
 }
 .lab-fig-canvas.fig-offscreen .fig-flow, .lab-fig-canvas.fig-offscreen .fig-pulse,
 .lab-fig-canvas.fig-offscreen .fig-ants, .lab-fig-canvas.fig-offscreen .fig-ghost { animation-play-state: paused !important; }
+
+/* glossary table (labs 11+): term rows, slightly tighter than model table */
+.lab-glossary-table th { width: 30%; color: var(--lab-accent); font-weight: 600; }
+.lab-glossary-table td { color: var(--lab-ink); }
+.lab-fig-canvas.fig-settle g { transition: none !important; }

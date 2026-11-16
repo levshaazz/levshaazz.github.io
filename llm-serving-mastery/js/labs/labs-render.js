@@ -372,6 +372,20 @@
     window.LSMPython && window.LSMPython.setLang(lang);
     const intro = document.querySelector("[data-lab-intro]");
     if (intro) intro.innerHTML = tr(content.intro);
+    const glHost = document.querySelector("[data-lab-glossary-host]");
+    if (glHost && (content.glossary || []).length) {
+      const table = el("table", "lab-model-table lab-glossary-table");
+      content.glossary.forEach((row) => {
+        const tr_ = document.createElement("tr");
+        for (let i = 0; i < row.length; i += 2) {
+          const th = document.createElement("th"); th.textContent = tr(row[i]);
+          const td = document.createElement("td"); td.textContent = tr(row[i + 1]);
+          tr_.appendChild(th); tr_.appendChild(td);
+        }
+        table.appendChild(tr_);
+      });
+      glHost.appendChild(table);
+    }
     const modelHost = document.querySelector("[data-lab-model]");
     if (modelHost && content.model) {
       const table = el("table", "lab-model-table");

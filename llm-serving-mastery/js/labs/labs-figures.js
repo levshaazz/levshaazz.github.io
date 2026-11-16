@@ -107,8 +107,15 @@
     });
 
     var state = 0;
+    var settleTimer = null;
     function go(k) {
       state = Math.max(0, Math.min(stages.length - 1, k));
+      // transitions animate the change for foreground viewers; after 650 ms
+      // transitions are switched off so the stage state is final even when
+      // the renderer throttles the tab (background panes, screenshots)
+      canvas.classList.remove("fig-settle");
+      if (settleTimer) clearTimeout(settleTimer);
+      settleTimer = setTimeout(function () { canvas.classList.add("fig-settle"); }, 650);
       var cur = stages[state] || { show: [] };
       var show = new Set(cur.show || []);
       groups.forEach(function (g, id) {
