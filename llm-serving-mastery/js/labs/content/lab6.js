@@ -63,9 +63,9 @@
   </g>
 </svg>`,
         stages: [
-          { cap: { en: "Declared model, cap 30: clients 10 / 20 / 30 / 60 → 125 / 200 / 250 / 250 tok/s.", ru: "Заявленная модель, потолок 30: клиенты 10 / 20 / 30 / 60 → 125 / 200 / 250 / 250 ток/с." }, show: ["g-axes", "g-pts"] },
+          { cap: { en: "Cap 30: waves 10 / 20 / 30 / 60 clients.", ru: "Потолок 30: волны 10 / 20 / 30 / 60 клиентов." }, show: ["g-axes", "g-pts"] },
           { cap: { en: "Gains wave over wave: +60%, then +25%, then +0%.", ru: "Приросты волна за волной: +60%, затем +25%, затем +0%." }, show: ["g-axes", "g-pts", "g-gains"] },
-          { cap: { en: "Rule γ = 0.5 stamps the knee at the last qualifying wave: batch 20, 200 tok/s.", ru: "Правило γ = 0.5 ставит колено на последней qualifying-волне: batch 20, 200 ток/с." }, show: ["g-axes", "g-pts", "g-gains", "g-knee"] },
+          { cap: { en: "Rule γ = 0.5: knee at the last qualifying wave, batch 20.", ru: "Правило γ = 0.5: колено — последняя qualifying-волна, batch 20." }, show: ["g-axes", "g-pts", "g-gains", "g-knee"] },
         ],
       },
       {
@@ -79,7 +79,7 @@
     <line x1="80" y1="340" x2="700" y2="340" stroke="var(--lab-muted)" stroke-width="1.5"/>
     <path d="M 80 340 C 200 240 300 170 380 150 C 470 130 600 130 700 130" fill="none" stroke="var(--lab-accent)" stroke-width="2.5"/>
     <circle cx="380" cy="150" r="6" fill="var(--lab-accent)"/>
-    <text x="380" y="128" text-anchor="middle" font-size="13" fill="var(--lab-muted)" class="mono">cap 30</text>
+    <text x="380" y="128" text-anchor="middle" font-size="13" fill="var(--lab-muted)" class="mono" data-en="cap 30" data-ru="потолок 30">cap 30</text>
     <text x="620" y="115" text-anchor="middle" font-size="14" fill="var(--lab-accent)" data-en="pins at the roof" data-ru="упирается в крышу">pins at the roof</text>
   </g>
   <g id="g-open">
@@ -94,8 +94,8 @@
   </g>
 </svg>`,
         stages: [
-          { cap: { en: "Closed loop: clients wait for replies — slowing the server shrinks demand by itself.", ru: "Замкнутый цикл: клиенты ждут ответов — замедление сервиса само снижает спрос." }, show: ["g-closed"] },
-          { cap: { en: "Open loop keeps the arrival rate: past the cap, only the queue grows.", ru: "Открытый цикл держит темп прихода: за потолком растёт только очередь." }, show: ["g-closed", "g-open"] },
+          { cap: { en: "Closed loop: slowing the server shrinks demand by itself.", ru: "Замкнутый цикл: клиенты ждут ответов — замедление сервиса само снижает спрос." }, show: ["g-closed"] },
+          { cap: { en: "Open loop: fixed arrival rate — past the cap, the queue grows.", ru: "Открытый цикл держит темп прихода: за потолком растёт только очередь." }, show: ["g-closed", "g-open"] },
           { cap: { en: "Same overload, two stories: quote throughput together with the loop shape.", ru: "Та же перегрузка — два рассказа: называй throughput вместе с формой цикла." }, show: ["g-closed", "g-open", "g-verdict"] },
         ],
       },

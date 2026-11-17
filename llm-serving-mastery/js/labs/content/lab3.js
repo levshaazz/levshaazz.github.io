@@ -68,10 +68,10 @@
   </g>
 </svg>`,
         stages: [
-          { cap: { en: "scale = absmax / 7: on the TOY row the outlier 2.25 sets the scale — 0.25.", ru: "scale = absmax / 7: на TOY-строке выброс 2.25 задаёт scale — 0.25." }, show: ["g-scale"] },
-          { cap: { en: "Divide and round: 2.25 / 0.25 = 9 — an integer the grid does not have.", ru: "Делим и округляем: 2.25 / 0.25 = 9 — целого, которого в сетке нет." }, show: ["g-scale", "g-div"] },
+          { cap: { en: "The outlier 2.25 sets the scale: absmax / 7 = 0.25.", ru: "Выброс 2.25 задаёт scale: absmax / 7 = 0.25." }, show: ["g-scale"] },
+          { cap: { en: "Divide and round: 2.25 / 0.25 = 9 — off-grid.", ru: "Делим и округляем: 2.25 / 0.25 = 9 — вне сетки." }, show: ["g-scale", "g-div"] },
           { cap: { en: "Clip to [−8, 7]: the illegal 9 is stored as 7.", ru: "Клип в [−8, 7]: нелегальная девятка сохраняется как 7." }, show: ["g-scale", "g-div", "g-clip"] },
-          { cap: { en: "Reconstruct 7 × 0.25 = 1.75; the signed error −0.50 stays in the MSE.", ru: "Реконструкция 7 × 0.25 = 1.75; знаковая ошибка −0.50 остаётся в MSE." }, show: ["g-scale", "g-div", "g-clip", "g-recon"] },
+          { cap: { en: "Reconstruct 7 × 0.25 = 1.75; error −0.50 stays in the MSE.", ru: "Реконструкция 7 × 0.25 = 1.75; знаковая ошибка −0.50 остаётся в MSE." }, show: ["g-scale", "g-div", "g-clip", "g-recon"] },
         ],
       },
       {

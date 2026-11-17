@@ -63,9 +63,9 @@
 </svg>`,
         stages: [
           { cap: { en: "Three requests retain 17, 31 and 33 positions on blocks of 16.", ru: "Три запроса удерживают 17, 31 и 33 позиции при блоках по 16." }, show: ["g-reqs"] },
-          { cap: { en: "Each rounds up to whole blocks: 2 + 2 + 3 = 7 blocks, 112 slots.", ru: "Каждый округляется вверх до целых блоков: 2 + 2 + 3 = 7 блоков, 112 слотов." }, show: ["g-reqs", "g-blocks"] },
-          { cap: { en: "The tails — 15 + 1 + 15 = 31 positions — are allocated but never used.", ru: "Хвосты — 15 + 1 + 15 = 31 позиция — выделены, но никогда не используются." }, show: ["g-reqs", "g-blocks"] },
-          { cap: { en: "One shared pool would claim ceil(81/16) = 6 blocks and hide the tails.", ru: "Один общий пул обещал бы ceil(81/16) = 6 блоков и спрятал бы хвосты." }, show: ["g-blocks", "g-pool"] },
+          { cap: { en: "Round up: 2 + 2 + 3 = 7 blocks, 112 slots.", ru: "Округление вверх: 2 + 2 + 3 = 7 блоков, 112 слотов." }, show: ["g-reqs", "g-blocks"] },
+          { cap: { en: "Tails 15 + 1 + 15 = 31 positions: allocated, never used.", ru: "Хвосты 15 + 1 + 15 = 31 позиция: выделены, не используются." }, show: ["g-reqs", "g-blocks"] },
+          { cap: { en: "A shared pool claims ceil(81/16) = 6 blocks — hiding the tails.", ru: "Общий пул обещает ceil(81/16) = 6 блоков — хвосты спрятаны." }, show: ["g-blocks", "g-pool"] },
         ],
       },
       {
@@ -83,14 +83,14 @@
     <text x="191" y="116" text-anchor="middle" font-size="14" fill="var(--lab-accent)" class="mono">C·1</text>
   </g>
   <g id="g-t0">
-    <text x="60" y="170" font-size="15" fill="var(--lab-ink)" class="mono">tick 0</text>
+    <text x="60" y="170" font-size="15" fill="var(--lab-ink)" class="mono" data-en="tick 0" data-ru="тик 0">tick 0</text>
     <rect x="150" y="150" width="450" height="26" rx="6" fill="var(--lab-accent)" opacity="0.85"/>
     <text x="160" y="168" font-size="13" fill="var(--lab-bg)" class="mono">A</text>
     <rect x="150" y="186" width="90" height="26" rx="6" fill="var(--lab-accent)" opacity="0.55"/>
     <text x="160" y="204" font-size="13" fill="var(--lab-bg)" class="mono">B</text>
   </g>
   <g id="g-t1">
-    <text x="60" y="250" font-size="15" fill="var(--lab-ink)" class="mono">tick 1</text>
+    <text x="60" y="250" font-size="15" fill="var(--lab-ink)" class="mono" data-en="tick 1" data-ru="тик 1">tick 1</text>
     <rect x="240" y="150" width="360" height="26" rx="6" fill="var(--lab-accent)" opacity="0.85"/>
     <rect x="240" y="186" width="90" height="26" rx="6" fill="var(--fig-warm)" opacity="0.7"/>
     <text x="246" y="204" font-size="13" fill="var(--lab-bg)" class="mono">B✓</text>
@@ -116,11 +116,11 @@
   </g>
 </svg>`,
         stages: [
-          { cap: { en: "Two slots; A needs 5 ticks, B and C need 1 each — all queued at tick 0.", ru: "Два слота; A нужно 5 тиков, B и C — по одному — все в очереди с тика 0." }, show: ["g-queue"] },
+          { cap: { en: "Two slots; A needs 5 ticks, B and C need 1 each.", ru: "Два слота; A нужно 5 тиков, B и C — по одному." }, show: ["g-queue"] },
           { cap: { en: "Tick 0: A and B take the slots.", ru: "Тик 0: A и B занимают слоты." }, show: ["g-queue", "g-t0"] },
-          { cap: { en: "Tick 1: B finishes — C slips into the freed slot at the boundary.", ru: "Тик 1: B завершается — C встаёт в освободившийся слот на границе." }, show: ["g-queue", "g-t0", "g-t1"] },
-          { cap: { en: "Finish marks: B at 1, C at 2 — A keeps its slot until 5.", ru: "Отметки завершения: B на 1, C на 2 — A держит слот до 5." }, show: ["g-queue", "g-t0", "g-t1", "g-marks"] },
-          { cap: { en: "Static batching would idle the slot: C would finish at 6, not 2.", ru: "Static-батчинг простаивал бы слотом: C завершился бы на 6, а не на 2." }, show: ["g-queue", "g-t0", "g-t1", "g-marks", "g-static"] },
+          { cap: { en: "Tick 1: B finishes — C takes the freed slot.", ru: "Тик 1: B завершается — C встаёт в освободившийся слот на границе." }, show: ["g-queue", "g-t0", "g-t1"] },
+          { cap: { en: "Finish marks: B at 1, C at 2, A at 5.", ru: "Отметки: B на 1, C на 2, A на 5." }, show: ["g-queue", "g-t0", "g-t1", "g-marks"] },
+          { cap: { en: "Static idles the slot: C would finish at 6, not 2.", ru: "Static простаивает слот: C завершился бы на 6, не на 2." }, show: ["g-queue", "g-t0", "g-t1", "g-marks", "g-static"] },
         ],
       },
     ],

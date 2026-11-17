@@ -59,8 +59,8 @@
         stages: [
           { cap: { en: "Bounds first: throughput floor 1200 tok/s, p95 SLO 800 ms.", ru: "Сначала границы: пол throughput 1200 ток/с, SLO по p95 800 мс." }, show: ["g-bounds"] },
           { cap: { en: "Five planned configs — failed rows stay in the table.", ru: "Пять запланированных конфигураций — неудачные остаются строками таблицы." }, show: ["g-bounds", "g-pts"] },
-          { cap: { en: "Feasible = thr ≥ floor AND p95 ≤ SLO: only seqs-32 and pair survive.", ru: "Допустимость = thr ≥ floor И p95 ≤ SLO: выживают только seqs-32 и pair." }, show: ["g-bounds", "g-pts"] },
-          { cap: { en: "Max throughput among feasible wins: pair, frozen with margins 450 tok/s and 350 ms.", ru: "Максимум throughput среди допустимых: pair — заморожена с запасами 450 ток/с и 350 мс." }, show: ["g-bounds", "g-pts", "g-frozen"] },
+          { cap: { en: "Feasible: thr ≥ floor AND p95 ≤ SLO — seqs-32, pair survive.", ru: "Допустимость: thr ≥ floor И p95 ≤ SLO — seqs-32 и pair." }, show: ["g-bounds", "g-pts"] },
+          { cap: { en: "Max throughput wins: pair frozen with margins 450 tok/s, 350 ms.", ru: "Максимум throughput: pair заморожена с запасами 450 ток/с, 350 мс." }, show: ["g-bounds", "g-pts", "g-frozen"] },
         ],
       },
       {

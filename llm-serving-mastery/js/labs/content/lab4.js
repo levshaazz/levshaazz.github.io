@@ -66,10 +66,10 @@
   </g>
 </svg>`,
         stages: [
-          { cap: { en: "A client sends a request at 0; the first token arrives at 0.2 s.", ru: "Клиент отправляет запрос в нуле; первый токен приходит через 0.2 с." }, show: ["g-axis"] },
+          { cap: { en: "Request sent at 0; the first token arrives at 0.2 s.", ru: "Клиент отправляет запрос в нуле; первый токен приходит через 0.2 с." }, show: ["g-axis"] },
           { cap: { en: "Measured TTFT = 0.2 s: prefill plus one decode step.", ru: "Измеренный TTFT = 0.2 с: prefill плюс один decode-шаг." }, show: ["g-axis", "g-ttft"] },
-          { cap: { en: "Tokens b and c arrive at 0.4 and 0.6: two gaps in a 0.4 s window.", ru: "Токены b и c приходят в 0.4 и 0.6: два промежутка в окне 0.4 с." }, show: ["g-axis", "g-ttft", "g-gaps"] },
-          { cap: { en: "Measured rate = 2 / 0.4 = 5.0 tok/s — the gaps, not the window.", ru: "Измеренная скорость = 2 / 0.4 = 5.0 ток/с — промежутки, а не всё окно." }, show: ["g-axis", "g-ttft", "g-gaps", "g-rate"] },
+          { cap: { en: "Tokens b and c: two gaps in a 0.4 s window.", ru: "Токены b и c: два промежутка в окне 0.4 с." }, show: ["g-axis", "g-ttft", "g-gaps"] },
+          { cap: { en: "Rate = 2 / 0.4 = 5.0 tok/s — gaps, not window.", ru: "Скорость = 2 / 0.4 = 5.0 ток/с — не всё окно." }, show: ["g-axis", "g-ttft", "g-gaps", "g-rate"] },
           { cap: { en: "Charging every token gives 7.5 tok/s — the starter's lie.", ru: "Платить за каждый токен — 7.5 ток/с: ложь стартера." }, show: ["g-axis", "g-ttft", "g-gaps", "g-ghost"] },
         ],
       },

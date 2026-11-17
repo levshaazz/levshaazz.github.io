@@ -58,9 +58,9 @@
 </svg>`,
         stages: [
           { cap: { en: "Axes: attainable TFLOP/s against arithmetic intensity — the roofline frame.", ru: "Оси: достижимые TFLOP/s против арифметической интенсивности — каркас roofline." }, show: ["g-axes"] },
-          { cap: { en: "Two roofs: the bandwidth roof climbs to the ridge, then compute pins flat at 60.", ru: "Две крыши: память растёт до хребта, дальше вычисления запирают на 60." }, show: ["g-axes", "g-bw", "g-comp"] },
-          { cap: { en: "Decode sits left of the ridge: 20 × 600 GB/s caps the step at 12 TFLOP/s.", ru: "Decode левее хребта: 20 × 600 GB/s запирает шаг на 12 TFLOP/s." }, show: ["g-axes", "g-bw", "g-comp", "g-pt1"] },
-          { cap: { en: "Right of the ridge more reuse stops helping: intensity 150 still pins at 60.", ru: "За хребтом повторное использование перестаёт помогать: интенсивность 150 — всё те же 60." }, show: ["g-axes", "g-bw", "g-comp", "g-pt1", "g-pt2"] },
+          { cap: { en: "The roofline frame: attainable TFLOP/s versus arithmetic intensity.", ru: "Две крыши: память растёт до хребта, дальше вычисления запирают на 60." }, show: ["g-axes", "g-bw", "g-comp"] },
+          { cap: { en: "Two roofs: bandwidth climbs to the ridge; compute pins at 60.", ru: "Decode левее хребта: 20 × 600 GB/s запирает шаг на 12 TFLOP/s." }, show: ["g-axes", "g-bw", "g-comp", "g-pt1"] },
+          { cap: { en: "Left of the ridge: intensity 20 caps at 12 TFLOP/s.", ru: "Левее хребта: интенсивность 20 запирает шаг на 12." }, show: ["g-axes", "g-bw", "g-comp", "g-pt1", "g-pt2"] },
         ],
       },
       {
@@ -95,10 +95,10 @@
   </g>
 </svg>`,
         stages: [
-          { cap: { en: "Every live token pays 2 × 36 × 2 × 128 × 2 B = 36 KiB of K and V.", ru: "Каждый живой токен платит 2 × 36 × 2 × 128 × 2 Б = 36 КиБ за K и V." }, show: ["g-token"] },
+          { cap: { en: "Every live token pays 36 KiB of K and V state.", ru: "Каждый живой токен платит 36 КиБ за K и V." }, show: ["g-token"] },
           { cap: { en: "The pool is fixed: 6 GiB reserved for the KV cache.", ru: "Пул фиксирован: 6 ГиБ выделено под KV-кэш." }, show: ["g-token", "g-pool"] },
-          { cap: { en: "Whole tokens that fit: 6 × 1024³ / 36 864 = 174 762.", ru: "Целых токенов помещается: 6 × 1024³ / 36 864 = 174 762." }, show: ["g-token", "g-pool", "g-fit"] },
-          { cap: { en: "The lever: kv_heads 2 → 4 doubles the bill to 72 KiB — the pool holds half.", ru: "Ручка: kv_heads 2 → 4 удваивает платёж до 72 КиБ — пул вмещает вдвое меньше." }, show: ["g-pool", "g-double"] },
+          { cap: { en: "Fits: 6 × 1024³ / 36 864 = 174 762 tokens.", ru: "Целых токенов помещается: 6 × 1024³ / 36 864 = 174 762." }, show: ["g-token", "g-pool", "g-fit"] },
+          { cap: { en: "The lever: kv_heads 2 → 4 doubles the bill to 72 KiB.", ru: "Ручка: kv_heads 2 → 4 удваивает платёж — пул вмещает вдвое меньше." }, show: ["g-pool", "g-double"] },
         ],
       },
     ],

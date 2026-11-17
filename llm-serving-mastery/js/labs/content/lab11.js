@@ -58,17 +58,17 @@
   <g id="g-pods">
     <rect x="430" y="60" width="130" height="56" rx="8" fill="var(--lab-accent)" opacity="0.12"/>
     <rect x="430" y="60" width="130" height="56" rx="8" fill="none" stroke="var(--lab-accent)" stroke-width="1.5"/>
-    <text x="445" y="84" font-size="13" fill="var(--lab-ink)" class="mono">pod 0</text>
+    <text x="445" y="84" font-size="13" fill="var(--lab-ink)" class="mono" data-en="pod 0" data-ru="под 0">pod 0</text>
     <circle cx="542" cy="76" r="5" fill="var(--lab-good)"/>
     <text x="445" y="104" font-size="13" fill="var(--lab-muted)" class="mono">16+4+1.5 Gi</text>
     <rect x="575" y="130" width="130" height="56" rx="8" fill="var(--lab-accent)" opacity="0.12"/>
     <rect x="575" y="130" width="130" height="56" rx="8" fill="none" stroke="var(--lab-accent)" stroke-width="1.5"/>
-    <text x="590" y="154" font-size="13" fill="var(--lab-ink)" class="mono">pod 1</text>
+    <text x="590" y="154" font-size="13" fill="var(--lab-ink)" class="mono" data-en="pod 1" data-ru="под 1">pod 1</text>
     <circle cx="687" cy="146" r="5" fill="var(--lab-good)"/>
     <text x="590" y="174" font-size="13" fill="var(--lab-muted)" class="mono">16+4+1.5 Gi</text>
     <rect x="430" y="204" width="130" height="56" rx="8" fill="var(--lab-accent)" opacity="0.12"/>
     <rect x="430" y="204" width="130" height="56" rx="8" fill="none" stroke="var(--lab-accent)" stroke-width="1.5"/>
-    <text x="445" y="228" font-size="13" fill="var(--lab-ink)" class="mono">pod 2</text>
+    <text x="445" y="228" font-size="13" fill="var(--lab-ink)" class="mono" data-en="pod 2" data-ru="под 2">pod 2</text>
     <circle cx="542" cy="220" r="5" fill="var(--lab-good)"/>
     <text x="445" y="248" font-size="13" fill="var(--lab-muted)" class="mono">16+4+1.5 Gi</text>
     <text x="430" y="290" font-size="13" fill="var(--lab-muted)" data-en="green dot = Ready (probe passed)" data-ru="зелёная точка = Ready (проба прошла)">green dot = Ready (probe passed)</text>
@@ -89,10 +89,10 @@
   </g>
 </svg>`,
         stages: [
-          { cap: { en: "You declare the desired state once: 3 replicas, ledger-sized memory, one GPU each, a probe budget.", ru: "Желаемое состояние объявляется один раз: 3 реплики, память по ledger, по GPU каждой, бюджет пробы." }, show: ["g-manifest"] },
-          { cap: { en: "The controller starts 3 pods; each becomes Ready only after the weights load and the probe passes.", ru: "Контроллер поднимает 3 пода; каждый становится Ready только после загрузки весов и прохождения пробы." }, show: ["g-manifest", "g-pods"] },
-          { cap: { en: "One Service fronts the fleet — a stable address while pod IPs churn.", ru: "Один Service закрывает флот — стабильный адрес, пока IP подов меняются." }, show: ["g-manifest", "g-pods", "g-service"] },
-          { cap: { en: "Sharing one GPU: time-slicing is logical replicas without isolation; MIG is isolated hardware slices.", ru: "Делёж одного GPU: time-slicing — логические реплики без изоляции; MIG — изолированные аппаратные слайсы." }, show: ["g-pods", "g-service", "g-gpu"] },
+          { cap: { en: "The desired state, declared once: 3 replicas, ledger memory, GPU, probe.", ru: "Желаемое состояние объявляется один раз: 3 реплики, ledger-память, GPU, проба." }, show: ["g-manifest"] },
+          { cap: { en: "The controller starts 3 pods; each goes Ready after weights + probe.", ru: "Контроллер поднимает 3 пода; Ready — после весов и пробы." }, show: ["g-manifest", "g-pods"] },
+          { cap: { en: "One Service fronts the fleet: a stable address.", ru: "Один Service закрывает флот — стабильный адрес, пока IP подов меняются." }, show: ["g-manifest", "g-pods", "g-service"] },
+          { cap: { en: "Sharing a GPU: time-slicing without isolation; MIG with isolation.", ru: "Делёж GPU: time-slicing без изоляции; MIG — с изоляцией." }, show: ["g-pods", "g-service", "g-gpu"] },
         ],
       },
       {
@@ -134,9 +134,9 @@
 </svg>`,
         stages: [
           { cap: { en: "The fleet serves at 3; the rollout must not dip below that.", ru: "Флот обслуживает на трёх; роллаут не должен провалиться ниже." }, show: ["g-fleet"] },
-          { cap: { en: "Surge goes first: pod 3s starts, but until it is Ready it serves nothing.", ru: "Сначала surge: pod 3s стартует, но до Ready не обслуживает ни одного запроса." }, show: ["g-fleet", "g-surge"] },
-          { cap: { en: "The swap: pod 3s turns Ready, only then pod 0 dies — the floor stays at 3.", ru: "Подмена: pod 3s становится Ready и лишь потом pod 0 умирает — граница держится на 3." }, show: ["g-fleet", "g-surge", "g-swap"] },
-          { cap: { en: "maxUnavailable 2 digs the dip: the app works, the rollout is stuck — the failure OpenAI warned about.", ru: "maxUnavailable 2 роет яму: приложение живо, роллаут завис — тот самый провал из доклада OpenAI." }, show: ["g-swap", "g-bad"] },
+          { cap: { en: "Surge first: pod 3s starts — but serves nothing until Ready.", ru: "Сначала surge: pod 3s стартует — до Ready не обслуживает." }, show: ["g-fleet", "g-surge"] },
+          { cap: { en: "Swap: 3s turns Ready, then pod 0 dies — floor stays 3.", ru: "Подмена: 3s Ready, затем pod 0 умирает — граница держится 3." }, show: ["g-fleet", "g-surge", "g-swap"] },
+          { cap: { en: "maxUnavailable 2 digs the dip: app alive, rollout stuck.", ru: "maxUnavailable 2 роет яму: приложение живо, роллаут завис." }, show: ["g-swap", "g-bad"] },
         ],
       },
     ],

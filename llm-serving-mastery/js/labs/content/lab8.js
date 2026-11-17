@@ -30,7 +30,7 @@
         svg: `<svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
   <g id="g-head">
     <text x="70" y="66" font-size="13" fill="var(--lab-muted)" class="mono" data-en="OUTCOME" data-ru="ИСХОД">OUTCOME</text>
-    <text x="280" y="66" font-size="13" fill="var(--lab-muted)" class="mono">STATUS</text>
+    <text x="280" y="66" font-size="13" fill="var(--lab-muted)" class="mono" data-en="STATUS" data-ru="СТАТУС">STATUS</text>
     <text x="470" y="66" font-size="13" fill="var(--lab-muted)" class="mono" data-en="CLIENT ACTION" data-ru="ДЕЙСТВИЕ КЛИЕНТА">CLIENT ACTION</text>
     <line x1="55" y1="78" x2="705" y2="78" stroke="var(--lab-muted)" stroke-width="1"/>
   </g>
@@ -63,10 +63,10 @@
   </g>
 </svg>`,
         stages: [
-          { cap: { en: "The contract table: outcome → status → the action the client should take.", ru: "Таблица контракта: исход → статус → действие, которое должен предпринять клиент." }, show: ["g-head"] },
+          { cap: { en: "The contract: outcome → status → client action.", ru: "Таблица контракта: исход → статус → действие, которое должен предпринять клиент." }, show: ["g-head"] },
           { cap: { en: "Validation before the queue: 400 for invalid, 429 + Retry-After for overload.", ru: "Валидация до очереди: 400 за невалидность, 429 + Retry-After за перегрузку." }, show: ["g-head", "g-r12"] },
           { cap: { en: "Engine down is 503 (retry later); a passed deadline is 504 (cancel).", ru: "Лежащий движок — 503 (повтори позже); истёкший дедлайн — 504 (отмена)." }, show: ["g-head", "g-r12", "g-r34"] },
-          { cap: { en: "Everything else is 500 without internals — and never a 200 with an error body.", ru: "Всё остальное — 500 без внутренностей — и никогда 200 с телом ошибки." }, show: ["g-head", "g-r12", "g-r34", "g-r5", "g-ribbon"] },
+          { cap: { en: "Everything else: 500 without internals — never 200 with an error body.", ru: "Всё остальное — 500 без внутренностей, никогда 200 с ошибкой." }, show: ["g-head", "g-r12", "g-r34", "g-r5", "g-ribbon"] },
         ],
       },
       {
@@ -81,7 +81,7 @@
     <text x="88" y="62" font-size="14" fill="var(--lab-muted)" data-en="requests in system, L" data-ru="заявок в системе, L">requests in system, L</text>
     <path d="M 80 340 L 519 116" fill="none" stroke="var(--lab-accent)" stroke-width="2.5" class="fig-flow"/>
     <text x="150" y="240" font-size="14" fill="var(--lab-accent)" class="mono">L = λ × W, W = 0.47 s</text>
-    <text x="300" y="362" text-anchor="middle" font-size="13" fill="var(--lab-muted)" class="mono">16-token requests</text>
+    <text x="300" y="362" text-anchor="middle" font-size="13" fill="var(--lab-muted)" class="mono" data-en="16-token requests" data-ru="запросы на 16 токенов">16-token requests</text>
   </g>
   <g id="g-seats">
     <line x1="80" y1="228" x2="519" y2="228" stroke="var(--lab-good)" stroke-width="2.5"/>
@@ -104,10 +104,10 @@
   </g>
 </svg>`,
         stages: [
-          { cap: { en: "Little's law: L = λ × W with the mock's W = 0.47 s for 16-token requests.", ru: "Закон Литтла: L = λ × W при W = 0.47 с для запросов на 16 токенов (мок)." }, show: ["g-little"] },
-          { cap: { en: "Seats are bounded: 4 in service plus 4 queue places — 8 in system.", ru: "Мест ограничено: 4 в обслуживании плюс 4 места очереди — 8 в системе." }, show: ["g-little", "g-seats"] },
-          { cap: { en: "The knee: λ* = 8 / 0.47 ≈ 17.0 req/s, where demand hits the seats.", ru: "Колено: λ* = 8 / 0.47 ≈ 17.0 req/s — где спрос упирается в места." }, show: ["g-little", "g-seats", "g-knee"] },
-          { cap: { en: "Past the knee: honest 429 + Retry-After — a burst of 24 loses 16.", ru: "За коленом: честный 429 + Retry-After — бурст из 24 теряет 16." }, show: ["g-little", "g-seats", "g-knee", "g-reject"] },
+          { cap: { en: "Little's law: L = λ × W, W = 0.47 s (mock).", ru: "Закон Литтла: L = λ × W, W = 0.47 с (мок)." }, show: ["g-little"] },
+          { cap: { en: "Seats: 4 in service + 4 queue places = 8 in system.", ru: "Места: 4 в обслуживании + 4 в очереди = 8 в системе." }, show: ["g-little", "g-seats"] },
+          { cap: { en: "Knee: λ* = 8 / 0.47 ≈ 17.0 req/s.", ru: "Колено: λ* = 8 / 0.47 ≈ 17.0 req/s." }, show: ["g-little", "g-seats", "g-knee"] },
+          { cap: { en: "Past the knee: honest 429s — a burst of 24 loses 16.", ru: "За коленом: честный 429 + Retry-After — бурст из 24 теряет 16." }, show: ["g-little", "g-seats", "g-knee", "g-reject"] },
         ],
       },
     ],

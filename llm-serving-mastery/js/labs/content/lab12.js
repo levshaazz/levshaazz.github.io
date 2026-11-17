@@ -73,9 +73,9 @@
 </svg>`,
         stages: [
           { cap: { en: "The metric climbs: queue depth per pod, tick by tick.", ru: "Метрика растёт: глубина очереди на под, тик за тиком." }, show: ["g-metric"] },
-          { cap: { en: "The tolerance band sits around the target; inside it the HPA does nothing.", ru: "Полоса tolerance вокруг цели; внутри неё HPA не делает ничего." }, show: ["g-metric", "g-band"] },
-          { cap: { en: "Outside the band and rising: ceil(2 × 6 / 2) = 6, clamped to 4 — scale up now.", ru: "Вне полосы и растёт: ceil(2 × 6 / 2) = 6, зажато до 4 — скейл-ап немедленно." }, show: ["g-metric", "g-band", "g-ceil"] },
-          { cap: { en: "The metric falls: scale-down reads its 300 s window and takes the max — no flapping.", ru: "Метрика падает: скейл-даун читает своё окно 300 с и берёт максимум — без флаттера." }, show: ["g-metric", "g-band", "g-window"] },
+          { cap: { en: "The tolerance band: inside it the HPA does nothing.", ru: "Полоса tolerance вокруг цели; внутри неё HPA не делает ничего." }, show: ["g-metric", "g-band"] },
+          { cap: { en: "Outside and rising: ceil → clamp 4 — scale up now.", ru: "Вне полосы и рост: ceil → кламп 4 — скейл-ап сразу." }, show: ["g-metric", "g-band", "g-ceil"] },
+          { cap: { en: "Metric falls: scale-down reads the 300 s window — no flapping.", ru: "Метрика падает: окно 300 с берёт максимум — без флаттера." }, show: ["g-metric", "g-band", "g-window"] },
         ],
       },
       {
@@ -124,8 +124,8 @@
         stages: [
           { cap: { en: "Six clients hit one vLLM pod at once.", ru: "Шесть клиентов бьют в один под vLLM одновременно." }, show: ["g-clients"] },
           { cap: { en: "Continuous batching packs them into slots at every step boundary.", ru: "Continuous batching упаковывает их в слоты на каждой границе шага." }, show: ["g-clients", "g-batch"] },
-          { cap: { en: "The honest gauges: GPU 90 % is calm batching; queue 0 means do not scale.", ru: "Честные манометры: GPU 90 % — спокойный батчинг; очередь 0 — не масштабировать." }, show: ["g-clients", "g-batch", "g-meters"] },
-          { cap: { en: "Queue 5 per pod: ceil(2 × 5 / 2) = 5 → clamp 4 — now the HPA acts.", ru: "Очередь 5 на под: ceil(2 × 5 / 2) = 5 → зажато до 4 — вот теперь HPA действует." }, show: ["g-batch", "g-meters", "g-scale"] },
+          { cap: { en: "GPU 90 % is calm batching; queue 0 — do not scale.", ru: "Манометры: GPU 90 % — батчинг; очередь 0 — не масштабировать." }, show: ["g-clients", "g-batch", "g-meters"] },
+          { cap: { en: "Queue 5 per pod: ceil → clamp 4 — the HPA acts.", ru: "Очередь 5 на под: ceil → кламп 4 — HPA действует." }, show: ["g-batch", "g-meters", "g-scale"] },
         ],
       },
     ],

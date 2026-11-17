@@ -32,20 +32,20 @@
   <g id="g-stack">
     <text x="60" y="60" font-size="14" fill="var(--lab-muted)" data-en="an image is an ordered stack" data-ru="образ — упорядоченная стопка">an image is an ordered stack</text>
     <rect x="60" y="286" width="300" height="48" rx="8" fill="none" stroke="var(--lab-muted)" stroke-width="2"/>
-    <text x="210" y="316" text-anchor="middle" font-size="15" fill="var(--lab-ink)" class="mono">base (llama.cpp 1.18 GB)</text>
+    <text x="210" y="316" text-anchor="middle" font-size="15" fill="var(--lab-ink)" class="mono" data-en="base (llama.cpp 1.18 GB)" data-ru="база (llama.cpp 1.18 ГБ)">base (llama.cpp 1.18 GB)</text>
     <rect x="60" y="232" width="300" height="48" rx="8" fill="none" stroke="var(--lab-muted)" stroke-width="2"/>
-    <text x="210" y="262" text-anchor="middle" font-size="15" fill="var(--lab-ink)" class="mono">os libs</text>
+    <text x="210" y="262" text-anchor="middle" font-size="15" fill="var(--lab-ink)" class="mono" data-en="os libs" data-ru="системные библиотеки">os libs</text>
     <rect x="60" y="178" width="300" height="48" rx="8" fill="none" stroke="var(--lab-muted)" stroke-width="2"/>
-    <text x="210" y="208" text-anchor="middle" font-size="15" fill="var(--lab-ink)" class="mono">deps (requirements.txt)</text>
+    <text x="210" y="208" text-anchor="middle" font-size="15" fill="var(--lab-ink)" class="mono" data-en="deps (requirements.txt)" data-ru="зависимости (requirements.txt)">deps (requirements.txt)</text>
     <rect x="60" y="124" width="300" height="48" rx="8" fill="none" stroke="var(--lab-accent)" stroke-width="2"/>
-    <text x="210" y="154" text-anchor="middle" font-size="15" fill="var(--lab-accent)" class="mono">app code</text>
+    <text x="210" y="154" text-anchor="middle" font-size="15" fill="var(--lab-accent)" class="mono" data-en="app code" data-ru="код приложения">app code</text>
   </g>
   <g id="g-edit-app">
     <circle cx="210" cy="148" r="11" fill="none" stroke="var(--lab-bad)" stroke-width="2.5" class="fig-pulse"/>
     <text x="390" y="140" font-size="15" fill="var(--lab-bad)" data-en="edit app → app rebuilds" data-ru="правка app → пересборка app">edit app → app rebuilds</text>
     <text x="390" y="166" font-size="14" fill="var(--lab-good)" data-en="everything below: cache hit" data-ru="всё ниже: cache hit">everything below: cache hit</text>
     <path d="M 372 132 L 286 140" fill="none" stroke="var(--lab-bad)" stroke-width="2" class="fig-flow"/>
-    <text x="390" y="196" font-size="14" fill="var(--lab-good)" class="mono">✓ deps · os · base</text>
+    <text x="390" y="196" font-size="14" fill="var(--lab-good)" class="mono" data-en="✓ deps · os · base" data-ru="✓ зависимости · ос · база">✓ deps · os · base</text>
   </g>
   <g id="g-edit-deps">
     <circle cx="210" cy="202" r="11" fill="none" stroke="var(--lab-bad)" stroke-width="2.5" class="fig-pulse"/>
@@ -61,7 +61,7 @@
   </g>
 </svg>`,
         stages: [
-          { cap: { en: "An image is an ordered stack: base → os libs → deps → app code.", ru: "Образ — упорядоченная стопка: base → os libs → deps → app code." }, show: ["g-stack"] },
+          { cap: { en: "The image stack: base → os → deps → app.", ru: "Стопка образа: base → os → deps → app." }, show: ["g-stack"] },
           { cap: { en: "Edit the app: one layer rebuilds; everything below stays a cache hit.", ru: "Правка app: пересобирается один слой; всё ниже остаётся cache hit." }, show: ["g-stack", "g-edit-app"] },
           { cap: { en: "Edit deps: the invalidation wave climbs — deps and app rebuild.", ru: "Правка deps: волна инвалидации поднимается — пересобираются deps и app." }, show: ["g-stack", "g-edit-app", "g-edit-deps"] },
           { cap: { en: "The law: a hit survives while nothing below it changed.", ru: "Закон: hit живёт, пока не изменилось ничего ниже него." }, show: ["g-stack", "g-edit-app", "g-edit-deps", "g-law"] },
@@ -102,9 +102,9 @@
   </g>
 </svg>`,
         stages: [
-          { cap: { en: "«Crashed → answering again» = extract + weight loading + server init + first /health.", ru: "«Упал → снова отвечает» = extract + загрузка весов + init сервера + первый /health." }, show: ["g-cold"] },
+          { cap: { en: "Crashed → answering again = extract + weights + init + /health.", ru: "«Упал → снова отвечает» = extract + веса + init + /health." }, show: ["g-cold"] },
           { cap: { en: "Warm restart: extract is already local; the weights still get paid.", ru: "Тёплый рестарт: extract уже локален; за веса платить всё равно." }, show: ["g-cold", "g-warm"] },
-          { cap: { en: "Bake the weights: 1.18 + 0.491 ≈ 1.67 GB — heavy pull once, light start.", ru: "Запечь веса: 1.18 + 0.491 ≈ 1.67 ГБ — тяжёлый pull один раз, лёгкий старт." }, show: ["g-cold", "g-warm", "g-bake"] },
+          { cap: { en: "Baked: 1.18 + 0.491 ≈ 1.67 GB — heavy pull once.", ru: "Запечь: 1.18 + 0.491 ≈ 1.67 ГБ — тяжёлый pull один раз." }, show: ["g-cold", "g-warm", "g-bake"] },
         ],
       },
     ],

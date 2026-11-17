@@ -80,9 +80,9 @@
     <path d="M 92 164 L 166 180" fill="none" stroke="var(--lab-accent)" stroke-width="2" class="fig-flow"/>
     <path d="M 92 256 L 166 240" fill="none" stroke="var(--lab-accent)" stroke-width="2" class="fig-flow"/>
     <rect x="470" y="120" width="70" height="84" rx="6" fill="none" stroke="var(--lab-accent)" stroke-width="2" class="fig-ants"/>
-    <text x="505" y="116" text-anchor="middle" font-size="14" fill="var(--lab-ink)" class="mono">partial Y₀</text>
+    <text x="505" y="116" text-anchor="middle" font-size="14" fill="var(--lab-ink)" class="mono" data-en="partial Y₀" data-ru="частичная Y₀">partial Y₀</text>
     <rect x="470" y="226" width="70" height="84" rx="6" fill="none" stroke="var(--lab-accent)" stroke-width="2" class="fig-ants"/>
-    <text x="505" y="330" text-anchor="middle" font-size="14" fill="var(--lab-ink)" class="mono">partial Y₁</text>
+    <text x="505" y="330" text-anchor="middle" font-size="14" fill="var(--lab-ink)" class="mono" data-en="partial Y₁" data-ru="частичная Y₁">partial Y₁</text>
     <text x="380" y="352" text-anchor="middle" font-size="13" fill="var(--lab-muted)" data-en="full shape, partial value" data-ru="полная форма, частичное значение">full shape, partial value</text>
   </g>
   <g id="g-areduce">
@@ -117,11 +117,11 @@
   </g>
 </svg>`,
         stages: [
-          { cap: { en: "One GPU multiplies X by the whole matrix W — the baseline the cut must preserve.", ru: "Один GPU умножает X на всю матрицу W — база, которую разрез обязан сохранить." }, show: ["g-baseline"] },
-          { cap: { en: "Column cut: W is split by columns — each GPU gets its slice of Y directly.", ru: "Column-катт: W режем по столбцам — каждый GPU сразу получает свой кусок Y." }, show: ["g-baseline", "g-colcut"] },
-          { cap: { en: "Row cut: W is split by rows and X by columns — out come partial sums.", ru: "Row-катт: W режем по строкам и X по столбцам — выходят частичные суммы." }, show: ["g-rowcut"] },
-          { cap: { en: "all-reduce sums the partials: Y = Y₀ + Y₁, bit-for-bit as on one GPU.", ru: "all-reduce складывает частички: Y = Y₀ + Y₁, бит-в-бит как у одного GPU." }, show: ["g-rowcut", "g-areduce"] },
-          { cap: { en: "Every block pays twice: a beat after attention and after MLP — the knee.", ru: "Каждый блок платит дважды: такт после attention и после MLP — вот и колено." }, show: ["g-timeline"] },
+          { cap: { en: "One GPU multiplies X by the whole matrix W — the baseline.", ru: "Один GPU умножает X на всю матрицу W — это база." }, show: ["g-baseline"] },
+          { cap: { en: "Column cut: each GPU gets its slice of Y directly.", ru: "Column-катт: каждый GPU сразу получает свой кусок Y." }, show: ["g-baseline", "g-colcut"] },
+          { cap: { en: "Row cut: W by rows, X by columns — partial sums.", ru: "Row-катт: W по строкам, X по столбцам — частичные суммы." }, show: ["g-rowcut"] },
+          { cap: { en: "all-reduce sums the partials: Y = Y₀ + Y₁, bit-for-bit exact.", ru: "all-reduce складывает частички: Y = Y₀ + Y₁, бит-в-бит." }, show: ["g-rowcut", "g-areduce"] },
+          { cap: { en: "Every block pays twice: a beat after attention and after MLP.", ru: "Каждый блок платит дважды: такт после attention и после MLP." }, show: ["g-timeline"] },
         ],
       },
       {
@@ -164,9 +164,9 @@
   </g>
 </svg>`,
         stages: [
-          { cap: { en: "One GPU: 16 + 4 + 1.5 = 21.5 GB — the ledger does not fit the budget.", ru: "Один GPU: 16 + 4 + 1.5 = 21.5 ГБ — ledger не влезает в бюджет." }, show: ["g-base", "g-p1"] },
-          { cap: { en: "tp = 2: weights and KV halve — 11.5 GB per GPU, under the line.", ru: "tp = 2: веса и KV делятся пополам — 11.5 ГБ на GPU, под линией." }, show: ["g-base", "g-p1", "g-p2"] },
-          { cap: { en: "tp = 4 / tp = 8: 6.5 and 4.0 GB — headroom for longer contexts.", ru: "tp = 4 / tp = 8: 6.5 и 4.0 ГБ — запас под более длинные контексты." }, show: ["g-base", "g-p1", "g-p2", "g-p48"] },
+          { cap: { en: "16 + 4 + 1.5 = 21.5 GB — over budget.", ru: "16 + 4 + 1.5 = 21.5 ГБ — перебор." }, show: ["g-base", "g-p1"] },
+          { cap: { en: "tp = 2: weights and KV halve — 11.5 GB fits.", ru: "tp = 2: веса и KV пополам — 11.5 ГБ, под линией." }, show: ["g-base", "g-p1", "g-p2"] },
+          { cap: { en: "tp = 4 / 8: 6.5 and 4.0 GB per GPU.", ru: "tp = 4 / 8: 6.5 и 4.0 ГБ — запас." }, show: ["g-base", "g-p1", "g-p2", "g-p48"] },
           { cap: { en: "The fixed 1.5 GB never divides; the minimal fitting degree is 2.", ru: "Фиксированные 1.5 ГБ не делятся никогда; минимальная подходящая степень — 2." }, show: ["g-base", "g-p1", "g-p2", "g-p48", "g-verdict"] },
         ],
       },
