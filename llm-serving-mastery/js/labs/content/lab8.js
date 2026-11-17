@@ -19,7 +19,7 @@
       en: `<p>A gateway is a thin HTTP layer between clients and the engine, and its job is to turn Topic 06 mechanisms into a contract: validation before the queue, a <strong>bounded queue</strong> that answers 429 with <code>Retry-After</code> instead of promising infinite waiting, an <strong>outcome → status</strong> map (invalid 400, overloaded 429, engine down 503, deadline 504, everything else 500 without internals), and cancellation that stops paying for abandoned tokens. HTTP 200 means "an answer was sent", not "the request succeeded" — a client timeout counted as success is a lie the metrics will repeat at 3 a.m.</p>
 <p>The lab habit: freeze the contract table (situation → mechanism → expected code) BEFORE any gateway code, then let drills and the journal check it. All numbers here are a declared mock engine: ttft 0.15 s, 0.02 s per token, 4 service slots + 4 queue seats — arithmetic you can verify by hand, not a vLLM measurement.</p>`,
       ru: `<p>Шлюз — тонкий HTTP-слой между клиентами и движком, и его работа — превратить механизмы Темы 06 в контракт: валидация до очереди, <strong>ограниченная очередь</strong>, отвечающая 429 с <code>Retry-After</code> вместо обещания вечного ожидания, карта <strong>«исход → код»</strong> (invalid 400, overloaded 429, движок лежит 503, deadline 504, остальное 500 без внутренностей) и отмена, которая перестаёт платить за брошенные токены. HTTP 200 означает «ответ отправлен», а не «запрос успешен» — таймаут клиента, засчитанный как успех, — это ложь, которую метрики повторят в 3 часа ночи.</p>
-<p>Привычка лабы: заморозить таблицу контракта (ситуация → механизм → ожидаемый код) ДО кода шлюза, потом дать drill'ам и журналу её проверить. Все числа здесь — объявленный мок движка: ttft 0.15 с, 0.02 с за токен, 4 слота обслуживания + 4 места очереди, — арифметика, которую можно проверить руками, а не измерение vLLM.</p>`,
+<p>Привычка лабы: заморозить таблицу контракта (ситуация → механизм → ожидаемый код) ДО кода шлюза, потом дать дриллам и журналу её проверить. Все числа здесь — объявленный мок движка: <code>ttft</code> 0.15 с, 0.02 с за токен, 4 слота обслуживания + 4 места очереди, — арифметика, которую можно проверить руками, а не измерение vLLM.</p>`,
     },
     heroTag: { en: "429, envelope, error map", ru: "429, конверт допуска, карта ошибок" },
     figures: [
@@ -112,7 +112,7 @@
       },
     ],
     outcomes: [
-      { en: "Map every failure outcome to a status code and a client action.", ru: "\u041c\u0430\u043f\u043f\u0438\u0442\u044c \u043a\u0430\u0436\u0434\u044b\u0439 \u043e\u0442\u043a\u0430\u0437 \u043d\u0430 \u043a\u043e\u0434 \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u044f \u0438 \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435 \u043a\u043b\u0438\u0435\u043d\u0442\u0430." },
+      { en: "Map every failure outcome to a status code and a client action.", ru: "\u0421\u043e\u043f\u043e\u0441\u0442\u0430\u0432\u043b\u044f\u0442\u044c \u043a\u0430\u0436\u0434\u043e\u043c\u0443 \u043e\u0442\u043a\u0430\u0437\u0443 \u043a\u043e\u0434 \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u044f \u0438 \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435 \u043a\u043b\u0438\u0435\u043d\u0442\u0430." },
       { en: "Keep rejection honest: a 429 is a decision, never a disguised success.", ru: "\u0414\u0435\u0440\u0436\u0430\u0442\u044c \u043e\u0442\u043a\u0430\u0437 \u0447\u0435\u0441\u0442\u043d\u044b\u043c: 429 \u2014 \u044d\u0442\u043e \u0440\u0435\u0448\u0435\u043d\u0438\u0435, \u0430 \u043d\u0435 \u0437\u0430\u043c\u0430\u0441\u043a\u0438\u0440\u043e\u0432\u0430\u043d\u043d\u044b\u0439 \u0443\u0441\u043f\u0435\u0445." },
     ],
     model: [
@@ -139,7 +139,7 @@
         id: "q2",
         q: {
           en: "With the declared mock handles (ttft 0.15 s, 0.02 s per token), how long does one full 64-token request take, in seconds?",
-          ru: "С объявленными ручками мока (ttft 0.15 с, 0.02 с за токен) — сколько длится полный запрос на 64 токена, в секундах?",
+          ru: "С объявленными ручками мока (<code>ttft</code> 0.15 с, 0.02 с за токен) — сколько длится полный запрос на 64 токена, в секундах?",
         },
         answer: 1.43, tol: 0.01, unit: { en: "s", ru: "с" },
         hint: {
@@ -237,7 +237,7 @@ eq(map_engine_error('engine_bug', 'r-4')['http_status'], 500)` },
         title: { en: "Exercise 2 · Bounded queue envelope", ru: "Упражнение 2 · Конверт ограниченной очереди" },
         brief: {
           en: "Implement <code>admission_envelope(arrivals, capacity, queue_slots)</code> — the closed form of the burst drill: first <code>min(arrivals, capacity)</code> requests take service slots, the next ones fill up to <code>queue_slots</code> waiting seats, everyone past both gets an honest 429. Return <code>{'admitted': …, 'queued': …, 'rejected': …}</code>; the three counts add up to <code>arrivals</code>. With 4 + 4 seats the burst of 24 must give 8 served and 16 rejections.",
-          ru: "Реализуй <code>admission_envelope(arrivals, capacity, queue_slots)</code> — замкнутую форму drill'а бурста: первые <code>min(arrivals, capacity)</code> запросов берут слоты обслуживания, следующие заполняют до <code>queue_slots</code> мест ожидания, все, кто сверх, получают честный 429. Верни <code>{'admitted': …, 'queued': …, 'rejected': …}</code>; три числа в сумме дают <code>arrivals</code>. При 4 + 4 местах бурст из 24 должен дать 8 обслуженных и 16 отказов.",
+          ru: "Реализуй <code>admission_envelope(arrivals, capacity, queue_slots)</code> — замкнутую форму дрилла бурста: первые <code>min(arrivals, capacity)</code> запросов берут слоты обслуживания, следующие заполняют до <code>queue_slots</code> мест ожидания, все, кто сверх, получают честный 429. Верни <code>{'admitted': …, 'queued': …, 'rejected': …}</code>; три числа в сумме дают <code>arrivals</code>. При 4 + 4 местах бурст из 24 должен дать 8 обслуженных и 16 отказов.",
         },
         starter: `def admission_envelope(arrivals, capacity, queue_slots):
     """Closed form of one synchronous burst against a bounded queue.
@@ -262,7 +262,7 @@ eq(map_engine_error('engine_bug', 'r-4')['http_status'], 500)` },
     rejected = max(arrivals - capacity - queue_slots, 0)
     return {'admitted': admitted, 'queued': queued, 'rejected': rejected}`,
         hints: [
-          { en: "Three clamps: min for the slots, min of the remainder for the queue, max(…, 0) for the refusals.", ru: "Три зажима: min для слотов, min остатка для очереди, max(…, 0) для отказов." },
+          { en: "Three clamps: min for the slots, min of the remainder for the queue, max(…, 0) for the refusals.", ru: "Три ограничения (clamp): min для слотов, min остатка для очереди, max(…, 0) для отказов." },
         ],
         numpy: false,
         timeoutMs: 4000,
@@ -302,7 +302,7 @@ eq(classify_outcome(400), 'failed')` },
         return 'cancelled'
     return 'failed'`,
         hints: [
-          { en: "Four branches, each with one named outcome; 0 is the disconnect probe from http_request, not a success.", ru: "Четыре ветки, у каждой — свой именованный исход; 0 — проба отключения из http_request, а не успех." },
+          { en: "Four branches, each with one named outcome; 0 is the disconnect probe from http_request, not a success.", ru: "Четыре ветки, у каждой — свой именованный исход; 0 — сигнал обрыва соединения из http_request, а не успех." },
         ],
         numpy: false,
         timeoutMs: 4000,
@@ -329,7 +329,7 @@ eq(classify_outcome(400), 'failed')` },
       },
       footer: {
         en: "Bursts are machine-local and honest. The gateway's own verifier is GET /journal/verify; each burst lands in the hash chain (kind=burst).",
-        ru: "Бурсты машинно-локальные и честные. Собственный верификатор шлюза — GET /journal/verify; каждый бурст попадает в хэш-цепочку (kind=burst).",
+        ru: "Бурсты честны и зависят только от твоей машины. Собственный верификатор шлюза — GET /journal/verify; каждый бурст попадает в хэш-цепочку (kind=burst).",
       },
     },
     posttest: [
@@ -342,14 +342,14 @@ eq(classify_outcome(400), 'failed')` },
       },
       {
         id: "p2",
-        q: { en: "Which outcome counts as success for the client ledger?", ru: "\u041a\u0430\u043a\u043e\u0439 \u0438\u0441\u0445\u043e\u0434 \u0441\u0447\u0438\u0442\u0430\u0435\u0442\u0441\u044f \u0443\u0441\u043f\u0435\u0445\u043e\u043c \u0432 \u043a\u043b\u0438\u0435\u043d\u0442\u0441\u043a\u043e\u043c ledger?" },
+        q: { en: "Which outcome counts as success for the client ledger?", ru: "\u041a\u0430\u043a\u043e\u0439 \u0438\u0441\u0445\u043e\u0434 \u0441\u0447\u0438\u0442\u0430\u0435\u0442\u0441\u044f \u0443\u0441\u043f\u0435\u0445\u043e\u043c \u0432 \u043a\u043b\u0438\u0435\u043d\u0442\u0441\u043a\u043e\u0439 \u0432\u0435\u0434\u043e\u043c\u043e\u0441\u0442\u0438?" },
         options: [{ en: "only HTTP 200 with a full response", ru: "\u0442\u043e\u043b\u044c\u043a\u043e HTTP 200 \u0441 \u043f\u043e\u043b\u043d\u044b\u043c \u043e\u0442\u0432\u0435\u0442\u043e\u043c" }, { en: "200 and 429", ru: "200 \u0438 429" }, { en: "anything but 500", ru: "\u0432\u0441\u0451, \u043a\u0440\u043e\u043c\u0435 500" }],
         answer: 0,
         explain: { en: "Cancellation (0) and timeouts are not successes either \u2014 the map is outcome \u2192 status \u2192 client action.", ru: "\u041e\u0442\u043c\u0435\u043d\u0430 (0) \u0438 \u0442\u0430\u0439\u043c\u0430\u0443\u0442\u044b \u2014 \u0442\u043e\u0436\u0435 \u043d\u0435 \u0443\u0441\u043f\u0435\u0445\u0438: \u043a\u0430\u0440\u0442\u0430 \u00ab\u0438\u0441\u0445\u043e\u0434 \u2192 \u0441\u0442\u0430\u0442\u0443\u0441 \u2192 \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435 \u043a\u043b\u0438\u0435\u043d\u0442\u0430\u00bb." },
       },
       {
         id: "p3",
-        q: { en: "Bounded queue with 4 slots + 4 queue places gets 24 arrivals. The gateway\u2026", ru: "\u041e\u0433\u0440\u0430\u043d\u0438\u0447\u0435\u043d\u043d\u0430\u044f \u043e\u0447\u0435\u0440\u0435\u0434\u044c \u0441 4 \u043c\u0435\u0441\u0442\u0430\u043c\u0438 + 4 \u0432 \u043e\u0447\u0435\u0440\u0435\u0434\u0438 \u043f\u043e\u043b\u0443\u0447\u0430\u0435\u0442 24 \u0437\u0430\u044f\u0432\u043a\u0438. \u0428\u043b\u044e\u0437\u2026" },
+        q: { en: "Bounded queue with 4 slots + 4 queue places gets 24 arrivals. The gateway\u2026", ru: "\u041a\u043e\u043d\u0432\u0435\u0440\u0442: 4 \u0441\u043b\u043e\u0442\u0430 \u043e\u0431\u0441\u043b\u0443\u0436\u0438\u0432\u0430\u043d\u0438\u044f + 4 \u043c\u0435\u0441\u0442\u0430 \u043e\u0447\u0435\u0440\u0435\u0434\u0438 \u2014 \u043f\u043e\u0441\u0442\u0443\u043f\u0430\u0435\u0442 24 \u0437\u0430\u044f\u0432\u043a\u0438. \u0428\u043b\u044e\u0437\u2026" },
         options: [{ en: "admits 4 and queues 4 (8 in system), rejects 16 with 429", ru: "допускает 4 и ставит в очередь 4 (8 в системе), отбивает 16 с 429" }, { en: "admits all 24", ru: "\u0434\u043e\u043f\u0443\u0441\u043a\u0430\u0435\u0442 \u0432\u0441\u0435 24" }, { en: "rejects all 24", ru: "\u043e\u0442\u0431\u0438\u0432\u0430\u0435\u0442 \u0432\u0441\u0435 24" }],
         answer: 0,
         explain: { en: "admitted = min(arrivals, slots + queue) = 8; the rest get immediate 429 instead of hidden waiting.", ru: "admitted = min(\u0437\u0430\u044f\u0432\u043a\u0438, \u0441\u043b\u043e\u0442\u044b + \u043e\u0447\u0435\u0440\u0435\u0434\u044c) = 8; \u043e\u0441\u0442\u0430\u043b\u044c\u043d\u044b\u0435 \u043f\u043e\u043b\u0443\u0447\u0430\u044e\u0442 \u043d\u0435\u043c\u0435\u0434\u043b\u0435\u043d\u043d\u044b\u0439 429 \u0432\u043c\u0435\u0441\u0442\u043e \u0441\u043a\u0440\u044b\u0442\u043e\u0433\u043e \u043e\u0436\u0438\u0434\u0430\u043d\u0438\u044f." },
@@ -360,7 +360,7 @@ eq(classify_outcome(400), 'failed')` },
     },
     footer: {
       en: "Teaching arithmetic on a declared mock engine (ttft 0.15 s, 0.02 s per token, seats 4+4) — not a vLLM measurement. The recorded gateway drills live in the Topic 08 evidence run (runs/2026-10-26-topic08-gateway-mock); this lab does not execute them.",
-      ru: "Учебная арифметика на объявленном моке движка (ttft 0.15 с, 0.02 с за токен, места 4+4) — не измерение vLLM. Прогоны drill'ов шлюза записаны в evidence-прогоне Темы 08 (runs/2026-10-26-topic08-gateway-mock); эта лаба их не исполняет.",
+      ru: "Учебная арифметика на объявленном моке движка (<code>ttft</code> 0.15 с, 0.02 с за токен, места 4+4) — не измерение vLLM. Прогоны дриллов шлюза записаны в evidence-прогоне Темы 08 (runs/2026-10-26-topic08-gateway-mock); эта лаба их не исполняет.",
     },
   };
 })();

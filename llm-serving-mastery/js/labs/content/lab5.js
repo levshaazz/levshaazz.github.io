@@ -13,19 +13,19 @@
     },
     sub: {
       en: "Round every request up to whole blocks, account the tail waste, then read a decode-only trace to see who finishes first.",
-      ru: "Округли каждый запрос до целых блоков, посчитай пустые хвосты и прочитай decode-only трассу: кто завершится первым.",
+      ru: "Округли длину каждого запроса до целых блоков, посчитай пустые хвосты и прочитай decode-only трассу: кто завершится первым.",
     },
     intro: {
       en: `<p>PagedAttention splits each request's KV cache into physical blocks of <strong>B</strong> positions. A request retaining <strong>L</strong> positions occupies <strong>ceil(L / B)</strong> blocks, and the last block is usually half empty: the tail is allocated but never used. Requests do not share blocks, so the total reserved capacity is <strong>Σ ceil(Lᵢ / B) × B</strong> — not <code>ceil(ΣLᵢ / B) × B</code>: one shared pool undercounts by the extra tails. In the notebook fixture [17, 31, 33] on block 16 that is 2 + 2 + 3 = 7 blocks, not ceil(81 / 16) = 6.</p>
 <p>Iteration-level (continuous) batching refills a freed slot at the next tick: a short request that finishes before its cohort immediately opens a slot for the next queued one. In the notebook toy (2 slots; A needs 5 ticks, B and C need 1; all arrive at tick 0) B completes at boundary tick 1, C is admitted at tick 1 and completes at tick 2 — while static mode would hold the whole cohort until it empties. The lab habit: read the trace by hand first, then let the tests check it; ticks are invented units, never GPU seconds.</p>`,
       ru: `<p>PagedAttention режет KV-кэш каждого запроса на физические блоки по <strong>B</strong> позиций. Запрос с <strong>L</strong> удержанными позициями занимает <strong>ceil(L / B)</strong> блоков, и последний блок обычно пуст наполовину: хвост выделен, но не используется. Запросы не делят блоки между собой, поэтому полная выделенная ёмкость — <strong>Σ ceil(Lᵢ / B) × B</strong>, а не <code>ceil(ΣLᵢ / B) × B</code>: один общий пул занижает счёт на лишние хвосты. В фикстуре тетради [17, 31, 33] при блоке 16 это 2 + 2 + 3 = 7 блоков, а не ceil(81 / 16) = 6.</p>
-<p>Итерационный (continuous) батчинг подсаживает новый запрос в освободившийся слот на следующем тике: короткий запрос, завершившись раньше когорты, сразу открывает место следующему. В игрушке тетради (2 слота; A нужно 5 тиков, B и C — по 1; все пришли в тик 0) B завершается на границе тика 1, C стартует в тик 1 и завершается в тик 2, тогда как static-режим держал бы всю когорту до опустошения. Привычка лабы: сначала прочитай трассу руками, потом дай тестам проверить; тики — придуманные единицы, а не секунды GPU.</p>`,
+<p>Непрерывный (continuous) батчинг подсаживает новый запрос в освободившийся слот на следующем тике: короткий запрос, завершившись раньше когорты, сразу открывает место следующему. В игрушке тетради (2 слота; A нужно 5 тиков, B и C — по 1; все пришли в тик 0) B завершается на границе тика 1, C стартует в тик 1 и завершается в тик 2, тогда как static-режим держал бы всю когорту до опустошения. Привычка лабы: сначала прочитай трассу руками, потом дай тестам проверить; тики — придуманные единицы, а не секунды GPU.</p>`,
     },
     heroTag: { en: "paging, batching, the knee", ru: "пейджинг, батчинг, колено" },
     figures: [
       {
         id: "lab5-pages",
-        title: { en: "Pages of 16: the tails you pay for", ru: "Страницы по 16: хвосты, за которые платишь" },
+        title: { en: "Pages of 16: the tails you pay for", ru: "Блоки по 16: хвосты, за которые платишь" },
         w: 760, h: 420,
         svg: `<svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
   <g id="g-reqs">
@@ -120,7 +120,7 @@
           { cap: { en: "Tick 0: A and B take the slots.", ru: "Тик 0: A и B занимают слоты." }, show: ["g-queue", "g-t0"] },
           { cap: { en: "Tick 1: B finishes — C takes the freed slot.", ru: "Тик 1: B завершается — C встаёт в освободившийся слот на границе." }, show: ["g-queue", "g-t0", "g-t1"] },
           { cap: { en: "Finish marks: B at 1, C at 2, A at 5.", ru: "Отметки: B на 1, C на 2, A на 5." }, show: ["g-queue", "g-t0", "g-t1", "g-marks"] },
-          { cap: { en: "Static idles the slot: C would finish at 6, not 2.", ru: "Static простаивает слот: C завершился бы на 6, не на 2." }, show: ["g-queue", "g-t0", "g-t1", "g-marks", "g-static"] },
+          { cap: { en: "Static idles the slot: C would finish at 6, not 2.", ru: "Static-режим простаивает слот: C завершился бы на 6, не на 2." }, show: ["g-queue", "g-t0", "g-t1", "g-marks", "g-static"] },
         ],
       },
     ],
@@ -144,7 +144,7 @@
         answer: 2, tol: 0.2, unit: { en: "blocks", ru: "блока" },
         hint: {
           en: "Round up: ceil(17 / 16) = 2 — the second block is only half used.",
-          ru: "Округляй вверх: ceil(17 / 16) = 2 — второй блок занят лишь наполовину.",
+          ru: "Округляй вверх: ceil(17 / 16) = 2 — второй блок занят лишь одной позицией из 16.",
         },
       },
       {
@@ -153,7 +153,7 @@
           en: "Three independent requests retain 17, 31 and 33 positions; block size 16. How many tail positions are allocated but never used, in total?",
           ru: "Три независимых запроса удерживают 17, 31 и 33 позиции; размер блока 16. Сколько всего хвостовых позиций выделено, но не используется?",
         },
-        answer: 31, tol: 0.2, unit: { en: "positions", ru: "позиции" },
+        answer: 31, tol: 0.2, unit: { en: "positions", ru: "позиция" },
         hint: {
           en: "Blocks: 2 + 2 + 3 = 7, capacity 7 × 16 = 112; live 17 + 31 + 33 = 81; waste = 112 − 81 = 31. One ceil over the sum would give 6 blocks and hide the tails.",
           ru: "Блоки: 2 + 2 + 3 = 7, ёмкость 7 × 16 = 112; живых 17 + 31 + 33 = 81; waste = 112 − 81 = 31. Один ceil по сумме дал бы 6 блоков и спрятал хвосты.",
@@ -163,9 +163,9 @@
         id: "q3",
         q: {
           en: "Decode-only toy, 2 slots, continuous batching: A needs 5 ticks, B and C need 1 each; A, B, C arrive at tick 0 in FIFO order. B works during [0, 1) and C takes its freed slot. At which tick boundary is C complete?",
-          ru: "Decode-only игрушка, 2 слота, continuous-батчинг: A нужно 5 тиков, B и C — по 1; A, B, C пришли в тик 0 в порядке FIFO. B работает в [0, 1), C занимает её освободившийся слот. На какой границе тиков C завершается?",
+          ru: "Decode-only игрушка, 2 слота, continuous-батчинг: A нужно 5 тиков, B и C — по 1; A, B, C пришли в тик 0 в порядке FIFO. B работает в [0, 1), C занимает его освободившийся слот. На какой границе тиков C завершается?",
         },
-        answer: 2, tol: 0.2, unit: { en: "tick", ru: "тик" },
+        answer: 2, tol: 0.2, unit: { en: "tick", ru: "тика" },
         hint: {
           en: "C is admitted at tick 1, works during [1, 2); completion is recorded at the next boundary: tick 2. Static mode would keep C waiting until the whole cohort empties.",
           ru: "C подсаживается в тик 1, работает в [1, 2); завершение фиксируется на следующей границе: тик 2. Static-режим держал бы C до опустошения всей когорты.",
@@ -257,7 +257,7 @@
         title: { en: "Exercise 4 · Finish the trace", ru: "Упражнение 4 · Дочитай трассу" },
         brief: {
           en: "Implement <code>finish_ticks(work, slots)</code> — the finish boundary tick of each request (FIFO, all arrive at tick 0, unit ticks, continuous batching): each request starts as soon as a slot is free and finishes at <code>start + work</code>. Notebook toy: [5, 1, 1] on 2 slots → [5, 1, 2] — B frees the slot at 1, C takes it immediately.",
-          ru: "Реализуй <code>finish_ticks(work, slots)</code> — границу завершения каждого запроса (FIFO, все пришли в тик 0, единичные тики, continuous-батчинг): запрос стартует, как только освободился слот, и завершается в <code>start + work</code>. Игрушка тетради: [5, 1, 1] на 2 слотах → [5, 1, 2] — B освобождает слот в тик 1, C занимает его сразу.",
+          ru: "Реализуй <code>finish_ticks(work, slots)</code> — границу завершения каждого запроса (FIFO, все пришли в тик 0, единичные тики, continuous-батчинг): запрос стартует, как только слот освободится, и завершается в <code>start + work</code>. Игрушка тетради: [5, 1, 1] на 2 слотах → [5, 1, 2] — B освобождает слот в тик 1, C занимает его сразу.",
         },
         starter: `def finish_ticks(work, slots):
     """Finish boundary tick per request; FIFO, continuous batching, unit ticks."""
@@ -296,7 +296,7 @@
       {
         id: "p2",
         q: { en: "Block tail waste for lengths [17, 31, 33] with block 16 is\u2026", ru: "\u0425\u0432\u043e\u0441\u0442\u043e\u0432\u044b\u0435 \u043e\u0442\u0445\u043e\u0434\u044b \u0434\u043b\u044f \u0434\u043b\u0438\u043d [17, 31, 33] \u043f\u0440\u0438 \u0431\u043b\u043e\u043a\u0435 16 \u2014 \u044d\u0442\u043e\u2026" },
-        options: [{ en: "allocated 112 \u2212 used 81 = 31", ru: "\u0432\u044b\u0434\u0435\u043b\u0435\u043d\u043e 112 \u2212 \u0436\u0438\u0432\u044b\u0445 81 = 31" }, { en: "0 \u2014 tails are shared", ru: "0 \u2014 \u0445\u0432\u043e\u0441\u0442\u044b \u0448\u0430\u0440\u044f\u0442\u0441\u044f" }, { en: "112", ru: "112" }],
+        options: [{ en: "allocated 112 \u2212 used 81 = 31", ru: "\u0432\u044b\u0434\u0435\u043b\u0435\u043d\u043e 112 \u2212 \u0436\u0438\u0432\u044b\u0445 81 = 31" }, { en: "0 \u2014 tails are shared", ru: "0 \u2014 \u0445\u0432\u043e\u0441\u0442\u044b \u0434\u0435\u043b\u044f\u0442\u0441\u044f \u043c\u0435\u0436\u0434\u0443 \u0437\u0430\u043f\u0440\u043e\u0441\u0430\u043c\u0438" }, { en: "112", ru: "112" }],
         answer: 0,
         explain: { en: "\u03a3 ceil(L/16)\u00d716 = 112 slots for 81 live tokens: 31 slots are paid tails, never used.", ru: "\u03a3 ceil(L/16)\u00d716 = 112 \u0441\u043b\u043e\u0442\u043e\u0432 \u043d\u0430 81 \u0436\u0438\u0432\u043e\u0439 \u0442\u043e\u043a\u0435\u043d: 31 \u0441\u043b\u043e\u0442 \u2014 \u043f\u043b\u0430\u0442\u043d\u044b\u0435 \u0445\u0432\u043e\u0441\u0442\u044b \u0431\u0435\u0437 \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u043d\u0438\u044f." },
       },
@@ -313,7 +313,7 @@
     },
     footer: {
       en: "Teaching arithmetic on a declared model — not a GPU measurement. The completion traces come from the decode-only CPU toy in the Topic 05 notebook (equal-cost ticks, prefill = 0), the same play the notebook rehearses before any real run; the notebook's pipeline-vs-vLLM burst comparison is a separate owner-run evidence step and is not executed by this lab.",
-      ru: "Учебная арифметика по заявленной модели — не измерение GPU. Трассировки завершения взяты из decode-only CPU-игрушки тетради Темы 05 (равноценные тики, prefill = 0) — тот же play, который тетрадь репетирует до любого реального прогона; сравнение pipeline-vs-vLLM из тетради — отдельный evidence-шаг и этой лабой не исполняется.",
+      ru: "Учебная арифметика по заявленной модели — не измерение GPU. Трассировки завершения взяты из decode-only CPU-игрушки тетради Темы 05 (равноценные тики, prefill = 0) — та же репетиция, которую тетрадь выполняет до любого реального прогона; сравнение pipeline-vs-vLLM из тетради — отдельный evidence-шаг и этой лабой не исполняется.",
     },
   };
 })();

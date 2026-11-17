@@ -110,7 +110,7 @@
           { cap: { en: "Two columns: what the client observes, and what it actually means.", ru: "Две колонки: что клиент наблюдает и что это значит на самом деле." }, show: ["g-head"] },
           { cap: { en: "stop + DONE: the model finished — the healthy ending.", ru: "stop + DONE: модель закончила — здоровый финал." }, show: ["g-head", "g-r1"] },
           { cap: { en: "length + DONE: the cap cut the generation — expected, but truncated.", ru: "length + DONE: потолок срезал генерацию — ожидаемо, но обрыв." }, show: ["g-head", "g-r1", "g-r2"] },
-          { cap: { en: "content-then-EOF and error+DONE look final too — both are failures.", ru: "content-then-EOF и error+DONE тоже выглядят финалом — оба это провал." }, show: ["g-head", "g-r1", "g-r2", "g-r34"] },
+          { cap: { en: "content-then-EOF and error+DONE look final too — both are failures.", ru: "content-then-EOF и error+DONE тоже выглядят финалом — оба — это провал." }, show: ["g-head", "g-r1", "g-r2", "g-r34"] },
           { cap: { en: "No single check suffices: read the pair, not one badge.", ru: "Одной проверки мало: читай пару, а не один бейдж." }, show: ["g-head", "g-r1", "g-r2", "g-r34", "g-verdict"] },
         ],
       },
@@ -121,7 +121,7 @@
     ],
     model: [
       [{ en: "declared service", ru: "заявленный сервис" }, { en: "TTFT = 180 ms", ru: "TTFT = 180 мс" }, "decode", { en: "55 tok/s", ru: "55 ток/с" }],
-      [{ en: "nominal wall", ru: "номинальный wall" }, { en: "TTFT + (n − 1) / decode", ru: "TTFT + (n − 1) / decode" }, { en: "prefill share", ru: "доля prefill" }, { en: "TTFT / wall", ru: "TTFT / wall" }],
+      [{ en: "nominal wall", ru: "номинальное wall-время" }, { en: "TTFT + (n − 1) / decode", ru: "TTFT + (n − 1) / decode" }, { en: "prefill share", ru: "доля prefill" }, { en: "TTFT / wall", ru: "TTFT / wall" }],
       [{ en: "measured TTFT", ru: "измеренный TTFT" }, { en: "first token arrival", ru: "приход первого токена" }, { en: "measured rate", ru: "измеренная скорость" }, { en: "(n − 1) / (t_last − t_first)", ru: "(n − 1) / (t_last − t_first)" }],
     ],
     scenario: null,
@@ -142,7 +142,7 @@
         id: "q2",
         q: {
           en: "Nominal wall time of a forced 24-token reply (like the notebook's forced-length trials), in seconds?",
-          ru: "Номинальное время принудительного 24-токенного ответа (как форсированные прогоны в тетради), в секундах?",
+          ru: "Номинальное время принудительного 24-токенного ответа (как у форсированных прогонов в тетради), в секундах?",
         },
         answer: 0.5982, tol: 0.005, unit: { en: "s", ru: "с" },
         hint: {

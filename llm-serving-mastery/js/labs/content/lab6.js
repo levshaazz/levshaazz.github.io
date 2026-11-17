@@ -19,7 +19,7 @@
     intro: {
       en: `<p>One decode step serves the whole batch: <strong>step = W + b × batch</strong> milliseconds — W pays for reading the weights once per step, each live sequence adds b. Throughput is <strong>batch × 1000 / step</strong> tok/s: it rises, flattens, and tops out at the roof <strong>1000 / b</strong> as the batch grows. The scheduler caps the batch at <code>max_num_seqs</code>, so clients beyond the cap buy place in the queue, not tokens — that is the mechanism behind the knee.</p>
 <p>The knee is located by a declared rule, not by eye: rule γ takes the <strong>last wave that gained at least 50% over its predecessor</strong> (teaching γ = 0.5). And load has two shapes. A <strong>closed loop</strong> of clients sends the next request only after the previous one returns, so offered req/s = clients / latency — slow the server down and demand shrinks by itself (Little's law). An <strong>open loop</strong> keeps the arrival rate fixed, so saturation shows up as a growing queue instead. Same overload, two different stories.</p>`,
-      ru: `<p>Один decode-шаг обслуживает весь batch: <strong>step = W + b × batch</strong> миллисекунд — W платит за чтение весов один раз за шаг, каждая живая последовательность добавляет b. Throughput равен <strong>batch × 1000 / step</strong> ток/с: он растёт, выполаживается и упирается в крышу <strong>1000 / b</strong> при росте batch. Scheduler режет batch потолком <code>max_num_seqs</code>, поэтому клиенты сверх потолка покупают место в очереди, а не токены — в этом механизм колена.</p>
+      ru: `<p>Один decode-шаг обслуживает весь батч: шаг (в мс) — <strong>step = W + b × batch</strong>, где W платит за чтение весов один раз за шаг, каждая живая последовательность добавляет b. Throughput равен <strong>batch × 1000 / step</strong> ток/с: он растёт, выполаживается и упирается в крышу <strong>1000 / b</strong> при росте batch. Scheduler режет batch потолком <code>max_num_seqs</code>, поэтому клиенты сверх потолка покупают место в очереди, а не токены — в этом механизм колена.</p>
 <p>Колено ищут по заявленному правилу, а не на глаз: правило γ берёт <strong>последнюю волну, прибавившую не меньше 50% к предыдущей</strong> (учебное γ = 0.5). И у нагрузки две формы. <strong>Замкнутый цикл</strong> шлёт следующий запрос только после ответа на предыдущий, поэтому предлагаемый req/s = clients / latency — замедли сервис, и спрос упадёт сам (закон Литтла). <strong>Открытый цикл</strong> держит фиксированный темп прихода, и насыщение проявляется растущей очередью. Та же перегрузка — два разных рассказа.</p>`,
     },
     heroTag: { en: "step model, knee, loop shapes", ru: "модель шага, колено, формы нагрузки" },
@@ -65,7 +65,7 @@
         stages: [
           { cap: { en: "Cap 30: waves 10 / 20 / 30 / 60 clients.", ru: "Потолок 30: волны 10 / 20 / 30 / 60 клиентов." }, show: ["g-axes", "g-pts"] },
           { cap: { en: "Gains wave over wave: +60%, then +25%, then +0%.", ru: "Приросты волна за волной: +60%, затем +25%, затем +0%." }, show: ["g-axes", "g-pts", "g-gains"] },
-          { cap: { en: "Rule γ = 0.5: knee at the last qualifying wave, batch 20.", ru: "Правило γ = 0.5: колено — последняя qualifying-волна, batch 20." }, show: ["g-axes", "g-pts", "g-gains", "g-knee"] },
+          { cap: { en: "Rule γ = 0.5: knee at the last qualifying wave, batch 20.", ru: "Правило γ = 0.5: колено — последняя волна с приростом ≥ 50%, batch 20." }, show: ["g-axes", "g-pts", "g-gains", "g-knee"] },
         ],
       },
       {
@@ -102,7 +102,7 @@
     ],
     outcomes: [
       { en: "Model step time from two constants and locate the saturation knee by a declared rule.", ru: "\u0421\u0442\u0440\u043e\u0438\u0442\u044c \u043c\u043e\u0434\u0435\u043b\u044c \u0448\u0430\u0433\u0430 \u0438\u0437 \u0434\u0432\u0443\u0445 \u043a\u043e\u043d\u0441\u0442\u0430\u043d\u0442 \u0438 \u043d\u0430\u0445\u043e\u0434\u0438\u0442\u044c \u043a\u043e\u043b\u0435\u043d\u043e \u043d\u0430\u0441\u044b\u0449\u0435\u043d\u0438\u044f \u043f\u043e \u0437\u0430\u044f\u0432\u043b\u0435\u043d\u043d\u043e\u043c\u0443 \u043f\u0440\u0430\u0432\u0438\u043b\u0443." },
-      { en: "Distinguish closed-loop clients from open-loop arrivals when quoting throughput.", ru: "\u0420\u0430\u0437\u043b\u0438\u0447\u0430\u0442\u044c closed-loop \u043a\u043b\u0438\u0435\u043d\u0442\u043e\u0432 \u0438 open-loop \u0437\u0430\u044f\u0432\u043a\u0438 \u043f\u0440\u0438 \u0440\u0430\u0437\u0433\u043e\u0432\u043e\u0440\u0435 \u043e \u043f\u0440\u043e\u043f\u0443\u0441\u043a\u043d\u043e\u0439 \u0441\u043f\u043e\u0441\u043e\u0431\u043d\u043e\u0441\u0442\u0438." },
+      { en: "Distinguish closed-loop clients from open-loop arrivals when quoting throughput.", ru: "\u0420\u0430\u0437\u043b\u0438\u0447\u0430\u0442\u044c \u043a\u043b\u0438\u0435\u043d\u0442\u043e\u0432 \u0437\u0430\u043c\u043a\u043d\u0443\u0442\u043e\u0433\u043e \u0446\u0438\u043a\u043b\u0430 (closed-loop) \u0438 \u0437\u0430\u044f\u0432\u043a\u0438 \u043e\u0442\u043a\u0440\u044b\u0442\u043e\u0433\u043e (open-loop) \u043f\u0440\u0438 \u0440\u0430\u0437\u0433\u043e\u0432\u043e\u0440\u0435 \u043e \u043f\u0440\u043e\u043f\u0443\u0441\u043a\u043d\u043e\u0439 \u0441\u043f\u043e\u0441\u043e\u0431\u043d\u043e\u0441\u0442\u0438." },
     ],
     model: [
       ["decode step", "step = W + b × batch, ms", "teaching constants", "W = 60 ms, b = 2 ms/seq"],
@@ -128,7 +128,7 @@
         id: "q2",
         q: {
           en: "Throughput at batch 10 under the same constants, in tok/s?",
-          ru: "Throughput при batch = 10 под теми же константами, в ток/с?",
+          ru: "Throughput при batch = 10 при тех же константах, в ток/с?",
         },
         answer: 125, tol: 0.5, unit: { en: "tok/s", ru: "ток/с" },
         hint: {
@@ -152,7 +152,7 @@
     exercises: [
       {
         id: "ex1",
-        title: { en: "Exercise 1 · Throughput of one batch", ru: "Упражнение 1 · Throughput одного batch" },
+        title: { en: "Exercise 1 · Throughput of one batch", ru: "Упражнение 1 · Throughput одного батча" },
         brief: {
           en: "Implement <code>throughput_of_batch(batch, w_ms, b_ms)</code> — the declared step model: one step costs <code>W + b × batch</code> milliseconds, throughput is <code>batch × 1000 / step</code> tok/s. Mind the units: the step comes out in ms, the 1000 converts ms → s.",
           ru: "Реализуй <code>throughput_of_batch(batch, w_ms, b_ms)</code> — заявленную модель шага: шаг стоит <code>W + b × batch</code> миллисекунд, throughput равен <code>batch × 1000 / step</code> ток/с. Следи за единицами: шаг выходит в мс, и 1000 переводит мс → с.",
@@ -208,7 +208,7 @@
         title: { en: "Exercise 4 · Closed loop vs open loop", ru: "Упражнение 4 · Замкнутый и открытый цикл" },
         brief: {
           en: "Implement <code>closed_loop_rps(clients, latency_s)</code> — Little's law for a closed loop: offered req/s = <code>clients / latency_s</code>. Read the comparison it encodes: in a closed loop, slowing the server shrinks the offered demand by itself; in an open loop the arrival rate is fixed, so the same slowdown becomes a growing queue. That is why one chart falls while the other waits.",
-          ru: "Реализуй <code>closed_loop_rps(clients, latency_s)</code> — закон Литтла для замкнутого цикла: предлагаемый req/s = <code>clients / latency_s</code>. Прочитай закодированное сравнение: в замкнутом цикле замедление сервиса само снижает спрос; в открытом темп прихода фиксирован, и то же замедление превращается в растущую очередь. Поэтому один график падает, а другой ждёт.",
+          ru: "Реализуй <code>closed_loop_rps(clients, latency_s)</code> — закон Литтла для замкнутого цикла: предлагаемый req/s = <code>clients / latency_s</code>. Прочитай сравнение, зашитое в формулу: в замкнутом цикле замедление сервиса само снижает спрос; в открытом темп прихода фиксирован, и то же замедление превращается в растущую очередь. Поэтому один график падает, а другой ждёт.",
         },
         starter: `def closed_loop_rps(clients, latency_s):
     """Offered requests per second of a closed loop (Little's law)."""
@@ -232,7 +232,7 @@
         title: { en: "Exercise 2 · The knee by rule, not by eye", ru: "Упражнение 2 · Колено по правилу, не на глаз" },
         brief: {
           en: "Implement <code>find_knee(clients, max_num_seqs, w_ms, b_ms, min_gain=0.5)</code> — walk the client counts in increasing order, compute throughput at effective batch <code>min(c, max_num_seqs)</code>, and keep the <strong>last</strong> count whose throughput gained at least <code>min_gain</code> (a fraction: 0.5 = +50%) over the <strong>previous</strong> count. Return a tuple <code>(working_batch, tok_per_s)</code>; a single count is the knee by default (no predecessor to beat).",
-          ru: "Реализуй <code>find_knee(clients, max_num_seqs, w_ms, b_ms, min_gain=0.5)</code> — иди по количествам клиентов в порядке возрастания, считай throughput на эффективном batch <code>min(c, max_num_seqs)</code> и сохраняй <strong>последнее</strong> значение, чей throughput вырос минимум на <code>min_gain</code> (доля: 0.5 = +50%) относительно <strong>предыдущего</strong>. Верни кортеж <code>(рабочий batch, ток/с)</code>; одиночное значение — колено по умолчанию (нет предыдущего, которого надо превзойти).",
+          ru: "Реализуй <code>find_knee(clients, max_num_seqs, w_ms, b_ms, min_gain=0.5)</code> — иди по списку количеств клиентов по возрастанию, считай throughput на эффективном батче <code>min(c, max_num_seqs)</code> и сохраняй <strong>последнее</strong> значение, у которого throughput вырос минимум на <code>min_gain</code> (доля: 0.5 = +50%) относительно <strong>предыдущего</strong>. Верни кортеж <code>(рабочий batch, ток/с)</code>; одиночное значение — колено по умолчанию (нет предыдущего, которого надо превзойти).",
         },
         starter: `def find_knee(clients, max_num_seqs, w_ms, b_ms, min_gain=0.5):
     """(working_batch, tok_per_s) of the last qualifying gain - by rule, not by eye."""
@@ -257,7 +257,7 @@
         prev_tps = tps
     return knee`,
         hints: [
-          { en: "Trace [10, 20, 30, 60] with γ = 0.5: tps 125 → 200 (+60%, qualifies) → 250 (+25%, stops) → capped 250 (+0%). Knee: batch 20, 200 tok/s.", ru: "Трасса [10, 20, 30, 60] при γ = 0.5: tps 125 → 200 (+60%, засчитано) → 250 (+25%, стоп) → срезанные 250 (+0%). Колено: batch 20, 200 ток/с." },
+          { en: "Trace [10, 20, 30, 60] with γ = 0.5: ток/с: 125 → 200 (+60%, qualifies) → 250 (+25%, stops) → capped 250 (+0%). Knee: batch 20, 200 tok/s.", ru: "Трасса [10, 20, 30, 60] при γ = 0.5: ток/с: 125 → 200 (+60%, засчитано) → 250 (+25%, стоп) → 250, срезанные потолком (+0%). Колено: batch 20, 200 ток/с." },
         ],
         numpy: false,
         timeoutMs: 4000,
@@ -267,10 +267,10 @@
     posttest: [
       {
         id: "p1",
-        q: { en: "Step time = W + b \u00d7 batch (W 60, b 2). Throughput at batch 20 is\u2026", ru: "\u0412\u0440\u0435\u043c\u044f \u0448\u0430\u0433\u0430 = W + b \u00d7 batch (W 60, b 2). Throughput \u043f\u0440\u0438 \u0431\u0430\u0442\u0447\u0435 20 \u2014 \u044d\u0442\u043e\u2026" },
+        q: { en: "Step time = W + b \u00d7 batch (W = 60, b = 2). Throughput at batch 20 is\u2026", ru: "\u0412\u0440\u0435\u043c\u044f \u0448\u0430\u0433\u0430 = W + b \u00d7 batch (W = 60, b = 2). Throughput \u043f\u0440\u0438 \u0431\u0430\u0442\u0447\u0435 20 \u2014 \u044d\u0442\u043e\u2026" },
         options: [{ en: "20 \u00d7 1000 / 100 = 200 tok/s", ru: "20 \u00d7 1000 / 100 = 200 \u0442\u043e\u043a/\u0441" }, { en: "100 / 20", ru: "100 / 20" }, { en: "20 \u00d7 60", ru: "20 \u00d7 60" }],
         answer: 0,
-        explain: { en: "Step = 60 + 2\u00d720 = 100 ms; throughput = batch \u00d7 1000 / step = 200 tok/s.", ru: "\u0428\u0430\u0433 = 60 + 2\u00d720 = 100 \u043c\u0441; \u043f\u0440\u043e\u043f\u0443\u0441\u043a = \u0431\u0430\u0442\u0447 \u00d7 1000 / \u0448\u0430\u0433 = 200 \u0442\u043e\u043a/\u0441." },
+        explain: { en: "Step = 60 + 2\u00d720 = 100 ms; throughput = batch \u00d7 1000 / step = 200 tok/s.", ru: "\u0428\u0430\u0433 = 60 + 2\u00d720 = 100 \u043c\u0441; throughput = \u0431\u0430\u0442\u0447 \u00d7 1000 / \u0448\u0430\u0433 = 200 \u0442\u043e\u043a/\u0441." },
       },
       {
         id: "p2",
@@ -284,7 +284,7 @@
         q: { en: "The knee is located\u2026", ru: "\u041a\u043e\u043b\u0435\u043d\u043e \u043d\u0430\u0445\u043e\u0434\u0438\u0442\u0441\u044f\u2026" },
         options: [{ en: "by a declared gain rule, not by eye", ru: "\u043f\u043e \u0437\u0430\u044f\u0432\u043b\u0435\u043d\u043d\u043e\u043c\u0443 \u043f\u0440\u0430\u0432\u0438\u043b\u0443 \u043f\u0440\u0438\u0440\u043e\u0441\u0442\u0430, \u0430 \u043d\u0435 \u043d\u0430 \u0433\u043b\u0430\u0437" }, { en: "where the curve looks flat", ru: "\u0442\u0430\u043c, \u0433\u0434\u0435 \u043a\u0440\u0438\u0432\u0430\u044f \u0432\u044b\u0433\u043b\u044f\u0434\u0438\u0442 \u043f\u043b\u043e\u0441\u043a\u043e\u0439" }, { en: "at max_num_seqs always", ru: "\u0432\u0441\u0435\u0433\u0434\u0430 \u043d\u0430 max_num_seqs" }],
         answer: 0,
-        explain: { en: "A declared rule (e.g. last gain \u2265 50 %) makes the knee reproducible and defensible.", ru: "\u0417\u0430\u044f\u0432\u043b\u0435\u043d\u043d\u043e\u0435 \u043f\u0440\u0430\u0432\u0438\u043b\u043e (\u043d\u0430\u043f\u0440\u0438\u043c\u0435\u0440, \u043f\u043e\u0441\u043b\u0435\u0434\u043d\u0438\u0439 \u043f\u0440\u0438\u0440\u043e\u0441\u0442 \u2265 50 %) \u0434\u0435\u043b\u0430\u0435\u0442 \u043a\u043e\u043b\u0435\u043d\u043e \u0432\u043e\u0441\u043f\u0440\u043e\u0438\u0437\u0432\u043e\u0434\u0438\u043c\u044b\u043c \u0438 \u0437\u0430\u0449\u0438\u0449\u0430\u0435\u043c\u044b\u043c." },
+        explain: { en: "A declared rule (e.g. last gain \u2265 50 %) makes the knee reproducible and defensible.", ru: "\u0417\u0430\u044f\u0432\u043b\u0435\u043d\u043d\u043e\u0435 \u043f\u0440\u0430\u0432\u0438\u043b\u043e (\u043d\u0430\u043f\u0440\u0438\u043c\u0435\u0440, \u043f\u043e\u0441\u043b\u0435\u0434\u043d\u0438\u0439 \u043f\u0440\u0438\u0440\u043e\u0441\u0442 \u2265 50%) \u0434\u0435\u043b\u0430\u0435\u0442 \u043a\u043e\u043b\u0435\u043d\u043e \u0432\u043e\u0441\u043f\u0440\u043e\u0438\u0437\u0432\u043e\u0434\u0438\u043c\u044b\u043c \u0438 \u0437\u0430\u0449\u0438\u0449\u0430\u0435\u043c\u044b\u043c." },
       },
     ],
     reward: {
@@ -292,7 +292,7 @@
     },
     footer: {
       en: "A declared synthetic step model, not a measurement: the constants W = 60 ms, b = 2 ms/seq are teaching values shared with the playground widget, and the knee follows the frozen gain rule, never an eye fit. The measured T4 saturation run of Topic 06 (waves 8/32/64/128 → 29.0/207.8/305.8/310.7 tok/s, knee 32 by γ = 0.5) lives in seminars/runs/2026-10-21-topic06-t4-saturation-v2; this lab does not execute it.",
-      ru: "Заявленная синтетическая модель шага, не измерение: константы W = 60 мс, b = 2 мс/seq — учебные значения, общие с виджетом playground, а колено находится по замороженному правилу прироста, никогда не подгонкой на глаз. Измеренный прогон насыщения Темы 06 на T4 (волны 8/32/64/128 → 29.0/207.8/305.8/310.7 ток/с, колено 32 по γ = 0.5) живёт в seminars/runs/2026-10-21-topic06-t4-saturation-v2; эта лаба его не исполняет.",
+      ru: "Заявленная синтетическая модель шага, не измерение: константы W = 60 мс, b = 2 мс/seq — учебные значения, совпадающие с виджетом playground, а колено находится по замороженному правилу прироста, никогда не подгонкой на глаз. Измеренный прогон насыщения Темы 06 на T4 (волны 8/32/64/128 → 29.0/207.8/305.8/310.7 ток/с, колено 32 по γ = 0.5) живёт в seminars/runs/2026-10-21-topic06-t4-saturation-v2; эта лаба его не исполняет.",
     },
   };
 })();

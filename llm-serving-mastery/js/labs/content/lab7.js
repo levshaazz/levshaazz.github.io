@@ -14,13 +14,13 @@
     },
     sub: {
       en: "Run a bounded plan of configs, keep the ones that clear the throughput floor and the p95 SLO, then freeze the fastest with its margins.",
-      ru: "Прогони ограниченный план конфигураций, отбери те, что пробили порог throughput и SLO по p95, и заморозь быстрейшую вместе с её запасами.",
+      ru: "Прогони ограниченный план конфигураций, отбери те, что прошли порог throughput и уложились в SLO по p95, и заморозь быстрейшую вместе с её запасами.",
     },
     intro: {
       en: `<p>You cannot sweep 4 knobs × 3 values × 4 waves, so the search is bounded by a frozen plan: a default baseline, one-factor-at-a-time (OFAT) branches, and one confirmatory pair — five configs, no more; failed configs stay in the table as rows, not erased footnotes. Feasibility is a declared conjunction: <strong>feasible = thr ≥ floor AND p95 ≤ SLO</strong>, both bounds inclusive. Nothing qualifies? Freezing nothing is a legitimate outcome.</p>
 <p>Among feasible configs the working point is the max-throughput one, and the margins — <code>thr − floor</code> and <code>SLO − p95</code> — tell you how brittle the choice is: a point sitting exactly on the SLO breaks at the first held-out run. Units bite here: p95 arrives in milliseconds, and comparing it against a threshold in different units flips every decision by 1000× — a slow profile sails through as "eligible".</p>`,
-      ru: `<p>Полный перебор невозможен (4 ручки × 3 значения × 4 волны), поэтому поиск ограничен замороженным планом: baseline default, по одной OFAT-ветке на ручку и одна подтверждающая пара — пять конфигураций, ни больше; неудачные конфигурации остаются строками таблицы, а не стёртыми сносками. Допустимость — заявленная конъюнкция: <strong>feasible = thr ≥ floor AND p95 ≤ SLO</strong>, обе границы включительные. Не прошло ничего? «Замораживать нечего» — полноценный исход.</p>
-<p>Рабочая точка среди допустимых — самая быстрая по throughput, а запасы — <code>thr − floor</code> и <code>SLO − p95</code> — показывают, насколько выбор хрупок: точка, сидящая ровно на SLO, сломается на первом же held-out. Здесь кусаются единицы: p95 приходит в миллисекундах, и сравнение его с порогом в других единицах переворачивает все решения в 1000 раз — медленный профиль проходит как «допустимый».</p>`,
+      ru: `<p>Полный перебор невозможен (4 ручки × 3 значения × 4 волны), поэтому поиск ограничен замороженным планом: baseline default, по одной OFAT-ветке на каждую из трёх варьируемых ручек и одна подтверждающая пара — пять конфигураций, ни больше; неудачные конфигурации остаются строками таблицы, а не стёртыми сносками. Допустимость — заявленная конъюнкция: <strong>feasible = thr ≥ floor AND p95 ≤ SLO</strong>, обе границы включительные. Не прошло ничего? «Замораживать нечего» — полноценный исход.</p>
+<p>Рабочая точка среди допустимых — самая быстрая по throughput, а запасы — <code>thr − floor</code> и <code>SLO − p95</code> — показывают, насколько выбор хрупок: точка, сидящая ровно на SLO, сломается на первом же held-out. Здесь кусаются единицы: p95 приходит в миллисекундах, и сравнение его с порогом в других единицах искажает все решения в 1000 раз — медленный профиль проходит как «допустимый».</p>`,
     },
     heroTag: { en: "floor, SLO, freeze", ru: "floor, SLO, заморозка" },
     figures: [
@@ -217,7 +217,7 @@
         title: { en: "Exercise 3 · Fix the bug: units in the count", ru: "Упражнение 3 · Почини баг: единицы в подсчёте" },
         brief: {
           en: "This <code>feasible_count(configs, floor_tps, slo_p95_ms)</code> over-admits: it divides <code>p95_64</code> — reported in <strong>milliseconds</strong> — by 1000 before comparing with the SLO, which is also in milliseconds. Then every p95 looks tiny and only the throughput floor filters: on the teaching sweep it counts 4 instead of 2, waving slow profiles through as eligible. Fix the units.",
-          ru: "Эта <code>feasible_count(configs, floor_tps, slo_p95_ms)</code> пропускает лишних: она делит <code>p95_64</code> — а он в <strong>миллисекундах</strong> — на 1000 перед сравнением с SLO, который тоже в миллисекундах. Тогда любой p95 выглядит крошечным, и фильтрует только порог throughput: на учебном свипе она насчитает 4 вместо 2 и пропустит медленные профили как допустимые. Почини единицы.",
+          ru: "Эта <code>feasible_count(configs, floor_tps, slo_p95_ms)</code> пропускает лишних: она делит <code>p95_64</code> — а он в <strong>миллисекундах</strong> — на 1000 перед сравнением с SLO, который тоже в миллисекундах. Тогда любой p95 выглядит крошечным, и работает только фильтр по порогу throughput: на учебном свипе она насчитает 4 вместо 2 и пропустит медленные профили как допустимые. Почини единицы.",
         },
         starter: `def feasible_count(configs, floor_tps, slo_p95_ms):
     """How many configs clear both the throughput floor and the p95 SLO."""
@@ -253,7 +253,7 @@
         title: { en: "Exercise 4 · Margins of the choice", ru: "Упражнение 4 · Запасы выбора" },
         brief: {
           en: "Implement <code>slo_margins(config, floor_tps, slo_p95_ms)</code> — how much headroom the choice has: return a tuple <code>(config['thr_64'] - floor_tps, slo_p95_ms - config['p95_64'])</code> — tok/s and ms. Margins may be negative: a negative tail margin is an SLO violation you can read off the sweep table before any held-out run breaks it.",
-          ru: "Реализуй <code>slo_margins(config, floor_tps, slo_p95_ms)</code> — сколько запаса у выбора: верни кортеж <code>(config['thr_64'] - floor_tps, slo_p95_ms - config['p95_64'])</code> — ток/с и мс. Запасы могут быть отрицательными: минус по хвосту — нарушение SLO, которое видно по sweep-таблице ещё до того, как его сломает held-out.",
+          ru: "Реализуй <code>slo_margins(config, floor_tps, slo_p95_ms)</code> — сколько запаса у выбора: верни кортеж <code>(config['thr_64'] - floor_tps, slo_p95_ms - config['p95_64'])</code> — ток/с и мс. Запасы могут быть отрицательными: минус по хвосту — нарушение SLO, которое видно по свип-таблице ещё до того, как конфиг сломает held-out.",
         },
         starter: `def slo_margins(config, floor_tps, slo_p95_ms):
     """(throughput margin tok/s, tail margin ms); negative means violated."""
@@ -277,7 +277,7 @@
     posttest: [
       {
         id: "p1",
-        q: { en: "A config gives 1650 tok/s and p95 450 ms under floor 1200 / SLO 800 ms. It is\u2026", ru: "\u041a\u043e\u043d\u0444\u0438\u0433 \u0434\u0430\u0451\u0442 1650 \u0442\u043e\u043a/\u0441 \u0438 p95 450 \u043c\u0441 floor 1200 / SLO 800 \u043c\u0441. \u041e\u043d\u2026" },
+        q: { en: "A config gives 1650 tok/s and p95 450 ms under floor 1200 / SLO 800 ms. It is\u2026", ru: "\u041a\u043e\u043d\u0444\u0438\u0433 \u0434\u0430\u0451\u0442 1650 \u0442\u043e\u043a/\u0441, p95 450 \u043c\u0441; floor 1200 \u0442\u043e\u043a/\u0441, SLO 800 \u043c\u0441. \u041e\u043d\u2026" },
         options: [{ en: "feasible with margin (450, 350)", ru: "\u0434\u043e\u043f\u0443\u0441\u0442\u0438\u043c \u0441 \u0437\u0430\u043f\u0430\u0441\u043e\u043c (450, 350)" }, { en: "infeasible: p95 too high", ru: "\u043d\u0435\u0434\u043e\u043f\u0443\u0441\u0442\u0438\u043c: p95 \u0441\u043b\u0438\u0448\u043a\u043e\u043c \u0432\u044b\u0441\u043e\u043a" }, { en: "feasible only after freeze", ru: "\u0434\u043e\u043f\u0443\u0441\u0442\u0438\u043c \u0442\u043e\u043b\u044c\u043a\u043e \u043f\u043e\u0441\u043b\u0435 \u0437\u0430\u043c\u043e\u0440\u043e\u0437\u043a\u0438" }],
         answer: 0,
         explain: { en: "1650 \u2265 1200 AND 450 \u2264 800 \u2014 both hold: feasible. Margins: thr \u2212 floor = 1650 \u2212 1200 = 450 tok/s, SLO \u2212 p95 = 800 \u2212 450 = 350 ms. Feasibility needs BOTH bounds.", ru: "1650 \u2265 1200 \u0418 450 \u2264 800 \u2014 \u043e\u0431\u0430 \u0443\u0441\u043b\u043e\u0432\u0438\u044f \u0432\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u044b: \u0434\u043e\u043f\u0443\u0441\u0442\u0438\u043c. \u0417\u0430\u043f\u0430\u0441\u044b: thr \u2212 floor = 1650 \u2212 1200 = 450 \u0442\u043e\u043a/\u0441, SLO \u2212 p95 = 800 \u2212 450 = 350 \u043c\u0441. \u0414\u043e\u043f\u0443\u0441\u0442\u0438\u043c\u043e\u0441\u0442\u044c \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u043e\u0431\u043e\u0438\u0445 \u0433\u0440\u0430\u043d\u0438\u0446." },
@@ -285,7 +285,7 @@
       {
         id: "p2",
         q: { en: "Among feasible configs you pick\u2026", ru: "\u0421\u0440\u0435\u0434\u0438 \u0434\u043e\u043f\u0443\u0441\u0442\u0438\u043c\u044b\u0445 \u043a\u043e\u043d\u0444\u0438\u0433\u043e\u0432 \u0442\u044b \u0432\u044b\u0431\u0438\u0440\u0430\u0435\u0448\u044c\u2026" },
-        options: [{ en: "max throughput with named margins", ru: "\u043c\u0430\u043a\u0441\u0438\u043c\u0430\u043b\u044c\u043d\u044b\u0439 throughput \u0441 \u0438\u043c\u0435\u043d\u043e\u0432\u0430\u043d\u043d\u044b\u043c\u0438 \u0437\u0430\u043f\u0430\u0441\u0430\u043c\u0438" }, { en: "the first one", ru: "\u043f\u0435\u0440\u0432\u044b\u0439 \u043f\u043e\u043f\u0430\u0432\u0448\u0438\u0439\u0441\u044f" }, { en: "the one with the smallest p95", ru: "\u0442\u043e\u0442, \u0443 \u043a\u043e\u0433\u043e \u043c\u0438\u043d\u0438\u043c\u0430\u043b\u044c\u043d\u044b\u0439 p95" }],
+        options: [{ en: "max throughput with named margins", ru: "\u043c\u0430\u043a\u0441\u0438\u043c\u0430\u043b\u044c\u043d\u044b\u0439 throughput \u0441 \u0438\u043c\u0435\u043d\u043e\u0432\u0430\u043d\u043d\u044b\u043c\u0438 \u0437\u0430\u043f\u0430\u0441\u0430\u043c\u0438" }, { en: "the first one", ru: "\u043f\u0435\u0440\u0432\u044b\u0439 \u043f\u043e\u043f\u0430\u0432\u0448\u0438\u0439\u0441\u044f" }, { en: "the one with the smallest p95", ru: "\u0442\u043e\u0442, \u0443 \u043a\u043e\u0442\u043e\u0440\u043e\u0433\u043e \u043c\u0438\u043d\u0438\u043c\u0430\u043b\u044c\u043d\u044b\u0439 p95" }],
         answer: 0,
         explain: { en: "The working point maximises throughput subject to the SLO, with margins stated for the freeze decision.", ru: "\u0420\u0430\u0431\u043e\u0447\u0430\u044f \u0442\u043e\u0447\u043a\u0430 \u043c\u0430\u043a\u0441\u0438\u043c\u0438\u0437\u0438\u0440\u0443\u0435\u0442 throughput \u043f\u0440\u0438 \u0441\u043e\u0431\u043b\u044e\u0434\u0435\u043d\u0438\u0438 SLO, \u0441 \u0438\u043c\u0435\u043d\u043e\u0432\u0430\u043d\u043d\u044b\u043c\u0438 \u0437\u0430\u043f\u0430\u0441\u0430\u043c\u0438 \u0434\u043b\u044f \u0437\u0430\u043c\u043e\u0440\u043e\u0437\u043a\u0438." },
       },
@@ -298,7 +298,7 @@
       },
     ],
     reward: {
-      caption: { en: "Feasible, margin, freeze \u2014 tuning with an SLO is a decision, not a vibe.", ru: "\u0414\u043e\u043f\u0443\u0441\u0442\u0438\u043c\u043e\u0441\u0442\u044c, \u0437\u0430\u043f\u0430\u0441, \u0437\u0430\u043c\u043e\u0440\u043e\u0437\u043a\u0430 \u2014 \u0442\u044e\u043d\u0438\u043d\u0433 \u043f\u043e\u0434 SLO \u044d\u0442\u043e \u0440\u0435\u0448\u0435\u043d\u0438\u0435, \u0430 \u043d\u0435 \u043d\u0430\u0441\u0442\u0440\u043e\u0435\u043d\u0438\u0435." },
+      caption: { en: "Feasible, margin, freeze \u2014 tuning with an SLO is a decision, not a vibe.", ru: "\u0414\u043e\u043f\u0443\u0441\u0442\u0438\u043c\u043e\u0441\u0442\u044c, \u0437\u0430\u043f\u0430\u0441, \u0437\u0430\u043c\u043e\u0440\u043e\u0437\u043a\u0430 \u2014 \u0442\u044e\u043d\u0438\u043d\u0433 \u043f\u043e\u0434 SLO \u2014 \u044d\u0442\u043e \u0440\u0435\u0448\u0435\u043d\u0438\u0435, \u0430 \u043d\u0435 \u043d\u0430\u0441\u0442\u0440\u043e\u0435\u043d\u0438\u0435." },
     },
     footer: {
       en: "Declared teaching numbers and a declared decision rule — not a vLLM measurement and not a production recommendation. The stable content of the Topic 07 validation run is the discipline (frozen plan, OFAT + one confirmatory pair, Pareto front, freeze before held-out); its numbers live in seminars/runs/2026-10-26-topic07-search-mock-v2 and are synthetic by design.",
