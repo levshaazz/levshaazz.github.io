@@ -59,8 +59,8 @@
         stages: [
           { cap: { en: "Axes: attainable TFLOP/s against arithmetic intensity — the roofline frame.", ru: "Оси: достижимые TFLOP/s против арифметической интенсивности — каркас roofline." }, show: ["g-axes"] },
           { cap: { en: "The roofline frame: attainable TFLOP/s versus arithmetic intensity.", ru: "Две крыши: память растёт до хребта, дальше вычисления запирают на 60." }, show: ["g-axes", "g-bw", "g-comp"] },
-          { cap: { en: "Two roofs: bandwidth climbs to the ridge; compute pins at 60.", ru: "Decode левее хребта: 20 × 600 GB/s запирает шаг на 12 TFLOP/s." }, show: ["g-axes", "g-bw", "g-comp", "g-pt1"] },
-          { cap: { en: "Left of the ridge: intensity 20 caps at 12 TFLOP/s.", ru: "Левее хребта: интенсивность 20 запирает шаг на 12." }, show: ["g-axes", "g-bw", "g-comp", "g-pt1", "g-pt2"] },
+          { cap: { en: "Decode left of the ridge: 20 × 600 GB/s pins the step at 12 TFLOP/s.", ru: "Decode левее хребта: 20 × 600 GB/s запирает шаг на 12 TFLOP/s." }, show: ["g-axes", "g-bw", "g-comp", "g-pt1"] },
+          { cap: { en: "Right of the ridge: intensity 150 pins at 60 — the compute roof.", ru: "Правее хребта: интенсивность 150 запирает шаг на 60 — крыша вычислений." }, show: ["g-axes", "g-bw", "g-comp", "g-pt2"] },
         ],
       },
       {
@@ -107,9 +107,9 @@
       { en: "Compute the exact KV payload per token and the tokens that fit a fixed pool.", ru: "\u0421\u0447\u0438\u0442\u0430\u0442\u044c \u0442\u043e\u0447\u043d\u044b\u0439 KV-\u043f\u043b\u0430\u0442\u0451\u0436 \u0437\u0430 \u0442\u043e\u043a\u0435\u043d \u0438 \u0447\u0438\u0441\u043b\u043e \u0442\u043e\u043a\u0435\u043d\u043e\u0432, \u043f\u043e\u043c\u0435\u0449\u0430\u044e\u0449\u0438\u0445\u0441\u044f \u0432 \u0444\u0438\u043a\u0441\u0438\u0440\u043e\u0432\u0430\u043d\u043d\u044b\u0439 \u043f\u0443\u043b." },
     ],
     model: [
-      [{ en: "compute ceiling", ru: "потолок вычислений" }, "60 TFLOP/s", { en: "bandwidth", ru: "пропускная способность" }, "600 GB/s"],
+      [{ en: "compute ceiling", ru: "крыша вычислений" }, "60 TFLOP/s", { en: "bandwidth", ru: "пропускная способность" }, "600 GB/s"],
       [{ en: "ridge intensity", ru: "интенсивность хребта" }, { en: "compute / bandwidth = 100 FLOP/B", ru: "вычисления / память = 100 FLOP/Б" }, { en: "attainable", ru: "достижимо" }, "min(compute, intensity × bandwidth)"],
-      [{ en: "kv per token", ru: "KV-платёж за токен" }, { en: "2 × layers × kv_heads × head_dim × bytes", ru: "2 × layers × kv_heads × head_dim × байты" }, "1 GiB", { en: "1024³ bytes", ru: "1024³ байта" }],
+      [{ en: "kv per token", ru: "KV-платёж за токен" }, { en: "2 × layers × kv_heads × head_dim × bytes", ru: "2 × layers × kv_heads × head_dim × bytes" }, "1 GiB", { en: "1024³ bytes", ru: "1024³ байта" }],
     ],
     scenario: null,
     quizzes: [
@@ -117,12 +117,12 @@
         id: "q1",
         q: {
           en: "What is the ridge arithmetic intensity for 60 TFLOP/s and 600 GB/s, in FLOP/byte?",
-          ru: "Какова интенсивность хребта для 60 TFLOP/s и 600 GB/s, во FLOP/байт?",
+          ru: "Какова интенсивность хребта для 60 TFLOP/s и 600 GB/s, во FLOP/Б?",
         },
         answer: 100, tol: 0.5, unit: { en: "FLOP/B", ru: "FLOP/Б" },
         hint: {
           en: "ridge = compute ceiling / bandwidth. Keep the units: TFLOP/s divided by GB/s.",
-          ru: "хребет = потолок вычислений / пропускная способность. Следи за единицами: TFLOP/s делить на GB/s.",
+          ru: "хребет = крыша вычислений / пропускная способность. Следи за единицами: дели TFLOP/s на GB/s.",
         },
       },
       {
@@ -156,7 +156,7 @@
         title: { en: "Exercise 1 · Roofline ceiling", ru: "Упражнение 1 · Крыша roofline" },
         brief: {
           en: "Implement <code>roofline_ceiling(intensity, compute_tflops, bandwidth_gbps)</code> — attainable TFLOP/s as <code>min(compute, intensity × bandwidth)</code>. Watch the units: intensity is FLOP per <strong>byte</strong>, bandwidth is GB/s — the product is GFLOP/s, divide by 1000.",
-          ru: "Реализуй <code>roofline_ceiling(intensity, compute_tflops, bandwidth_gbps)</code> — достижимые TFLOP/s как <code>min(compute, intensity × bandwidth)</code>. Следи за единицами: интенсивность — FLOP на <strong>байт</strong>, bandwidth — GB/s — произведение в GFLOP/s, дели на 1000.",
+          ru: "Реализуй <code>roofline_ceiling(intensity, compute_tflops, bandwidth_gbps)</code> — достижимые TFLOP/s как <code>min(compute, intensity × bandwidth)</code>. Следи за единицами: интенсивность — FLOP на <strong>байт</strong>, пропускная способность памяти — GB/s; их произведение — в GFLOP/s, дели на 1000.",
         },
         starter: `def roofline_ceiling(intensity, compute_tflops, bandwidth_gbps):
     """Attainable TFLOP/s: min(compute roof, intensity x bandwidth / 1000)."""
@@ -171,7 +171,7 @@
         solution: `def roofline_ceiling(intensity, compute_tflops, bandwidth_gbps):
     return min(compute_tflops, intensity * bandwidth_gbps / 1000)`,
         hints: [
-          { en: "One min() of two products. No branches needed.", ru: "Один min() от двух произведений. Ветвления не нужны." },
+          { en: "One min(): the compute roof and the product (intensity × bandwidth / 1000). No branches needed.", ru: "Один min(): крыша вычислений и произведение (интенсивность × bandwidth / 1000). Ветвления не нужны." },
         ],
         numpy: false,
         timeoutMs: 4000,
@@ -205,7 +205,7 @@
         title: { en: "Exercise 3 · Fix the bug: pool capacity", ru: "Упражнение 3 · Почини баг: ёмкость пула" },
         brief: {
           en: "This <code>kv_pool_tokens(pool_gib, per_token_bytes)</code> undercounts: it treats GiB as 10⁹ bytes and shrinks the pool by an unexplained 0.75 reserve. Fix it to return whole tokens that fit: <code>int(pool_gib × 1024³ / per_token_bytes)</code>.",
-          ru: "Эта <code>kv_pool_tokens(pool_gib, per_token_bytes)</code> занижает: считает GiB как 10⁹ байт и сжимает пул необъяснённым резервом 0.75. Почини: целое число токенов, помещающихся в пул, — <code>int(pool_gib × 1024³ / per_token_bytes)</code>.",
+          ru: "Эта <code>kv_pool_tokens(pool_gib, per_token_bytes)</code> занижает: считает GiB как 10⁹ байт и сжимает пул необъяснённым множителем 0.75. Почини: целое число токенов, помещающихся в пул, — <code>int(pool_gib × 1024³ / per_token_bytes)</code>.",
         },
         starter: `def kv_pool_tokens(pool_gib, per_token_bytes):
     """How many whole live tokens fit in a pool of pool_gib GiB."""
@@ -231,7 +231,7 @@
       {
         id: "p1",
         q: { en: "A decode step runs at arithmetic intensity 150 FLOP/B on the declared machine (ridge 100). What bounds it?", ru: "Decode-\u0448\u0430\u0433 \u0438\u0434\u0451\u0442 \u043f\u0440\u0438 \u0438\u043d\u0442\u0435\u043d\u0441\u0438\u0432\u043d\u043e\u0441\u0442\u0438 150 FLOP/\u0411 \u043d\u0430 \u0437\u0430\u044f\u0432\u043b\u0435\u043d\u043d\u043e\u0439 \u043c\u0430\u0448\u0438\u043d\u0435 (\u0445\u0440\u0435\u0431\u0435\u0442 100). \u0427\u0442\u043e \u0435\u0433\u043e \u043e\u0433\u0440\u0430\u043d\u0438\u0447\u0438\u0432\u0430\u0435\u0442?" },
-        options: [{ en: "The bandwidth roof", ru: "\u041a\u0440\u044b\u0448\u0430 \u043f\u0430\u043c\u044f\u0442\u0438" }, { en: "The compute roof", ru: "\u041a\u0440\u044b\u0448\u0430 \u0432\u044b\u0447\u0438\u0441\u043b\u0435\u043d\u0438\u0439" }, { en: "Neither: it is latency-bound", ru: "\u041d\u0438\u0447\u044c\u044f: \u043e\u043d \u043e\u0433\u0440\u0430\u043d\u0438\u0447\u0435\u043d \u043b\u0430\u0442\u0435\u043d\u0442\u043d\u043e\u0441\u0442\u044c\u044e" }],
+        options: [{ en: "The bandwidth roof", ru: "\u041a\u0440\u044b\u0448\u0430 \u043f\u0430\u043c\u044f\u0442\u0438" }, { en: "The compute roof", ru: "\u041a\u0440\u044b\u0448\u0430 \u0432\u044b\u0447\u0438\u0441\u043b\u0435\u043d\u0438\u0439" }, { en: "Neither: it is latency-bound", ru: "\u041d\u0438\u0447\u0435\u0433\u043e \u0438\u0437 \u044d\u0442\u043e\u0433\u043e: \u043e\u043d \u043e\u0433\u0440\u0430\u043d\u0438\u0447\u0435\u043d \u043b\u0430\u0442\u0435\u043d\u0442\u043d\u043e\u0441\u0442\u044c\u044e" }],
         answer: 1,
         explain: { en: "150 is right of the ridge: attainable = min(compute, intensity \u00d7 bandwidth) pins at the compute roof.", ru: "150 \u043f\u0440\u0430\u0432\u0435\u0435 \u0445\u0440\u0435\u0431\u0442\u0430: attainable = min(compute, intensity \u00d7 bandwidth) \u0443\u043f\u0438\u0440\u0430\u0435\u0442\u0441\u044f \u0432 \u043a\u0440\u044b\u0448\u0443 \u0432\u044b\u0447\u0438\u0441\u043b\u0435\u043d\u0438\u0439." },
       },
@@ -240,14 +240,14 @@
         q: { en: "Which one is NOT part of the per-token KV payload?", ru: "\u0427\u0442\u043e \u0438\u0437 \u044d\u0442\u043e\u0433\u043e \u041d\u0415 \u0432\u0445\u043e\u0434\u0438\u0442 \u0432 KV-\u043f\u043b\u0430\u0442\u0451\u0436 \u0437\u0430 \u0442\u043e\u043a\u0435\u043d?" },
         options: [{ en: "K and V tensors", ru: "\u0422\u0435\u043d\u0437\u043e\u0440\u044b K \u0438 V" }, { en: "Model weights", ru: "\u0412\u0435\u0441\u0430 \u043c\u043e\u0434\u0435\u043b\u0438" }, { en: "kv_heads \u00d7 head_dim", ru: "kv_heads \u00d7 head_dim" }],
         answer: 1,
-        explain: { en: "KV payload = 2 \u00d7 layers \u00d7 kv_heads \u00d7 head_dim \u00d7 bytes \u2014 it is per-token state, not the frozen weights.", ru: "KV-\u043f\u043b\u0430\u0442\u0451\u0436 = 2 \u00d7 layers \u00d7 kv_heads \u00d7 head_dim \u00d7 bytes \u2014 \u044d\u0442\u043e \u043f\u043e\u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u044e \u043d\u0430 \u0442\u043e\u043a\u0435\u043d, \u0430 \u043d\u0435 \u0437\u0430\u043c\u043e\u0440\u043e\u0436\u0435\u043d\u043d\u044b\u0435 \u0432\u0435\u0441\u0430." },
+        explain: { en: "KV payload = 2 \u00d7 layers \u00d7 kv_heads \u00d7 head_dim \u00d7 bytes \u2014 it is per-token state, not the frozen weights.", ru: "KV-\u043f\u043b\u0430\u0442\u0451\u0436 = 2 \u00d7 layers \u00d7 kv_heads \u00d7 head_dim \u00d7 bytes \u2014 \u044d\u0442\u043e \u043f\u043b\u0430\u0442\u0430 \u0437\u0430 \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u0435 \u043d\u0430 \u0442\u043e\u043a\u0435\u043d, \u0430 \u043d\u0435 \u0437\u0430 \u0432\u0435\u0441\u0430 \u043c\u043e\u0434\u0435\u043b\u0438." },
       },
       {
         id: "p3",
         q: { en: "You double kv_heads from 2 to 4. The per-token payload\u2026", ru: "\u0422\u044b \u0443\u0434\u0432\u043e\u0438\u043b kv_heads \u0441 2 \u0434\u043e 4. \u041f\u043b\u0430\u0442\u0451\u0436 \u0437\u0430 \u0442\u043e\u043a\u0435\u043d\u2026" },
         options: [{ en: "stays the same", ru: "\u043d\u0435 \u043c\u0435\u043d\u044f\u0435\u0442\u0441\u044f" }, { en: "doubles", ru: "\u0443\u0434\u0432\u0430\u0438\u0432\u0430\u0435\u0442\u0441\u044f" }, { en: "halves", ru: "\u0434\u0435\u043b\u0438\u0442\u0441\u044f \u043f\u043e\u043f\u043e\u043b\u0430\u043c" }],
         answer: 1,
-        explain: { en: "The formula is linear in kv_heads: 2 \u00d7 36 \u00d7 2 \u00d7 128 \u00d7 2 doubles from 36 to 72 KiB.", ru: "\u0424\u043e\u0440\u043c\u0443\u043b\u0430 \u043b\u0438\u043d\u0435\u0439\u043d\u0430 \u043f\u043e kv_heads: 2 \u00d7 36 \u00d7 2 \u00d7 128 \u00d7 2 \u0432\u044b\u0440\u0430\u0441\u0442\u0430\u0435\u0442 \u0441 36 \u0434\u043e 72 \u041a\u0438\u0411." },
+        explain: { en: "The formula is linear in kv_heads: 2 \u00d7 36 \u00d7 2 \u00d7 128 \u00d7 2 doubles from 36 to 72 KiB.", ru: "\u0424\u043e\u0440\u043c\u0443\u043b\u0430 \u043b\u0438\u043d\u0435\u0439\u043d\u0430 \u043f\u043e kv_heads: \u043f\u043b\u0430\u0442\u0451\u0436 \u0432\u044b\u0440\u0430\u0441\u0442\u0430\u0435\u0442 \u0441 36 \u0434\u043e 72 \u041a\u0438\u0411." },
       },
     ],
     reward: {
