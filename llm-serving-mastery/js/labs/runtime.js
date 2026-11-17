@@ -35,7 +35,12 @@
 
   async function ensureWarm() {
     if (!warm) warm = spawn();
-    await warm.ready;
+    try {
+      await warm.ready;
+    } catch (e) {
+      warm = null; // a failed spawn must not poison every later run
+      throw e;
+    }
     return warm;
   }
 

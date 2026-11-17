@@ -256,9 +256,14 @@
           JSON.stringify(ex.fixtureEntries) + "))\n\n";
       }
       if (!inject) return { ok: false, fixture: false };
-      if (!textarea.value.startsWith("import json as _rtjson")) {
-        textarea.value = inject + textarea.value;
+      // refresh, not skip: a second run after a new experiment must analyse the
+      // CURRENT journal, and a fixture must never silently masquerade as live
+      const MARK = "import json as _rtjson";
+      if (textarea.value.startsWith(MARK)) {
+        const sep = textarea.value.indexOf("\n\n");
+        textarea.value = sep >= 0 ? textarea.value.slice(sep + 2) : "";
       }
+      textarea.value = inject + textarea.value;
       return { ok: true, fixture: fixture };
     },
   };

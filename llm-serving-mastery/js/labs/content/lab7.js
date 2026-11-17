@@ -96,7 +96,7 @@
   <g id="g-freeze">
     <rect x="250" y="356" width="260" height="42" rx="9" fill="none" stroke="var(--lab-good)" stroke-width="2"/>
     <text x="380" y="373" text-anchor="middle" font-size="14" fill="var(--lab-good)" data-en="freeze: pair · before held-out" data-ru="заморозка: pair · до held-out">freeze: pair · before held-out</text>
-    <text x="380" y="391" text-anchor="middle" font-size="12" fill="var(--lab-muted)" data-en="rejected rows stay in the table" data-ru="отклонённые строки остаются в таблице">rejected rows stay in the table</text>
+    <text x="380" y="391" text-anchor="middle" font-size="13" fill="var(--lab-muted)" data-en="rejected rows stay in the table" data-ru="отклонённые строки остаются в таблице">rejected rows stay in the table</text>
   </g>
 </svg>`,
         stages: [

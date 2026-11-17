@@ -21,10 +21,11 @@
   // Deterministic per-item option shuffle: content authors should not have to
   // hand-place correct answers (all-A/all-B was a real audit finding), and the
   // same seed keeps RU/EN order identical. Seed = stable hash of the item id.
-  function shuffleOptions(it, seedPrefix) {
+  function shuffleOptions(it, seedPrefix, itemIndex) {
     let h = 2166136261;
-    // seed per lab+id: identical item ids across labs must not share a permutation
-    const key = String(seedPrefix || "") + ":" + String(it.id || "");
+    // seed per lab+id+item: identical ids across labs must not share a
+    // permutation, and a single lab must not land on all-same positions
+    const key = String(seedPrefix || "") + ":" + String(it.id || "") + ":" + String(itemIndex);
     for (let i = 0; i < key.length; i += 1) {
       h ^= key.charCodeAt(i);
       h = Math.imul(h, 16777619);
@@ -53,7 +54,18 @@
       const seedPrefix = (opts && opts.seedPrefix) || "";
       const onCorrect = (opts && opts.onCorrect) || (() => {});
       const trl = (f) => tr(f, lang);
-      items.forEach((it) => {
+      const allPairs = items.map((it, itemIndex) => shuffleOptions(it, seedPrefix, itemIndex));
+      const okPos = allPairs.map((ps) => ps.findIndex((p) => p.ok));
+      if (items.length > 1 && okPos.every((p) => p === okPos[0])) {
+        // every correct answer on the same button is a pattern a student learns
+        // after one lab; rotate item i by i (deterministic, RU/EN identical)
+        allPairs.forEach((ps, i) => {
+          const shift = i % ps.length;
+          for (let r = 0; r < shift; r += 1) ps.push(ps.shift());
+        });
+      }
+      items.forEach((it, itemIndex) => {
+        const pairs = allPairs[itemIndex];
         const card = el("div", "lab-card lab-mc");
         card.dataset.labCheckpoint = it.id;
         const head = el("div", "lab-mc-head");
@@ -68,7 +80,6 @@
         verdict.setAttribute("aria-live", "polite");
         const explain = el("p", "lab-mc-explain");
         explain.style.display = "none";
-        const pairs = shuffleOptions(it, seedPrefix);
         pairs.forEach((pair, i) => {
           const btn = el("button", "lab-mc-opt");
           btn.type = "button";
@@ -83,7 +94,7 @@
               list.querySelectorAll(".lab-mc-opt").forEach((b) => { b.disabled = true; });
               verdict.dataset.state = "pass";
               verdict.textContent = (lang === "ru" ? "верно" : "correct") +
-                (attempts > 1 ? " · " + (lang === "ru" ? "со второй попытки" : "on attempt " + attempts) : "");
+                (attempts > 1 ? " · " + (lang === "ru" ? "с " + attempts + "-й попытки" : "on attempt " + attempts) : "");
               explain.style.display = "block";
               explain.textContent = trl(it.explain);
               onCorrect(it.id);

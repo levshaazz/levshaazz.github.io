@@ -31,6 +31,7 @@
 
   function mount(host, fig, lang) {
     if (!host || !fig || !fig.svg) return;
+    if (fig.id && host.querySelector('[data-fig="' + fig.id + '"]')) return;
     var stages = fig.stages || [];
     var ru = lang === "ru";
     var L = {
@@ -96,7 +97,8 @@
     });
     figure.appendChild(dots);
 
-    // group registry: first stage each group appears in
+    // group registry: first stage each group appears in; groups never listed
+    // in any show stay hidden forever (an authoring slip must not leak ink)
     var groups = new Map();
     stages.forEach(function (st, i) {
       (st.show || []).forEach(function (id) {
@@ -104,6 +106,9 @@
           groups.set(id, { el: canvas.querySelector('g[id="' + id + '"]'), first: i });
         }
       });
+    });
+    canvas.querySelectorAll("g[id]").forEach(function (g) {
+      if (!groups.has(g.id)) groups.set(g.id, { el: g, first: -1 });
     });
 
     var state = 0;
@@ -159,6 +164,7 @@
     figure.addEventListener("keydown", function (e) {
       if (e.key === "ArrowRight") { stopPlay(); go(state + 1); e.preventDefault(); }
       else if (e.key === "ArrowLeft") { stopPlay(); go(state - 1); e.preventDefault(); }
+      else if (e.key === " ") { stopPlay(); go(state + 1); e.preventDefault(); }
     });
 
     if (REDUCED) bPlay.style.display = "none";
@@ -173,6 +179,13 @@
     }
 
     host.appendChild(figure);
+    if (!stages.length) {
+      count.textContent = "0 / 0";
+      cap.textContent = tr(fig.title, lang);
+      bPrev.disabled = true; bNext.disabled = true; bPlay.style.display = "none";
+      dotBtns.forEach(function (d) { d.disabled = true; });
+      return;
+    }
     go(0);
   }
 

@@ -60,22 +60,22 @@
     <rect x="430" y="60" width="130" height="56" rx="8" fill="none" stroke="var(--lab-accent)" stroke-width="1.5"/>
     <text x="445" y="84" font-size="13" fill="var(--lab-ink)" class="mono">pod 0</text>
     <circle cx="542" cy="76" r="5" fill="var(--lab-good)"/>
-    <text x="445" y="104" font-size="12" fill="var(--lab-muted)" class="mono">16+4+1.5 Gi</text>
+    <text x="445" y="104" font-size="13" fill="var(--lab-muted)" class="mono">16+4+1.5 Gi</text>
     <rect x="575" y="130" width="130" height="56" rx="8" fill="var(--lab-accent)" opacity="0.12"/>
     <rect x="575" y="130" width="130" height="56" rx="8" fill="none" stroke="var(--lab-accent)" stroke-width="1.5"/>
     <text x="590" y="154" font-size="13" fill="var(--lab-ink)" class="mono">pod 1</text>
     <circle cx="687" cy="146" r="5" fill="var(--lab-good)"/>
-    <text x="590" y="174" font-size="12" fill="var(--lab-muted)" class="mono">16+4+1.5 Gi</text>
+    <text x="590" y="174" font-size="13" fill="var(--lab-muted)" class="mono">16+4+1.5 Gi</text>
     <rect x="430" y="204" width="130" height="56" rx="8" fill="var(--lab-accent)" opacity="0.12"/>
     <rect x="430" y="204" width="130" height="56" rx="8" fill="none" stroke="var(--lab-accent)" stroke-width="1.5"/>
     <text x="445" y="228" font-size="13" fill="var(--lab-ink)" class="mono">pod 2</text>
     <circle cx="542" cy="220" r="5" fill="var(--lab-good)"/>
-    <text x="445" y="248" font-size="12" fill="var(--lab-muted)" class="mono">16+4+1.5 Gi</text>
+    <text x="445" y="248" font-size="13" fill="var(--lab-muted)" class="mono">16+4+1.5 Gi</text>
     <text x="430" y="290" font-size="13" fill="var(--lab-muted)" data-en="green dot = Ready (probe passed)" data-ru="зелёная точка = Ready (проба прошла)">green dot = Ready (probe passed)</text>
   </g>
   <g id="g-service">
     <rect x="430" y="330" width="280" height="42" rx="9" fill="none" stroke="var(--lab-good)" stroke-width="2"/>
-    <text x="570" y="356" text-anchor="middle" font-size="14" fill="var(--lab-good)" class="mono">Service: llm-svc :8000</text>
+    <text x="570" y="356" text-anchor="middle" font-size="14" fill="var(--lab-good)" class="mono">Service: llm-svc :8760</text>
     <path d="M 495 330 L 495 264" fill="none" stroke="var(--lab-good)" stroke-width="2" class="fig-flow"/>
     <path d="M 620 330 C 660 320 680 240 690 190" fill="none" stroke="var(--lab-good)" stroke-width="2" class="fig-flow"/>
     <path d="M 560 330 L 560 264" fill="none" stroke="var(--lab-good)" stroke-width="2" class="fig-flow"/>
@@ -116,7 +116,7 @@
   <g id="g-surge">
     <rect x="558" y="76" width="150" height="60" rx="8" fill="none" stroke="var(--lab-accent)" stroke-width="1.5" stroke-dasharray="6 4" class="fig-ants"/>
     <text x="633" y="100" text-anchor="middle" font-size="14" fill="var(--lab-ink)" class="mono">pod 3s</text>
-    <text x="633" y="122" text-anchor="middle" font-size="12" fill="var(--fig-warm)" data-en="loading weights · 165 s" data-ru="грузит веса · 165 с">loading weights · 165 s</text>
+    <text x="633" y="122" text-anchor="middle" font-size="13" fill="var(--fig-warm)" data-en="loading weights · 165 s" data-ru="грузит веса · 165 с">loading weights · 165 s</text>
     <text x="60" y="216" font-size="14" fill="var(--lab-ink)" data-en="surge first: the new pod starts loading" data-ru="сначала surge: новый под начинает грузиться">surge first: the new pod starts loading</text>
     <text x="60" y="240" font-size="13" fill="var(--lab-muted)" data-en="until it is Ready, it serves nothing" data-ru="пока не Ready — он не обслуживает ни один запрос">until it is Ready, it serves nothing</text>
   </g>
@@ -185,7 +185,7 @@
         answer: 3, tol: 0.2, unit: { en: "pods", ru: "пода" },
         hint: {
           en: "floor = replicas − maxUnavailable; maxSurge does not raise the floor.",
-          ru: "граница = replicas − maxUnavailable; maxSurve границу не поднимает.",
+          ru: "граница = replicas − maxUnavailable; maxSurge границу не поднимает.",
         },
       },
     ],

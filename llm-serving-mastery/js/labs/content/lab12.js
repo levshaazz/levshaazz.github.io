@@ -17,7 +17,7 @@
       ru: "Объясни, почему занятый GPU — не сигнал к масштабированию, посчитай решение HPA до целого и усмири флаттерующий флот окном стабилизации.",
     },
     intro: {
-      en: `<p>One vLLM pod already serves a crowd: continuous batching (T05) collects requests into batches at every step boundary, and the roof <code>1000 / b</code> from T06 still holds. That is why <strong>«GPU busy at 90 %» is not an overload signal</strong> — batching is supposed to keep the GPU busy even when the queue is empty. The signals that actually mean «scale» are the <strong>queue depth</strong>, the KV-cache pressure and the TTFT — the lesson the llm-d team brought home from KubeCon NA 2026.</p>
+      en: `<p>One vLLM pod already serves a crowd: continuous batching (T05) collects requests into batches at every step boundary, and the roof <code>1000 / b</code> from T06 still holds. That is why <strong>"GPU busy at 90%" is not an overload signal</strong> — batching is supposed to keep the GPU busy even when the queue is empty. The signals that actually mean "scale" are the <strong>queue depth</strong>, the KV-cache pressure and the TTFT — the lesson the llm-d team brought home from KubeCon NA 2026.</p>
 <p>The <strong>Horizontal Pod Autoscaler (HPA)</strong> is the controller that turns such a signal into replicas. Every tick (15 s) it computes one number: <code>desired = ceil(replicas × metric / target)</code>, clamped into <code>[min, max]</code>. If the metric-to-target ratio sits inside the <strong>tolerance band</strong> ±10 %, it does nothing. And the windows are asymmetric on purpose: scaling up is immediate (window 0 s), scaling down waits in a <strong>300 s stabilization window</strong> and applies the <em>maximum</em> recommendation seen there — without it, a saw-shaped metric makes the fleet flap 1↔2↔1 and burns money on churn.</p>
 <p>Scaling LLM pods is expensive in time even when it is free in paperwork: a fresh pod pays the weight load again (T09's members, ~165 s on the course fleet), which is exactly why scale-down is the cautious direction. Everything here runs on declared numbers and a deterministic simulator in the sandbox — this is controller arithmetic, not a cluster. The compose runtime from T08 remains your rehearsal: burst 24 → sixteen honest 429s (T08), then a hand-driven «HPA tick» — raise the gateway replicas — and burst again; the journal compares the refusals.</p>`,
       ru: `<p>Один под vLLM уже обслуживает толпу: continuous batching (T05) собирает запросы в батчи на каждой границе шага, и крыша <code>1000 / b</code> из T06 никуда не делась. Поэтому <strong>«GPU занят на 90 %» — не сигнал перегрузки</strong>: батчинг и обязан держать GPU занятым, даже когда очередь пуста. Сигналы, которые действительно означают «масштабируй», — <strong>глубина очереди</strong>, давление на KV-кэш и TTFT: урок, который команда llm-d привезла с KubeCon NA 2026.</p>
@@ -35,7 +35,7 @@
       [{ en: "cold scale-up", ru: "холодный масштаб-ап" }, { en: "a fresh pod pays the weight load again (T09 members) — scale-up is instant on paper, slow in reality.", ru: "свежий под снова платит загрузку весов (члены T09) — на бумаге скейл-ап мгновенный, в реальности медленный." }],
       [{ en: "single-pod concurrency", ru: "конкурентность пода" }, { en: "continuous batching (T05) serves many clients per pod — that is why per-pod capacity is a roof, not a fixed rate.", ru: "continuous batching (T05) обслуживает многих клиентов на под — потому ёмкость пода это крыша, а не фиксированная ставка." }],
       [{ en: "PodDisruptionBudget", ru: "PodDisruptionBudget" }, { en: "a floor for voluntary disruptions (drains, updates): how many pods must stay up — the T11 rollout lesson, generalized.", ru: "нижняя граница для добровольных беспокойств (дрены, обновления): сколько подов обязаны жить — урок роллаутов из T11 в общем виде." }],
-      [{ en: "failure drill", ru: "дрель отказа" }, { en: "kill a pod on purpose and measure what clients see: how much capacity vanished and for how long.", ru: "убить под нарочно и измерить, что увидят клиенты: сколько ёмкости пропало и на сколько." }],
+      [{ en: "failure drill", ru: "дрилл отказа" }, { en: "kill a pod on purpose and measure what clients see: how much capacity vanished and for how long.", ru: "убить под нарочно и измерить, что увидят клиенты: сколько ёмкости пропало и на сколько." }],
     ],
     figures: [
       {
@@ -57,17 +57,17 @@
   <g id="g-ceil">
     <rect x="470" y="40" width="230" height="52" rx="9" fill="none" stroke="var(--lab-accent)" stroke-width="2"/>
     <text x="585" y="62" text-anchor="middle" font-size="14" fill="var(--lab-accent)" class="mono">ceil(2 × 6 / 2) = 6 → 4</text>
-    <text x="585" y="82" text-anchor="middle" font-size="12" fill="var(--lab-muted)" data-en="clamped into [min, max]" data-ru="зажато в [min, max]">clamped into [min, max]</text>
+    <text x="585" y="82" text-anchor="middle" font-size="13" fill="var(--lab-muted)" data-en="clamped into [min, max]" data-ru="зажато в [min, max]">clamped into [min, max]</text>
     <text x="380" y="348" font-size="14" fill="var(--lab-ink)" data-en="outside the band and rising: scale up immediately (window 0 s)" data-ru="вне полосы и растёт: скейл-ап мгновенно (окно 0 с)">outside the band and rising: scale up immediately (window 0 s)</text>
   </g>
   <g id="g-window">
     <rect x="470" y="40" width="230" height="52" rx="9" fill="none" stroke="var(--fig-warm)" stroke-width="2"/>
     <text x="585" y="62" text-anchor="middle" font-size="14" fill="var(--fig-warm)" class="mono" data-en="scale-down: max of 300 s window" data-ru="скейл-даун: максимум за 300 с">scale-down: max of 300 s window</text>
-    <text x="585" y="82" text-anchor="middle" font-size="12" fill="var(--lab-muted)" data-en="20 ticks of 15 s" data-ru="20 тиков по 15 с">20 ticks of 15 s</text>
+    <text x="585" y="82" text-anchor="middle" font-size="13" fill="var(--lab-muted)" data-en="20 ticks of 15 s" data-ru="20 тиков по 15 с">20 ticks of 15 s</text>
     <text x="380" y="378" font-size="14" fill="var(--fig-warm)" data-en="metric falls: the window holds the fleet up" data-ru="метрика падает: окно держит флот наверху">metric falls: the window holds the fleet up</text>
     <g class="fig-ghost">
       <path d="M 100 40 L 140 76 L 180 40 L 220 76 L 260 40 L 300 76 L 340 40" fill="none" stroke="var(--fig-warm)" stroke-width="1.5"/>
-      <text x="220" y="30" text-anchor="middle" font-size="12" fill="var(--fig-warm)" data-en="without the window: flapping 1↔4↔1" data-ru="без окна: флаттер 1↔4↔1">without the window: flapping 1↔4↔1</text>
+      <text x="220" y="30" text-anchor="middle" font-size="13" fill="var(--fig-warm)" data-en="without the window: flapping 1↔4↔1" data-ru="без окна: флаттер 1↔4↔1">without the window: flapping 1↔4↔1</text>
     </g>
   </g>
 </svg>`,
@@ -108,16 +108,16 @@
   <g id="g-meters">
     <rect x="520" y="110" width="200" height="70" rx="9" fill="none" stroke="var(--fig-warm)" stroke-width="1.5"/>
     <text x="536" y="136" font-size="14" fill="var(--fig-warm)" class="mono" data-en="GPU util: 90 %" data-ru="GPU-утилизация: 90 %">GPU util: 90 %</text>
-    <text x="536" y="160" font-size="12" fill="var(--fig-warm)" data-en="busy batching — calm, not overload" data-ru="занят батчингом — это спокойствие, не перегруз">busy batching — calm, not overload</text>
+    <text x="536" y="160" font-size="13" fill="var(--fig-warm)" data-en="busy batching — calm, not overload" data-ru="занят батчингом — это спокойствие, не перегруз">busy batching — calm, not overload</text>
     <rect x="520" y="200" width="200" height="70" rx="9" fill="none" stroke="var(--lab-good)" stroke-width="1.5"/>
     <text x="536" y="226" font-size="14" fill="var(--lab-good)" class="mono" data-en="queue depth: 0 per pod" data-ru="очередь: 0 на под">queue depth: 0 per pod</text>
-    <text x="536" y="250" font-size="12" fill="var(--lab-good)" data-en="nobody waiting — do not scale" data-ru="никто не ждёт — не масштабируй">nobody waiting — do not scale</text>
+    <text x="536" y="250" font-size="13" fill="var(--lab-good)" data-en="nobody waiting — do not scale" data-ru="никто не ждёт — не масштабируй">nobody waiting — do not scale</text>
   </g>
   <g id="g-scale">
     <rect x="520" y="290" width="200" height="70" rx="9" fill="none" stroke="var(--lab-accent)" stroke-width="2"/>
     <text x="536" y="316" font-size="14" fill="var(--lab-accent)" class="mono" data-en="queue depth: 5 per pod" data-ru="очередь: 5 на под">queue depth: 5 per pod</text>
     <text x="536" y="340" font-size="13" fill="var(--lab-accent)" class="mono">ceil(2 × 5 / 2) = 5 → 4</text>
-    <text x="536" y="356" font-size="12" fill="var(--lab-accent)" data-en="now the HPA acts" data-ru="вот теперь HPA действует">now the HPA acts</text>
+    <text x="536" y="356" font-size="13" fill="var(--lab-accent)" data-en="now the HPA acts" data-ru="вот теперь HPA действует">now the HPA acts</text>
     <text x="380" y="398" text-anchor="middle" font-size="14" fill="var(--lab-ink)" data-en="GPU util lies, the queue tells the truth" data-ru="GPU-утилизация врёт, очередь говорит правду">GPU util lies, the queue tells the truth</text>
   </g>
 </svg>`,
@@ -131,7 +131,7 @@
     ],
     outcomes: [
       { en: "Compute the HPA decision like the controller: ceil formula, tolerance band, clamp, and the stabilization windows that prevent flapping.", ru: "Считать решение HPA как контроллер: формула ceil, полоса tolerance, кламп и окна стабилизации, которые гасят флаттер." },
-      { en: "Pick an LLM scaling signal and run a failure drill: explain why GPU utilization misleads and what a lost pod costs.", ru: "Выбирать сигнал масштабирования для LLM и проводить дрель отказа: объяснять, чем обманывает GPU-утилизация и во что обходится потерянный под." },
+      { en: "Explain why GPU utilization misleads under batching and scale on the queue-depth signal, not on the busy meter.", ru: "Объяснять, почему GPU-утилизация обманывает при батчинге, и масштабировать по сигналу глубины очереди, а не по занятости GPU." },
     ],
     model: [
       [{ en: "HPA formula", ru: "формула HPA" }, { en: "desired = ceil(replicas × metric / target)", ru: "desired = ceil(replicas × metric / target)" }, { en: "tolerance", ru: "tolerance" }, { en: "±10 % → no scaling", ru: "±10 % → не скейлим" }],
@@ -256,6 +256,7 @@ def hpa_step(replicas, metric, target, tol=0.1, min_r=1, max_r=10):
 `,
         tests: [
           { name: "saw metric: the window holds the fleet", hidden: false, code: "eq(stabilized([1, 2, 1, 2, 1], 3, 2), 2)" },
+          { name: "a stale spike does not raise a rising fleet", hidden: true, code: "eq(stabilized([9, 7, 8], 3, 7), 8)" },
           { name: "scale-up is immediate", hidden: false, code: "eq(stabilized([1, 1, 5], 3, 2), 5)" },
           { name: "the spike fell out of the window", hidden: true, code: "eq(stabilized([5, 1, 1, 1], 3, 4), 1)" },
           { name: "window max keeps current — held, not raised", hidden: true, code: "eq(stabilized([4, 2, 2], 3, 4), 4)" },
@@ -366,7 +367,7 @@ class HPASim:
       {
         id: "p2",
         q: { en: "Why do LLM teams scale on queue depth instead of GPU utilization?", ru: "Почему LLM-команды скейлят по глубине очереди, а не по GPU-утилизации?" },
-        options: [{ en: "batching keeps GPU utilization high even with an empty queue — only the queue shows real demand", ru: "батчинг держит GPU-утилизацию высокой даже при пустой очереди — настоящий спрос видна только очередь" }, { en: "GPU utilization is impossible to measure", ru: "GPU-утилизацию невозможно измерить" }, { en: "the HPA forbids GPU metrics", ru: "HPA запрещает GPU-метрики" }],
+        options: [{ en: "batching keeps GPU utilization high even with an empty queue — only the queue shows real demand", ru: "батчинг держит GPU-утилизацию высокой даже при пустой очереди — о настоящем спросе говорит только очередь" }, { en: "GPU utilization is impossible to measure", ru: "GPU-утилизацию невозможно измерить" }, { en: "the HPA forbids GPU metrics", ru: "HPA запрещает GPU-метрики" }],
         answer: 0,
         explain: { en: "Continuous batching is doing its job exactly when the GPU is busy and the queue is empty; the queue (or KV pressure, or TTFT) is what says «more pods now».", ru: "Continuous batching делает свою работу ровно тогда, когда GPU занят, а очередь пуста; очередь (или давление KV, или TTFT) — то, что говорит «нужны ещё поды»." },
       },

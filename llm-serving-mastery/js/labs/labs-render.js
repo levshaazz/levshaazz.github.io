@@ -251,6 +251,9 @@
     const lockRuns = (on) => document.querySelectorAll("[data-lab-run]").forEach((b) => { b.disabled = !on; });
 
     runBtn.addEventListener("click", async () => {
+      // lock BEFORE any await: two clicks inside the prepareExercise window
+      // would both reach the single Pyodide worker and corrupt each other's run
+      lockRuns(false);
       // layer-2 exercises need the live journal injected from the local runtime;
       // offline, fall back to the declared synthetic fixture when the content
       // ships one (marked in the output — a fixture is never evidence)
@@ -259,11 +262,11 @@
         if (!ready || !ready.ok) {
           results.innerHTML = "";
           appendOut(T.runtimeOffline, "err");
+          lockRuns(true);
           return;
         }
         if (ready.fixture) appendOut(T.fixtureNote, "err");
       }
-      lockRuns(false);
       results.innerHTML = "";
       stdoutBox.textContent = "";
       appendOut(T.loading);
