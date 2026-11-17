@@ -32,9 +32,9 @@
       [{ en: "stabilization window", ru: "окно стабилизации" }, { en: "scale-up is immediate (0 s); scale-down waits 300 s and takes the max recommendation seen in the window.", ru: "скейл-ап мгновенный (0 с); скейл-даун ждёт 300 с и берёт максимум рекомендаций за окно." }],
       [{ en: "custom metrics", ru: "кастомные метрики" }, { en: "LLM signals are not CPU: they reach the HPA via Prometheus Adapter, KEDA, or llm-d's WVA.", ru: "сигналы LLM — не CPU: до HPA они добираются через Prometheus Adapter, KEDA или llm-d WVA." }],
       [{ en: "queue depth", ru: "глубина очереди" }, { en: "requests waiting per pod; the teaching target here is 2 per pod.", ru: "заявок в очереди на под; учебная цель здесь — 2 на под." }],
-      [{ en: "cold scale-up", ru: "холодный масштаб-ап" }, { en: "a fresh pod pays the weight load again (T09 members) — scale-up is instant on paper, slow in reality.", ru: "свежий под снова платит загрузку весов (члены T09) — на бумаге скейл-ап мгновенный, в реальности медленный." }],
-      [{ en: "single-pod concurrency", ru: "конкурентность пода" }, { en: "continuous batching (T05) serves many clients per pod — that is why per-pod capacity is a roof, not a fixed rate.", ru: "continuous batching (T05) обслуживает многих клиентов на под — потому ёмкость пода это крыша, а не фиксированная ставка." }],
-      [{ en: "PodDisruptionBudget", ru: "PodDisruptionBudget" }, { en: "a floor for voluntary disruptions (drains, updates): how many pods must stay up — the T11 rollout lesson, generalized.", ru: "нижняя граница для добровольных беспокойств (дрены, обновления): сколько подов обязаны жить — урок роллаутов из T11 в общем виде." }],
+      [{ en: "cold scale-up", ru: "холодный скейл-ап" }, { en: "a fresh pod pays the weight load again (T09 members) — scale-up is instant on paper, slow in reality.", ru: "свежий под снова платит загрузку весов (члены T09) — на бумаге скейл-ап мгновенный, в реальности медленный." }],
+      [{ en: "single-pod concurrency", ru: "конкурентность пода" }, { en: "continuous batching (T05) serves many clients per pod — that is why per-pod capacity is a roof, not a fixed rate.", ru: "continuous batching (T05) обслуживает многих клиентов на под — потому ёмкость пода — это крыша, а не фиксированная ставка." }],
+      [{ en: "PodDisruptionBudget", ru: "PodDisruptionBudget" }, { en: "a floor for voluntary disruptions (drains, updates): how many pods must stay up — the T11 rollout lesson, generalized.", ru: "нижняя граница добровольных прерываний (дрены, обновления): сколько подов обязаны жить — урок роллаутов из T11 в общем виде." }],
       [{ en: "failure drill", ru: "дрилл отказа" }, { en: "kill a pod on purpose and measure what clients see: how much capacity vanished and for how long.", ru: "убить под нарочно и измерить, что увидят клиенты: сколько ёмкости пропало и на сколько." }],
     ],
     figures: [
@@ -162,7 +162,7 @@
         answer: 4, tol: 0.2, unit: { en: "replicas", ru: "реплик" },
         hint: {
           en: "2.2 / 2 = 1.1 — exactly on the band edge; the band is inclusive, so: no change.",
-          ru: "2.2 / 2 = 1.1 — ровно на краю полосы; полоса включительная, значит: без изменений.",
+          ru: "2.2 / 2 = 1.1 — ровно на краю полосы; края полосы включены: без изменений.",
         },
       },
       {
@@ -184,7 +184,7 @@
         title: { en: "Exercise 1 · The HPA formula", ru: "Упражнение 1 · Формула HPA" },
         brief: {
           en: "Implement <code>desired_replicas(replicas, metric, target, min_r=1, max_r=10)</code> — the controller's one number: <code>ceil(replicas × metric / target)</code>, clamped into <code>[min_r, max_r]</code>. Here <code>metric</code> is an LLM signal like queue depth per pod and <code>target</code> is its desired value (the tolerance band arrives in Exercise 2). Mind the ceiling: <code>int()</code> truncates, the controller rounds <em>up</em> — under-provisioning is the one mistake it never makes.",
-          ru: "Реализуй <code>desired_replicas(replicas, metric, target, min_r=1, max_r=10)</code> — то самое число контроллера: <code>ceil(replicas × metric / target)</code>, зажатое в <code>[min_r, max_r]</code>. Здесь <code>metric</code> — LLM-сигнал вроде глубины очереди на под, а <code>target</code> — его желаемое значение (полоса tolerance появится в упражнении 2). Следи за потолком: <code>int()</code> усекает, а контроллер округляет <em>вверх</em> — недопровижининг — единственная ошибка, которую он никогда не делает.",
+          ru: "Реализуй <code>desired_replicas(replicas, metric, target, min_r=1, max_r=10)</code> — то самое число контроллера: <code>ceil(replicas × metric / target)</code>, зажатое в <code>[min_r, max_r]</code>. Здесь <code>metric</code> — LLM-сигнал вроде глубины очереди на под, а <code>target</code> — его желаемое значение (полоса tolerance появится в упражнении 2). Следи за потолком: <code>int()</code> усекает, а контроллер округляет <em>вверх</em> — нехватка реплик (underprovisioning) — единственная ошибка, которую он никогда не делает.",
         },
         starter: `import math
 
@@ -236,7 +236,7 @@ def hpa_step(replicas, metric, target, tol=0.1, min_r=1, max_r=10):
     return min(max(math.ceil(replicas * ratio), min_r), max_r)`,
         hints: [
           { en: "Reuse desired_replicas outside the band — do not re-derive it.", ru: "Вне полосы переиспользуй desired_replicas — не выводи формулу заново." },
-          { en: "Import math at the top of the cell.", ru: "Импортируй math вверху клетки." },
+          { en: "Import math at the top of the cell.", ru: "Импортируй math вверху ячейки." },
         ],
         numpy: false,
         timeoutMs: 4000,
@@ -246,7 +246,7 @@ def hpa_step(replicas, metric, target, tol=0.1, min_r=1, max_r=10):
         title: { en: "Exercise 3 · Fix the bug: the flapping fleet", ru: "Упражнение 3 · Почини баг: флаттерующий флот" },
         brief: {
           en: "This <code>stabilized(recs, window, current)</code> always applies the latest recommendation, so a saw-shaped metric flaps the fleet 1↔2↔1: every scale-down is instantly regretted. Kubernetes' fix is the stabilization window: scaling <strong>up</strong> applies immediately (the shortage hurts now), scaling <strong>down</strong> takes the <em>maximum</em> recommendation seen within the last <code>window</code> ticks. Fix it: latest recommendation when it does not shrink the fleet; otherwise the window max.",
-          ru: "Эта <code>stabilized(recs, window, current)</code> всегда применяет последнюю рекомендацию, поэтому пилообразная метрика дёргает флот 1↔2↔1: каждый скейл-даун тут же приходится отменять. Фикс Kubernetes — окно стабилизации: скейл <strong>вверх</strong> применяется немедленно (дефицит болит сейчас), скейл <strong>вниз</strong> берёт <em>максимум</em> рекомендаций за последние <code>window</code> тиков. Почини: последняя рекомендация, если она не сжимает флот; иначе — максимум окна.",
+          ru: "Эта <code>stabilized(recs, window, current)</code> всегда применяет последнюю рекомендацию, поэтому пилообразная метрика дёргает флот 1↔2↔1: каждый скейл-даун тут же приходится отменять. Фикс Kubernetes — окно стабилизации: скейл-ап применяется немедленно (дефицит болит сейчас), скейл-даун берёт <em>максимум</em> рекомендаций за последние <code>window</code> тиков. Почини: последняя рекомендация, если она не сжимает флот; иначе — максимум окна.",
         },
         starter: `def stabilized(recs, window, current):
     """Replica count to set now; recs is per-tick, oldest first."""
@@ -384,7 +384,7 @@ class HPASim:
     },
     footer: {
       en: "Declared controller arithmetic on course numbers (T06 step model, T08 burst envelope, T09 cold start) — not a cluster. Primary practice sources: Kubernetes HPA docs (formula, tolerance, windows), the llm-d autoscaling lesson from KubeCon NA 2026 (queue depth, KV pressure, TTFT — not GPU utilization), GKE's HPA-for-inference guides, KEDA and vLLM production stack as the modern custom-metric paths. The compose drill is a rehearsal of the HPA, not the HPA.",
-      ru: "Заявленная арифметика контроллера на курсовых числах (модель шага из T06, конверт бурста из T08, холодный старт из T09) — не кластер. Первоисточники практики: доки Kubernetes HPA (формула, tolerance, окна), урок llm-d с KubeCon NA 2026 (глубина очереди, давление KV, TTFT — не GPU-утилизация), гайды GKE про HPA для инференса, KEDA и vLLM production stack как современные пути кастомных метрик. Compose-дрель — репетиция HPA, но не сам HPA.",
+      ru: "Заявленная арифметика контроллера на курсовых числах (модель шага из T06, конверт бурста из T08, холодный старт из T09) — не кластер. Первоисточники практики: доки Kubernetes HPA (формула, tolerance, окна), урок llm-d с KubeCon NA 2026 (глубина очереди, давление KV, TTFT — не GPU-утилизация), гайды GKE про HPA для инференса, KEDA и vLLM production stack как современные пути кастомных метрик. Compose-дрилл — репетиция HPA, но не сам HPA.",
     },
   };
 })();

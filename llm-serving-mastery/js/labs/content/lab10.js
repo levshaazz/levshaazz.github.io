@@ -22,7 +22,7 @@
       ru: `<p>Один GPU заканчивается дважды: стена памяти (веса 8B fp16 ≈ 16 ГБ плюс KV против бюджета 15 ГБ) и пол латентности последовательного decode. Тензорный параллелизм (TP) отвечает разрезом матриц весов: <strong>column-parallel</strong> режет <code>W</code> по выходным столбцам — каждый шард видит весь <code>X</code> и возвращает свои столбцы <code>Y</code>, стыковать внутри блока не надо; <strong>row-parallel</strong> режет <code>W</code> по строкам (и <code>X</code> по столбцам на те же части) — каждый шард даёт <strong>частичную сумму</strong>, и all-reduce соединяет их точной поэлементной суммой. Разрез — не иллюстрация: собранные шарды равны полному matmul с точностью до float-шума (≤ 1e-10 в тетради, здесь 1e-9).</p>
 <p>Модель шага заявлена: <code>t(p) = C/p + B·(p−1)/p + beat·(p−1)</code>. Вычисления делятся на степень, байтовая доля all-reduce растёт к <code>B</code>, и каждый лишний GPU добавляет такты синхронизации — член, которого забывает чистый план. Привычка лабы: заморозить план (колено, минимальная подходящая степень) до свипа, доказать разрез числом и считать такт именованным членом, а не шумом.</p>`,
     },
-    heroTag: { en: "column/row cuts, all-reduce, the knee", ru: "column/row-катты, all-reduce, колено" },
+    heroTag: { en: "column/row cuts, all-reduce, the knee", ru: "column/row-разрезы, all-reduce, колено" },
     figures: [
       {
         id: "lab10-tp-split",
@@ -117,16 +117,16 @@
   </g>
 </svg>`,
         stages: [
-          { cap: { en: "One GPU multiplies X by the whole matrix W — the baseline.", ru: "Один GPU умножает X на всю матрицу W — это база." }, show: ["g-baseline"] },
-          { cap: { en: "Column cut: each GPU gets its slice of Y directly.", ru: "Column-катт: каждый GPU сразу получает свой кусок Y." }, show: ["g-baseline", "g-colcut"] },
-          { cap: { en: "Row cut: W by rows, X by columns — partial sums.", ru: "Row-катт: W по строкам, X по столбцам — частичные суммы." }, show: ["g-rowcut"] },
-          { cap: { en: "all-reduce sums the partials: Y = Y₀ + Y₁, bit-for-bit exact.", ru: "all-reduce складывает частички: Y = Y₀ + Y₁, бит-в-бит." }, show: ["g-rowcut", "g-areduce"] },
+          { cap: { en: "One GPU multiplies X by the whole matrix W — the baseline.", ru: "Один GPU умножает X на всю матрицу W — это базовый случай." }, show: ["g-baseline"] },
+          { cap: { en: "Column cut: each GPU gets its slice of Y directly.", ru: "Column-разрез: каждый GPU сразу получает свой кусок Y." }, show: ["g-baseline", "g-colcut"] },
+          { cap: { en: "Row cut: W by rows, X by columns — partial sums.", ru: "Row-разрез: W по строкам, X по столбцам — частичные суммы." }, show: ["g-rowcut"] },
+          { cap: { en: "all-reduce sums the partials: Y = Y₀ + Y₁, bit-for-bit exact.", ru: "all-reduce складывает частичные суммы: Y = Y₀ + Y₁, бит в бит." }, show: ["g-rowcut", "g-areduce"] },
           { cap: { en: "Every block pays twice: a beat after attention and after MLP.", ru: "Каждый блок платит дважды: такт после attention и после MLP." }, show: ["g-timeline"] },
         ],
       },
       {
         id: "lab10-memory-ledger",
-        title: { en: "Per-GPU memory ledger against the 15 GB budget", ru: "Per-GPU ledger памяти против бюджета 15 ГБ" },
+        title: { en: "Per-GPU memory ledger against the 15 GB budget", ru: "Per-GPU ведомость памяти против бюджета 15 ГБ" },
         w: 760, h: 420,
         svg: `<svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
   <g id="g-base">
@@ -172,8 +172,8 @@
       },
     ],
     outcomes: [
-      { en: "Prove split equals full within tolerance for column- and row-parallel layers.", ru: "\u0414\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0442\u044c \u0440\u0430\u0432\u0435\u043d\u0441\u0442\u0432\u043e \u0441\u043f\u043b\u0438\u0442\u0430 \u0438 \u043f\u043e\u043b\u043d\u043e\u0433\u043e \u043f\u0440\u043e\u0445\u043e\u0434\u0430 \u0432 \u0434\u043e\u043f\u0443\u0441\u043a\u0435 \u0434\u043b\u044f column/row-parallel \u0441\u043b\u043e\u0451\u0432." },
-      { en: "Predict the TP knee from the sync beat and keep an honest per-GPU ledger.", ru: "\u041f\u0440\u0435\u0434\u0441\u043a\u0430\u0437\u044b\u0432\u0430\u0442\u044c \u043a\u043e\u043b\u0435\u043d\u043e TP \u0438\u0437 \u0442\u0430\u043a\u0442\u0430 \u0441\u0438\u043d\u0445\u0440\u043e\u043d\u0438\u0437\u0430\u0446\u0438\u0438 \u0438 \u0432\u0435\u0441\u0442\u0438 \u0447\u0435\u0441\u0442\u043d\u044b\u0439 per-GPU ledger." },
+      { en: "Prove split equals full within tolerance for column- and row-parallel layers.", ru: "\u0414\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0442\u044c \u0440\u0430\u0432\u0435\u043d\u0441\u0442\u0432\u043e \u0440\u0430\u0437\u0440\u0435\u0437\u0430 \u0438 \u043f\u043e\u043b\u043d\u043e\u0433\u043e \u043f\u0440\u043e\u0445\u043e\u0434\u0430 \u0432 \u0434\u043e\u043f\u0443\u0441\u043a\u0435 \u0434\u043b\u044f column/row-parallel \u0441\u043b\u043e\u0451\u0432." },
+      { en: "Predict the TP knee from the sync beat and keep an honest per-GPU ledger.", ru: "\u041f\u0440\u0435\u0434\u0441\u043a\u0430\u0437\u044b\u0432\u0430\u0442\u044c \u043a\u043e\u043b\u0435\u043d\u043e TP \u0438\u0437 \u0442\u0430\u043a\u0442\u0430 \u0441\u0438\u043d\u0445\u0440\u043e\u043d\u0438\u0437\u0430\u0446\u0438\u0438 \u0438 \u0432\u0435\u0441\u0442\u0438 \u0447\u0435\u0441\u0442\u043d\u0443\u044e per-GPU \u0432\u0435\u0434\u043e\u043c\u043e\u0441\u0442\u044c." },
     ],
     model: [
       ["step model", "t(p) = C/p + B·(p−1)/p + beat·(p−1)", "declared knobs", "C = 800 ms, B = 120 ms, beat = 25 ms"],
@@ -278,7 +278,7 @@ def column_parallel(x, w, parts):
         title: { en: "Exercise 2 · Declared step time", ru: "Упражнение 2 · Заявленное время шага" },
         brief: {
           en: "Implement <code>plan_tp_knee(compute_ms, bytes_term_ms, degree, beat_ms=25.0)</code> — the declared step time in ms at one TP degree: <code>compute_ms/degree + bytes_term_ms×(degree−1)/degree + beat_ms×(degree−1)</code>. Compute divides by the degree, the all-reduce byte share grows toward <code>bytes_term_ms</code>, and every extra GPU adds a sync beat — the member the clean plan forgets. With the course knobs (800, 120, beat 25) t(4) = 365 ms but t(8) = 380 ms: past the knee, more GPUs make the step slower.",
-          ru: "Реализуй <code>plan_tp_knee(compute_ms, bytes_term_ms, degree, beat_ms=25.0)</code> — заявленное время шага в мс при одной степени TP: <code>compute_ms/degree + bytes_term_ms×(degree−1)/degree + beat_ms×(degree−1)</code>. Вычисления делятся на степень, байтовая доля all-reduce растёт к <code>bytes_term_ms</code>, и каждый лишний GPU добавляет такт синхронизации — член, которого забывает чистый план. С ручками курса (800, 120, beat 25) t(4) = 365 мс, но t(8) = 380 мс: за коленом больше GPU — медленнее шаг.",
+          ru: "Реализуй <code>plan_tp_knee(compute_ms, bytes_term_ms, degree, beat_ms=25.0)</code> — заявленное время шага в мс при заданной степени TP: <code>compute_ms/degree + bytes_term_ms×(degree−1)/degree + beat_ms×(degree−1)</code>. Вычисления делятся на степень, байтовая доля all-reduce растёт до <code>bytes_term_ms</code>, и каждый лишний GPU добавляет такт синхронизации — член, которого забывает чистый план. С ручками курса (800, 120, beat 25) t(4) = 365 мс, но t(8) = 380 мс: за коленом больше GPU — медленнее шаг.",
         },
         starter: `def plan_tp_knee(compute_ms, bytes_term_ms, degree, beat_ms=25.0):
     """Declared step time (ms) at one TP degree: compute share + byte share + beats.
@@ -307,7 +307,7 @@ eq(plan_tp_knee(800, 120, 8) > plan_tp_knee(800, 120, 4), True)` },
       },
       {
         id: "ex3",
-        title: { en: "Exercise 3 · Fix the bug: partials need the all-reduce", ru: "Упражнение 3 · Почини баг: частичным нужен all-reduce" },
+        title: { en: "Exercise 3 · Fix the bug: partials need the all-reduce", ru: "Упражнение 3 · Почини баг: частичным суммам нужен all-reduce" },
         brief: {
           en: "This <code>mlp_forward_tp(x, w_up, w_down, parts)</code> runs one MLP step under TP: up-projection column-parallel, down-projection row-parallel. The bug: the down-projection joins its partials by CONCATENATION, as if they were independent columns. Row-parallel partials are partial sums — the join is the all-reduce, the exact elementwise sum. Fix the join so that <code>mlp_forward_tp(x, w_up, w_down, parts)</code> equals <code>tanh(x @ w_up) @ w_down</code> within 1e-9 (the tanh is elementwise, so column-parallel passes through it exactly).",
           ru: "Эта <code>mlp_forward_tp(x, w_up, w_down, parts)</code> исполняет один MLP-шаг под TP: up-projection — column-parallel, down-projection — row-parallel. Баг: down-projection стыкует частичные результаты КОНКАТЕНАЦИЕЙ, как будто это независимые столбцы. Частичные результаты row-parallel — это частичные суммы; стыковка — all-reduce, точная поэлементная сумма. Почини стыковку так, чтобы <code>mlp_forward_tp(x, w_up, w_down, parts)</code> равнялось <code>tanh(x @ w_up) @ w_down</code> с точностью до 1e-9 (tanh поэлементный, поэтому column-parallel проходит сквозь него точно).",
@@ -374,7 +374,7 @@ def mlp_forward_tp(x, w_up, w_down, parts):
         title: { en: "Exercise 4 · Wrap it into a class: TPSim", ru: "Упражнение 4 · Собери в класс: TPSim" },
         brief: {
           en: "The lab's final boss: wrap the declared model into a class. The <code>TPSim(compute_ms, bytes_term_ms, beat_ms)</code> constructor with two methods: <code>step_time(degree)</code> — the knee formula you already know — and <code>fits(degree, weights_gib, per_gpu_gib)</code> — the per-GPU ledger: <code>(weights_gib + 4) / degree + 1.5 &lt;= per_gpu_gib</code>. Real classes, real NumPy, real tests.",
-          ru: "Финальный босс лабы: заверши заявленную модель в класс. Конструктор <code>TPSim(compute_ms, bytes_term_ms, beat_ms)</code> с двумя методами: <code>step_time(degree)</code> — уже знакомая формула колена — и <code>fits(degree, weights_gib, per_gpu_gib)</code> — per-GPU ledger: <code>(weights_gib + 4) / degree + 1.5 &lt;= per_gpu_gib</code>. Настоящие классы, настоящий NumPy, настоящие тесты.",
+          ru: "Финальный босс лабы: заверни заявленную модель в класс. Конструктор <code>TPSim(compute_ms, bytes_term_ms, beat_ms)</code> с двумя методами: <code>step_time(degree)</code> — уже знакомая формула колена — и <code>fits(degree, weights_gib, per_gpu_gib)</code> — per-GPU ведомость: <code>(weights_gib + 4) / degree + 1.5 &lt;= per_gpu_gib</code>. Настоящие классы, настоящий NumPy, настоящие тесты.",
         },
         starter: `class TPSim:
     def __init__(self, compute_ms, bytes_term_ms, beat_ms):
@@ -442,11 +442,11 @@ def mlp_forward_tp(x, w_up, w_down, parts):
       },
     ],
     reward: {
-      caption: { en: "Split equals full, the knee predicted \u2014 tensor parallelism is arithmetic you own.", ru: "\u0421\u043f\u043b\u0438\u0442 \u0440\u0430\u0432\u0435\u043d \u043f\u043e\u043b\u043d\u043e\u043c\u0443 \u043f\u0440\u043e\u0445\u043e\u0434\u0443, \u043a\u043e\u043b\u0435\u043d\u043e \u043f\u0440\u0435\u0434\u0441\u043a\u0430\u0437\u0430\u043d\u043e \u2014 \u0442\u0435\u043d\u0437\u043e\u0440\u043d\u044b\u0439 \u043f\u0430\u0440\u0430\u043b\u043b\u0435\u043b\u0438\u0437\u043c \u044d\u0442\u043e \u0442\u0432\u043e\u044f \u0430\u0440\u0438\u0444\u043c\u0435\u0442\u0438\u043a\u0430." },
+      caption: { en: "Split equals full, the knee predicted \u2014 tensor parallelism is arithmetic you own.", ru: "\u0420\u0430\u0437\u0440\u0435\u0437 \u0440\u0430\u0432\u0435\u043d \u043f\u043e\u043b\u043d\u043e\u043c\u0443 \u043f\u0440\u043e\u0445\u043e\u0434\u0443, \u043a\u043e\u043b\u0435\u043d\u043e \u043f\u0440\u0435\u0434\u0441\u043a\u0430\u0437\u0430\u043d\u043e \u2014 \u0442\u0435\u043d\u0437\u043e\u0440\u043d\u044b\u0439 \u043f\u0430\u0440\u0430\u043b\u043b\u0435\u043b\u0438\u0437\u043c \u2014 \u044d\u0442\u043e \u0442\u0432\u043e\u044f \u0430\u0440\u0438\u0444\u043c\u0435\u0442\u0438\u043a\u0430." },
     },
     footer: {
       en: "The split mechanics are real NumPy (checked to 1e-9 here, 1e-10 in the notebook); every millisecond is declared arithmetic with named knobs, not a GPU measurement. The recorded sweep and ledger live in the Topic 10 evidence run (runs/2026-11-01-topic10-tp-sim); this lab does not execute it.",
-      ru: "Механика разреза — настоящий NumPy (здесь проверка до 1e-9, в тетради до 1e-10); каждая миллисекунда — объявленная арифметика с именованными ручками, а не измерение GPU. Свип и ведомость записаны в evidence-прогоне Темы 10 (runs/2026-11-01-topic10-tp-sim); эта лаба его не исполняет.",
+      ru: "Механика разреза — настоящий NumPy (здесь проверка до 1e-9, в тетради до 1e-10); каждая миллисекунда — заявленная арифметика с именованными ручками, а не измерение GPU. Свип и ведомость записаны в evidence-прогоне Темы 10 (runs/2026-11-01-topic10-tp-sim); эта лаба его не исполняет.",
     },
   };
 })();
