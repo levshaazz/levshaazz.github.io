@@ -155,10 +155,10 @@
       {
         id: "q1",
         q: {
-          en: "A pod hosts the engine at TP degree 2 (T10 ledger: weights 16, KV 4, fixed 1.5 GB). How many GiB go into requests (memory)?",
+          en: "A pod hosts the engine at TP degree 2 (T10 ledger: weights 16, KV 4, fixed 1.5 GB). How many GB go into requests (memory)?",
           ru: "Под держит движок на TP-степени 2 (ведомость из T10: веса 16, KV 4, фикс 1.5 ГБ). Сколько ГБ писать в requests (память)?",
         },
-        answer: 11.5, tol: 0.1, unit: { en: "GiB", ru: "ГиБ" },
+        answer: 11.5, tol: 0.1, unit: { en: "GB", ru: "ГБ" },
         hint: {
           en: "(16 + 4) / 2 + 1.5 — weights and KV divide, the fixed part does not.",
           ru: "(16 + 4) / 2 + 1.5 — веса и KV делятся, фикс нет.",
@@ -328,7 +328,7 @@ class ReleaseSim:
     posttest: [
       {
         id: "p1",
-        q: { en: "A pod sets requests 11.5 GB and limits 20 GiB of memory. Its QoS class is\u2026", ru: "Под пишет requests 11.5 ГиБ и лимиты 20 ГиБ памяти. Его класс QoS — это\u2026" },
+        q: { en: "A pod sets requests 11.5 GB and limits 20 GB of memory. Its QoS class is\u2026", ru: "Под пишет requests 11.5 ГБ и лимиты 20 ГБ памяти. Его класс QoS — это\u2026" },
         options: [{ en: "Burstable — requests and limits differ", ru: "Burstable — requests и limits различаются" }, { en: "Guaranteed — both fields are set", ru: "Guaranteed — оба поля заполнены" }, { en: "BestEffort — there is a limit", ru: "BestEffort — ведь есть лимит" }],
         answer: 0,
         explain: { en: "Guaranteed needs requests == limits on every container. Differing values mean Burstable — higher eviction priority, a bad home for weights.", ru: "Guaranteed требует requests == limits у всех контейнеров. Разные значения — Burstable: приоритет выселения выше, весам такое жильё не подходит." },
