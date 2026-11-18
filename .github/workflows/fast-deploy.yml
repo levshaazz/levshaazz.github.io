@@ -1,0 +1,46 @@
+# Dispatch-only deploy of the site already committed to main.
+# No build, no checks: use ONLY when the source was verified locally
+# (npm run check && build && check:site) and the lesson is imminent.
+# Safe by construction: it deploys exactly what is on main, nothing else.
+name: Fast deploy committed site
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: fast-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy committed site to Pages
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Check out public publisher
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Stage site artifact
+        run: |
+          set -euo pipefail
+          mkdir -p site/llm-serving-mastery
+          cp -a llm-serving-mastery/. site/llm-serving-mastery/
+          cp index.html .nojekyll .course-source-sha site/
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
