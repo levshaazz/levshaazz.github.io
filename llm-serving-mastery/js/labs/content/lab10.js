@@ -373,8 +373,8 @@ def mlp_forward_tp(x, w_up, w_down, parts):
         id: "ex4",
         title: { en: "Exercise 4 · Wrap it into a class: TPSim", ru: "Упражнение 4 · Собери в класс: TPSim" },
         brief: {
-          en: "The lab's final boss: wrap the declared model into a class. The <code>TPSim(compute_ms, bytes_term_ms, beat_ms)</code> constructor with two methods: <code>step_time(degree)</code> — the knee formula you already know — and <code>fits(degree, weights_gib, per_gpu_gib)</code> — the per-GPU ledger: <code>(weights_gib + 4) / degree + 1.5 &lt;= per_gpu_gib</code>. Real classes, real NumPy, real tests.",
-          ru: "Финальный босс лабы: заверни заявленную модель в класс. Конструктор <code>TPSim(compute_ms, bytes_term_ms, beat_ms)</code> с двумя методами: <code>step_time(degree)</code> — уже знакомая формула колена — и <code>fits(degree, weights_gib, per_gpu_gib)</code> — per-GPU ведомость: <code>(weights_gib + 4) / degree + 1.5 &lt;= per_gpu_gib</code>. Настоящие классы, настоящий NumPy, настоящие тесты.",
+          en: "The lab's final boss: wrap the declared model into a class. The <code>TPSim(compute_ms, bytes_term_ms, beat_ms)</code> constructor with three methods: <code>step_time(degree)</code>, <code>knee_degree(max_degree)</code> (minimal degree with the smallest t(p)) and <code>fits(degree, weights_gib, per_gpu_gib, kv_gib=4.0)</code> — the per-GPU ledger: <code>(weights_gib + 4) / degree + 1.5 &lt;= per_gpu_gib</code>. Real classes, real NumPy, real tests.",
+          ru: "Финальный босс лабы: заверни заявленную модель в класс. Конструктор <code>TPSim(compute_ms, bytes_term_ms, beat_ms)</code> с тремя методами: <code>step_time(degree)</code>, <code>knee_degree(max_degree)</code> — минимальная степень с минимальным t(p) — и <code>fits(degree, weights_gib, per_gpu_gib, kv_gib=4.0)</code> — per-GPU ведомость: <code>(weights_gib + 4) / degree + 1.5 &lt;= per_gpu_gib</code>. Настоящие классы, настоящий NumPy, настоящие тесты.",
         },
         starter: `class TPSim:
     def __init__(self, compute_ms, bytes_term_ms, beat_ms):
@@ -385,8 +385,12 @@ def mlp_forward_tp(x, w_up, w_down, parts):
         # TODO: t(p) = C/p + B*(p-1)/p + beat*(p-1)
         ...
 
-    def fits(self, degree, weights_gib, per_gpu_gib):
-        # TODO: (weights_gib + 4) / degree + 1.5 <= per_gpu_gib
+    def knee_degree(self, max_degree):
+        # TODO: the minimal degree in 1..max_degree with the smallest t(p)
+        ...
+
+    def fits(self, degree, weights_gib, per_gpu_gib, kv_gib=4.0):
+        # TODO: (weights_gib + kv_gib) / degree + 1.5 <= per_gpu_gib
         ...`,
         tests: [
           { name: "single GPU: no split, no sync", hidden: false, code: "sim = TPSim(800, 120, 25);\napprox(sim.step_time(1), 800, 1e-9)" },
@@ -410,8 +414,16 @@ def mlp_forward_tp(x, w_up, w_down, parts):
         p = degree
         return self.compute / p + self.bytes_term * (p - 1) / p + self.beat * (p - 1)
 
-    def fits(self, degree, weights_gib, per_gpu_gib):
-        return (weights_gib + 4) / degree + 1.5 <= per_gpu_gib`,
+    def knee_degree(self, max_degree):
+        best_degree, best_time = 1, self.step_time(1)
+        for degree in range(2, max_degree + 1):
+            t = self.step_time(degree)
+            if t < best_time:
+                best_degree, best_time = degree, t
+        return best_degree
+
+    def fits(self, degree, weights_gib, per_gpu_gib, kv_gib=4.0):
+        return (weights_gib + kv_gib) / degree + 1.5 <= per_gpu_gib`,
         hints: [
           { en: "Store the three constants in __init__; both methods read them from self.", ru: "Сохрани три константы в __init__; оба метода читают их из self." },
           { en: "fits is a single boolean expression — no if needed.", ru: "fits — одно булево выражение, if не нужен." },
