@@ -40,6 +40,20 @@
     }
   }
 
+  async function fetchJournalRaw() {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 2500);
+    try {
+      const r = await fetch(RUNTIME_URL + "/journal", { signal: ctrl.signal });
+      clearTimeout(timer);
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return await r.text();
+    } catch (e) {
+      clearTimeout(timer);
+      throw e;
+    }
+  }
+
   function renderChip(host, state, detail) {
     const cls = state === "on" ? "ok" : state === "wait" ? "wait" : "off";
     host.innerHTML = "";
@@ -65,6 +79,16 @@
     zip.download = "lsm-runtime.zip";
     actions.appendChild(zip);
 
+    if (spec.experimentPrompt) {
+      const pwrap = el("label", "lab-rt-num lab-rt-prompt");
+      pwrap.appendChild(el("span", "", tr(T().promptLabel)));
+      const pin = document.createElement("input");
+      pin.type = "text"; pin.value = tr(spec.experimentPrompt);
+      pin.dataset.rtPromptField = "";
+      pwrap.appendChild(pin);
+      actions.appendChild(pwrap);
+    }
+
     const expBtn = el("button", "button", tr(T().experiment));
     expBtn.type = "button"; expBtn.dataset.rtExp = "";
     actions.appendChild(expBtn);
@@ -76,6 +100,13 @@
     const verifyBtn = el("button", "button secondary", tr(T().verify));
     verifyBtn.type = "button"; verifyBtn.dataset.rtVerify = "";
     actions.appendChild(verifyBtn);
+
+    const hasRtEx = (content().exercises || []).some((e) => e.injectEntries);
+    if (hasRtEx) {
+      const vst = el("button", "button secondary", tr(T().verifyStudent));
+      vst.type = "button"; vst.dataset.rtVerifyStudent = "";
+      actions.appendChild(vst);
+    }
     if (spec.burst) {
       const mkInput = (label, value, max) => {
         const wrap = el("label", "lab-rt-num");
@@ -141,10 +172,12 @@
       if (!(await probe())) { log(tr(T().needRuntime), "err"); return; }
       log("POST /experiment → " + tr(T().running));
       try {
+        const pin = card.querySelector("[data-rt-prompt-field]");
+        const prompt = (pin && pin.value.trim()) || tr(spec.experimentPrompt || (spec.burst && spec.burst.prompt));
         const r = await fetchJson("/experiment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: tr(spec.experimentPrompt || (spec.burst && spec.burst.prompt)), max_tokens: 32 }),
+          body: JSON.stringify({ prompt: prompt, max_tokens: 32 }),
           timeoutMs: 120000,
         });
         setMetric("wall", r.metrics.wall_s.toFixed(3) + " s");
@@ -176,6 +209,43 @@
         log(tr(T().needRuntime), "err");
       }
     });
+
+    const vstBtn = card.querySelector("[data-rt-verify-student]");
+    if (vstBtn) {
+      vstBtn.addEventListener("click", async () => {
+        const locked = [...document.querySelectorAll("[data-lab-run]")].some((b) => b.disabled);
+        if (locked) { log(tr(T().gateBusy), "err"); return; }
+        if (!(await probe())) { log(tr(T().needRuntime), "err"); return; }
+        const cardEl = document.querySelector('[data-lab-checkpoint="rt1"]');
+        const wrap = cardEl && cardEl.querySelector(".CodeMirror");
+        let code = wrap && wrap.CodeMirror ? wrap.CodeMirror.getValue() : (cardEl && cardEl.querySelector("textarea") ? cardEl.querySelector("textarea").value : "");
+        const MARK = "import json as _rtjson";
+        if (code.startsWith(MARK)) {
+          const sep = code.indexOf("\n\n");
+          code = sep >= 0 ? code.slice(sep + 2) : "";
+        }
+        if (!code.includes("def verify_chain")) { log(tr(T().verifyStudentFirst), "err"); return; }
+        try {
+          const raw = await fetchJournalRaw();
+          const gw = await fetchJson("/journal/verify");
+          const runner = "import json as _rtjson\n_data = _rtjson.loads(" + JSON.stringify(raw) + ")\nentries = _data[\"entries\"] if isinstance(_data, dict) else _data\n\n" + code + "\n\nprint(\"STUDENT_VERDICT\", verify_chain(entries))";
+          vstBtn.disabled = true;
+          const res = await window.LSMPython.run(runner, [], { timeoutMs: 8000 });
+          vstBtn.disabled = false;
+          // stdout пайвorka приходит фрагментами: склеиваем, чтобы вердикт и кортеж были в одной строке
+          const joined = (res.stdout || "").split("\n").map((s) => s.trim()).filter(Boolean).join(" ");
+          const okStudent = /STUDENT_VERDICT\s*\(?\s*True/.test(joined);
+          const verdictText = joined.slice(joined.indexOf("STUDENT_VERDICT")).replace("STUDENT_VERDICT", "").trim() || (okStudent ? "(True, …)" : "нет вывода");
+          log(tr(T().studentVerdict) + " " + verdictText, okStudent ? "chunk" : "err");
+          log(tr(T().gatewayVerdict) + " ok=" + gw.ok + ", " + gw.entries + " " + tr(T().entriesWord), gw.ok ? "ok" : "err");
+          log(gw.ok === okStudent ? tr(T().matchOk) : tr(T().matchMismatch), gw.ok === okStudent ? "ok" : "err");
+          await probe();
+        } catch (e) {
+          vstBtn.disabled = false;
+          log(tr(T().experimentFail) + " " + e.message, "err");
+        }
+      });
+    }
 
     const burstBtn = card.querySelector("[data-rt-burst]");
     if (burstBtn) {
@@ -227,9 +297,11 @@
   async function journalInjection(ex) {
     if (!ex.injectEntries) return null;
     try {
-      const j = await fetchJson("/journal", { timeoutMs: 2500 });
-      return "import json as _rtjson\nentries = _rtjson.loads(_rtjson.dumps(" +
-        JSON.stringify(j.entries) + "))\n\n";
+      // сырой текст журнала: python loads сохраняет float-ность (0.0 != 0),
+      // JS-круг JSON.parse/stringify мутирует целочисленные float и ломает хэши
+      const raw = await fetchJournalRaw();
+      return "import json as _rtjson\n_data = _rtjson.loads(" +
+        JSON.stringify(raw) + ")\nentries = _data[\"entries\"] if isinstance(_data, dict) else _data\n\n";
     } catch (e) {
       return null;
     }

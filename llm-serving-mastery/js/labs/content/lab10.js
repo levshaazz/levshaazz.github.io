@@ -396,6 +396,9 @@ def mlp_forward_tp(x, w_up, w_down, parts):
           { name: "another machine, same class", hidden: true, code: "sim = TPSim(400, 80, 10);\napprox(sim.step_time(2), 250, 1e-9)" },
           { name: "boundary: exactly at the budget still fits", hidden: true, code: "sim = TPSim(800, 120, 25);\neq(sim.fits(2, 16, 11.5), True)" },
           { name: "weights_gib is honored, not hardcoded", hidden: true, code: "sim = TPSim(800, 120, 25);\neq(sim.fits(2, 40, 15), False)" },
+          { name: "knee degree finds the minimum step at 5", code: "sim = TPSim(800, 120, 25);\neq(sim.knee_degree(8), 5)" },
+          { name: "knee respects max_degree", code: "sim = TPSim(800, 120, 25);\neq(sim.knee_degree(4), 4)" },
+          { name: "kv_gib is honored, not hardcoded", code: "sim = TPSim(800, 120, 25);\neq(sim.fits(2, 16, 15, kv_gib=8), True)\neq(sim.fits(1, 16, 15, kv_gib=8), False)" },
         ],
         solution: `class TPSim:
     def __init__(self, compute_ms, bytes_term_ms, beat_ms):

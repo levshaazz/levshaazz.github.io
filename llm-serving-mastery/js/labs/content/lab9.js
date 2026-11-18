@@ -196,8 +196,8 @@ eq(len(backoff_delays(1, 0.1, 60.0)), 1)` },
         id: "ex2",
         title: { en: "Exercise 2 · Freeze the build plan", ru: "Упражнение 2 · Заморозь план сборки" },
         brief: {
-          en: "Implement <code>plan_cache_order()</code> — freeze the build plan BEFORE the first build. Fill in <code>chosen_order</code> (one letter: 'A', 'B' or 'C' from <code>options</code>), the <code>predictions</code> dict (keys <code>edit_source</code>, <code>change_source_pin</code>, <code>change_base</code> — which layers rebuild and why), the <code>restart_terms</code> dict (<code>cold</code> = the members of “crashed → answering”, <code>dominant</code> = which member rules for 0.491 GB of weights) and <code>why</code> (one sentence about the cache). No <code>TODO</code> may survive in any string.",
-          ru: "Реализуй <code>plan_cache_order()</code> — заморозь план сборки ДО первой сборки. Заполни <code>chosen_order</code> (одна буква: 'A', 'B' или 'C' из <code>options</code>), dict <code>predictions</code> (ключи <code>edit_source</code>, <code>change_source_pin</code>, <code>change_base</code> — какие слои пересоберутся и почему), dict <code>restart_terms</code> (<code>cold</code> = члены «упал → снова отвечает», <code>dominant</code> = какой член правит при 0.491 ГБ весов) и <code>why</code> (одно предложение про cache). Ни одного <code>TODO</code> в строках остаться не должно.",
+          en: "Implement <code>plan_cache_order()</code> — freeze the build plan BEFORE the first build. Fill in <code>chosen_order</code> (one letter: 'A', 'B' or 'C' from <code>options</code>), the <code>predictions</code> dict (keys <code>edit_source</code>, <code>change_source_pin</code>, <code>change_base</code> — which layers rebuild and why), the <code>restart_terms</code> dict (<code>cold</code> = the members of “crashed → answering”, <code>dominant</code> = which member rules for 0.491 GB of weights) and <code>why</code> (one sentence about the cache). No <code>TODO</code> may survive in any string. Then bring the plan alive in code: implement <code>rebuild_on_edit(layers, edited_layer)</code> — the layers from the edited one up (order kept); an unknown layer yields an empty list.",
+          ru: "Реализуй <code>plan_cache_order()</code> — заморозь план сборки ДО первой сборки. Заполни <code>chosen_order</code> (одна буква: 'A', 'B' или 'C' из <code>options</code>), dict <code>predictions</code> (ключи <code>edit_source</code>, <code>change_source_pin</code>, <code>change_base</code> — какие слои пересоберутся и почему), dict <code>restart_terms</code> (<code>cold</code> = члены «упал → снова отвечает», <code>dominant</code> = какой член правит при 0.491 ГБ весов) и <code>why</code> (одно предложение про cache). Ни одного <code>TODO</code> в строках остаться не должно. Затем оживи план кодом: реализуй <code>rebuild_on_edit(layers, edited_layer)</code> — список слоёв от отредактированного и выше (порядок сохраняется); неизвестный слой — пустой список.",
         },
         starter: `def plan_cache_order():
     """Freeze the build plan BEFORE the first build: layer order and predictions."""
@@ -221,6 +221,11 @@ eq(len(backoff_delays(1, 0.1, 60.0)), 1)` },
             cold='TODO: members of "crashed -> answering" joined with +',
             dominant='TODO: which member dominates for 0.491 GB of weights and why'),
         why='TODO: one sentence - why the chosen order protects the cache')
+
+def rebuild_on_edit(layers, edited_layer):
+    """Layers from the edited one to the top (order kept); unknown -> []."""
+    # TODO: the edited layer and everything above it
+    ...
 `,
         tests: [
           { name: "order B wins", hidden: false, code: `eq(plan_cache_order()['chosen_order'], 'B')` },
@@ -254,7 +259,13 @@ eq('cache' in why.lower(), True)` },
         restart_terms=dict(
             cold='extract layers + load weights + server init + first /health',
             dominant='weight loading (0.491 GB): the only hundred-megabyte member'),
-        why='rarely-changing context above the heavy layer keeps the dependency cache hit')`,
+        rebuild_on_edit=rebuild_on_edit,
+        why='rarely-changing context above the heavy layer keeps the dependency cache hit')
+
+    def rebuild_on_edit(layers, edited_layer):
+        i = layers.index(edited_layer) if edited_layer in layers else len(layers)
+        return layers[i:]
+`,
         hints: [
           { en: "Order B copies the rarely-changing manifest before the heavy install; a cache hit for a layer needs everything below it unchanged.", ru: "Порядок B копирует редко меняющийся манифест до тяжёлой установки; попадание в кэш слоя возможно, только если всё под ним не менялось." },
         ],
@@ -468,8 +479,8 @@ def verify_chain(entries):
         ru: "Измерь на своём движке: practice-рантайм",
       },
       brief: {
-        en: "Download the runtime ZIP, run <code>docker compose up -d</code>, and this page connects to a real llama.cpp server on your machine (pinned image digest, weights verified by sha256, hard <code>mem_limit: 1200m</code> — the Topic 09 lesson running live). Your student code still executes in the browser sandbox; the page only talks to the gateway at 127.0.0.1:8760 and journals every measurement into a hash chain.",
-        ru: "Скачай ZIP рантайма, запусти <code>docker compose up -d</code> — и эта страница подключится к настоящему llama.cpp server на твоей машине (образ запинен по дайджесту, веса проверяются по sha256, жёсткий <code>mem_limit: 1200m</code> — урок Темы 09 вживую). Твой код по-прежнему исполняется в песочнице браузера; страница ходит только в шлюз на 127.0.0.1:8760 и журналирует каждое измерение в хэш-цепочку.",
+        en: "Download the runtime ZIP, run <code>docker compose up -d</code>, and this page connects to a real llama.cpp server on your machine (pinned image digest, weights verified by sha256, hard <code>mem_limit: 1200m</code> — the Topic 09 lesson running live). Your student code still executes in the browser sandbox; the page only talks to the gateway at 127.0.0.1:8760 and journals every measurement into a hash chain: each entry hashes the previous one, so a tamper cannot go unnoticed.",
+        ru: "Скачай ZIP рантайма, запусти <code>docker compose up -d</code> — и эта страница подключится к настоящему llama.cpp server на твоей машине (образ запинен по дайджесту, веса проверяются по sha256, жёсткий <code>mem_limit: 1200m</code> — урок Темы 09 вживую). Твой код по-прежнему исполняется в песочнице браузера; страница ходит только в шлюз на 127.0.0.1:8760 и журналирует каждое измерение в хэш-цепочку: хэш каждой записи считается от хэша предыдущей, так что подделка не может остаться незамеченной.",
       },
       experimentPrompt: {
         en: "In one short sentence, explain what an image digest pins.",
@@ -500,7 +511,7 @@ def verify_chain(entries):
         q: { en: "After the sizing fix the limit is set from\u2026", ru: "\u041f\u043e\u0441\u043b\u0435 \u043f\u043e\u0447\u0438\u043d\u043a\u0438 \u043b\u0438\u043c\u0438\u0442 \u0432\u044b\u0447\u0438\u0441\u043b\u044f\u0435\u0442\u0441\u044f \u0438\u0437\u2026" },
         options: [{ en: "measured resident memory \u00d7 ~1.5 headroom", ru: "\u0438\u0437\u043c\u0435\u0440\u0435\u043d\u043d\u043e\u0439 \u0440\u0435\u0437\u0438\u0434\u0435\u043d\u0442\u043d\u043e\u0439 \u043f\u0430\u043c\u044f\u0442\u0438 \u00d7 \u0437\u0430\u043f\u0430\u0441 ~1.5" }, { en: "budget ÷ 2 with no KV headroom", ru: "budget ÷ 2 без запаса на KV" }, { en: "peak RSS with zero headroom", ru: "пиковый RSS без запаса" }],
         answer: 0,
-        explain: { en: "Resident ~760 MiB \u2192 1200 m limit: room to live, cgroup OOM never fires, crash-loop stops.", ru: "\u0420\u0435\u0437\u0438\u0434\u0435\u043d\u0442 ~760\u00a0\u041c\u0438\u0411 \u2192 docker-\u043b\u0438\u043c\u0438\u0442 1200m: \u0435\u0441\u0442\u044c \u0433\u0434\u0435 \u0436\u0438\u0442\u044c, cgroup OOM \u043d\u0435 \u0441\u0442\u0440\u0435\u043b\u044f\u0435\u0442, crash-loop \u043f\u0440\u0435\u043a\u0440\u0430\u0449\u0430\u0435\u0442\u0441\u044f." },
+        explain: { en: "Resident ~760 MiB \u00d7 1.5 = 1140 \u2192 rounded up to the 1200 m limit: room to live, cgroup OOM never fires, crash-loop stops.", ru: "\u0420\u0435\u0437\u0438\u0434\u0435\u043d\u0442 ~760\u00a0\u041c\u0438\u0411 \u00d7 1.5 = 1140 \u2192 docker-\u043b\u0438\u043c\u0438\u0442 1200m (\u043e\u043a\u0440\u0443\u0433\u043b\u0438\u043b\u0438 \u0432\u0432\u0435\u0440\u0445): \u0435\u0441\u0442\u044c \u0433\u0434\u0435 \u0436\u0438\u0442\u044c, cgroup OOM \u043d\u0435 \u0441\u0442\u0440\u0435\u043b\u044f\u0435\u0442, crash-loop \u043f\u0440\u0435\u043a\u0440\u0430\u0449\u0430\u0435\u0442\u0441\u044f." },
       },
     ],
     reward: {
