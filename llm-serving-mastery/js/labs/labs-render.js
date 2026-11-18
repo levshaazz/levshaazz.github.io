@@ -136,8 +136,9 @@
     card.appendChild(row);
     const verdict = el("p", "lab-verdict"); verdict.setAttribute("aria-live", "polite");
     card.appendChild(verdict);
+    let hint = null;
     if (q.hint) {
-      const hint = el("p", "lab-hint"); hint.dataset.open = "0";
+      hint = el("p", "lab-hint"); hint.dataset.open = "0";
       hint.textContent = tr(q.hint);
       card.appendChild(hint);
     }
