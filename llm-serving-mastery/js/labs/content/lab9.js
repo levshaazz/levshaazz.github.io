@@ -241,7 +241,12 @@ eq('+' in r['cold'], True)` },
 eq(bool(why) and 'TODO' not in why, True)
 eq('cache' in why.lower(), True)` },
         ],
-        solution: `def plan_cache_order():
+        solution: `def rebuild_on_edit(layers, edited_layer):
+    i = layers.index(edited_layer) if edited_layer in layers else len(layers)
+    return layers[i:]
+
+
+def plan_cache_order():
     options = {
         'A': ['COPY . .', 'RUN pip install -r requirements.txt'],
         'B': ['COPY requirements.txt requirements.txt',
@@ -261,10 +266,6 @@ eq('cache' in why.lower(), True)` },
             dominant='weight loading (0.491 GB): the only hundred-megabyte member'),
         rebuild_on_edit=rebuild_on_edit,
         why='rarely-changing context above the heavy layer keeps the dependency cache hit')
-
-    def rebuild_on_edit(layers, edited_layer):
-        i = layers.index(edited_layer) if edited_layer in layers else len(layers)
-        return layers[i:]
 `,
         hints: [
           { en: "Order B copies the rarely-changing manifest before the heavy install; a cache hit for a layer needs everything below it unchanged.", ru: "Порядок B копирует редко меняющийся манифест до тяжёлой установки; попадание в кэш слоя возможно, только если всё под ним не менялось." },
