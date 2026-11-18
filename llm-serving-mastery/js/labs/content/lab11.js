@@ -14,16 +14,16 @@
     },
     sub: {
       en: "Turn the ledger into a pod spec, gate readiness on the weight load, roll a release without dipping capacity — then drive Helm revisions and roll back.",
-      ru: "Преврати ведомость из T10 в спецификацию пода, гейтни готовность по загрузке весов, прокати релиз без ямы в ёмкости — а потом поведай историю Helm-ревизий и откатись.",
+      ru: "Преврати ведомость из T10 в спецификацию пода, гейтни готовность по загрузке весов, прокати релиз без ямы в ёмкости — а потом поведай историю Helm-ревизий и откатись.",
     },
     intro: {
       en: `<p>Kubernetes runs your fleet the way you already ran it in T09 — only declared. You state the <strong>desired state</strong> (how many pods, how much memory each, when a pod counts as ready), and controllers make reality match the declaration and keep it there. In compose you wrote <code>restart: on-failure</code> and restarted containers by hand; here a <strong>Deployment</strong> watches replicas for you, and a <strong>pod</strong> is one running engine together with its limits — exactly the container with a memory cap you raised in T09.</p>
 <p>For LLM engines the vocabulary has to be more precise than for web apps. A pod loads weights first (T09's named members: extract + weight loading + init + <code>/health</code>), so it is <strong>not ready</strong> until the load finishes — that is what the startup/readiness probe gates. The pod's memory is the T10 ledger (weights + KV + fixed). And updating an engine is not the same as updating a stateless service: while the new pod loads weights, the old ones carry the capacity — the lesson behind <code>maxUnavailable 0, maxSurge 1</code>.</p>
 <p>You have no real cluster, and none is needed: the lab drills the vocabulary and controller arithmetic on deterministic simulators in the sandbox. The numbers are this course's numbers: the pod ledger from T10, the 165 s cold start measured live by the T09-fleet run. The GPU Operator appears as vocabulary — what it installs (driver container, container toolkit, device plugin) and how one GPU is shared (time-slicing: logical replicas without memory isolation; MIG: hardware slices with isolation) — not as something you install here.</p>
 <p>The lab habit: predict from the declared model, then let the tests check it — the model is printed in full, as always.</p>`,
-      ru: `<p>Kubernetes управляет твоим флотом так же, как ты сам управлял им в T09 — только декларативно. Ты объявляешь <strong>желаемое состояние</strong> (сколько подов, сколько памяти каждому, когда под считается готовым), а контроллеры приводят реальность к объявлению и держат её там. В compose ты писал <code>restart: on-failure</code> и рестартовал контейнеры руками; здесь <strong>Deployment</strong> следит за репликами сам, а <strong>под</strong> — это один запущенный движок вместе со своими лимитами: ровно тот контейнер с потолком памяти, что ты поднимал в T09.</p>
-<p>Для LLM-движков словарь приходится проговаривать точнее, чем для веб-приложений. Под сначала грузит веса (именованные члены из T09: extract + загрузка весов + init + <code>/health</code>), поэтому он <strong>не готов</strong>, пока не кончилась загрузка, — это и гейтит startup/readiness-проба. Память пода — ведомость из T10 (веса + KV + фикс). И обновлять движок — не то же самое, что обновлять stateless-сервис: пока новый под грузит веса, старые держат ёмкость, — за этим стоит <code>maxUnavailable 0, maxSurge 1</code>.</p>
-<p>Настоящего кластера у тебя нет, и он не нужен: лаба тренирует словарь и арифметику контроллеров на детерминированных симуляторах в песочнице. Числа — курсовые: ведомость пода из T10, холодный старт 165 с из живого прогона T09-fleet. GPU Operator присутствует как словарь — что он ставит (контейнер драйвера, container toolkit, device plugin) и как делят один GPU (time-slicing: логические реплики без изоляции памяти; MIG: аппаратные слайсы с изоляцией), — но не как установка.</p>
+      ru: `<p>Kubernetes управляет твоим флотом так же, как ты сам управлял им в T09 — только декларативно. Ты объявляешь <strong>желаемое состояние</strong> (сколько подов, сколько памяти каждому, когда под считается готовым), а контроллеры приводят реальность к объявлению и держат её там. В compose ты писал <code>restart: on-failure</code> и рестартовал контейнеры руками; здесь <strong>Deployment</strong> следит за репликами сам, а <strong>под</strong> — это один запущенный движок вместе со своими лимитами: ровно тот контейнер с потолком памяти, что ты поднимал в T09.</p>
+<p>Для LLM-движков словарь приходится проговаривать точнее, чем для веб-приложений. Под сначала грузит веса (именованные члены из T09: extract + загрузка весов + init + <code>/health</code>), поэтому он <strong>не готов</strong>, пока не кончилась загрузка, — это и гейтит startup/readiness-проба. Память пода — ведомость из T10 (веса + KV + фикс). И обновлять движок — не то же самое, что обновлять stateless-сервис: пока новый под грузит веса, старые держат ёмкость, — за этим стоит <code>maxUnavailable 0, maxSurge 1</code>.</p>
+<p>Настоящего кластера у тебя нет, и он не нужен: лаба тренирует словарь и арифметику контроллеров на детерминированных симуляторах в песочнице. Числа — курсовые: ведомость пода из T10, холодный старт 165 с из живого прогона T09-fleet. GPU Operator присутствует как словарь — что он ставит (контейнер драйвера, container toolkit, device plugin) и как делят один GPU (time-slicing: логические реплики без изоляции памяти; MIG: аппаратные слайсы с изоляцией), — но не как установка.</p>
 <p>Привычка лабы: сначала предскажи по заявленной модели, потом дай тестам проверить, — модель напечатана целиком, как всегда.</p>`,
     },
     heroTag: { en: "pods, probes, helm revisions", ru: "поды, пробы, Helm-ревизии" },
@@ -31,14 +31,14 @@
       [{ en: "pod", ru: "под" }, { en: "one running engine + its limits; in compose it was one container with mem_limit.", ru: "один запущенный движок + его лимиты; в compose это был один контейнер с mem_limit." }],
       [{ en: "Deployment", ru: "Deployment" }, { en: "declaration: how many pod replicas to keep alive; the controller keeps them (in compose you restarted by hand).", ru: "объявление: сколько реплик пода держать живыми; контроллер следит сам (в compose ты рестартовал руками)." }],
       [{ en: "replica", ru: "реплика" }, { en: "one pod of a Deployment; the T10 fleet cut into identical instances.", ru: "один под из набора Deployment; флот из T09, нарезанный одинаковыми экземплярами." }],
-      [{ en: "Service", ru: "Service" }, { en: "a stable address for the fleet: clients hit one name, not changing pod IPs (lab08's gateway was exactly such a stable 127.0.0.1:8760).", ru: "стабильный адрес флота: клиенты бьют в одно имя, а не в меняющиеся IP подов (шлюз lab08 был таким же стабильным 127.0.0.1:8760)." }],
-      [{ en: "requests / limits", ru: "requests / limits" }, { en: "how much memory/GPU a pod asks for and may use at most; the limit is the same cgroup cap as T09's mem_limit.", ru: "сколько памяти/GPU под просит и сколько ему максимум можно; лимит — тот же cgroup-потолок, что mem_limit в T09." }],
-      [{ en: "QoS Guaranteed", ru: "QoS Guaranteed" }, { en: "requests == limits: the lowest eviction priority; for weight-bearing pods it is the mandatory setting.", ru: "requests == limits: наименьший приоритет выселения; для подов с весами — обязательная настройка." }],
+      [{ en: "Service", ru: "Service" }, { en: "a stable address for the fleet: clients hit one name, not changing pod IPs (lab08's gateway was exactly such a stable 127.0.0.1:8760).", ru: "стабильный адрес флота: клиенты бьют в одно имя, а не в меняющиеся IP подов (шлюз lab08 был таким же стабильным 127.0.0.1:8760)." }],
+      [{ en: "requests / limits", ru: "requests / limits" }, { en: "how much memory/GPU a pod asks for and may use at most; the limit is the same cgroup cap as T09's mem_limit.", ru: "сколько памяти/GPU под просит и сколько ему максимум можно; лимит — тот же cgroup-потолок, что mem_limit в T09." }],
+      [{ en: "QoS Guaranteed", ru: "QoS Guaranteed" }, { en: "requests == limits: the lowest eviction priority; for weight-bearing pods it is the mandatory setting.", ru: "requests == limits: наименьший приоритет выселения; для подов с весами — обязательная настройка." }],
       [{ en: "probe", ru: "проба" }, { en: "the controller's question «is this pod ready for traffic?»; for LLM pods — only after the weights load (T09 members).", ru: "вопрос контроллера «под готов принимать трафик?»; для LLM-пода — только после загрузки весов (члены из T09)." }],
       [{ en: "rollout", ru: "роллаут" }, { en: "the pace of version changes: maxUnavailable — how many old pods may die at once; maxSurge — how many extra new pods may start.", ru: "скорость смены версий: maxUnavailable — сколько старых можно убить сразу; maxSurge — сколько новых поднять сверх набора." }],
-      [{ en: "Helm release", ru: "Helm-релиз" }, { en: "chart templates + a values table; every update appends a revision to history; rollback = a NEW revision with old content.", ru: "шаблоны чарта + таблица values; каждое обновление добавляет ревизию в историю; откат = новая ревизия со старым содержимым." }],
+      [{ en: "Helm release", ru: "Helm-релиз" }, { en: "chart templates + a values table; every update appends a revision to history; rollback = a NEW revision with old content.", ru: "шаблоны чарта + таблица values; каждое обновление добавляет ревизию в историю; откат = новая ревизия со старым содержимым." }],
       [{ en: "GPU Operator", ru: "GPU Operator" }, { en: "a cluster operator that installs the driver container, container toolkit and device plugin so pods can request nvidia.com/gpu.", ru: "оператор кластера: сам ставит контейнер драйвера, container toolkit и device plugin, чтобы поды могли просить nvidia.com/gpu." }],
-      [{ en: "time-slicing vs MIG", ru: "time-slicing vs MIG" }, { en: "share one GPU as logical replicas (time-slicing, no memory isolation) or hardware slices (MIG, isolated, Ampere+).", ru: "разделить один GPU на логические реплики (time-slicing, без изоляции памяти) или аппаратные слайсы (MIG, с изоляцией, Ampere+)." }],
+      [{ en: "time-slicing vs MIG", ru: "time-slicing vs MIG" }, { en: "share one GPU as logical replicas (time-slicing, no memory isolation) or hardware slices (MIG, isolated, Ampere+).", ru: "разделить один GPU на логические реплики (time-slicing, без изоляции памяти) или аппаратные слайсы (MIG, с изоляцией, Ampere+)." }],
     ],
     figures: [
       {
@@ -79,7 +79,7 @@
     <path d="M 495 330 L 495 264" fill="none" stroke="var(--lab-good)" stroke-width="2" class="fig-flow"/>
     <path d="M 620 330 C 660 320 680 240 690 190" fill="none" stroke="var(--lab-good)" stroke-width="2" class="fig-flow"/>
     <path d="M 560 330 L 560 264" fill="none" stroke="var(--lab-good)" stroke-width="2" class="fig-flow"/>
-    <text x="60" y="300" font-size="13" fill="var(--lab-muted)" data-en="clients hit one stable name;" data-ru="клиенты бьют в одно стабильное имя;">clients hit one stable name;</text>
+    <text x="60" y="300" font-size="13" fill="var(--lab-muted)" data-en="clients hit one stable name;" data-ru="клиенты бьют в одно стабильное имя;">clients hit one stable name;</text>
     <text x="60" y="320" font-size="13" fill="var(--lab-muted)" data-en="pod IPs may churn underneath" data-ru="IP подов могут меняться под ним">pod IPs may churn underneath</text>
   </g>
   <g id="g-gpu">
@@ -90,7 +90,7 @@
 </svg>`,
         stages: [
           { cap: { en: "The desired state, declared once: 3 replicas, ledger memory, GPU, probe.", ru: "Желаемое состояние объявляется один раз: 3 реплики, память по ведомости из T10, GPU, проба." }, show: ["g-manifest"] },
-          { cap: { en: "The controller starts 3 pods; each goes Ready after weights + probe.", ru: "Контроллер поднимает 3 пода; Ready — после весов и пробы." }, show: ["g-manifest", "g-pods"] },
+          { cap: { en: "The controller starts 3 pods; each goes Ready after weights + probe.", ru: "Контроллер поднимает 3 пода; Ready — после весов и пробы." }, show: ["g-manifest", "g-pods"] },
           { cap: { en: "One Service fronts the fleet: a stable address.", ru: "Один Service закрывает флот — стабильный адрес, пока IP подов меняются." }, show: ["g-manifest", "g-pods", "g-service"] },
           { cap: { en: "Sharing a GPU: time-slicing without isolation; MIG with isolation.", ru: "Разделение GPU: time-slicing без изоляции; MIG — с изоляцией." }, show: ["g-pods", "g-service", "g-gpu"] },
         ],
@@ -116,14 +116,14 @@
   <g id="g-surge">
     <rect x="558" y="76" width="150" height="60" rx="8" fill="none" stroke="var(--lab-accent)" stroke-width="1.5" stroke-dasharray="6 4" class="fig-ants"/>
     <text x="633" y="100" text-anchor="middle" font-size="14" fill="var(--lab-ink)" class="mono">pod 3s</text>
-    <text x="633" y="122" text-anchor="middle" font-size="13" fill="var(--fig-warm)" data-en="loading weights · 165 s" data-ru="грузит веса · 165 с">loading weights · 165 s</text>
+    <text x="633" y="122" text-anchor="middle" font-size="13" fill="var(--fig-warm)" data-en="loading weights · 165 s" data-ru="грузит веса · 165 с">loading weights · 165 s</text>
     <text x="60" y="216" font-size="14" fill="var(--lab-ink)" data-en="surge first: the new pod starts loading" data-ru="сначала surge: новый под начинает грузиться">surge first: the new pod starts loading</text>
     <text x="60" y="240" font-size="13" fill="var(--lab-muted)" data-en="until it is Ready, it serves nothing" data-ru="пока не Ready — он не обслуживает ни один запрос">until it is Ready, it serves nothing</text>
   </g>
   <g id="g-swap">
     <rect x="60" y="268" width="648" height="26" rx="6" fill="var(--lab-accent)" opacity="0.16"/>
     <rect x="60" y="268" width="648" height="26" rx="6" fill="none" stroke="var(--lab-good)" stroke-width="1.5"/>
-    <text x="60" y="320" font-size="14" fill="var(--lab-good)" data-en="pod 3s turns Ready, THEN pod 0 dies — capacity never dips below 3" data-ru="pod 3s становится Ready, и только потом pod 0 умирает — ёмкость не ниже 3">pod 3s turns Ready, THEN pod 0 dies — capacity never dips below 3</text>
+    <text x="60" y="320" font-size="14" fill="var(--lab-good)" data-en="pod 3s turns Ready, THEN pod 0 dies — capacity never dips below 3" data-ru="pod 3s становится Ready, и только потом pod 0 умирает — ёмкость не ниже 3">pod 3s turns Ready, THEN pod 0 dies — capacity never dips below 3</text>
     <circle cx="620" cy="281" r="6" fill="var(--lab-good)" class="fig-pulse"/>
     <text x="60" y="352" font-size="13" fill="var(--lab-muted)" data-en="the floor is replicas − maxUnavailable; surge only adds speed" data-ru="нижняя граница — replicas − maxUnavailable; surge добавляет только скорость">the floor is replicas − maxUnavailable; surge only adds speed</text>
   </g>
@@ -141,12 +141,12 @@
       },
     ],
     outcomes: [
-      { en: "Size an LLM pod from the ledger and roll a release without dipping capacity (Guaranteed QoS, probe gate, maxUnavailable 0).", ru: "Подобрать размер LLM-пода по ведомости из T10 и катить релиз без ямы в ёмкости (Guaranteed QoS, гейт пробы, maxUnavailable 0)." },
-      { en: "Drive a Helm release history and roll back, knowing a rollback creates a new revision.", ru: "Вести историю Helm-релиза и откатываться, зная, что откат создаёт новую ревизию." },
+      { en: "Size an LLM pod from the ledger and roll a release without dipping capacity (Guaranteed QoS, probe gate, maxUnavailable 0).", ru: "Подобрать размер LLM-пода по ведомости из T10 и катить релиз без ямы в ёмкости (Guaranteed QoS, гейт пробы, maxUnavailable 0)." },
+      { en: "Drive a Helm release history and roll back, knowing a rollback creates a new revision.", ru: "Вести историю Helm-релиза и откатываться, зная, что откат создаёт новую ревизию." },
     ],
     model: [
-      [{ en: "pod memory (T10 ledger)", ru: "память пода (ведомость из T10)" }, { en: "(16 + 4) / p + 1.5 GB", ru: "(16 + 4) / p + 1.5 ГБ" }, { en: "GPU per pod", ru: "GPU на под" }, "nvidia.com/gpu: 1"],
-      [{ en: "cold start (T09-fleet run)", ru: "холодный старт (прогон T09-fleet)" }, { en: "165 s to /health", ru: "165 с до /health" }, { en: "startupProbe budget", ru: "бюджет startupProbe" }, { en: "period 5 s × failureThreshold", ru: "период 5 с × failureThreshold" }],
+      [{ en: "pod memory (T10 ledger)", ru: "память пода (ведомость из T10)" }, { en: "(16 + 4) / p + 1.5 GB", ru: "(16 + 4) / p + 1.5 ГБ" }, { en: "GPU per pod", ru: "GPU на под" }, "nvidia.com/gpu: 1"],
+      [{ en: "cold start (T09-fleet run)", ru: "холодный старт (прогон T09-fleet)" }, { en: "165 s to /health", ru: "165 с до /health" }, { en: "startupProbe budget", ru: "бюджет startupProbe" }, { en: "period 5 s × failureThreshold", ru: "период 5 с × failureThreshold" }],
       [{ en: "rollout capacity floor", ru: "нижняя граница ёмкости роллаута" }, { en: "replicas − maxUnavailable", ru: "replicas − maxUnavailable" }, { en: "safe cadence", ru: "безопасный темп" }, { en: "maxUnavailable 0 · maxSurge 1", ru: "maxUnavailable 0 · maxSurge 1" }],
       [{ en: "helm revision", ru: "Helm-ревизия" }, { en: "values snapshot in history", ru: "снимок values в истории" }, { en: "rollback N", ru: "откат к N" }, { en: "new revision == content of N", ru: "новая ревизия == содержимое N" }],
     ],
@@ -156,7 +156,7 @@
         id: "q1",
         q: {
           en: "A pod hosts the engine at TP degree 2 (T10 ledger: weights 16, KV 4, fixed 1.5 GB). How many GB go into requests (memory)?",
-          ru: "Под держит движок на TP-степени 2 (ведомость из T10: веса 16, KV 4, фикс 1.5 ГБ). Сколько ГБ писать в requests (память)?",
+          ru: "Под держит движок на TP-степени 2 (ведомость из T10: веса 16, KV 4, фикс 1.5 ГБ). Сколько ГБ писать в requests (память)?",
         },
         answer: 11.5, tol: 0.1, unit: { en: "GB", ru: "ГБ" },
         hint: {
@@ -168,7 +168,7 @@
         id: "q2",
         q: {
           en: "Cold start to /health is 165 s; the probe runs every 5 s. What failureThreshold gives a budget of exactly 200 s?",
-          ru: "Холодный старт до /health — 165 с; проба ходит каждые 5 с. Какой failureThreshold даст бюджет ровно 200 с?",
+          ru: "Холодный старт до /health — 165 с; проба ходит каждые 5 с. Какой failureThreshold даст бюджет ровно 200 с?",
         },
         answer: 40, tol: 0.2, unit: { en: "attempts", ru: "попыток" },
         hint: {
@@ -222,7 +222,7 @@
         title: { en: "Exercise 2 · StartupProbe vs the cold start", ru: "Упражнение 2 · StartupProbe против холодного старта" },
         brief: {
           en: "Implement <code>pod_goes_ready(cold_start_s, period_s, failure_threshold)</code> — does the pod survive to Ready? The probe asks <code>/health</code> every <code>period_s</code> seconds and tolerates <code>failure_threshold</code> failures before killing the container, so the budget is <code>period_s × failure_threshold</code>. The pod goes Ready iff the budget is <strong>at least</strong> the cold start (the T09-fleet run measured 165 s). An LLM pod that is slow-but-loading must not be killed for being slow — the probe exists to gate traffic, not to murder weight loading.",
-          ru: "Реализуй <code>pod_goes_ready(cold_start_s, period_s, failure_threshold)</code> — доживёт ли под до Ready? Проба стучится в <code>/health</code> каждые <code>period_s</code> секунд и терпит <code>failure_threshold</code> неудач, прежде чем убить контейнер; бюджет — <code>period_s × failure_threshold</code>. Под становится Ready тогда и только тогда, когда бюджет <strong>не меньше</strong> холодного старта (прогон T09-fleet измерил 165 с). Медленный, но грузящийся LLM-под нельзя убивать за медленность — проба гейтит трафик, а не казнит загрузку весов.",
+          ru: "Реализуй <code>pod_goes_ready(cold_start_s, period_s, failure_threshold)</code> — доживёт ли под до Ready? Проба стучится в <code>/health</code> каждые <code>period_s</code> секунд и терпит <code>failure_threshold</code> неудач, прежде чем убить контейнер; бюджет — <code>period_s × failure_threshold</code>. Под становится Ready тогда и только тогда, когда бюджет <strong>не меньше</strong> холодного старта (прогон T09-fleet измерил 165 с). Медленный, но грузящийся LLM-под нельзя убивать за медленность — проба гейтит трафик, а не казнит загрузку весов.",
         },
         starter: `def pod_goes_ready(cold_start_s, period_s, failure_threshold):
     """True iff the probe budget covers the cold start (>=, not >)."""
@@ -247,7 +247,7 @@
         title: { en: "Exercise 3 · Fix the bug: the rollout dips", ru: "Упражнение 3 · Почини баг: роллаут роет яму" },
         brief: {
           en: "This <code>rollout_floor(replicas, max_unavailable, max_surge)</code> claims the rollout's capacity floor is <code>replicas − maxUnavailable + maxSurge</code> — wrong on two sides. A surged pod serves <strong>nothing</strong> until it is Ready (weights, 165 s), so surge never raises the floor; and killing <code>maxUnavailable</code> old pods before any new one is Ready dips the floor to <code>replicas − maxUnavailable</code> — the OpenAI KubeCon lesson: an inference rollout is not a stateless rollout. Fix the formula, and the safe cadence falls out: <code>maxUnavailable 0, maxSurge 1</code> keeps the floor at <code>replicas</code>.",
-          ru: "Эта <code>rollout_floor(replicas, max_unavailable, max_surge)</code> утверждает, что нижняя граница ёмкости роллаута — <code>replicas − maxUnavailable + maxSurge</code>, и ошибается с двух сторон. Surge-под не обслуживает <strong>ничего</strong>, пока не Ready (веса, 165 с), поэтому surge границу не поднимает; а убийство <code>maxUnavailable</code> старых подов до готовности хотя бы одного нового роняет границу до <code>replicas − maxUnavailable</code> — урок KubeCon-доклада OpenAI: роллаут инференса — не роллаут stateless. Почини формулу, и безопасный темп получится сам: <code>maxUnavailable 0, maxSurge 1</code> держит границу на <code>replicas</code>.",
+          ru: "Эта <code>rollout_floor(replicas, max_unavailable, max_surge)</code> утверждает, что нижняя граница ёмкости роллаута — <code>replicas − maxUnavailable + maxSurge</code>, и ошибается с двух сторон. Surge-под не обслуживает <strong>ничего</strong>, пока не Ready (веса, 165 с), поэтому surge границу не поднимает; а убийство <code>maxUnavailable</code> старых подов до готовности хотя бы одного нового роняет границу до <code>replicas − maxUnavailable</code> — урок KubeCon-доклада OpenAI: роллаут инференса — не роллаут stateless. Почини формулу, и безопасный темп получится сам: <code>maxUnavailable 0, maxSurge 1</code> держит границу на <code>replicas</code>.",
         },
         starter: `def rollout_floor(replicas, max_unavailable, max_surge):
     """Lowest serving capacity during a rolling update."""
@@ -264,17 +264,17 @@
         solution: `def rollout_floor(replicas, max_unavailable, max_surge):
     return replicas - max_unavailable`,
         hints: [
-          { en: "A pod that is still loading weights serves zero requests — surge is speed, not capacity.", ru: "Под, ещё грузящий веса, обслуживает ноль запросов — surge — это скорость, а не ёмкость." },
+          { en: "A pod that is still loading weights serves zero requests — surge is speed, not capacity.", ru: "Под, ещё грузящий веса, обслуживает ноль запросов — surge — это скорость, а не ёмкость." },
         ],
         numpy: false,
         timeoutMs: 4000,
       },
       {
         id: "ex4",
-        title: { en: "Exercise 4 · Wrap it into a class: ReleaseSim", ru: "Упражнение 4 · Собери в класс: ReleaseSim" },
+        title: { en: "Exercise 4 · Wrap it into a class: ReleaseSim", ru: "Упражнение 4 · Собери в класс: ReleaseSim" },
         brief: {
           en: "The lab's final boss: a Helm release as a class. <code>ReleaseSim()</code> with <code>upgrade(values)</code> — appends a revision (numbered from 1) and returns its number; <code>history()</code> — the list of <code>{'revision': n, 'values': dict}</code>; <code>rollback(revision)</code> — appends a <strong>new</strong> revision whose values are a copy of that revision's (history is never rewritten — the Helm rule) and returns its number; an unknown revision raises <code>ValueError</code>. Copy the values dicts — a release history that aliases its snapshots is a corrupt ledger.",
-          ru: "Финальный босс лабы: Helm-релиз как класс. <code>ReleaseSim()</code> с <code>upgrade(values)</code> — добавляет ревизию (нумерация с 1) и возвращает её номер; <code>history()</code> — список <code>{'revision': n, 'values': dict}</code>; <code>rollback(revision)</code> — добавляет <strong>новую</strong> ревизию, значения которой — копия значений указанной (история никогда не переписывается — правило Helm), и возвращает её номер; неизвестная ревизия — <code>ValueError</code>. Копируй словари values — история релиза, ссылающаяся на свои же снимки, — это испорченный журнал.",
+          ru: "Финальный босс лабы: Helm-релиз как класс. <code>ReleaseSim()</code> с <code>upgrade(values)</code> — добавляет ревизию (нумерация с 1) и возвращает её номер; <code>history()</code> — список <code>{'revision': n, 'values': dict}</code>; <code>rollback(revision)</code> — добавляет <strong>новую</strong> ревизию, значения которой — копия значений указанной (история никогда не переписывается — правило Helm), и возвращает её номер; неизвестная ревизия — <code>ValueError</code>. Копируй словари values — история релиза, ссылающаяся на свои же снимки, — это испорченный журнал.",
         },
         starter: `class ReleaseSim:
     """Helm-style release: upgrade/history/rollback, revisions from 1."""
@@ -319,7 +319,7 @@ class ReleaseSim:
         raise ValueError('unknown revision: %s' % revision)`,
         hints: [
           { en: "rollback(rev) is just upgrade(stored_values_of_rev) — plus the ValueError guard.", ru: "rollback(rev) — это просто upgrade(сохранённых_values_ревизии) — плюс защита от ValueError." },
-          { en: "Copy on the way in AND on the way out: history() returning live references lets a caller corrupt the ledger.", ru: "Копируй и на входе, и на выходе: history(), вернувшая живые ссылки, позволяет вызывающему испортить журнал." },
+          { en: "Copy on the way in AND on the way out: history() returning live references lets a caller corrupt the ledger.", ru: "Копируй и на входе, и на выходе: history(), вернувшая живые ссылки, позволяет вызывающему испортить журнал." },
         ],
         numpy: false,
         timeoutMs: 4000,
@@ -336,24 +336,24 @@ class ReleaseSim:
       {
         id: "p2",
         q: { en: "A liveness probe with a 1 s timeout keeps killing pods during long generations. The right treatment is\u2026", ru: "Liveness-проба с таймаутом 1 с убивает поды во время длинных генераций. Правильное лечение —\u2026" },
-        options: [{ en: "gate traffic with readiness and budget the startup; do not let liveness kill slow-but-busy pods", ru: "гейтить трафик readiness-пробой и дать бюджет старту; liveness не должен убивать медленно-занятые поды" }, { en: "remove all probes entirely", ru: "убрать все пробы совсем" }, { en: "just add more replicas", ru: "просто добавить реплик" }],
+        options: [{ en: "gate traffic with readiness and budget the startup; do not let liveness kill slow-but-busy pods", ru: "гейтить трафик readiness-пробой и дать бюджет старту; liveness не должен убивать медленно-занятые поды" }, { en: "remove all probes entirely", ru: "убрать все пробы совсем" }, { en: "just add more replicas", ru: "просто добавить реплик" }],
         answer: 0,
-        explain: { en: "Probes exist to gate traffic and survive cold starts (weights, then /health). Killing busy-but-healthy engines turns every long generation into a restart — the model-aware readiness lesson.", ru: "Пробы существуют, чтобы гейтить трафик и переживать холодный старт (веса, потом /health). Убийство занятых, но здоровых движков превращает каждую длинную генерацию в рестарт — урок model-aware readiness." },
+        explain: { en: "Probes exist to gate traffic and survive cold starts (weights, then /health). Killing busy-but-healthy engines turns every long generation into a restart — the model-aware readiness lesson.", ru: "Пробы существуют, чтобы гейтить трафик и переживать холодный старт (веса, потом /health). Убийство занятых, но здоровых движков превращает каждую длинную генерацию в рестарт — урок model-aware readiness." },
       },
       {
         id: "p3",
         q: { en: "A release history holds revisions [1, 2, 3]. After `helm rollback 1` the history is\u2026", ru: "История релиза хранит ревизии [1, 2, 3]. После <code>helm rollback 1</code> история — это\u2026" },
         options: [{ en: "[1, 2, 3, 4] where 4 has revision 1's content", ru: "[1, 2, 3, 4], где 4 несёт содержимое ревизии 1" }, { en: "[1] — the history is rewritten", ru: "[1] — история переписана" }, { en: "[2, 3] — revision 1 is consumed", ru: "[2, 3] — ревизия 1 израсходована" }],
         answer: 0,
-        explain: { en: "Helm never rewrites history: a rollback appends a new revision whose content matches the target. That is why ReleaseSim.rollback() calls upgrade() under the hood.", ru: "Helm никогда не переписывает историю: откат добавляет новую ревизию с содержимым целевой. Поэтому ReleaseSim.rollback() под капотом вызывает upgrade()." },
+        explain: { en: "Helm never rewrites history: a rollback appends a new revision whose content matches the target. That is why ReleaseSim.rollback() calls upgrade() under the hood.", ru: "Helm никогда не переписывает историю: откат добавляет новую ревизию с содержимым целевой. Поэтому ReleaseSim.rollback() под капотом вызывает upgrade()." },
       },
     ],
     reward: {
-      caption: { en: "Ledger → pod spec, probe → readiness, rollout without the dip, and a release you can roll back.", ru: "Ведомость → спецификация пода, проба → готовность, роллаут без ямы — и релиз, с которого можно откатиться." },
+      caption: { en: "Ledger → pod spec, probe → readiness, rollout without the dip, and a release you can roll back.", ru: "Ведомость → спецификация пода, проба → готовность, роллаут без ямы — и релиз, с которого можно откатиться." },
     },
     footer: {
       en: "A declared teaching model of a cluster (vocabulary + controller arithmetic on course numbers) — not your cluster and not a kubectl walkthrough. Real practice material: NVIDIA GPU Operator docs, Helm docs, llm-d model-aware readiness probes, the OpenAI KubeCon NA 2026 rollout talk. The T10 ledger and the T09-fleet 165 s cold start are the course's own measured numbers.",
-      ru: "Заявленная учебная модель кластера (словарь + арифметика контроллеров на курсовых числах) — не твой кластер и не walkthrough по kubectl. Реальные первоисточники практики: доки NVIDIA GPU Operator, доки Helm, llm-d model-aware readiness probes, доклад OpenAI с KubeCon NA 2026 про роллауты. Ведомость из T10 и холодный старт 165 с из T09-fleet — измеренные числа самого курса.",
+      ru: "Заявленная учебная модель кластера (словарь + арифметика контроллеров на курсовых числах) — не твой кластер и не walkthrough по kubectl. Реальные первоисточники практики: доки NVIDIA GPU Operator, доки Helm, llm-d model-aware readiness probes, доклад OpenAI с KubeCon NA 2026 про роллауты. Ведомость из T10 и холодный старт 165 с из T09-fleet — измеренные числа самого курса.",
     },
   };
 })();

@@ -14,28 +14,28 @@
     },
     sub: {
       en: "Explain why a busy GPU is not a scaling signal, compute the HPA decision to the integer, and tame the flapping fleet with a stabilization window.",
-      ru: "Объясни, почему занятый GPU — не сигнал к масштабированию, посчитай решение HPA до целого и усмири флаттерующий флот окном стабилизации.",
+      ru: "Объясни, почему занятый GPU — не сигнал к масштабированию, посчитай решение HPA до целого и усмири флаттерующий флот окном стабилизации.",
     },
     intro: {
       en: `<p>One vLLM pod already serves a crowd: continuous batching (T05) collects requests into batches at every step boundary, and the roof <code>1000 / b</code> from T06 still holds. That is why <strong>"GPU busy at 90%" is not an overload signal</strong> — batching is supposed to keep the GPU busy even when the queue is empty. The signals that actually mean "scale" are the <strong>queue depth</strong>, the KV-cache pressure and the TTFT — the lesson the llm-d team brought home from KubeCon NA 2026.</p>
 <p>The <strong>Horizontal Pod Autoscaler (HPA)</strong> is the controller that turns such a signal into replicas. Every tick (15 s) it computes one number: <code>desired = ceil(replicas × metric / target)</code>, clamped into <code>[min, max]</code>. If the metric-to-target ratio sits inside the <strong>tolerance band</strong> ±10 %, it does nothing. And the windows are asymmetric on purpose: scaling up is immediate (window 0 s), scaling down waits in a <strong>300 s stabilization window</strong> and applies the <em>maximum</em> recommendation seen there — without it, a saw-shaped metric makes the fleet flap 1↔2↔1 and burns money on churn.</p>
 <p>Scaling LLM pods is expensive in time even when it is free in paperwork: a fresh pod pays the weight load again (T09's members, ~165 s on the course fleet), which is exactly why scale-down is the cautious direction. Everything here runs on declared numbers and a deterministic simulator in the sandbox — this is controller arithmetic, not a cluster. The compose runtime from T08 remains your rehearsal: burst 24 → sixteen honest 429s (T08), then a hand-driven «HPA tick» — raise the gateway replicas — and burst again; the journal compares the refusals.</p>`,
-      ru: `<p>Один под vLLM уже обслуживает толпу: continuous batching (T05) собирает запросы в батчи на каждой границе шага, и крыша <code>1000 / b</code> из T06 никуда не делась. Поэтому <strong>«GPU занят на 90 %» — не сигнал перегрузки</strong>: батчинг и обязан держать GPU занятым, даже когда очередь пуста. Сигналы, которые действительно означают «масштабируй», — <strong>глубина очереди</strong>, давление на KV-кэш и TTFT: урок, который команда llm-d привезла с KubeCon NA 2026.</p>
-<p><strong>Horizontal Pod Autoscaler (HPA)</strong> — контроллер, превращающий такой сигнал в реплики. Каждый тик (15 с) он считает одно число: <code>desired = ceil(replicas × metric / target)</code>, зажатое в <code>[min, max]</code>. Если отношение метрики к цели сидит в <strong>полосе tolerance</strong> ±10 % — он не делает ничего. А окна намеренно асимметричны: вверх — мгновенно (окно 0 с), вниз — ждёт в <strong>окне стабилизации 300 с</strong> и применяет <em>максимум</em> увиденных там рекомендаций; без него пилообразная метрика дёргает флот 1↔2↔1 и сжигает деньги на перемешивание.</p>
-<p>Масштабировать LLM-поды дорого по времени, даже когда по бумагам бесплатно: свежий под снова платит загрузку весов (члены из T09, ~165 с на курсовом флоте) — поэтому осторожное направление именно скейл-даун. Всё здесь считается на заявленных числах и детерминированном симуляторе в песочнице — это арифметика контроллера, а не кластер. Compose-рантайм из T08 остаётся репетицией: бурст 24 → шестнадцать честных 429 (T08), потом «тик HPA» руками — поднять replicas шлюза — и снова бурст; журнал сравнит отказы.</p>`,
+      ru: `<p>Один под vLLM уже обслуживает толпу: continuous batching (T05) собирает запросы в батчи на каждой границе шага, и крыша <code>1000 / b</code> из T06 никуда не делась. Поэтому <strong>«GPU занят на 90 %» — не сигнал перегрузки</strong>: батчинг и обязан держать GPU занятым, даже когда очередь пуста. Сигналы, которые действительно означают «масштабируй», — <strong>глубина очереди</strong>, давление на KV-кэш и TTFT: урок, который команда llm-d привезла с KubeCon NA 2026.</p>
+<p><strong>Horizontal Pod Autoscaler (HPA)</strong> — контроллер, превращающий такой сигнал в реплики. Каждый тик (15 с) он считает одно число: <code>desired = ceil(replicas × metric / target)</code>, зажатое в <code>[min, max]</code>. Если отношение метрики к цели сидит в <strong>полосе tolerance</strong> ±10 % — он не делает ничего. А окна намеренно асимметричны: вверх — мгновенно (окно 0 с), вниз — ждёт в <strong>окне стабилизации 300 с</strong> и применяет <em>максимум</em> увиденных там рекомендаций; без него пилообразная метрика дёргает флот 1↔2↔1 и сжигает деньги на перемешивание.</p>
+<p>Масштабировать LLM-поды дорого по времени, даже когда по бумагам бесплатно: свежий под снова платит загрузку весов (члены из T09, ~165 с на курсовом флоте) — поэтому осторожное направление именно скейл-даун. Всё здесь считается на заявленных числах и детерминированном симуляторе в песочнице — это арифметика контроллера, а не кластер. Compose-рантайм из T08 остаётся репетицией: бурст 24 → шестнадцать честных 429 (T08), потом «тик HPA» руками — поднять replicas шлюза — и снова бурст; журнал сравнит отказы.</p>`,
     },
     heroTag: { en: "queue depth, ceil, stabilization", ru: "глубина очереди, ceil, стабилизация" },
     glossary: [
       [{ en: "HPA", ru: "HPA" }, { en: "Horizontal Pod Autoscaler: a controller that adjusts replica count every tick from one formula.", ru: "Horizontal Pod Autoscaler: контроллер, меняющий число реплик каждый тик по одной формуле." }],
       [{ en: "signal vs metric", ru: "сигнал против метрики" }, { en: "GPU utilization misleads for LLMs (batching keeps it high); real signals: queue depth, KV-cache pressure, TTFT.", ru: "GPU-утилизация для LLM обманывает (батчинг держит её высокой); настоящие сигналы: глубина очереди, давление KV-кэша, TTFT." }],
       [{ en: "tolerance", ru: "полоса tolerance" }, { en: "±10 % band around the target: if the ratio is inside, the HPA does nothing (no flapping on noise).", ru: "полоса ±10 % вокруг цели: если отношение внутри — HPA не делает ничего (нет дёрганья на шуме)." }],
-      [{ en: "stabilization window", ru: "окно стабилизации" }, { en: "scale-up is immediate (0 s); scale-down waits 300 s and takes the max recommendation seen in the window.", ru: "скейл-ап мгновенный (0 с); скейл-даун ждёт 300 с и берёт максимум рекомендаций за окно." }],
+      [{ en: "stabilization window", ru: "окно стабилизации" }, { en: "scale-up is immediate (0 s); scale-down waits 300 s and takes the max recommendation seen in the window.", ru: "скейл-ап мгновенный (0 с); скейл-даун ждёт 300 с и берёт максимум рекомендаций за окно." }],
       [{ en: "custom metrics", ru: "кастомные метрики" }, { en: "LLM signals are not CPU: they reach the HPA via Prometheus Adapter, KEDA, or llm-d's WVA.", ru: "сигналы LLM — не CPU: до HPA они добираются через Prometheus Adapter, KEDA или llm-d WVA." }],
-      [{ en: "queue depth", ru: "глубина очереди" }, { en: "requests waiting per pod; the teaching target here is 2 per pod.", ru: "заявок в очереди на под; учебная цель здесь — 2 на под." }],
-      [{ en: "cold scale-up", ru: "холодный скейл-ап" }, { en: "a fresh pod pays the weight load again (T09 members) — scale-up is instant on paper, slow in reality.", ru: "свежий под снова платит загрузку весов (члены T09) — на бумаге скейл-ап мгновенный, в реальности медленный." }],
-      [{ en: "single-pod concurrency", ru: "конкурентность пода" }, { en: "continuous batching (T05) serves many clients per pod — that is why per-pod capacity is a roof, not a fixed rate.", ru: "continuous batching (T05) обслуживает многих клиентов на под — потому ёмкость пода — это крыша, а не фиксированная ставка." }],
+      [{ en: "queue depth", ru: "глубина очереди" }, { en: "requests waiting per pod; the teaching target here is 2 per pod.", ru: "заявок в очереди на под; учебная цель здесь — 2 на под." }],
+      [{ en: "cold scale-up", ru: "холодный скейл-ап" }, { en: "a fresh pod pays the weight load again (T09 members) — scale-up is instant on paper, slow in reality.", ru: "свежий под снова платит загрузку весов (члены T09) — на бумаге скейл-ап мгновенный, в реальности медленный." }],
+      [{ en: "single-pod concurrency", ru: "конкурентность пода" }, { en: "continuous batching (T05) serves many clients per pod — that is why per-pod capacity is a roof, not a fixed rate.", ru: "continuous batching (T05) обслуживает многих клиентов на под — потому ёмкость пода — это крыша, а не фиксированная ставка." }],
       [{ en: "PodDisruptionBudget", ru: "PodDisruptionBudget" }, { en: "a floor for voluntary disruptions (drains, updates): how many pods must stay up — the T11 rollout lesson, generalized.", ru: "нижняя граница добровольных прерываний (дрены, обновления): сколько подов обязаны жить — урок роллаутов из T11 в общем виде." }],
-      [{ en: "failure drill", ru: "дрилл отказа" }, { en: "kill a pod on purpose and measure what clients see: how much capacity vanished and for how long.", ru: "убить под нарочно и измерить, что увидят клиенты: сколько ёмкости пропало и на сколько." }],
+      [{ en: "failure drill", ru: "дрилл отказа" }, { en: "kill a pod on purpose and measure what clients see: how much capacity vanished and for how long.", ru: "убить под нарочно и измерить, что увидят клиенты: сколько ёмкости пропало и на сколько." }],
     ],
     figures: [
       {
@@ -45,7 +45,7 @@
         svg: `<svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
   <g id="g-metric">
     <line x1="80" y1="300" x2="700" y2="300" stroke="var(--lab-muted)" stroke-width="1.5"/>
-    <text x="700" y="324" text-anchor="end" font-size="13" fill="var(--lab-muted)" data-en="ticks (15 s each)" data-ru="тики (по 15 с)">ticks (15 s each)</text>
+    <text x="700" y="324" text-anchor="end" font-size="13" fill="var(--lab-muted)" data-en="ticks (15 s each)" data-ru="тики (по 15 с)">ticks (15 s each)</text>
     <path d="M 80 300 C 180 296 280 240 380 170 C 480 110 580 100 700 96" fill="none" stroke="var(--lab-accent)" stroke-width="2.5" class="fig-flow"/>
     <text x="90" y="80" font-size="14" fill="var(--lab-accent)" data-en="metric: queue depth per pod" data-ru="метрика: глубина очереди на под">metric: queue depth per pod</text>
   </g>
@@ -58,12 +58,12 @@
     <rect x="470" y="40" width="230" height="52" rx="9" fill="none" stroke="var(--lab-accent)" stroke-width="2"/>
     <text x="585" y="62" text-anchor="middle" font-size="14" fill="var(--lab-accent)" class="mono">ceil(2 × 6 / 2) = 6 → 4</text>
     <text x="585" y="82" text-anchor="middle" font-size="13" fill="var(--lab-muted)" data-en="clamped into [min, max]" data-ru="зажато в [min, max]">clamped into [min, max]</text>
-    <text x="380" y="348" font-size="14" fill="var(--lab-ink)" data-en="outside the band and rising: scale up immediately (window 0 s)" data-ru="вне полосы и растёт: скейл-ап мгновенно (окно 0 с)">outside the band and rising: scale up immediately (window 0 s)</text>
+    <text x="380" y="348" font-size="14" fill="var(--lab-ink)" data-en="outside the band and rising: scale up immediately (window 0 s)" data-ru="вне полосы и растёт: скейл-ап мгновенно (окно 0 с)">outside the band and rising: scale up immediately (window 0 s)</text>
   </g>
   <g id="g-window">
     <rect x="470" y="40" width="230" height="52" rx="9" fill="none" stroke="var(--fig-warm)" stroke-width="2"/>
-    <text x="585" y="62" text-anchor="middle" font-size="14" fill="var(--fig-warm)" class="mono" data-en="scale-down: max of 300 s window" data-ru="скейл-даун: максимум за 300 с">scale-down: max of 300 s window</text>
-    <text x="585" y="82" text-anchor="middle" font-size="13" fill="var(--lab-muted)" data-en="20 ticks of 15 s" data-ru="20 тиков по 15 с">20 ticks of 15 s</text>
+    <text x="585" y="62" text-anchor="middle" font-size="14" fill="var(--fig-warm)" class="mono" data-en="scale-down: max of 300 s window" data-ru="скейл-даун: максимум за 300 с">scale-down: max of 300 s window</text>
+    <text x="585" y="82" text-anchor="middle" font-size="13" fill="var(--lab-muted)" data-en="20 ticks of 15 s" data-ru="20 тиков по 15 с">20 ticks of 15 s</text>
     <text x="380" y="378" font-size="14" fill="var(--fig-warm)" data-en="metric falls: the window holds the fleet up" data-ru="метрика падает: окно держит флот наверху">metric falls: the window holds the fleet up</text>
     <g class="fig-ghost">
       <path d="M 100 40 L 140 76 L 180 40 L 220 76 L 260 40 L 300 76 L 340 40" fill="none" stroke="var(--fig-warm)" stroke-width="1.5"/>
@@ -74,8 +74,8 @@
         stages: [
           { cap: { en: "The metric climbs: queue depth per pod, tick by tick.", ru: "Метрика растёт: глубина очереди на под, тик за тиком." }, show: ["g-metric"] },
           { cap: { en: "The tolerance band: inside it the HPA does nothing.", ru: "Полоса tolerance вокруг цели; внутри неё HPA не делает ничего." }, show: ["g-metric", "g-band"] },
-          { cap: { en: "Outside and rising: ceil → clamp 4 — scale up now.", ru: "Вне полосы и рост: ceil → кламп 4 — скейл-ап сразу." }, show: ["g-metric", "g-band", "g-ceil"] },
-          { cap: { en: "Metric falls: scale-down reads the 300 s window — no flapping.", ru: "Метрика падает: окно 300 с берёт максимум — без флаттера." }, show: ["g-metric", "g-band", "g-window"] },
+          { cap: { en: "Outside and rising: ceil → clamp 4 — scale up now.", ru: "Вне полосы и рост: ceil → кламп 4 — скейл-ап сразу." }, show: ["g-metric", "g-band", "g-ceil"] },
+          { cap: { en: "Metric falls: scale-down reads the 300 s window — no flapping.", ru: "Метрика падает: окно 300 с берёт максимум — без флаттера." }, show: ["g-metric", "g-band", "g-window"] },
         ],
       },
       {
@@ -103,7 +103,7 @@
     <rect x="368" y="160" width="22" height="42" rx="4" fill="var(--lab-accent)" opacity="0.25"/>
     <rect x="394" y="160" width="22" height="42" rx="4" fill="var(--lab-accent)" opacity="0.12"/>
     <text x="370" y="226" text-anchor="middle" font-size="13" fill="var(--lab-muted)" data-en="continuous batching fills slots at step boundaries (T05)" data-ru="continuous batching заполняет слоты на границах шага (T05)">continuous batching fills slots at step boundaries (T05)</text>
-    <text x="370" y="248" text-anchor="middle" font-size="13" fill="var(--lab-muted)" class="mono" data-en="cap 30 · working point 250 tok/s (T06)" data-ru="кап 30 · рабочая точка 250 ток/с (T06)">cap 30 · working point 250 tok/s (T06)</text>
+    <text x="370" y="248" text-anchor="middle" font-size="13" fill="var(--lab-muted)" class="mono" data-en="cap 30 · working point 250 tok/s (T06)" data-ru="кап 30 · рабочая точка 250 ток/с (T06)">cap 30 · working point 250 tok/s (T06)</text>
   </g>
   <g id="g-meters">
     <rect x="520" y="110" width="200" height="70" rx="9" fill="none" stroke="var(--fig-warm)" stroke-width="1.5"/>
@@ -122,22 +122,22 @@
   </g>
 </svg>`,
         stages: [
-          { cap: { en: "Six clients hit one vLLM pod at once.", ru: "Шесть клиентов бьют в один под vLLM одновременно." }, show: ["g-clients"] },
-          { cap: { en: "Continuous batching packs them into slots at every step boundary.", ru: "Continuous batching упаковывает их в слоты на каждой границе шага." }, show: ["g-clients", "g-batch"] },
+          { cap: { en: "Six clients hit one vLLM pod at once.", ru: "Шесть клиентов бьют в один под vLLM одновременно." }, show: ["g-clients"] },
+          { cap: { en: "Continuous batching packs them into slots at every step boundary.", ru: "Continuous batching упаковывает их в слоты на каждой границе шага." }, show: ["g-clients", "g-batch"] },
           { cap: { en: "GPU 90 % is calm batching; queue 0 — do not scale.", ru: "Манометры: GPU 90 % — батчинг; очередь 0 — не масштабировать." }, show: ["g-clients", "g-batch", "g-meters"] },
           { cap: { en: "Queue 5 per pod: ceil → clamp 4 — the HPA acts.", ru: "Очередь 5 на под: ceil → кламп 4 — HPA действует." }, show: ["g-batch", "g-meters", "g-scale"] },
         ],
       },
     ],
     outcomes: [
-      { en: "Compute the HPA decision like the controller: ceil formula, tolerance band, clamp, and the stabilization windows that prevent flapping.", ru: "Считать решение HPA как контроллер: формула ceil, полоса tolerance, кламп и окна стабилизации, которые гасят флаттер." },
-      { en: "Explain why GPU utilization misleads under batching and scale on the queue-depth signal, not on the busy meter.", ru: "Объяснять, почему GPU-утилизация обманывает при батчинге, и масштабировать по сигналу глубины очереди, а не по занятости GPU." },
+      { en: "Compute the HPA decision like the controller: ceil formula, tolerance band, clamp, and the stabilization windows that prevent flapping.", ru: "Считать решение HPA как контроллер: формула ceil, полоса tolerance, кламп и окна стабилизации, которые гасят флаттер." },
+      { en: "Explain why GPU utilization misleads under batching and scale on the queue-depth signal, not on the busy meter.", ru: "Объяснять, почему GPU-утилизация обманывает при батчинге, и масштабировать по сигналу глубины очереди, а не по занятости GPU." },
     ],
     model: [
       [{ en: "HPA formula", ru: "формула HPA" }, { en: "desired = ceil(replicas × metric / target)", ru: "desired = ceil(replicas × metric / target)" }, { en: "tolerance", ru: "tolerance" }, { en: "±10 % → no scaling", ru: "±10 % → не скейлим" }],
-      [{ en: "windows (k8s defaults)", ru: "окна (дефолты k8s)" }, { en: "up 0 s · down 300 s", ru: "вверх 0 с · вниз 300 с" }, { en: "scale-down rule", ru: "правило скейл-дауна" }, { en: "max recommendation in window", ru: "максимум рекомендаций за окно" }],
+      [{ en: "windows (k8s defaults)", ru: "окна (дефолты k8s)" }, { en: "up 0 s · down 300 s", ru: "вверх 0 с · вниз 300 с" }, { en: "scale-down rule", ru: "правило скейл-дауна" }, { en: "max recommendation in window", ru: "максимум рекомендаций за окно" }],
       [{ en: "sync tick", ru: "тик синхронизации" }, "15 s", { en: "clamp", ru: "кламп" }, { en: "min ≤ desired ≤ max", ru: "min ≤ desired ≤ max" }],
-      [{ en: "one pod's working point (T06)", ru: "рабочая точка пода (T06)" }, { en: "batch 30 → 250 tok/s", ru: "батч 30 → 250 ток/с" }, { en: "LLM scaling signals", ru: "сигналы масштабирования LLM" }, { en: "queue depth · KV pressure · TTFT", ru: "глубина очереди · давление KV · TTFT" }],
+      [{ en: "one pod's working point (T06)", ru: "рабочая точка пода (T06)" }, { en: "batch 30 → 250 tok/s", ru: "батч 30 → 250 ток/с" }, { en: "LLM scaling signals", ru: "сигналы масштабирования LLM" }, { en: "queue depth · KV pressure · TTFT", ru: "глубина очереди · давление KV · TTFT" }],
     ],
     scenario: null,
     quizzes: [
@@ -169,7 +169,7 @@
         id: "q3",
         q: {
           en: "The scale-down stabilization window is 300 s and the sync tick is 15 s. How many ticks does a recommendation stay inside the window?",
-          ru: "Окно стабилизации скейл-дауна — 300 с, тик синхронизации — 15 с. Сколько тиков рекомендация живёт внутри окна?",
+          ru: "Окно стабилизации скейл-дауна — 300 с, тик синхронизации — 15 с. Сколько тиков рекомендация живёт внутри окна?",
         },
         answer: 20, tol: 0.2, unit: { en: "ticks", ru: "тиков" },
         hint: {
@@ -184,7 +184,7 @@
         title: { en: "Exercise 1 · The HPA formula", ru: "Упражнение 1 · Формула HPA" },
         brief: {
           en: "Implement <code>desired_replicas(replicas, metric, target, min_r=1, max_r=10)</code> — the controller's one number: <code>ceil(replicas × metric / target)</code>, clamped into <code>[min_r, max_r]</code>. Here <code>metric</code> is an LLM signal like queue depth per pod and <code>target</code> is its desired value (the tolerance band arrives in Exercise 2). Mind the ceiling: <code>int()</code> truncates, the controller rounds <em>up</em> — under-provisioning is the one mistake it never makes.",
-          ru: "Реализуй <code>desired_replicas(replicas, metric, target, min_r=1, max_r=10)</code> — то самое число контроллера: <code>ceil(replicas × metric / target)</code>, зажатое в <code>[min_r, max_r]</code>. Здесь <code>metric</code> — LLM-сигнал вроде глубины очереди на под, а <code>target</code> — его желаемое значение (полоса tolerance появится в упражнении 2). Следи за потолком: <code>int()</code> усекает, а контроллер округляет <em>вверх</em> — нехватка реплик (underprovisioning) — единственная ошибка, которую он никогда не делает.",
+          ru: "Реализуй <code>desired_replicas(replicas, metric, target, min_r=1, max_r=10)</code> — то самое число контроллера: <code>ceil(replicas × metric / target)</code>, зажатое в <code>[min_r, max_r]</code>. Здесь <code>metric</code> — LLM-сигнал вроде глубины очереди на под, а <code>target</code> — его желаемое значение (полоса tolerance появится в упражнении 2). Следи за потолком: <code>int()</code> усекает, а контроллер округляет <em>вверх</em> — нехватка реплик (underprovisioning) — единственная ошибка, которую он никогда не делает.",
         },
         starter: `import math
 
@@ -204,7 +204,7 @@ def desired_replicas(replicas, metric, target, min_r=1, max_r=10):
 def desired_replicas(replicas, metric, target, min_r=1, max_r=10):
     return min(max(math.ceil(replicas * metric / target), min_r), max_r)`,
         hints: [
-          { en: "math.ceil first, clamp second: ceil(7.5) = 8, not 7.", ru: "Сначала math.ceil, кламп вторым: ceil(7.5) = 8, а не 7." },
+          { en: "math.ceil first, clamp second: ceil(7.5) = 8, not 7.", ru: "Сначала math.ceil, кламп вторым: ceil(7.5) = 8, а не 7." },
         ],
         numpy: false,
         timeoutMs: 4000,
@@ -274,10 +274,10 @@ def hpa_step(replicas, metric, target, tol=0.1, min_r=1, max_r=10):
       },
       {
         id: "ex4",
-        title: { en: "Exercise 4 · Wrap it into a class: HPASim", ru: "Упражнение 4 · Собери в класс: HPASim" },
+        title: { en: "Exercise 4 · Wrap it into a class: HPASim", ru: "Упражнение 4 · Собери в класс: HPASim" },
         brief: {
           en: "The lab's final boss: the controller loop as a class. <code>HPASim(w_ms=60.0, b_ms=2.0, cap=30, target_queue=2.0, min_r=1, max_r=4, window=20)</code> — the T06 step model per pod (cap 30 sequences, working point 250 tok/s). <code>tick(arrivals)</code>: add arrivals to the queue; the metric is <code>queue / replicas</code>; recommend <code>ceil(replicas × metric / target)</code> clamped (no tolerance band here — Exercise 2's job); scale-down runs through the stabilization window (max of the last <code>window</code> recommendations), scale-up is immediate; then serve <code>min(queue, replicas × cap)</code>. The tick returns <code>{'replicas', 'served', 'queue', 'step_ms'}</code> with <code>step_ms = w_ms + b_ms × batch</code> and <code>batch = ceil(served / replicas)</code> capped at <code>cap</code> (0 if nothing served). <code>report()</code> returns <code>{'ticks', 'held_ticks', 'unserved_ticks', 'final_replicas', 'final_queue'}</code> where <code>held_ticks</code> counts scale-downs suppressed by the window and <code>unserved_ticks</code> counts ticks that ended with a non-empty queue.",
-          ru: "Финальный босс лабы: цикл контроллера как класс. <code>HPASim(w_ms=60.0, b_ms=2.0, cap=30, target_queue=2.0, min_r=1, max_r=4, window=20)</code> — модель шага из T06 на под (кап 30 последовательностей, рабочая точка 250 ток/с). <code>tick(arrivals)</code>: добавь arrivals в очередь; метрика — <code>queue / replicas</code>; рекомендация — <code>ceil(replicas × metric / target)</code> с клампом (без полосы tolerance — её работа была в упражнении 2); скейл-даун идёт через окно стабилизации (максимум последних <code>window</code> рекомендаций), скейл-ап мгновенный; затем обслужи <code>min(queue, replicas × cap)</code>. Тик возвращает <code>{'replicas', 'served', 'queue', 'step_ms'}</code>, где <code>step_ms = w_ms + b_ms × batch</code>, а <code>batch = ceil(served / replicas)</code> с потолком <code>cap</code> (0, если ничего не обслужено). <code>report()</code> возвращает <code>{'ticks', 'held_ticks', 'unserved_ticks', 'final_replicas', 'final_queue'}</code>, где <code>held_ticks</code> считает скейл-дауны, удержанные окном, а <code>unserved_ticks</code> — тики, кончившиеся непустой очередью.",
+          ru: "Финальный босс лабы: цикл контроллера как класс. <code>HPASim(w_ms=60.0, b_ms=2.0, cap=30, target_queue=2.0, min_r=1, max_r=4, window=20)</code> — модель шага из T06 на под (кап 30 последовательностей, рабочая точка 250 ток/с). <code>tick(arrivals)</code>: добавь arrivals в очередь; метрика — <code>queue / replicas</code>; рекомендация — <code>ceil(replicas × metric / target)</code> с клампом (без полосы tolerance — её работа была в упражнении 2); скейл-даун идёт через окно стабилизации (максимум последних <code>window</code> рекомендаций), скейл-ап мгновенный; затем обслужи <code>min(queue, replicas × cap)</code>. Тик возвращает <code>{'replicas', 'served', 'queue', 'step_ms'}</code>, где <code>step_ms = w_ms + b_ms × batch</code>, а <code>batch = ceil(served / replicas)</code> с потолком <code>cap</code> (0, если ничего не обслужено). <code>report()</code> возвращает <code>{'ticks', 'held_ticks', 'unserved_ticks', 'final_replicas', 'final_queue'}</code>, где <code>held_ticks</code> считает скейл-дауны, удержанные окном, а <code>unserved_ticks</code> — тики, кончившиеся непустой очередью.",
         },
         starter: `import math
 
@@ -349,7 +349,7 @@ class HPASim:
                 'final_queue': self.queue}`,
         hints: [
           { en: "Trace test 1 by hand first: queue 60, 1 replica → rec = ceil(60/10) = 6 → clamp 3; served min(60, 90); batch ceil(60/3) = 20 → step 60 + 2×20 = 100.", ru: "Сначала трассируй тест 1 руками: очередь 60, 1 реплика → rec = ceil(60/10) = 6 → кламп 3; обслужено min(60, 90); батч ceil(60/3) = 20 → шаг 60 + 2×20 = 100." },
-          { en: "The recommendation is recorded BEFORE the window logic — the window reads recorded history, not the future.", ru: "Рекомендация записывается ДО логики окна — окно читает записанную историю, а не будущее." },
+          { en: "The recommendation is recorded BEFORE the window logic — the window reads recorded history, not the future.", ru: "Рекомендация записывается ДО логики окна — окно читает записанную историю, а не будущее." },
           { en: "-(-a // b) is an integer ceil without imports beyond math for the ratio.", ru: "-(-a // b) — целочисленный ceil без лишних импортов (math нужен только для отношения)." },
         ],
         numpy: false,
@@ -366,10 +366,10 @@ class HPASim:
       },
       {
         id: "p2",
-        q: { en: "Why do LLM teams scale on queue depth instead of GPU utilization?", ru: "Почему LLM-команды скейлят по глубине очереди, а не по GPU-утилизации?" },
+        q: { en: "Why do LLM teams scale on queue depth instead of GPU utilization?", ru: "Почему LLM-команды скейлят по глубине очереди, а не по GPU-утилизации?" },
         options: [{ en: "batching keeps GPU utilization high even with an empty queue — only the queue shows real demand", ru: "батчинг держит GPU-утилизацию высокой даже при пустой очереди — о настоящем спросе говорит только очередь" }, { en: "GPU utilization is impossible to measure", ru: "GPU-утилизацию невозможно измерить" }, { en: "the HPA forbids GPU metrics", ru: "HPA запрещает GPU-метрики" }],
         answer: 0,
-        explain: { en: "Continuous batching is doing its job exactly when the GPU is busy and the queue is empty; the queue (or KV pressure, or TTFT) is what says «more pods now».", ru: "Continuous batching делает свою работу ровно тогда, когда GPU занят, а очередь пуста; очередь (или давление KV, или TTFT) — то, что говорит «нужны ещё поды»." },
+        explain: { en: "Continuous batching is doing its job exactly when the GPU is busy and the queue is empty; the queue (or KV pressure, or TTFT) is what says «more pods now».", ru: "Continuous batching делает свою работу ровно тогда, когда GPU занят, а очередь пуста; очередь (или давление KV, или TTFT) — то, что говорит «нужны ещё поды»." },
       },
       {
         id: "p3",

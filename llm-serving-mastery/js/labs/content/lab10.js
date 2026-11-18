@@ -14,24 +14,24 @@
     },
     sub: {
       en: "Split the weight matrices, prove split == full to 1e-9, then let the sync beat bend the scaling curve.",
-      ru: "Разрежь матрицы весов, докажи, что разбитое равно целому с точностью до 1e-9, и посмотри, как такт синхронизации гнёт кривую масштабирования.",
+      ru: "Разрежь матрицы весов, докажи, что разбитое равно целому с точностью до 1e-9, и посмотри, как такт синхронизации гнёт кривую масштабирования.",
     },
     intro: {
       en: `<p>One GPU ends twice: the memory wall (8B fp16 weights ≈ 16 GB plus KV against a 15 GB budget) and the latency floor of a sequential decode. Tensor parallelism (TP) answers by cutting the weight matrices: <strong>column-parallel</strong> splits <code>W</code> by output columns — every shard sees all of <code>X</code> and returns its own columns of <code>Y</code>, no joining inside the block; <strong>row-parallel</strong> splits <code>W</code> by rows (and <code>X</code> by columns on the same parts) — each shard produces a <strong>partial sum</strong>, and the all-reduce joins them with an exact elementwise sum. The split is not an illustration: assembled shards equal the full matmul within float noise (≤ 1e-10 in the notebook, 1e-9 here).</p>
 <p>The step model is declared: <code>t(p) = C/p + B·(p−1)/p + beat·(p−1)</code>. Compute divides by the degree, the all-reduce byte share grows toward <code>B</code>, and every extra GPU adds sync beats — the member the clean plan forgets. The lab habit: freeze the plan (knee, minimal fitting degree) before the sweep, prove the split numerically, and treat the beat as a named member, not noise.</p>`,
-      ru: `<p>Один GPU заканчивается дважды: стена памяти (веса 8B fp16 ≈ 16 ГБ плюс KV против бюджета 15 ГБ) и пол латентности последовательного decode. Тензорный параллелизм (TP) отвечает разрезом матриц весов: <strong>column-parallel</strong> режет <code>W</code> по выходным столбцам — каждый шард видит весь <code>X</code> и возвращает свои столбцы <code>Y</code>, стыковать внутри блока не надо; <strong>row-parallel</strong> режет <code>W</code> по строкам (и <code>X</code> по столбцам на те же части) — каждый шард даёт <strong>частичную сумму</strong>, и all-reduce соединяет их точной поэлементной суммой. Разрез — не иллюстрация: собранные шарды равны полному matmul с точностью до float-шума (≤ 1e-10 в тетради, здесь 1e-9).</p>
-<p>Модель шага заявлена: <code>t(p) = C/p + B·(p−1)/p + beat·(p−1)</code>. Вычисления делятся на степень, байтовая доля all-reduce растёт к <code>B</code>, и каждый лишний GPU добавляет такты синхронизации — член, которого забывает чистый план. Привычка лабы: заморозить план (колено, минимальная подходящая степень) до свипа, доказать разрез числом и считать такт именованным членом, а не шумом.</p>`,
+      ru: `<p>Один GPU заканчивается дважды: стена памяти (веса 8B fp16 ≈ 16 ГБ плюс KV против бюджета 15 ГБ) и пол латентности последовательного decode. Тензорный параллелизм (TP) отвечает разрезом матриц весов: <strong>column-parallel</strong> режет <code>W</code> по выходным столбцам — каждый шард видит весь <code>X</code> и возвращает свои столбцы <code>Y</code>, стыковать внутри блока не надо; <strong>row-parallel</strong> режет <code>W</code> по строкам (и <code>X</code> по столбцам на те же части) — каждый шард даёт <strong>частичную сумму</strong>, и all-reduce соединяет их точной поэлементной суммой. Разрез — не иллюстрация: собранные шарды равны полному matmul с точностью до float-шума (≤ 1e-10 в тетради, здесь 1e-9).</p>
+<p>Модель шага заявлена: <code>t(p) = C/p + B·(p−1)/p + beat·(p−1)</code>. Вычисления делятся на степень, байтовая доля all-reduce растёт к <code>B</code>, и каждый лишний GPU добавляет такты синхронизации — член, которого забывает чистый план. Привычка лабы: заморозить план (колено, минимальная подходящая степень) до свипа, доказать разрез числом и считать такт именованным членом, а не шумом.</p>`,
     },
     heroTag: { en: "column/row cuts, all-reduce, the knee", ru: "column/row-разрезы, all-reduce, колено" },
     figures: [
       {
         id: "lab10-tp-split",
-        title: { en: "TP split: cut the weights, join exactly", ru: "TP-разрез: режем веса и собираем точно" },
+        title: { en: "TP split: cut the weights, join exactly", ru: "TP-разрез: режем веса и собираем точно" },
         w: 760, h: 420,
         svg: `<svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
   <g id="g-baseline">
     <rect x="46" y="96" width="544" height="224" rx="14" fill="none" stroke="var(--lab-muted)" stroke-width="1.5" stroke-dasharray="7 5"/>
-    <text x="60" y="88" font-size="14" fill="var(--lab-muted)" class="mono" data-en="GPU · t(1) = 800 ms" data-ru="GPU · t(1) = 800 мс">GPU · t(1) = 800 ms</text>
+    <text x="60" y="88" font-size="14" fill="var(--lab-muted)" class="mono" data-en="GPU · t(1) = 800 ms" data-ru="GPU · t(1) = 800 мс">GPU · t(1) = 800 ms</text>
     <circle cx="80" cy="150" r="5" fill="var(--lab-accent)"/>
     <circle cx="80" cy="178" r="5" fill="var(--lab-accent)"/>
     <circle cx="80" cy="206" r="5" fill="var(--lab-accent)"/>
@@ -120,20 +120,20 @@
           { cap: { en: "One GPU multiplies X by the whole matrix W — the baseline.", ru: "Один GPU умножает X на всю матрицу W — это базовый случай." }, show: ["g-baseline"] },
           { cap: { en: "Column cut: each GPU gets its slice of Y directly.", ru: "Column-разрез: каждый GPU сразу получает свой кусок Y." }, show: ["g-baseline", "g-colcut"] },
           { cap: { en: "Row cut: W by rows, X by columns — partial sums.", ru: "Row-разрез: W по строкам, X по столбцам — частичные суммы." }, show: ["g-rowcut"] },
-          { cap: { en: "all-reduce sums the partials: Y = Y₀ + Y₁, bit-for-bit exact.", ru: "all-reduce складывает частичные суммы: Y = Y₀ + Y₁, бит в бит." }, show: ["g-rowcut", "g-areduce"] },
+          { cap: { en: "all-reduce sums the partials: Y = Y₀ + Y₁, bit-for-bit exact.", ru: "all-reduce складывает частичные суммы: Y = Y₀ + Y₁, бит в бит." }, show: ["g-rowcut", "g-areduce"] },
           { cap: { en: "Every block pays twice: a beat after attention and after MLP.", ru: "Каждый блок платит дважды: такт после attention и после MLP." }, show: ["g-timeline"] },
         ],
       },
       {
         id: "lab10-memory-ledger",
-        title: { en: "Per-GPU memory ledger against the 15 GB budget", ru: "Per-GPU ведомость памяти против бюджета 15 ГБ" },
+        title: { en: "Per-GPU memory ledger against the 15 GB budget", ru: "Per-GPU ведомость памяти против бюджета 15 ГБ" },
         w: 760, h: 420,
         svg: `<svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
   <g id="g-base">
     <line x1="80" y1="340" x2="700" y2="340" stroke="var(--lab-muted)" stroke-width="1.5"/>
     <text x="700" y="364" text-anchor="end" font-size="14" fill="var(--lab-muted)" data-en="TP degree" data-ru="степень TP">TP degree</text>
     <line x1="80" y1="177" x2="700" y2="177" stroke="var(--fig-warm)" stroke-width="2" stroke-dasharray="6 4"/>
-    <text x="92" y="168" font-size="13" fill="var(--fig-warm)" class="mono" data-en="budget 15 GB" data-ru="бюджет 15 ГБ">budget 15 GB</text>
+    <text x="92" y="168" font-size="13" fill="var(--fig-warm)" class="mono" data-en="budget 15 GB" data-ru="бюджет 15 ГБ">budget 15 GB</text>
   </g>
   <g id="g-p1">
     <rect x="110" y="107" width="80" height="233" rx="6" fill="var(--lab-accent)" opacity="0.75"/>
@@ -164,16 +164,16 @@
   </g>
 </svg>`,
         stages: [
-          { cap: { en: "16 + 4 + 1.5 = 21.5 GB — over budget.", ru: "16 + 4 + 1.5 = 21.5 ГБ — перебор." }, show: ["g-base", "g-p1"] },
-          { cap: { en: "tp = 2: weights and KV halve — 11.5 GB fits.", ru: "tp = 2: веса и KV пополам — 11.5 ГБ, под линией." }, show: ["g-base", "g-p1", "g-p2"] },
-          { cap: { en: "tp = 4 / 8: 6.5 and 4.0 GB per GPU.", ru: "tp = 4 / 8: 6.5 и 4.0 ГБ — запас." }, show: ["g-base", "g-p1", "g-p2", "g-p48"] },
-          { cap: { en: "The fixed 1.5 GB never divides; the minimal fitting degree is 2.", ru: "Фиксированные 1.5 ГБ не делятся никогда; минимальная подходящая степень — 2." }, show: ["g-base", "g-p1", "g-p2", "g-p48", "g-verdict"] },
+          { cap: { en: "16 + 4 + 1.5 = 21.5 GB — over budget.", ru: "16 + 4 + 1.5 = 21.5 ГБ — перебор." }, show: ["g-base", "g-p1"] },
+          { cap: { en: "tp = 2: weights and KV halve — 11.5 GB fits.", ru: "tp = 2: веса и KV пополам — 11.5 ГБ, под линией." }, show: ["g-base", "g-p1", "g-p2"] },
+          { cap: { en: "tp = 4 / 8: 6.5 and 4.0 GB per GPU.", ru: "tp = 4 / 8: 6.5 и 4.0 ГБ — запас." }, show: ["g-base", "g-p1", "g-p2", "g-p48"] },
+          { cap: { en: "The fixed 1.5 GB never divides; the minimal fitting degree is 2.", ru: "Фиксированные 1.5 ГБ не делятся никогда; минимальная подходящая степень — 2." }, show: ["g-base", "g-p1", "g-p2", "g-p48", "g-verdict"] },
         ],
       },
     ],
     outcomes: [
-      { en: "Prove split equals full within tolerance for column- and row-parallel layers.", ru: "\u0414\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0442\u044c \u0440\u0430\u0432\u0435\u043d\u0441\u0442\u0432\u043e \u0440\u0430\u0437\u0440\u0435\u0437\u0430 \u0438 \u043f\u043e\u043b\u043d\u043e\u0433\u043e \u043f\u0440\u043e\u0445\u043e\u0434\u0430 \u0432 \u0434\u043e\u043f\u0443\u0441\u043a\u0435 \u0434\u043b\u044f column/row-parallel \u0441\u043b\u043e\u0451\u0432." },
-      { en: "Predict the TP knee from the sync beat and keep an honest per-GPU ledger.", ru: "\u041f\u0440\u0435\u0434\u0441\u043a\u0430\u0437\u044b\u0432\u0430\u0442\u044c \u043a\u043e\u043b\u0435\u043d\u043e TP \u0438\u0437 \u0442\u0430\u043a\u0442\u0430 \u0441\u0438\u043d\u0445\u0440\u043e\u043d\u0438\u0437\u0430\u0446\u0438\u0438 \u0438 \u0432\u0435\u0441\u0442\u0438 \u0447\u0435\u0441\u0442\u043d\u0443\u044e per-GPU \u0432\u0435\u0434\u043e\u043c\u043e\u0441\u0442\u044c." },
+      { en: "Prove split equals full within tolerance for column- and row-parallel layers.", ru: "\u0414\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0442\u044c \u0440\u0430\u0432\u0435\u043d\u0441\u0442\u0432\u043e \u0440\u0430\u0437\u0440\u0435\u0437\u0430 \u0438\u00a0\u043f\u043e\u043b\u043d\u043e\u0433\u043e \u043f\u0440\u043e\u0445\u043e\u0434\u0430 \u0432\u00a0\u0434\u043e\u043f\u0443\u0441\u043a\u0435 \u0434\u043b\u044f column/row-parallel \u0441\u043b\u043e\u0451\u0432." },
+      { en: "Predict the TP knee from the sync beat and keep an honest per-GPU ledger.", ru: "\u041f\u0440\u0435\u0434\u0441\u043a\u0430\u0437\u044b\u0432\u0430\u0442\u044c \u043a\u043e\u043b\u0435\u043d\u043e TP \u0438\u0437 \u0442\u0430\u043a\u0442\u0430 \u0441\u0438\u043d\u0445\u0440\u043e\u043d\u0438\u0437\u0430\u0446\u0438\u0438 \u0438\u00a0\u0432\u0435\u0441\u0442\u0438 \u0447\u0435\u0441\u0442\u043d\u0443\u044e per-GPU \u0432\u0435\u0434\u043e\u043c\u043e\u0441\u0442\u044c." },
     ],
     model: [
       ["step model", "t(p) = C/p + B·(p−1)/p + beat·(p−1)", "declared knobs", "C = 800 ms, B = 120 ms, beat = 25 ms"],
@@ -187,7 +187,7 @@
         id: "q1",
         q: {
           en: "Declared step at tp = 4 with C = 800 ms, B = 120 ms, beat = 25 ms: what is t(4), in ms?",
-          ru: "Заявленный шаг при tp = 4 с C = 800 мс, B = 120 мс, beat = 25 мс: чему равно t(4), в мс?",
+          ru: "Заявленный шаг при tp = 4 с C = 800 мс, B = 120 мс, beat = 25 мс: чему равно t(4), в мс?",
         },
         answer: 365, tol: 0.5, unit: { en: "ms", ru: "мс" },
         hint: {
@@ -199,7 +199,7 @@
         id: "q2",
         q: {
           en: "Same knobs at tp = 8: t(8), in ms? Compare with t(4) — this is where “add more GPUs” stops paying.",
-          ru: "Те же ручки при tp = 8: t(8), в мс? Сравни с t(4) — именно здесь «бери больше GPU» перестаёт платить.",
+          ru: "Те же ручки при tp = 8: t(8), в мс? Сравни с t(4) — именно здесь «бери больше GPU» перестаёт платить.",
         },
         answer: 380, tol: 0.5, unit: { en: "ms", ru: "мс" },
         hint: {
@@ -211,7 +211,7 @@
         id: "q3",
         q: {
           en: "8B fp16 weights (16 GB) + KV (4 GB) divide by tp; 1.5 GB fixed per GPU does not; budget 15 GB. The minimal degree that fits?",
-          ru: "Веса 8B fp16 (16 ГБ) + KV (4 ГБ) делятся на tp; 1.5 ГБ фиксированных на GPU — нет; бюджет 15 ГБ. Минимальная подходящая степень?",
+          ru: "Веса 8B fp16 (16 ГБ) + KV (4 ГБ) делятся на tp; 1.5 ГБ фиксированных на GPU — нет; бюджет 15 ГБ. Минимальная подходящая степень?",
         },
         answer: 2, tol: 0.2, unit: { en: "GPUs", ru: "GPU" },
         hint: {
@@ -226,7 +226,7 @@
         title: { en: "Exercise 1 · Column-parallel split", ru: "Упражнение 1 · Разрез column-parallel" },
         brief: {
           en: "Implement <code>column_parallel(x, w, parts)</code> — split <code>w</code> by output columns (<code>np.array_split(w, parts, axis=1)</code>); every shard sees ALL of <code>x</code> and returns its own columns of the product: <code>x @ w_j</code>. Return the list of shard outputs — stacked sideways (<code>np.hstack</code>) they must reproduce the full <code>x @ w</code> within 1e-9.",
-          ru: "Реализуй <code>column_parallel(x, w, parts)</code> — разрежь <code>w</code> по выходным столбцам (<code>np.array_split(w, parts, axis=1)</code>); каждый шард видит ВЕСЬ <code>x</code> и возвращает свои столбцы произведения: <code>x @ w_j</code>. Верни список выходов шардов — при стыковке бок о бок (<code>np.hstack</code>) они обязаны воспроизвести полный <code>x @ w</code> с точностью до 1e-9.",
+          ru: "Реализуй <code>column_parallel(x, w, parts)</code> — разрежь <code>w</code> по выходным столбцам (<code>np.array_split(w, parts, axis=1)</code>); каждый шард видит ВЕСЬ <code>x</code> и возвращает свои столбцы произведения: <code>x @ w_j</code>. Верни список выходов шардов — при стыковке бок о бок (<code>np.hstack</code>) они обязаны воспроизвести полный <code>x @ w</code> с точностью до 1e-9.",
         },
         starter: `import numpy as np
 
@@ -278,7 +278,7 @@ def column_parallel(x, w, parts):
         title: { en: "Exercise 2 · Declared step time", ru: "Упражнение 2 · Заявленное время шага" },
         brief: {
           en: "Implement <code>plan_tp_knee(compute_ms, bytes_term_ms, degree, beat_ms=25.0)</code> — the declared step time in ms at one TP degree: <code>compute_ms/degree + bytes_term_ms×(degree−1)/degree + beat_ms×(degree−1)</code>. Compute divides by the degree, the all-reduce byte share grows toward <code>bytes_term_ms</code>, and every extra GPU adds a sync beat — the member the clean plan forgets. With the course knobs (800, 120, beat 25) t(4) = 365 ms but t(8) = 380 ms: past the knee, more GPUs make the step slower.",
-          ru: "Реализуй <code>plan_tp_knee(compute_ms, bytes_term_ms, degree, beat_ms=25.0)</code> — заявленное время шага в мс при заданной степени TP: <code>compute_ms/degree + bytes_term_ms×(degree−1)/degree + beat_ms×(degree−1)</code>. Вычисления делятся на степень, байтовая доля all-reduce растёт до <code>bytes_term_ms</code>, и каждый лишний GPU добавляет такт синхронизации — член, которого забывает чистый план. С ручками курса (800, 120, beat 25) t(4) = 365 мс, но t(8) = 380 мс: за коленом больше GPU — медленнее шаг.",
+          ru: "Реализуй <code>plan_tp_knee(compute_ms, bytes_term_ms, degree, beat_ms=25.0)</code> — заявленное время шага в мс при заданной степени TP: <code>compute_ms/degree + bytes_term_ms×(degree−1)/degree + beat_ms×(degree−1)</code>. Вычисления делятся на степень, байтовая доля all-reduce растёт до <code>bytes_term_ms</code>, и каждый лишний GPU добавляет такт синхронизации — член, которого забывает чистый план. С ручками курса (800, 120, beat 25) t(4) = 365 мс, но t(8) = 380 мс: за коленом больше GPU — медленнее шаг.",
         },
         starter: `def plan_tp_knee(compute_ms, bytes_term_ms, degree, beat_ms=25.0):
     """Declared step time (ms) at one TP degree: compute share + byte share + beats.
@@ -371,10 +371,10 @@ def mlp_forward_tp(x, w_up, w_down, parts):
       },
       {
         id: "ex4",
-        title: { en: "Exercise 4 · Wrap it into a class: TPSim", ru: "Упражнение 4 · Собери в класс: TPSim" },
+        title: { en: "Exercise 4 · Wrap it into a class: TPSim", ru: "Упражнение 4 · Собери в класс: TPSim" },
         brief: {
           en: "The lab's final boss: wrap the declared model into a class. The <code>TPSim(compute_ms, bytes_term_ms, beat_ms)</code> constructor with two methods: <code>step_time(degree)</code> — the knee formula you already know — and <code>fits(degree, weights_gib, per_gpu_gib)</code> — the per-GPU ledger: <code>(weights_gib + 4) / degree + 1.5 &lt;= per_gpu_gib</code>. Real classes, real NumPy, real tests.",
-          ru: "Финальный босс лабы: заверни заявленную модель в класс. Конструктор <code>TPSim(compute_ms, bytes_term_ms, beat_ms)</code> с двумя методами: <code>step_time(degree)</code> — уже знакомая формула колена — и <code>fits(degree, weights_gib, per_gpu_gib)</code> — per-GPU ведомость: <code>(weights_gib + 4) / degree + 1.5 &lt;= per_gpu_gib</code>. Настоящие классы, настоящий NumPy, настоящие тесты.",
+          ru: "Финальный босс лабы: заверни заявленную модель в класс. Конструктор <code>TPSim(compute_ms, bytes_term_ms, beat_ms)</code> с двумя методами: <code>step_time(degree)</code> — уже знакомая формула колена — и <code>fits(degree, weights_gib, per_gpu_gib)</code> — per-GPU ведомость: <code>(weights_gib + 4) / degree + 1.5 &lt;= per_gpu_gib</code>. Настоящие классы, настоящий NumPy, настоящие тесты.",
         },
         starter: `class TPSim:
     def __init__(self, compute_ms, bytes_term_ms, beat_ms):
@@ -446,7 +446,7 @@ def mlp_forward_tp(x, w_up, w_down, parts):
     },
     footer: {
       en: "The split mechanics are real NumPy (checked to 1e-9 here, 1e-10 in the notebook); every millisecond is declared arithmetic with named knobs, not a GPU measurement. The recorded sweep and ledger live in the Topic 10 evidence run (runs/2026-11-01-topic10-tp-sim); this lab does not execute it.",
-      ru: "Механика разреза — настоящий NumPy (здесь проверка до 1e-9, в тетради до 1e-10); каждая миллисекунда — заявленная арифметика с именованными ручками, а не измерение GPU. Свип и ведомость записаны в evidence-прогоне Темы 10 (runs/2026-11-01-topic10-tp-sim); эта лаба его не исполняет.",
+      ru: "Механика разреза — настоящий NumPy (здесь проверка до 1e-9, в тетради до 1e-10); каждая миллисекунда — заявленная арифметика с именованными ручками, а не измерение GPU. Свип и ведомость записаны в evidence-прогоне Темы 10 (runs/2026-11-01-topic10-tp-sim); эта лаба его не исполняет.",
     },
   };
 })();

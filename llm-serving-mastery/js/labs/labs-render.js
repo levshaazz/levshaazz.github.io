@@ -203,6 +203,17 @@
         mode: "python", lineNumbers: true, indentUnit: 4, viewportMargin: 12, theme: "dracula",
       });
       editor.setSize("100%", "296px");
+      // CM5's contenteditable wrapper has no accessible name (axe rule "label").
+      const cmWrap = editor.getWrapperElement();
+      cmWrap.setAttribute("role", "textbox");
+      cmWrap.setAttribute("aria-multiline", "true");
+      cmWrap.setAttribute("aria-label", ta.getAttribute("aria-label") || T.editor);
+      // CM5's offscreen measuring textarea is unlabeled and tabbable — hide it from a11y.
+      cmWrap.querySelectorAll("textarea").forEach(mt => {
+        mt.setAttribute("tabindex", "-1");
+        mt.setAttribute("aria-hidden", "true");
+        mt.setAttribute("aria-label", cmWrap.getAttribute("aria-label"));
+      });
     }
     grid.appendChild(leftPanel);
 

@@ -13,13 +13,13 @@
     },
     sub: {
       en: "Predict which roof bounds the step, size the KV payload per token, then defend it in real Python tests.",
-      ru: "Предскажи, какая крыша ограничивает шаг, оцени KV-платёж за токен и защити это настоящими Python-тестами.",
+      ru: "Предскажи, какая крыша ограничивает шаг, оцени KV-платёж за токен и защити это настоящими Python-тестами.",
     },
     intro: {
       en: `<p>Decode is a stream of steps; each step moves weights from memory and does a little math. Two ceilings bound the step: <strong>compute</strong> (TFLOP/s) and <strong>memory bandwidth</strong> (GB/s). The <em>roofline</em> model says attainable = min(compute, intensity × bandwidth), where arithmetic intensity = FLOP per byte moved. Left of the ridge you are bandwidth-bound; right of it, compute-bound — more reuse stops helping after the ridge.</p>
 <p>The KV cache is the other budget: every live token pays <strong>2 × layers × kv_heads × head_dim × bytes</strong> (the 2 is K and V). This payload is not model-weight memory and it grows with every client and every context token. The lab habit: write the arithmetic down first, let the tests check it, only then argue about a real GPU.</p>`,
-      ru: `<p>Decode — это поток шагов; каждый шаг перетаскивает веса из памяти и делает немного арифметики. Шаг ограничивают две крыши: <strong>вычисления</strong> (TFLOP/s) и <strong>пропускная способность памяти</strong> (GB/s). Модель <em>roofline</em>: attainable = min(compute, intensity × bandwidth), где арифметическая интенсивность = FLOP на байт перемещённых данных. Слева от хребта ты упираешься в память, справа — в вычисления; после хребта повторное использование данных перестаёт помогать.</p>
-<p>Второй бюджет — KV-кэш: каждый живой токен платит <strong>2 × layers × kv_heads × head_dim × bytes</strong> (двойка — это K и V). Этот платёж — не память весов, и он растёт с каждым клиентом и каждым токеном контекста. Привычка лабы: сначала выписать арифметику, дать тестам её проверить, и только потом спорить про реальный GPU.</p>`,
+      ru: `<p>Decode — это поток шагов; каждый шаг перетаскивает веса из памяти и делает немного арифметики. Шаг ограничивают две крыши: <strong>вычисления</strong> (TFLOP/s) и <strong>пропускная способность памяти</strong> (GB/s). Модель <em>roofline</em>: attainable = min(compute, intensity × bandwidth), где арифметическая интенсивность = FLOP на байт перемещённых данных. Слева от хребта ты упираешься в память, справа — в вычисления; после хребта повторное использование данных перестаёт помогать.</p>
+<p>Второй бюджет — KV-кэш: каждый живой токен платит <strong>2 × layers × kv_heads × head_dim × bytes</strong> (двойка — это K и V). Этот платёж — не память весов, и он растёт с каждым клиентом и каждым токеном контекста. Привычка лабы: сначала выписать арифметику, дать тестам её проверить, и только потом спорить про реальный GPU.</p>`,
     },
     heroTag: { en: "roofline, KV budget", ru: "крыши, KV-бюджет" },
     figures: [
@@ -70,13 +70,13 @@
         svg: `<svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
   <g id="g-token">
     <text x="60" y="70" font-size="16" fill="var(--lab-ink)" class="mono">2 × 36 × 2 × 128 × 2 B</text>
-    <text x="60" y="94" font-size="14" fill="var(--lab-muted)" data-en="K + V per live token = 36 KiB" data-ru="K + V за живой токен = 36 КиБ">K + V per live token = 36 KiB</text>
+    <text x="60" y="94" font-size="14" fill="var(--lab-muted)" data-en="K + V per live token = 36 KiB" data-ru="K + V за живой токен = 36 КиБ">K + V per live token = 36 KiB</text>
     <rect x="60" y="110" width="60" height="26" rx="5" fill="var(--lab-accent)" opacity="0.85"/>
     <text x="128" y="128" font-size="14" fill="var(--lab-accent)" class="mono">36 KiB</text>
   </g>
   <g id="g-pool">
     <rect x="330" y="60" width="380" height="300" rx="12" fill="none" stroke="var(--lab-muted)" stroke-width="2" stroke-dasharray="7 5"/>
-    <text x="520" y="88" text-anchor="middle" font-size="15" fill="var(--lab-muted)" data-en="KV pool: 6 GiB" data-ru="пул KV: 6 ГиБ">KV pool: 6 GiB</text>
+    <text x="520" y="88" text-anchor="middle" font-size="15" fill="var(--lab-muted)" data-en="KV pool: 6 GiB" data-ru="пул KV: 6 ГиБ">KV pool: 6 GiB</text>
     <text x="520" y="382" text-anchor="middle" font-size="13" fill="var(--lab-muted)" class="mono">6 × 1024³ B</text>
   </g>
   <g id="g-fit">
@@ -95,8 +95,8 @@
   </g>
 </svg>`,
         stages: [
-          { cap: { en: "Every live token pays 36 KiB of K and V state.", ru: "Каждый живой токен платит 36 КиБ за K и V." }, show: ["g-token"] },
-          { cap: { en: "The pool is fixed: 6 GiB reserved for the KV cache.", ru: "Пул фиксирован: 6 ГиБ выделено под KV-кэш." }, show: ["g-token", "g-pool"] },
+          { cap: { en: "Every live token pays 36 KiB of K and V state.", ru: "Каждый живой токен платит 36 КиБ за K и V." }, show: ["g-token"] },
+          { cap: { en: "The pool is fixed: 6 GiB reserved for the KV cache.", ru: "Пул фиксирован: 6 ГиБ выделено под KV-кэш." }, show: ["g-token", "g-pool"] },
           { cap: { en: "Fits: 6 × 1024³ / 36 864 = 174 762 tokens.", ru: "Целых токенов помещается: 6 × 1024³ / 36 864 = 174 762." }, show: ["g-token", "g-pool", "g-fit"] },
           { cap: { en: "The lever: kv_heads 2 → 4 doubles the bill to 72 KiB.", ru: "Ручка: kv_heads 2 → 4 удваивает платёж — пул вмещает вдвое меньше." }, show: ["g-pool", "g-double"] },
         ],
@@ -104,7 +104,7 @@
     ],
     outcomes: [
       { en: "Predict which roof (bandwidth or compute) bounds a decode step before measuring.", ru: "\u041f\u0440\u0435\u0434\u0441\u043a\u0430\u0437\u044b\u0432\u0430\u0442\u044c, \u043a\u0430\u043a\u0430\u044f \u043a\u0440\u044b\u0448\u0430 \u2014 \u043f\u0430\u043c\u044f\u0442\u044c \u0438\u043b\u0438 \u0432\u044b\u0447\u0438\u0441\u043b\u0435\u043d\u0438\u044f \u2014 \u043e\u0433\u0440\u0430\u043d\u0438\u0447\u0438\u0432\u0430\u0435\u0442 decode-\u0448\u0430\u0433, \u0434\u043e \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u044f." },
-      { en: "Compute the exact KV payload per token and the tokens that fit a fixed pool.", ru: "\u0421\u0447\u0438\u0442\u0430\u0442\u044c \u0442\u043e\u0447\u043d\u044b\u0439 KV-\u043f\u043b\u0430\u0442\u0451\u0436 \u0437\u0430 \u0442\u043e\u043a\u0435\u043d \u0438 \u0447\u0438\u0441\u043b\u043e \u0442\u043e\u043a\u0435\u043d\u043e\u0432, \u043f\u043e\u043c\u0435\u0449\u0430\u044e\u0449\u0438\u0445\u0441\u044f \u0432 \u0444\u0438\u043a\u0441\u0438\u0440\u043e\u0432\u0430\u043d\u043d\u044b\u0439 \u043f\u0443\u043b." },
+      { en: "Compute the exact KV payload per token and the tokens that fit a fixed pool.", ru: "\u0421\u0447\u0438\u0442\u0430\u0442\u044c \u0442\u043e\u0447\u043d\u044b\u0439 KV-\u043f\u043b\u0430\u0442\u0451\u0436 \u0437\u0430 \u0442\u043e\u043a\u0435\u043d \u0438\u00a0\u0447\u0438\u0441\u043b\u043e \u0442\u043e\u043a\u0435\u043d\u043e\u0432, \u043f\u043e\u043c\u0435\u0449\u0430\u044e\u0449\u0438\u0445\u0441\u044f \u0432\u00a0\u0444\u0438\u043a\u0441\u0438\u0440\u043e\u0432\u0430\u043d\u043d\u044b\u0439 \u043f\u0443\u043b." },
     ],
     model: [
       [{ en: "compute ceiling", ru: "крыша вычислений" }, "60 TFLOP/s", { en: "bandwidth", ru: "пропускная способность" }, "600 GB/s"],
@@ -141,7 +141,7 @@
         id: "q3",
         q: {
           en: "KV payload per token for 36 layers, 2 KV heads, head_dim 128, fp16 (2 bytes), in KiB?",
-          ru: "KV-платёж за токен при 36 слоях, 2 KV-головах, head_dim 128, fp16 (2 байта), в КиБ?",
+          ru: "KV-платёж за токен при 36 слоях, 2 KV-головах, head_dim 128, fp16 (2 байта), в КиБ?",
         },
         answer: 36, tol: 0.2, unit: { en: "KiB", ru: "КиБ" },
         hint: {
@@ -171,7 +171,7 @@
         solution: `def roofline_ceiling(intensity, compute_tflops, bandwidth_gbps):
     return min(compute_tflops, intensity * bandwidth_gbps / 1000)`,
         hints: [
-          { en: "One min(): the compute roof and the product (intensity × bandwidth / 1000). No branches needed.", ru: "Один min(): крыша вычислений и произведение (интенсивность × bandwidth / 1000). Ветвления не нужны." },
+          { en: "One min(): the compute roof and the product (intensity × bandwidth / 1000). No branches needed.", ru: "Один min(): крыша вычислений и произведение (интенсивность × bandwidth / 1000). Ветвления не нужны." },
         ],
         numpy: false,
         timeoutMs: 4000,
@@ -205,7 +205,7 @@
         title: { en: "Exercise 3 · Fix the bug: pool capacity", ru: "Упражнение 3 · Почини баг: ёмкость пула" },
         brief: {
           en: "This <code>kv_pool_tokens(pool_gib, per_token_bytes)</code> undercounts: it treats GiB as 10⁹ bytes and shrinks the pool by an unexplained 0.75 reserve. Fix it to return whole tokens that fit: <code>int(pool_gib × 1024³ / per_token_bytes)</code>.",
-          ru: "Эта <code>kv_pool_tokens(pool_gib, per_token_bytes)</code> занижает: считает GiB как 10⁹ байт и сжимает пул необъяснённым множителем 0.75. Почини: целое число токенов, помещающихся в пул, — <code>int(pool_gib × 1024³ / per_token_bytes)</code>.",
+          ru: "Эта <code>kv_pool_tokens(pool_gib, per_token_bytes)</code> занижает: считает GiB как 10⁹ байт и сжимает пул необъяснённым множителем 0.75. Почини: целое число токенов, помещающихся в пул, — <code>int(pool_gib × 1024³ / per_token_bytes)</code>.",
         },
         starter: `def kv_pool_tokens(pool_gib, per_token_bytes):
     """How many whole live tokens fit in a pool of pool_gib GiB."""
@@ -233,21 +233,21 @@
         q: { en: "A decode step runs at arithmetic intensity 150 FLOP/B on the declared machine (ridge 100). What bounds it?", ru: "Decode-\u0448\u0430\u0433 \u0438\u0434\u0451\u0442 \u043f\u0440\u0438 \u0438\u043d\u0442\u0435\u043d\u0441\u0438\u0432\u043d\u043e\u0441\u0442\u0438 150 FLOP/\u0411 \u043d\u0430 \u0437\u0430\u044f\u0432\u043b\u0435\u043d\u043d\u043e\u0439 \u043c\u0430\u0448\u0438\u043d\u0435 (\u0445\u0440\u0435\u0431\u0435\u0442 100). \u0427\u0442\u043e \u0435\u0433\u043e \u043e\u0433\u0440\u0430\u043d\u0438\u0447\u0438\u0432\u0430\u0435\u0442?" },
         options: [{ en: "The bandwidth roof", ru: "\u041a\u0440\u044b\u0448\u0430 \u043f\u0430\u043c\u044f\u0442\u0438" }, { en: "The compute roof", ru: "\u041a\u0440\u044b\u0448\u0430 \u0432\u044b\u0447\u0438\u0441\u043b\u0435\u043d\u0438\u0439" }, { en: "Neither: it is latency-bound", ru: "\u041d\u0438\u0447\u0435\u0433\u043e \u0438\u0437 \u044d\u0442\u043e\u0433\u043e: \u043e\u043d \u043e\u0433\u0440\u0430\u043d\u0438\u0447\u0435\u043d \u043b\u0430\u0442\u0435\u043d\u0442\u043d\u043e\u0441\u0442\u044c\u044e" }],
         answer: 1,
-        explain: { en: "150 is right of the ridge: attainable = min(compute, intensity \u00d7 bandwidth) pins at the compute roof.", ru: "150 \u043f\u0440\u0430\u0432\u0435\u0435 \u0445\u0440\u0435\u0431\u0442\u0430: attainable = min(compute, intensity \u00d7 bandwidth) \u0443\u043f\u0438\u0440\u0430\u0435\u0442\u0441\u044f \u0432 \u043a\u0440\u044b\u0448\u0443 \u0432\u044b\u0447\u0438\u0441\u043b\u0435\u043d\u0438\u0439." },
+        explain: { en: "150 is right of the ridge: attainable = min(compute, intensity \u00d7 bandwidth) pins at the compute roof.", ru: "150 \u043f\u0440\u0430\u0432\u0435\u0435 \u0445\u0440\u0435\u0431\u0442\u0430: attainable = min(compute, intensity \u00d7 bandwidth) \u0443\u043f\u0438\u0440\u0430\u0435\u0442\u0441\u044f \u0432\u00a0\u043a\u0440\u044b\u0448\u0443 \u0432\u044b\u0447\u0438\u0441\u043b\u0435\u043d\u0438\u0439." },
       },
       {
         id: "p2",
         q: { en: "Which one is NOT part of the per-token KV payload?", ru: "\u0427\u0442\u043e \u0438\u0437 \u044d\u0442\u043e\u0433\u043e \u041d\u0415 \u0432\u0445\u043e\u0434\u0438\u0442 \u0432 KV-\u043f\u043b\u0430\u0442\u0451\u0436 \u0437\u0430 \u0442\u043e\u043a\u0435\u043d?" },
         options: [{ en: "K and V tensors", ru: "\u0422\u0435\u043d\u0437\u043e\u0440\u044b K \u0438 V" }, { en: "Model weights", ru: "\u0412\u0435\u0441\u0430 \u043c\u043e\u0434\u0435\u043b\u0438" }, { en: "kv_heads \u00d7 head_dim", ru: "kv_heads \u00d7 head_dim" }],
         answer: 1,
-        explain: { en: "KV payload = 2 \u00d7 layers \u00d7 kv_heads \u00d7 head_dim \u00d7 bytes \u2014 it is per-token state, not the frozen weights.", ru: "KV-\u043f\u043b\u0430\u0442\u0451\u0436 = 2 \u00d7 layers \u00d7 kv_heads \u00d7 head_dim \u00d7 bytes \u2014 \u044d\u0442\u043e \u043f\u043b\u0430\u0442\u0430 \u0437\u0430 \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u0435 \u043d\u0430 \u0442\u043e\u043a\u0435\u043d, \u0430 \u043d\u0435 \u0437\u0430 \u0432\u0435\u0441\u0430 \u043c\u043e\u0434\u0435\u043b\u0438." },
+        explain: { en: "KV payload = 2 \u00d7 layers \u00d7 kv_heads \u00d7 head_dim \u00d7 bytes \u2014 it is per-token state, not the frozen weights.", ru: "KV-\u043f\u043b\u0430\u0442\u0451\u0436 = 2 \u00d7 layers \u00d7 kv_heads \u00d7 head_dim \u00d7 bytes \u2014 \u044d\u0442\u043e \u043f\u043b\u0430\u0442\u0430 \u0437\u0430 \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u0435 \u043d\u0430 \u0442\u043e\u043a\u0435\u043d, \u0430\u00a0\u043d\u0435 \u0437\u0430 \u0432\u0435\u0441\u0430 \u043c\u043e\u0434\u0435\u043b\u0438." },
       },
       {
         id: "p3",
         q: { en: "You double kv_heads from 2 to 4. The per-token payload\u2026", ru: "\u0422\u044b \u0443\u0434\u0432\u043e\u0438\u043b kv_heads \u0441 2 \u0434\u043e 4. \u041f\u043b\u0430\u0442\u0451\u0436 \u0437\u0430 \u0442\u043e\u043a\u0435\u043d\u2026" },
         options: [{ en: "stays the same", ru: "\u043d\u0435 \u043c\u0435\u043d\u044f\u0435\u0442\u0441\u044f" }, { en: "doubles", ru: "\u0443\u0434\u0432\u0430\u0438\u0432\u0430\u0435\u0442\u0441\u044f" }, { en: "halves", ru: "\u0434\u0435\u043b\u0438\u0442\u0441\u044f \u043f\u043e\u043f\u043e\u043b\u0430\u043c" }],
         answer: 1,
-        explain: { en: "The formula is linear in kv_heads: 2 \u00d7 36 \u00d7 2 \u00d7 128 \u00d7 2 doubles from 36 to 72 KiB.", ru: "\u0424\u043e\u0440\u043c\u0443\u043b\u0430 \u043b\u0438\u043d\u0435\u0439\u043d\u0430 \u043f\u043e kv_heads: \u043f\u043b\u0430\u0442\u0451\u0436 \u0432\u044b\u0440\u0430\u0441\u0442\u0430\u0435\u0442 \u0441 36 \u0434\u043e 72 \u041a\u0438\u0411." },
+        explain: { en: "The formula is linear in kv_heads: 2 \u00d7 36 \u00d7 2 \u00d7 128 \u00d7 2 doubles from 36 to 72 KiB.", ru: "\u0424\u043e\u0440\u043c\u0443\u043b\u0430 \u043b\u0438\u043d\u0435\u0439\u043d\u0430 \u043f\u043e kv_heads: \u043f\u043b\u0430\u0442\u0451\u0436 \u0432\u044b\u0440\u0430\u0441\u0442\u0430\u0435\u0442 \u0441 36 \u0434\u043e 72\u00a0\u041a\u0438\u0411." },
       },
     ],
     reward: {
@@ -255,7 +255,7 @@
     },
     footer: {
       en: "Teaching arithmetic with a declared model — not a GPU measurement. The measured phase profile lives in the Topic 02 evidence run; this lab does not execute it.",
-      ru: "Учебная арифметика с заявленной моделью — не измерение GPU. Измеренный профиль фаз живёт в evidence-прогоне Темы 02; эта лаба его не исполняет.",
+      ru: "Учебная арифметика с заявленной моделью — не измерение GPU. Измеренный профиль фаз живёт в evidence-прогоне Темы 02; эта лаба его не исполняет.",
     },
   };
 })();

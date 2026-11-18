@@ -13,13 +13,13 @@
     },
     sub: {
       en: "Admission with a bounded queue, honest 429, the outcome-to-status map and cancellation — predicted before the code, checked by tests.",
-      ru: "Admission с ограниченной очередью, честный 429, карта «исход → код → действие» и отмена — предсказано до кода, проверено тестами.",
+      ru: "Admission с ограниченной очередью, честный 429, карта «исход → код → действие» и отмена — предсказано до кода, проверено тестами.",
     },
     intro: {
       en: `<p>A gateway is a thin HTTP layer between clients and the engine, and its job is to turn Topic 06 mechanisms into a contract: validation before the queue, a <strong>bounded queue</strong> that answers 429 with <code>Retry-After</code> instead of promising infinite waiting, an <strong>outcome → status</strong> map (invalid 400, overloaded 429, engine down 503, deadline 504, everything else 500 without internals), and cancellation that stops paying for abandoned tokens. HTTP 200 means "an answer was sent", not "the request succeeded" — a client timeout counted as success is a lie the metrics will repeat at 3 a.m.</p>
 <p>The lab habit: freeze the contract table (situation → mechanism → expected code) BEFORE any gateway code, then let drills and the journal check it. All numbers here are a declared mock engine: ttft 0.15 s, 0.02 s per token, 4 service slots + 4 queue seats — arithmetic you can verify by hand, not a vLLM measurement.</p>`,
-      ru: `<p>Шлюз — тонкий HTTP-слой между клиентами и движком, и его работа — превратить механизмы Темы 06 в контракт: валидация до очереди, <strong>ограниченная очередь</strong>, отвечающая 429 с <code>Retry-After</code> вместо обещания вечного ожидания, карта <strong>«исход → код»</strong> (invalid 400, overloaded 429, движок лежит 503, deadline 504, остальное 500 без внутренностей) и отмена, которая перестаёт платить за брошенные токены. HTTP 200 означает «ответ отправлен», а не «запрос успешен» — таймаут клиента, засчитанный как успех, — это ложь, которую метрики повторят в 3 часа ночи.</p>
-<p>Привычка лабы: заморозить таблицу контракта (ситуация → механизм → ожидаемый код) ДО кода шлюза, потом дать дриллам и журналу её проверить. Все числа здесь — объявленный мок движка: <code>ttft</code> 0.15 с, 0.02 с за токен, 4 слота обслуживания + 4 места очереди, — арифметика, которую можно проверить руками, а не измерение vLLM.</p>`,
+      ru: `<p>Шлюз — тонкий HTTP-слой между клиентами и движком, и его работа — превратить механизмы Темы 06 в контракт: валидация до очереди, <strong>ограниченная очередь</strong>, отвечающая 429 с <code>Retry-After</code> вместо обещания вечного ожидания, карта <strong>«исход → код»</strong> (invalid 400, overloaded 429, движок лежит 503, deadline 504, остальное 500 без внутренностей) и отмена, которая перестаёт платить за брошенные токены. HTTP 200 означает «ответ отправлен», а не «запрос успешен» — таймаут клиента, засчитанный как успех, — это ложь, которую метрики повторят в 3 часа ночи.</p>
+<p>Привычка лабы: заморозить таблицу контракта (ситуация → механизм → ожидаемый код) ДО кода шлюза, потом дать дриллам и журналу её проверить. Все числа здесь — объявленный мок движка: <code>ttft</code> 0.15 с, 0.02 с за токен, 4 слота обслуживания + 4 места очереди, — арифметика, которую можно проверить руками, а не измерение vLLM.</p>`,
     },
     heroTag: { en: "429, envelope, error map", ru: "429, конверт допуска, карта ошибок" },
     figures: [
@@ -66,7 +66,7 @@
           { cap: { en: "The contract: outcome → status → client action.", ru: "Таблица контракта: исход → статус → действие, которое должен предпринять клиент." }, show: ["g-head"] },
           { cap: { en: "Validation before the queue: 400 for invalid, 429 + Retry-After for overload.", ru: "Валидация до очереди: 400 за невалидность, 429 + Retry-After за перегрузку." }, show: ["g-head", "g-r12"] },
           { cap: { en: "Engine down is 503 (retry later); a passed deadline is 504 (cancel).", ru: "Лежащий движок — 503 (повтори позже); истёкший дедлайн — 504 (отмена)." }, show: ["g-head", "g-r12", "g-r34"] },
-          { cap: { en: "Everything else: 500 without internals — never 200 with an error body.", ru: "Всё остальное — 500 без внутренностей, никогда 200 с ошибкой." }, show: ["g-head", "g-r12", "g-r34", "g-r5", "g-ribbon"] },
+          { cap: { en: "Everything else: 500 without internals — never 200 with an error body.", ru: "Всё остальное — 500 без внутренностей, никогда 200 с ошибкой." }, show: ["g-head", "g-r12", "g-r34", "g-r5", "g-ribbon"] },
         ],
       },
       {
@@ -78,7 +78,7 @@
     <line x1="80" y1="340" x2="700" y2="340" stroke="var(--lab-muted)" stroke-width="1.5"/>
     <line x1="80" y1="340" x2="80" y2="70" stroke="var(--lab-muted)" stroke-width="1.5"/>
     <text x="700" y="364" text-anchor="end" font-size="14" fill="var(--lab-muted)" data-en="arrival rate λ, req/s" data-ru="темп прихода λ, req/s">arrival rate λ, req/s</text>
-    <text x="88" y="62" font-size="14" fill="var(--lab-muted)" data-en="requests in system, L" data-ru="заявок в системе, L">requests in system, L</text>
+    <text x="88" y="62" font-size="14" fill="var(--lab-muted)" data-en="requests in system, L" data-ru="заявок в системе, L">requests in system, L</text>
     <path d="M 80 340 L 519 116" fill="none" stroke="var(--lab-accent)" stroke-width="2.5" class="fig-flow"/>
     <text x="150" y="240" font-size="14" fill="var(--lab-accent)" class="mono">L = λ × W, W = 0.47 s</text>
     <text x="300" y="362" text-anchor="middle" font-size="13" fill="var(--lab-muted)" class="mono" data-en="16-token requests" data-ru="запросы на 16 токенов">16-token requests</text>
@@ -94,7 +94,7 @@
   <g id="g-knee">
     <line x1="519" y1="340" x2="519" y2="70" stroke="var(--fig-warm)" stroke-width="2" stroke-dasharray="5 4"/>
     <text x="528" y="88" font-size="15" fill="var(--fig-warm)" class="mono">λ* = 8 / 0.47 ≈ 17.0</text>
-    <text x="528" y="108" font-size="13" fill="var(--lab-muted)" data-en="demand hits the seats" data-ru="спрос упирается в места">demand hits the seats</text>
+    <text x="528" y="108" font-size="13" fill="var(--lab-muted)" data-en="demand hits the seats" data-ru="спрос упирается в места">demand hits the seats</text>
   </g>
   <g id="g-reject">
     <rect x="519" y="70" width="181" height="270" fill="var(--lab-bad)" opacity="0.1"/>
@@ -104,7 +104,7 @@
   </g>
 </svg>`,
         stages: [
-          { cap: { en: "Little's law: L = λ × W, W = 0.47 s (mock).", ru: "Закон Литтла: L = λ × W, W = 0.47 с (мок)." }, show: ["g-little"] },
+          { cap: { en: "Little's law: L = λ × W, W = 0.47 s (mock).", ru: "Закон Литтла: L = λ × W, W = 0.47 с (мок)." }, show: ["g-little"] },
           { cap: { en: "Seats: 4 in service + 4 queue places = 8 in system.", ru: "Места: 4 в обслуживании + 4 в очереди = 8 в системе." }, show: ["g-little", "g-seats"] },
           { cap: { en: "Knee: λ* = 8 / 0.47 ≈ 17.0 req/s.", ru: "Колено: λ* = 8 / 0.47 ≈ 17.0 req/s." }, show: ["g-little", "g-seats", "g-knee"] },
           { cap: { en: "Past the knee: honest 429s — a burst of 24 loses 16.", ru: "За коленом: честный 429 + Retry-After — бурст из 24 теряет 16." }, show: ["g-little", "g-seats", "g-knee", "g-reject"] },
@@ -112,8 +112,8 @@
       },
     ],
     outcomes: [
-      { en: "Map every failure outcome to a status code and a client action.", ru: "\u0421\u043e\u043f\u043e\u0441\u0442\u0430\u0432\u043b\u044f\u0442\u044c \u043a\u0430\u0436\u0434\u043e\u043c\u0443 \u043e\u0442\u043a\u0430\u0437\u0443 \u043a\u043e\u0434 \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u044f \u0438 \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435 \u043a\u043b\u0438\u0435\u043d\u0442\u0430." },
-      { en: "Keep rejection honest: a 429 is a decision, never a disguised success.", ru: "\u0414\u0435\u0440\u0436\u0430\u0442\u044c \u043e\u0442\u043a\u0430\u0437 \u0447\u0435\u0441\u0442\u043d\u044b\u043c: 429 \u2014 \u044d\u0442\u043e \u0440\u0435\u0448\u0435\u043d\u0438\u0435, \u0430 \u043d\u0435 \u0437\u0430\u043c\u0430\u0441\u043a\u0438\u0440\u043e\u0432\u0430\u043d\u043d\u044b\u0439 \u0443\u0441\u043f\u0435\u0445." },
+      { en: "Map every failure outcome to a status code and a client action.", ru: "\u0421\u043e\u043f\u043e\u0441\u0442\u0430\u0432\u043b\u044f\u0442\u044c \u043a\u0430\u0436\u0434\u043e\u043c\u0443 \u043e\u0442\u043a\u0430\u0437\u0443 \u043a\u043e\u0434 \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u044f \u0438\u00a0\u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435 \u043a\u043b\u0438\u0435\u043d\u0442\u0430." },
+      { en: "Keep rejection honest: a 429 is a decision, never a disguised success.", ru: "\u0414\u0435\u0440\u0436\u0430\u0442\u044c \u043e\u0442\u043a\u0430\u0437 \u0447\u0435\u0441\u0442\u043d\u044b\u043c: 429 \u2014 \u044d\u0442\u043e \u0440\u0435\u0448\u0435\u043d\u0438\u0435, \u0430\u00a0\u043d\u0435 \u0437\u0430\u043c\u0430\u0441\u043a\u0438\u0440\u043e\u0432\u0430\u043d\u043d\u044b\u0439 \u0443\u0441\u043f\u0435\u0445." },
     ],
     model: [
       ["service seats", "capacity 4 + queue 4 = 8", "burst 24 → honest 429s", "24 − 8 = 16"],
@@ -127,7 +127,7 @@
         id: "q1",
         q: {
           en: "A burst of 24 clients hits a gateway with 4 service slots and 4 queue seats. How many honest 429 answers does the envelope predict?",
-          ru: "Бурст из 24 клиентов бьёт в шлюз с 4 слотами обслуживания и 4 местами очереди. Сколько честных 429 предсказывает конверт?",
+          ru: "Бурст из 24 клиентов бьёт в шлюз с 4 слотами обслуживания и 4 местами очереди. Сколько честных 429 предсказывает конверт?",
         },
         answer: 16, tol: 0.5, unit: { en: "requests", ru: "запросов" },
         hint: {
@@ -139,7 +139,7 @@
         id: "q2",
         q: {
           en: "With the declared mock handles (ttft 0.15 s, 0.02 s per token), how long does one full 64-token request take, in seconds?",
-          ru: "С объявленными ручками мока (<code>ttft</code> 0.15 с, 0.02 с за токен) — сколько длится полный запрос на 64 токена, в секундах?",
+          ru: "С объявленными ручками мока (<code>ttft</code> 0.15 с, 0.02 с за токен) — сколько длится полный запрос на 64 токена, в секундах?",
         },
         answer: 1.43, tol: 0.01, unit: { en: "s", ru: "с" },
         hint: {
@@ -151,7 +151,7 @@
         id: "q3",
         q: {
           en: "Queue knee λ* for 16-token requests (W = 0.47 s) with 8 in-system seats — in req/s?",
-          ru: "Колено очереди λ* для запросов на 16 токенов (W = 0.47 с) при 8 местах в системе — в req/s?",
+          ru: "Колено очереди λ* для запросов на 16 токенов (W = 0.47 с) при 8 местах в системе — в req/s?",
         },
         answer: 17, tol: 0.5, unit: { en: "req/s", ru: "req/s" },
         hint: {
@@ -166,7 +166,7 @@
       title: { en: "Exercise 0 · Warm-up: what counts as success", ru: "Упражнение 0 · Разогрев: что считается успехом" },
       brief: {
         en: "One line to start: implement <code>status_is_success(status)</code> — exactly <code>true</code> for HTTP 200 and <code>false</code> for everything else. The whole gateway contract hangs on this single predicate; anything that is not 200 is a decision, not a success.",
-        ru: "Одна строка для старта: реализуй <code>status_is_success(status)</code> — ровно <code>true</code> для HTTP 200 и <code>false</code> для всего остального. На этом одном предикате держится весь контракт шлюза; всё, что не 200, — это решение, а не успех.",
+        ru: "Одна строка для старта: реализуй <code>status_is_success(status)</code> — ровно <code>true</code> для HTTP 200 и <code>false</code> для всего остального. На этом одном предикате держится весь контракт шлюза; всё, что не 200, — это решение, а не успех.",
       },
       starter: `def status_is_success(status):
     """True only for HTTP 200."""
@@ -192,7 +192,7 @@
         title: { en: "Exercise 1 · Outcome → status map", ru: "Упражнение 1 · Карта «исход → код»" },
         brief: {
           en: "Implement <code>map_engine_error(outcome, request_id)</code> — one terminal outcome to an honest answer: a dict with <code>http_status</code>, <code>payload</code> (carries <code>error</code> and <code>request_id</code>) and <code>headers</code>. Map: <code>invalid</code> → 400, <code>overloaded</code> → 429 with header <code>Retry-After: '1'</code>, <code>engine_down</code> → 503, <code>deadline</code> → 504, everything else → 500 without internals. Never 200-with-error-body: the status code is the first truth the client reads.",
-          ru: "Реализуй <code>map_engine_error(outcome, request_id)</code> — один терминальный исход в честный ответ: dict с <code>http_status</code>, <code>payload</code> (везёт <code>error</code> и <code>request_id</code>) и <code>headers</code>. Карта: <code>invalid</code> → 400, <code>overloaded</code> → 429 с заголовком <code>Retry-After: '1'</code>, <code>engine_down</code> → 503, <code>deadline</code> → 504, всё остальное → 500 без внутренностей. Никогда не 200-with-error-body: статус-код — первая правда, которую читает клиент.",
+          ru: "Реализуй <code>map_engine_error(outcome, request_id)</code> — один терминальный исход в честный ответ: dict с <code>http_status</code>, <code>payload</code> (везёт <code>error</code> и <code>request_id</code>) и <code>headers</code>. Карта: <code>invalid</code> → 400, <code>overloaded</code> → 429 с заголовком <code>Retry-After: '1'</code>, <code>engine_down</code> → 503, <code>deadline</code> → 504, всё остальное → 500 без внутренностей. Никогда не 200-with-error-body: статус-код — первая правда, которую читает клиент.",
         },
         starter: `def map_engine_error(outcome, request_id):
     """Map one terminal outcome to an honest HTTP answer for the client.
@@ -237,7 +237,7 @@ eq(map_engine_error('engine_bug', 'r-4')['http_status'], 500)` },
         title: { en: "Exercise 2 · Bounded queue envelope", ru: "Упражнение 2 · Конверт ограниченной очереди" },
         brief: {
           en: "Implement <code>admission_envelope(arrivals, capacity, queue_slots)</code> — the closed form of the burst drill: first <code>min(arrivals, capacity)</code> requests take service slots, the next ones fill up to <code>queue_slots</code> waiting seats, everyone past both gets an honest 429. Return <code>{'admitted': …, 'queued': …, 'rejected': …}</code>; the three counts add up to <code>arrivals</code>. With 4 + 4 seats the burst of 24 must give 8 served and 16 rejections.",
-          ru: "Реализуй <code>admission_envelope(arrivals, capacity, queue_slots)</code> — замкнутую форму дрилла бурста: первые <code>min(arrivals, capacity)</code> запросов берут слоты обслуживания, следующие заполняют до <code>queue_slots</code> мест ожидания, все, кто сверх, получают честный 429. Верни <code>{'admitted': …, 'queued': …, 'rejected': …}</code>; три числа в сумме дают <code>arrivals</code>. При 4 + 4 местах бурст из 24 должен дать 8 обслуженных и 16 отказов.",
+          ru: "Реализуй <code>admission_envelope(arrivals, capacity, queue_slots)</code> — замкнутую форму дрилла бурста: первые <code>min(arrivals, capacity)</code> запросов берут слоты обслуживания, следующие заполняют до <code>queue_slots</code> мест ожидания, все, кто сверх, получают честный 429. Верни <code>{'admitted': …, 'queued': …, 'rejected': …}</code>; три числа в сумме дают <code>arrivals</code>. При 4 + 4 местах бурст из 24 должен дать 8 обслуженных и 16 отказов.",
         },
         starter: `def admission_envelope(arrivals, capacity, queue_slots):
     """Closed form of one synchronous burst against a bounded queue.
@@ -272,7 +272,7 @@ eq(map_engine_error('engine_bug', 'r-4')['http_status'], 500)` },
         title: { en: "Exercise 3 · Fix the bug: success is not “not-429”", ru: "Упражнение 3 · Почини баг: успех — это не «не 429»" },
         brief: {
           en: "This <code>classify_outcome(status)</code> counts every non-429 as success: a client that timed out or dropped mid-generation ends up <code>'completed'</code>, and the metrics lie — the orphan generation keeps burning tokens that no dashboard explains. Fix it to the contract from the docstring: 200 → <code>'completed'</code>, 429 → <code>'rejected'</code>, 0 → <code>'cancelled'</code> (the socket died together with the leaving client), any other status → <code>'failed'</code>.",
-          ru: "Эта <code>classify_outcome(status)</code> засчитывает любой не-429 как успех: клиент, у которого вышел таймаут или который ушёл посреди генерации, получает <code>'completed'</code>, и метрики лгут — orphan-генерация продолжает жечь токены, которые никто не объясняет. Почини по контракту из docstring: 200 → <code>'completed'</code>, 429 → <code>'rejected'</code>, 0 → <code>'cancelled'</code> (сокет умер вместе с уходящим клиентом), любой другой статус → <code>'failed'</code>.",
+          ru: "Эта <code>classify_outcome(status)</code> засчитывает любой не-429 как успех: клиент, у которого вышел таймаут или который ушёл посреди генерации, получает <code>'completed'</code>, и метрики лгут — orphan-генерация продолжает жечь токены, которые никто не объясняет. Почини по контракту из docstring: 200 → <code>'completed'</code>, 429 → <code>'rejected'</code>, 0 → <code>'cancelled'</code> (сокет умер вместе с уходящим клиентом), любой другой статус → <code>'failed'</code>.",
         },
         starter: `def classify_outcome(status):
     """Classify one terminal HTTP status for the metrics journal.
@@ -302,7 +302,7 @@ eq(classify_outcome(400), 'failed')` },
         return 'cancelled'
     return 'failed'`,
         hints: [
-          { en: "Four branches, each with one named outcome; 0 is the disconnect probe from http_request, not a success.", ru: "Четыре ветки, у каждой — свой именованный исход; 0 — сигнал обрыва соединения из http_request, а не успех." },
+          { en: "Four branches, each with one named outcome; 0 is the disconnect probe from http_request, not a success.", ru: "Четыре ветки, у каждой — свой именованный исход; 0 — сигнал обрыва соединения из http_request, а не успех." },
         ],
         numpy: false,
         timeoutMs: 4000,
@@ -315,7 +315,7 @@ eq(classify_outcome(400), 'failed')` },
       },
       brief: {
         en: "The Layer 2 runtime (ZIP below, <code>docker compose up -d</code>) carries a real admission drill: <code>POST /burst</code> fires concurrent requests at the engine through a bounded envelope — <code>slots</code> in flight, <code>queue_slots</code> waiting, everything beyond that rejected with an honest 429 + Retry-After. Nothing is simulated: queued requests really wait, timings are your machine's. Run a burst, then compare admitted/rejected with your own <code>admission_envelope</code> from Exercise 2 — the formula you tested is the formula the gateway enforces.",
-        ru: "Рантайм слоя 2 (ZIP ниже, <code>docker compose up -d</code>) держит настоящий admission-дрилл: <code>POST /burst</code> бьёт по движку параллельными запросами через ограниченный конверт — <code>slots</code> в полёте, <code>queue_slots</code> ждут, всё сверх — честный 429 + Retry-After. Ничего не симулируется: очередь ждёт по-настоящему, тайминги — твоей машины. Сделай бурст и сравни admitted/rejected со своей <code>admission_envelope</code> из Упражнения 2 — формула, которую ты тестировал, — это формула, которую исполняет шлюз.",
+        ru: "Рантайм слоя 2 (ZIP ниже, <code>docker compose up -d</code>) держит настоящий admission-дрилл: <code>POST /burst</code> бьёт по движку параллельными запросами через ограниченный конверт — <code>slots</code> в полёте, <code>queue_slots</code> ждут, всё сверх — честный 429 + Retry-After. Ничего не симулируется: очередь ждёт по-настоящему, тайминги — твоей машины. Сделай бурст и сравни admitted/rejected со своей <code>admission_envelope</code> из Упражнения 2 — формула, которую ты тестировал, — это формула, которую исполняет шлюз.",
       },
       burst: {
         arrivals: 24,
@@ -329,28 +329,28 @@ eq(classify_outcome(400), 'failed')` },
       },
       footer: {
         en: "Bursts are machine-local and honest. The gateway's own verifier is GET /journal/verify; each burst lands in the hash chain (kind=burst).",
-        ru: "Бурсты честны и зависят только от твоей машины. Собственный верификатор шлюза — GET /journal/verify; каждый бурст попадает в хэш-цепочку (kind=burst).",
+        ru: "Бурсты честны и зависят только от твоей машины. Собственный верификатор шлюза — GET /journal/verify; каждый бурст попадает в хэш-цепочку (kind=burst).",
       },
     },
     posttest: [
       {
         id: "p1",
-        q: { en: "HTTP 429 with Retry-After is\u2026", ru: "HTTP 429 \u0441 Retry-After \u2014 \u044d\u0442\u043e\u2026" },
+        q: { en: "HTTP 429 with Retry-After is\u2026", ru: "HTTP 429\u00a0\u0441 Retry-After \u2014 \u044d\u0442\u043e\u2026" },
         options: [{ en: "an honest admission decision: try again later", ru: "\u0447\u0435\u0441\u0442\u043d\u043e\u0435 \u0440\u0435\u0448\u0435\u043d\u0438\u0435 \u0434\u043e\u043f\u0443\u0441\u043a\u0430: \u043f\u043e\u0432\u0442\u043e\u0440\u0438 \u043f\u043e\u0437\u0436\u0435" }, { en: "an engine bug", ru: "\u0431\u0430\u0433 \u0434\u0432\u0438\u0436\u043a\u0430" }, { en: "a successful answer", ru: "\u0443\u0441\u043f\u0435\u0448\u043d\u044b\u0439 \u043e\u0442\u0432\u0435\u0442" }],
         answer: 0,
-        explain: { en: "429 separates rejection from success. Hiding overload in timeouts is the failure mode the lab drills.", ru: "429 \u043e\u0442\u0434\u0435\u043b\u044f\u0435\u0442 \u043e\u0442\u043a\u0430\u0437 \u043e\u0442 \u0443\u0441\u043f\u0435\u0445\u0430. \u041f\u0440\u044f\u0442\u0430\u0442\u044c \u043f\u0435\u0440\u0435\u0433\u0440\u0443\u0437\u043a\u0443 \u0432 \u0442\u0430\u0439\u043c\u0430\u0443\u0442\u0430\u0445 \u2014 \u0442\u043e\u0442 \u0430\u043d\u0442\u0438\u043f\u0430\u0442\u0442\u0435\u0440\u043d, \u043a\u043e\u0442\u043e\u0440\u044b\u0439 \u0433\u043e\u043d\u044f\u0435\u0442 \u043b\u0430\u0431\u0430." },
+        explain: { en: "429 separates rejection from success. Hiding overload in timeouts is the failure mode the lab drills.", ru: "429 \u043e\u0442\u0434\u0435\u043b\u044f\u0435\u0442 \u043e\u0442\u043a\u0430\u0437 \u043e\u0442 \u0443\u0441\u043f\u0435\u0445\u0430. \u041f\u0440\u044f\u0442\u0430\u0442\u044c \u043f\u0435\u0440\u0435\u0433\u0440\u0443\u0437\u043a\u0443 \u0432\u00a0\u0442\u0430\u0439\u043c\u0430\u0443\u0442\u0430\u0445 \u2014 \u0442\u043e\u0442 \u0430\u043d\u0442\u0438\u043f\u0430\u0442\u0442\u0435\u0440\u043d, \u043a\u043e\u0442\u043e\u0440\u044b\u0439 \u0433\u043e\u043d\u044f\u0435\u0442 \u043b\u0430\u0431\u0430." },
       },
       {
         id: "p2",
-        q: { en: "Which outcome counts as success for the client ledger?", ru: "\u041a\u0430\u043a\u043e\u0439 \u0438\u0441\u0445\u043e\u0434 \u0441\u0447\u0438\u0442\u0430\u0435\u0442\u0441\u044f \u0443\u0441\u043f\u0435\u0445\u043e\u043c \u0432 \u043a\u043b\u0438\u0435\u043d\u0442\u0441\u043a\u043e\u0439 \u0432\u0435\u0434\u043e\u043c\u043e\u0441\u0442\u0438?" },
-        options: [{ en: "only HTTP 200 with a full response", ru: "\u0442\u043e\u043b\u044c\u043a\u043e HTTP 200 \u0441 \u043f\u043e\u043b\u043d\u044b\u043c \u043e\u0442\u0432\u0435\u0442\u043e\u043c" }, { en: "200 and 429", ru: "200 \u0438 429" }, { en: "anything but 500", ru: "\u0432\u0441\u0451, \u043a\u0440\u043e\u043c\u0435 500" }],
+        q: { en: "Which outcome counts as success for the client ledger?", ru: "\u041a\u0430\u043a\u043e\u0439 \u0438\u0441\u0445\u043e\u0434 \u0441\u0447\u0438\u0442\u0430\u0435\u0442\u0441\u044f \u0443\u0441\u043f\u0435\u0445\u043e\u043c \u0432\u00a0\u043a\u043b\u0438\u0435\u043d\u0442\u0441\u043a\u043e\u0439 \u0432\u0435\u0434\u043e\u043c\u043e\u0441\u0442\u0438?" },
+        options: [{ en: "only HTTP 200 with a full response", ru: "\u0442\u043e\u043b\u044c\u043a\u043e HTTP 200\u00a0\u0441 \u043f\u043e\u043b\u043d\u044b\u043c \u043e\u0442\u0432\u0435\u0442\u043e\u043c" }, { en: "200 and 429", ru: "200 \u0438 429" }, { en: "anything but 500", ru: "\u0432\u0441\u0451, \u043a\u0440\u043e\u043c\u0435 500" }],
         answer: 0,
-        explain: { en: "Cancellation (0) and timeouts are not successes either \u2014 the map is outcome \u2192 status \u2192 client action.", ru: "\u041e\u0442\u043c\u0435\u043d\u0430 (0) \u0438 \u0442\u0430\u0439\u043c\u0430\u0443\u0442\u044b \u2014 \u0442\u043e\u0436\u0435 \u043d\u0435 \u0443\u0441\u043f\u0435\u0445\u0438: \u043a\u0430\u0440\u0442\u0430 \u00ab\u0438\u0441\u0445\u043e\u0434 \u2192 \u0441\u0442\u0430\u0442\u0443\u0441 \u2192 \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435 \u043a\u043b\u0438\u0435\u043d\u0442\u0430\u00bb." },
+        explain: { en: "Cancellation (0) and timeouts are not successes either \u2014 the map is outcome \u2192 status \u2192 client action.", ru: "\u041e\u0442\u043c\u0435\u043d\u0430 (0) \u0438\u00a0\u0442\u0430\u0439\u043c\u0430\u0443\u0442\u044b \u2014 \u0442\u043e\u0436\u0435 \u043d\u0435 \u0443\u0441\u043f\u0435\u0445\u0438: \u043a\u0430\u0440\u0442\u0430 \u00ab\u0438\u0441\u0445\u043e\u0434 \u2192 \u0441\u0442\u0430\u0442\u0443\u0441 \u2192 \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435 \u043a\u043b\u0438\u0435\u043d\u0442\u0430\u00bb." },
       },
       {
         id: "p3",
         q: { en: "Bounded queue with 4 slots + 4 queue places gets 24 arrivals. The gateway\u2026", ru: "\u041a\u043e\u043d\u0432\u0435\u0440\u0442: 4 \u0441\u043b\u043e\u0442\u0430 \u043e\u0431\u0441\u043b\u0443\u0436\u0438\u0432\u0430\u043d\u0438\u044f + 4 \u043c\u0435\u0441\u0442\u0430 \u043e\u0447\u0435\u0440\u0435\u0434\u0438 \u2014 \u043f\u043e\u0441\u0442\u0443\u043f\u0430\u0435\u0442 24 \u0437\u0430\u044f\u0432\u043a\u0438. \u0428\u043b\u044e\u0437\u2026" },
-        options: [{ en: "admits 4 and queues 4 (8 in system), rejects 16 with 429", ru: "допускает 4 и ставит в очередь 4 (8 в системе), отбивает 16 с 429" }, { en: "admits all 24", ru: "\u0434\u043e\u043f\u0443\u0441\u043a\u0430\u0435\u0442 \u0432\u0441\u0435 24" }, { en: "rejects all 24", ru: "\u043e\u0442\u0431\u0438\u0432\u0430\u0435\u0442 \u0432\u0441\u0435 24" }],
+        options: [{ en: "admits 4 and queues 4 (8 in system), rejects 16 with 429", ru: "допускает 4 и ставит в очередь 4 (8 в системе), отбивает 16 с 429" }, { en: "admits all 24", ru: "\u0434\u043e\u043f\u0443\u0441\u043a\u0430\u0435\u0442 \u0432\u0441\u0435 24" }, { en: "rejects all 24", ru: "\u043e\u0442\u0431\u0438\u0432\u0430\u0435\u0442 \u0432\u0441\u0435 24" }],
         answer: 0,
         explain: { en: "admitted = min(arrivals, slots + queue) = 8; the rest get immediate 429 instead of hidden waiting.", ru: "admitted = min(\u0437\u0430\u044f\u0432\u043a\u0438, \u0441\u043b\u043e\u0442\u044b + \u043e\u0447\u0435\u0440\u0435\u0434\u044c) = 8; \u043e\u0441\u0442\u0430\u043b\u044c\u043d\u044b\u0435 \u043f\u043e\u043b\u0443\u0447\u0430\u044e\u0442 \u043d\u0435\u043c\u0435\u0434\u043b\u0435\u043d\u043d\u044b\u0439 429 \u0432\u043c\u0435\u0441\u0442\u043e \u0441\u043a\u0440\u044b\u0442\u043e\u0433\u043e \u043e\u0436\u0438\u0434\u0430\u043d\u0438\u044f." },
       },
@@ -360,7 +360,7 @@ eq(classify_outcome(400), 'failed')` },
     },
     footer: {
       en: "Teaching arithmetic on a declared mock engine (ttft 0.15 s, 0.02 s per token, seats 4+4) — not a vLLM measurement. The recorded gateway drills live in the Topic 08 evidence run (runs/2026-10-26-topic08-gateway-mock); this lab does not execute them.",
-      ru: "Учебная арифметика на объявленном моке движка (<code>ttft</code> 0.15 с, 0.02 с за токен, места 4+4) — не измерение vLLM. Прогоны дриллов шлюза записаны в evidence-прогоне Темы 08 (runs/2026-10-26-topic08-gateway-mock); эта лаба их не исполняет.",
+      ru: "Учебная арифметика на объявленном моке движка (<code>ttft</code> 0.15 с, 0.02 с за токен, места 4+4) — не измерение vLLM. Прогоны дриллов шлюза записаны в evidence-прогоне Темы 08 (runs/2026-10-26-topic08-gateway-mock); эта лаба их не исполняет.",
     },
   };
 })();
