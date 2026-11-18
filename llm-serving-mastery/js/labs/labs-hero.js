@@ -68,7 +68,7 @@
     if (document.querySelector(".cb-switch")) return;
     const bar = document.createElement("div");
     bar.className = "cb-switch";
-    bar.setAttribute("role", "group");
+    bar.setAttribute("role", "region");
     bar.setAttribute("aria-label", "Colorblind mode");
     const modes = [["normal", "Normal"], ["deut", "Deut"], ["prot", "Prot"], ["trit", "Trit"], ["mono", "Mono"]];
     const saved = localStorage.getItem("lsm.cb") || "normal";
