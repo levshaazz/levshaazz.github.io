@@ -8,6 +8,7 @@
   window.LABS_CONTENT = window.LABS_CONTENT || {};
 
   LABS_CONTENT["9"] = {
+    budget: 120,
     title: {
       en: "Docker: the production unit",
       ru: "Docker: производственная единица",
@@ -17,9 +18,9 @@
       ru: "Порядок слоёв и попадания в кэш, exit 137 как 128 + 9 (SIGKILL), crash-loop backoff с растущими интервалами, рестарт-до-готовности как именованные члены.",
     },
     intro: {
-      en: `<p>An image is an ordered stack of layers, and the build cache has one law: a layer hit survives only while neither it nor anything <em>below</em> it changed — editing a layer rebuilds it and everything above. For an LLM image the size accounting is brutal: the binary is megabytes, the weights (Qwen2.5-0.5B Q4_K_M — 0.491 GB) dominate whatever you do with the Dockerfile. And when a pod touches pages beyond its <code>--memory</code> wall, the kernel kills it: exit 137 is not an application code but 128 + 9 (SIGKILL), the restart policy brings it back with a <strong>growing backoff</strong> (100 ms → … → 1 min; Kubernetes calls it CrashLoopBackOff), and only the exit code, the log tail and <code>OOMKilled</code> tell the story.</p>
+      en: `<p>An image is an ordered stack of layers, and the build cache has one law: a layer hit survives only while neither it nor anything <em>below</em> it changed — editing a layer rebuilds it and everything above. For an LLM image the size accounting is brutal: the binary is megabytes, the weights (Qwen2.5-0.5B Q4_K_M — 0.491 GB) dominate whatever you do with the Dockerfile. And when a container touches pages beyond its <code>--memory</code> wall, the kernel kills it: exit 137 is not an application code but 128 + 9 (SIGKILL), the restart policy brings it back with a <strong>growing backoff</strong> (100 ms → … → 1 min; Kubernetes calls it CrashLoopBackOff), and only the exit code, the log tail and <code>OOMKilled</code> tell the story.</p>
 <p>The lab habit: freeze the build plan (layer order, per-edit invalidation, restart members) before the first build; diagnose from evidence, not vibes — code + log + inspect; treat "crashed → answering again" as a sum of named members: layer extract + weight loading + server init + first <code>/health</code>. Minimizing the image is recovery speed.</p>`,
-      ru: `<p>Образ — упорядоченная стопка слоёв, и у build-кэша один закон: попадание слоя живёт, пока не изменились ни он сам, ни что-либо <em>под</em> ним — правка слоя пересобирает его и всё выше. Для LLM-образа бухгалтерия размера жёсткая: бинарник — мегабайты, а веса (Qwen2.5-0.5B Q4_K_M — 0.491 ГБ) доминируют, что бы ты ни делал с Dockerfile. Когда под касается страниц за стеной <code>--memory</code>, ядро его убивает: exit 137 — не код приложения, а 128 + 9 (SIGKILL), restart-политика поднимает контейнер снова с <strong>растущим backoff</strong> (100 мс → … → 1 мин; в Kubernetes это CrashLoopBackOff), и только код выхода, хвост журнала и <code>OOMKilled</code> рассказывают историю.</p>
+      ru: `<p>Образ — упорядоченная стопка слоёв, и у build-кэша один закон: попадание слоя живёт, пока не изменились ни он сам, ни что-либо <em>под</em> ним — правка слоя пересобирает его и всё выше. Для LLM-образа бухгалтерия размера жёсткая: бинарник — мегабайты, а веса (Qwen2.5-0.5B Q4_K_M — 0.491 ГБ) доминируют, что бы ты ни делал с Dockerfile. Когда контейнер касается страниц за стеной <code>--memory</code>, ядро его убивает: exit 137 — не код приложения, а 128 + 9 (SIGKILL), restart-политика поднимает контейнер снова с <strong>растущим backoff</strong> (100 мс → … → 1 мин; в Kubernetes это CrashLoopBackOff), и только код выхода, хвост журнала и <code>OOMKilled</code> рассказывают историю.</p>
 <p>Привычка лабы: заморозить план сборки (порядок слоёв, инвалидация по правке, члены рестарта) до первой сборки; диагностировать по доказательствам, а не по ощущениям — код + лог + inspect; считать «упал → снова отвечает» суммой именованных членов: extract слоёв + загрузка весов + init сервера + первый <code>/health</code>. Минимизация размера — это скорость восстановления.</p>`,
     },
     heroTag: { en: "layers, exit codes, backoff", ru: "слои, exit-коды, backoff" },
@@ -92,7 +93,7 @@
     <text x="265" y="249" text-anchor="middle" font-size="14" fill="var(--lab-bg)" class="mono">weights 0.491 GB</text>
     <rect x="434" y="224" width="110" height="40" rx="7" fill="var(--lab-accent)" opacity="0.35"/>
     <rect x="548" y="224" width="98" height="40" rx="7" fill="var(--lab-good)" opacity="0.45"/>
-    <text x="660" y="249" font-size="13" fill="var(--lab-muted)" data-en="still pays weights" data-ru="веса платить всё равно">still pays weights</text>
+    <text x="60" y="284" font-size="13" fill="var(--lab-muted)" data-en="still pays weights" data-ru="веса платить всё равно">still pays weights</text>
   </g>
   <g id="g-bake">
     <text x="60" y="308" font-size="15" fill="var(--lab-ink)" data-en="bake the weights into the image" data-ru="запечь веса в образ">bake the weights into the image</text>

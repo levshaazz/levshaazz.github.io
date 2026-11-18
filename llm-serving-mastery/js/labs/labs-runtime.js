@@ -130,13 +130,21 @@
     out.setAttribute("aria-live", "polite");
     card.appendChild(out);
     const metrics = el("div", "lab-metrics");
-    [["wall", tr(T().mWall)], ["tok", tr(T().mTok)], ["seq", tr(T().mSeq)]].forEach(([k, label]) => {
+    // "done" exists only where the burst button does: the burst used to print
+    // its completed-request count into the tok/s slot (audit L1b-3)
+    const metricDefs = [["wall", tr(T().mWall)], ["tok", tr(T().mTok)]];
+    if (spec.burst) metricDefs.push(["done", tr(T().mDone)]);
+    metricDefs.push(["seq", tr(T().mSeq)]);
+    metricDefs.forEach(([k, label]) => {
       const m = el("div", "lab-metric");
       m.appendChild(el("b", "", "—")); m.firstChild.dataset.rtMetric = k;
       m.appendChild(el("span", "", label));
       metrics.appendChild(m);
     });
     card.appendChild(metrics);
+    // what "Эксперимент" actually does — it was never described in the section
+    // text and silently falls back to a default prompt (audit L1b-4)
+    card.appendChild(el("p", "lab-note", tr(T().experimentHint)));
     const note = el("p", "lab-note", tr(spec.footer));
     card.appendChild(note);
     host.appendChild(card);
@@ -163,7 +171,12 @@
         renderChip(chipHost, "wait", tr(T().warming));
         return false;
       } catch (e) {
-        renderChip(chipHost, "off", tr(T().offline));
+        // from a public origin (github.io) the failure is usually the browser
+        // blocking private-network access, not a missing runtime — say so
+        // instead of sending the student to raise a container that won't help
+        const localOrigin = location.protocol === "file:" ||
+          /^(localhost|127\.0\.0\.1|\[::1\]|::1)$/.test(location.hostname);
+        renderChip(chipHost, "off", localOrigin ? tr(T().offline) : tr(T().blocked));
         return false;
       }
     }
@@ -269,7 +282,7 @@
             timeoutMs: 180000,
           });
           setMetric("wall", r.wall_s.toFixed(2) + " s");
-          setMetric("tok", String(r.completed));
+          setMetric("done", String(r.completed));
           setMetric("seq", "#" + r.journal_seq);
           log(tr(T().burstDone)
             .replace("{a}", String(r.admitted))
@@ -290,7 +303,17 @@
     }
 
     probe();
-    setInterval(probe, 15000);
+    // reprobe with backoff: while the runtime is away every probe logs browser
+    // console CORS/PNA errors that can't be silenced — probe at 15 s when up,
+    // doubling up to 60 s when down
+    let probeTimer = null;
+    let probeDelay = 15000;
+    const scheduleProbe = (okNow) => {
+      probeDelay = okNow ? 15000 : Math.min(probeDelay * 2, 60000);
+      clearTimeout(probeTimer);
+      probeTimer = setTimeout(async () => scheduleProbe(await probe()), probeDelay);
+    };
+    scheduleProbe(true);
   }
 
   // Inject the student's actual journal into a Python exercise as `entries`.

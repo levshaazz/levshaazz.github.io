@@ -8,6 +8,7 @@
   window.LABS_CONTENT = window.LABS_CONTENT || {};
 
   LABS_CONTENT["7"] = {
+    budget: 55,
     title: {
       en: "Tuning for the SLO",
       ru: "Тюнинг под SLO",
@@ -196,7 +197,7 @@
           { name: "picks the fastest feasible", hidden: false, code: "eq(pick_working_point([{'name': 'default', 'thr_64': 1200, 'p95_64': 860}, {'name': 'seqs-32', 'thr_64': 1600, 'p95_64': 470}, {'name': 'pair', 'thr_64': 1650, 'p95_64': 450}, {'name': 'mem-085', 'thr_64': 1150, 'p95_64': 880}, {'name': 'chunked', 'thr_64': 1250, 'p95_64': 840}], 1200.0, 800.0)['name'], 'pair')" },
           { name: "nothing feasible freezes nothing", hidden: false, code: "eq(pick_working_point([{'name': 'slow', 'thr_64': 900, 'p95_64': 300}], 1200.0, 800.0), None)" },
           { name: "ties keep the first", hidden: true, code: "eq(pick_working_point([{'name': 'a', 'thr_64': 1500, 'p95_64': 500}, {'name': 'b', 'thr_64': 1500, 'p95_64': 600}], 1200.0, 800.0)['name'], 'a')" },
-          { name: "min-p95 rule among equal-throughput feasible", hidden: true, code: "eq(pick_working_point([{'name': 'a', 'thr_64': 1650, 'p95_64': 490}, {'name': 'b', 'thr_64': 1600, 'p95_64': 460}], 1200.0, 800.0)['name'], 'a')" },
+          { name: "max-throughput beats a lower p95", hidden: true, code: "eq(pick_working_point([{'name': 'a', 'thr_64': 1650, 'p95_64': 490}, {'name': 'b', 'thr_64': 1600, 'p95_64': 460}], 1200.0, 800.0)['name'], 'a')" },
           { name: "empty plan", hidden: true, code: "eq(pick_working_point([], 1200.0, 800.0), None)" },
         ],
         solution: `def pick_working_point(configs, floor_tps, slo_p95_ms):

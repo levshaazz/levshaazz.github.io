@@ -7,6 +7,7 @@
   window.LABS_CONTENT = window.LABS_CONTENT || {};
 
   LABS_CONTENT["2"] = {
+    budget: 45,
     title: {
       en: "Bottlenecks: roofline and the KV cache",
       ru: "Узкие места: roofline и KV-кэш",
@@ -128,7 +129,7 @@
       {
         id: "q2",
         q: {
-          en: "Attainable throughput at intensity 20 FLOP/B on that machine, in TFLOP/s?",
+          en: "Attainable performance at intensity 20 FLOP/B on that machine, in TFLOP/s?",
           ru: "Достижимая производительность при интенсивности 20 FLOP/Б на этой машине, в TFLOP/s?",
         },
         answer: 12, tol: 0.5, unit: { en: "TFLOP/s", ru: "TFLOP/s" },
@@ -160,7 +161,7 @@
         },
         starter: `def roofline_ceiling(intensity, compute_tflops, bandwidth_gbps):
     """Attainable TFLOP/s: min(compute roof, intensity x bandwidth / 1000)."""
-    # TODO: одна строка арифметики
+    # TODO: one line of arithmetic / одна строка арифметики
 `,
         tests: [
           { name: "bandwidth-bound left of ridge", hidden: false, code: "eq(roofline_ceiling(20, 60, 600), 12.0)" },
@@ -185,7 +186,7 @@
         },
         starter: `def kv_bytes_per_token(layers, kv_heads, head_dim, bytes_per_elem):
     """Exact bytes of KV payload per live token (K and V)."""
-    # TODO: формула из блока «Заявленная модель»
+    # TODO: formula from the "Declared model" block / формула из блока «Заявленная модель»
 `,
         tests: [
           { name: "Qwen2.5-3B teaching shape", hidden: false, code: "eq(kv_bytes_per_token(36, 2, 128, 2), 36864)" },

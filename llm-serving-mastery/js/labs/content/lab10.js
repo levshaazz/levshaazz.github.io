@@ -8,6 +8,7 @@
   window.LABS_CONTENT = window.LABS_CONTENT || {};
 
   LABS_CONTENT["10"] = {
+    budget: 75,
     title: {
       en: "Multi-GPU inference: tensor parallelism",
       ru: "Инференс на нескольких GPU: тензорный параллелизм",
@@ -131,9 +132,9 @@
         svg: `<svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
   <g id="g-base">
     <line x1="80" y1="340" x2="700" y2="340" stroke="var(--lab-muted)" stroke-width="1.5"/>
-    <text x="700" y="364" text-anchor="end" font-size="14" fill="var(--lab-muted)" data-en="TP degree" data-ru="степень TP">TP degree</text>
+    <text x="700" y="388" text-anchor="end" font-size="14" fill="var(--lab-muted)" data-en="TP degree" data-ru="степень TP">TP degree</text>
     <line x1="80" y1="177" x2="700" y2="177" stroke="var(--fig-warm)" stroke-width="2" stroke-dasharray="6 4"/>
-    <text x="92" y="168" font-size="13" fill="var(--fig-warm)" class="mono" data-en="budget 15 GB" data-ru="бюджет 15 ГБ">budget 15 GB</text>
+    <text x="698" y="168" text-anchor="end" font-size="13" fill="var(--fig-warm)" class="mono" data-en="budget 15 GB" data-ru="бюджет 15 ГБ">budget 15 GB</text>
   </g>
   <g id="g-p1">
     <rect x="110" y="107" width="80" height="233" rx="6" fill="var(--lab-accent)" opacity="0.75"/>
@@ -236,7 +237,7 @@ def column_parallel(x, w, parts):
     x: (batch, features); w: (features, out) split along axis=1.
     Returns a list of arrays: x @ w_j - own columns of Y per shard.
     """
-    # TODO: np.array_split(w, parts, axis=1); each shard computes x @ w_j
+    # TODO: cut w into 'parts' equal column slices; each shard maps x through its own slice
     raise NotImplementedError('TODO: split w by columns and compute shard outputs')
 `,
         tests: [
@@ -444,7 +445,7 @@ def mlp_forward_tp(x, w_up, w_down, parts):
       {
         id: "p2",
         q: { en: "Row-parallel partial outputs must be\u2026", ru: "\u0427\u0430\u0441\u0442\u0438\u0447\u043d\u044b\u0435 \u0440\u0435\u0437\u0443\u043b\u044c\u0442\u0430\u0442\u044b row-parallel \u043d\u0443\u0436\u043d\u043e\u2026" },
-        options: [{ en: "summed (all-reduce)", ru: "\u043f\u0440\u043e\u0441\u0443\u043c\u043c\u0438\u0440\u043e\u0432\u0430\u0442\u044c (all-reduce)" }, { en: "concatenated", ru: "\u0441\u043a\u043e\u043d\u043a\u0430\u0442\u0435\u043d\u0438\u0440\u043e\u0432\u0430\u0442\u044c" }, { en: "dropped", ru: "\u0432\u044b\u0431\u0440\u043e\u0441\u0438\u0442\u044c" }],
+        options: [{ en: "summed (all-reduce)", ru: "\u043f\u0440\u043e\u0441\u0443\u043c\u043c\u0438\u0440\u043e\u0432\u0430\u0442\u044c (all-reduce)" }, { en: "concatenated", ru: "\u0441\u043a\u043e\u043d\u043a\u0430\u0442\u0435\u043d\u0438\u0440\u043e\u0432\u0430\u0442\u044c" }, { en: "averaged per part", ru: "\u0443\u0441\u0440\u0435\u0434\u043d\u0438\u0442\u044c \u043f\u043e \u0447\u0430\u0441\u0442\u044f\u043c" }],
         answer: 0,
         explain: { en: "Row-parallel shards hold partial sums; the join is an exact elementwise sum \u2014 the all-reduce.", ru: "\u0428\u0430\u0440\u0434\u044b row-parallel \u0434\u0435\u0440\u0436\u0430\u0442 \u0447\u0430\u0441\u0442\u0438\u0447\u043d\u044b\u0435 \u0441\u0443\u043c\u043c\u044b; \u0441\u0431\u043e\u0440\u043a\u0430 \u2014 \u0442\u043e\u0447\u043d\u0430\u044f \u043f\u043e\u044d\u043b\u0435\u043c\u0435\u043d\u0442\u043d\u0430\u044f \u0441\u0443\u043c\u043c\u0430, \u0442\u043e \u0435\u0441\u0442\u044c all-reduce." },
       },

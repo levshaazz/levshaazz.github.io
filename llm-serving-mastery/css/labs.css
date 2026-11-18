@@ -216,8 +216,13 @@ html[data-cb="prot"] .lab-shell { --lab-accent: #56b4e9 !important; --lab-accent
 html[data-cb="trit"] .lab-shell { --lab-accent: #56b4e9 !important; --lab-accent-2: #cc79a7 !important; --lab-good: #56b4e9 !important; --lab-bad: #d55e00 !important; --fig-warm: #e69f00 !important; }
 html[data-cb="mono"] .lab-shell { --lab-accent: #c9ced6 !important; --lab-accent-2: #9aa1ac !important; --lab-good: #e8eef7 !important; --lab-bad: #8a9099 !important; --fig-warm: #9aa1ac !important; }
 
-.cb-switch { position: fixed; left: 12px; bottom: 12px; z-index: 50; display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: rgba(13, 16, 23, 0.85); border: 1px solid var(--lab-line, rgba(148, 163, 184, 0.18)); backdrop-filter: blur(4px); }
+.cb-switch { position: fixed; left: 12px; bottom: 12px; z-index: 50; display: flex; flex-direction: column-reverse; align-items: flex-start; gap: 6px; }
+.cb-toggle { width: 34px; height: 34px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 999px; background: rgba(13, 16, 23, 0.85); border: 1px solid var(--lab-line, rgba(148, 163, 184, 0.18)); backdrop-filter: blur(4px); cursor: pointer; }
+.cb-switch .cb-toggle:focus-visible { outline: 2px solid var(--lab-accent, #38e1ff); outline-offset: 2px; }
+.cb-panel { display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: rgba(13, 16, 23, 0.85); border: 1px solid var(--lab-line, rgba(148, 163, 184, 0.18)); backdrop-filter: blur(4px); }
+.cb-panel[hidden] { display: none; }
 .cb-switch button { border: 1px solid transparent; background: transparent; color: var(--lab-muted, #93a1b5); font: 600 0.72rem/1.2 ui-monospace, monospace; padding: 0.25rem 0.55rem; border-radius: 999px; cursor: pointer; }
+.cb-switch .cb-toggle { border: 1px solid var(--lab-line, rgba(148, 163, 184, 0.18)); }
 .cb-switch button[aria-pressed="true"] { color: var(--lab-accent, #38e1ff); border-color: var(--lab-accent, #38e1ff); }
 
 /* Post-test (MC self-check) */

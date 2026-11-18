@@ -7,6 +7,7 @@
   window.LABS_CONTENT = window.LABS_CONTENT || {};
 
   LABS_CONTENT["5"] = {
+    budget: 45,
     title: {
       en: "PagedAttention and batching",
       ru: "PagedAttention и батчинг",
@@ -97,7 +98,7 @@
     <path d="M 330 199 L 372 199" fill="none" stroke="var(--lab-good)" stroke-width="2.5" class="fig-flow"/>
     <rect x="374" y="186" width="90" height="26" rx="6" fill="var(--lab-good)" opacity="0.7"/>
     <text x="384" y="204" font-size="13" fill="var(--lab-bg)" class="mono">C</text>
-    <text x="480" y="204" font-size="13" fill="var(--lab-good)" data-en="C takes the freed slot at the boundary" data-ru="C занимает освободившийся слот на границе">C takes the freed slot at the boundary</text>
+    <text x="480" y="204" font-size="13" fill="var(--lab-good)" data-en="C takes the freed slot" data-ru="C занимает свободный слот">C takes the freed slot</text>
   </g>
   <g id="g-marks">
     <text x="60" y="300" font-size="15" fill="var(--lab-ink)" data-en="finish marks:" data-ru="отметки завершения:">finish marks:</text>
@@ -108,7 +109,7 @@
     <circle cx="240" cy="316" r="5" fill="var(--fig-warm)"/>
     <circle cx="330" cy="316" r="5" fill="var(--lab-good)"/>
     <circle cx="600" cy="316" r="5" fill="var(--lab-accent)"/>
-    <text x="640" y="321" font-size="13" fill="var(--lab-muted)" class="mono">tick</text>
+    <text x="640" y="321" font-size="13" fill="var(--lab-muted)" class="mono" data-en="tick" data-ru="тик">tick</text>
   </g>
   <g id="g-static">
     <text x="380" y="362" text-anchor="middle" font-size="16" fill="var(--fig-warm)" data-en="static batching: C would start only at tick 5 → finish at 6" data-ru="static-батчинг: C стартовал бы только в тик 5 → финал на 6">static batching: C would start only at tick 5 → finish at 6</text>
@@ -143,7 +144,7 @@
         },
         answer: 2, tol: 0.2, unit: { en: "blocks", ru: "блока" },
         hint: {
-          en: "Round up: ceil(17 / 16) = 2 — the second block is only half used.",
+          en: "Round up: ceil(17 / 16) = 2 — only one of the second block's 16 positions is used.",
           ru: "Округляй вверх: ceil(17 / 16) = 2 — второй блок занят лишь одной позицией из 16.",
         },
       },

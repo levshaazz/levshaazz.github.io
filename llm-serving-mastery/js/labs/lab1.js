@@ -103,7 +103,9 @@
     try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; }
   }
   function markDone(id) {
-    var p = loadProgress(); p[id] = 1; localStorage.setItem(KEY, JSON.stringify(p)); renderProgress();
+    var p = loadProgress(); p[id] = 1;
+    try { localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) { /* private mode */ }
+    renderProgress();
   }
   function renderProgress() {
     var p = loadProgress();
@@ -300,7 +302,6 @@
 
   // ------------------------------------------------------------------ init
   document.addEventListener("DOMContentLoaded", function () {
-    renderProgress();
     if (window.LSMPosttest && window.LAB1_POSTTEST) {
       var host = document.querySelector("[data-lab-posttest-host]");
       if (host) {
@@ -310,6 +311,9 @@
         });
       }
     }
+    // after the post-test render: its p1–p3 dots exist only once rendered,
+    // painting them earlier left them grey after reload with progress at 9/9
+    renderProgress();
     initLifecycle();
     initQuiz("q1", 16.16, 0.5, "s");
     initQuiz("q2", 160, 10, "ms");

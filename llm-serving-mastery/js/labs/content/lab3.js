@@ -7,6 +7,7 @@
   window.LABS_CONTENT = window.LABS_CONTENT || {};
 
   LABS_CONTENT["3"] = {
+    budget: 45,
     title: {
       en: "Quantization: scales and reconstruction error",
       ru: "Квантование: scale и ошибки",

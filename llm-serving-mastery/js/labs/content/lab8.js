@@ -7,6 +7,7 @@
   window.LABS_CONTENT = window.LABS_CONTENT || {};
 
   LABS_CONTENT["8"] = {
+    budget: 60,
     title: {
       en: "Production inference API: the gateway",
       ru: "Продакшен-API инференса: шлюз",

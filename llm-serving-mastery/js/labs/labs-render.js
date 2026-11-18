@@ -209,10 +209,22 @@
       cmWrap.setAttribute("role", "textbox");
       cmWrap.setAttribute("aria-multiline", "true");
       cmWrap.setAttribute("aria-label", ta.getAttribute("aria-label") || T.editor);
-      // CM5's offscreen measuring textarea is unlabeled and tabbable — hide it from a11y.
+      // Keyboard-only students enter through the wrapper — without tabindex the
+      // editors were unreachable by Tab. CM5 binds key handling to its hidden
+      // textarea, so the wrapper forwards focus into it; the textarea itself
+      // stays non-tabbable (it keeps its label so SR announces it on entry).
+      cmWrap.setAttribute("tabindex", "0");
+      let cmReenter = false;
+      cmWrap.addEventListener("focus", () => {
+        if (cmReenter) { cmReenter = false; return; }
+        editor.focus();
+      });
+      // Tab is indentation inside CM — Esc hands focus back to the wrapper so
+      // keyboard users can Tab on; without it the editor is a keyboard trap.
+      editor.setOption("extraKeys", { Esc: () => { cmReenter = true; cmWrap.focus(); } });
+      // CM5's offscreen measuring textarea must not join the Tab order.
       cmWrap.querySelectorAll("textarea").forEach(mt => {
         mt.setAttribute("tabindex", "-1");
-        mt.setAttribute("aria-hidden", "true");
         mt.setAttribute("aria-label", cmWrap.getAttribute("aria-label"));
       });
     }

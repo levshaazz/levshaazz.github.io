@@ -8,6 +8,7 @@
   window.LABS_CONTENT = window.LABS_CONTENT || {};
 
   LABS_CONTENT["11"] = {
+    budget: 60,
     title: {
       en: "Kubernetes for LLM serving: pods, probes and Helm",
       ru: "Kubernetes для LLM-сервинга: поды, пробы и Helm",
@@ -30,7 +31,7 @@
     glossary: [
       [{ en: "pod", ru: "под" }, { en: "one running engine + its limits; in compose it was one container with mem_limit.", ru: "один запущенный движок + его лимиты; в compose это был один контейнер с mem_limit." }],
       [{ en: "Deployment", ru: "Deployment" }, { en: "declaration: how many pod replicas to keep alive; the controller keeps them (in compose you restarted by hand).", ru: "объявление: сколько реплик пода держать живыми; контроллер следит сам (в compose ты рестартовал руками)." }],
-      [{ en: "replica", ru: "реплика" }, { en: "one pod of a Deployment; the T10 fleet cut into identical instances.", ru: "один под из набора Deployment; флот из T09, нарезанный одинаковыми экземплярами." }],
+      [{ en: "replica", ru: "реплика" }, { en: "one pod of a Deployment; the T09 fleet cut into identical instances.", ru: "один под из набора Deployment; флот из T09, нарезанный одинаковыми экземплярами." }],
       [{ en: "Service", ru: "Service" }, { en: "a stable address for the fleet: clients hit one name, not changing pod IPs (lab08's gateway was exactly such a stable 127.0.0.1:8760).", ru: "стабильный адрес флота: клиенты бьют в одно имя, а не в меняющиеся IP подов (шлюз lab08 был таким же стабильным 127.0.0.1:8760)." }],
       [{ en: "requests / limits", ru: "requests / limits" }, { en: "how much memory/GPU a pod asks for and may use at most; the limit is the same cgroup cap as T09's mem_limit.", ru: "сколько памяти/GPU под просит и сколько ему максимум можно; лимит — тот же cgroup-потолок, что mem_limit в T09." }],
       [{ en: "QoS Guaranteed", ru: "QoS Guaranteed" }, { en: "requests == limits: the lowest eviction priority; for weight-bearing pods it is the mandatory setting.", ru: "requests == limits: наименьший приоритет выселения; для подов с весами — обязательная настройка." }],
@@ -199,7 +200,7 @@
         },
         starter: `def pod_resources(p, weights_gib=16.0, kv_gib=4.0, fixed_gib=1.5):
     """Resources block of one engine pod: requests == limits (Guaranteed QoS)."""
-    # TODO: memory = (weights + kv) / p + fixed; gpu 1; requests == limits
+    # TODO: per-pod memory from the declared ledger; gpu: 1; requests equal limits
 `,
         tests: [
           { name: "single GPU pod", hidden: false, code: "eq(pod_resources(1), {'requests': {'memory_gib': 21.5, 'gpu': 1}, 'limits': {'memory_gib': 21.5, 'gpu': 1}})" },
@@ -226,7 +227,7 @@
         },
         starter: `def pod_goes_ready(cold_start_s, period_s, failure_threshold):
     """True iff the probe budget covers the cold start (>=, not >)."""
-    # TODO: budget = period_s * failure_threshold; compare with >=
+    # TODO: disruption budget from the period and the failure threshold; comparison inclusive
 `,
         tests: [
           { name: "T09-fleet numbers fit", hidden: false, code: "eq(pod_goes_ready(165.0, 5, 40), True)" },

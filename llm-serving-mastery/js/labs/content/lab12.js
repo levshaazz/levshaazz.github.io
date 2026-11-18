@@ -8,6 +8,7 @@
   window.LABS_CONTENT = window.LABS_CONTENT || {};
 
   LABS_CONTENT["12"] = {
+    budget: 45,
     title: {
       en: "Advanced Kubernetes: one pod, many clients — and the HPA",
       ru: "Продвинутый Kubernetes: толпа на одном поде — и HPA",
@@ -108,16 +109,17 @@
   <g id="g-meters">
     <rect x="520" y="110" width="200" height="70" rx="9" fill="none" stroke="var(--fig-warm)" stroke-width="1.5"/>
     <text x="536" y="136" font-size="14" fill="var(--fig-warm)" class="mono" data-en="GPU util: 90 %" data-ru="GPU-утилизация: 90 %">GPU util: 90 %</text>
-    <text x="536" y="160" font-size="13" fill="var(--fig-warm)" data-en="busy batching — calm, not overload" data-ru="занят батчингом — это спокойствие, не перегруз">busy batching — calm, not overload</text>
+    <text x="536" y="157" font-size="13" fill="var(--fig-warm)" data-en="busy batching —" data-ru="занят батчингом —">busy batching —</text>
+    <text x="536" y="173" font-size="13" fill="var(--fig-warm)" data-en="calm, not overload" data-ru="спокойствие, не перегруз">calm, not overload</text>
     <rect x="520" y="200" width="200" height="70" rx="9" fill="none" stroke="var(--lab-good)" stroke-width="1.5"/>
-    <text x="536" y="226" font-size="14" fill="var(--lab-good)" class="mono" data-en="queue depth: 0 per pod" data-ru="очередь: 0 на под">queue depth: 0 per pod</text>
-    <text x="536" y="250" font-size="13" fill="var(--lab-good)" data-en="nobody waiting — do not scale" data-ru="никто не ждёт — не масштабируй">nobody waiting — do not scale</text>
+    <text x="528" y="226" font-size="14" fill="var(--lab-good)" class="mono" data-en="queue depth: 0 per pod" data-ru="очередь: 0 на под">queue depth: 0 per pod</text>
+    <text x="528" y="250" font-size="13" fill="var(--lab-good)" data-en="nobody waiting — do not scale" data-ru="никто не ждёт — не масштабируй">nobody waiting — do not scale</text>
   </g>
   <g id="g-scale">
     <rect x="520" y="290" width="200" height="70" rx="9" fill="none" stroke="var(--lab-accent)" stroke-width="2"/>
-    <text x="536" y="316" font-size="14" fill="var(--lab-accent)" class="mono" data-en="queue depth: 5 per pod" data-ru="очередь: 5 на под">queue depth: 5 per pod</text>
-    <text x="536" y="340" font-size="13" fill="var(--lab-accent)" class="mono">ceil(2 × 5 / 2) = 5 → 4</text>
-    <text x="536" y="356" font-size="13" fill="var(--lab-accent)" data-en="now the HPA acts" data-ru="вот теперь HPA действует">now the HPA acts</text>
+    <text x="528" y="316" font-size="14" fill="var(--lab-accent)" class="mono" data-en="queue depth: 5 per pod" data-ru="очередь: 5 на под">queue depth: 5 per pod</text>
+    <text x="528" y="340" font-size="13" fill="var(--lab-accent)" class="mono">ceil(2 × 5 / 2) = 5 → 4</text>
+    <text x="528" y="356" font-size="13" fill="var(--lab-accent)" data-en="now the HPA acts" data-ru="вот теперь HPA действует">now the HPA acts</text>
     <text x="380" y="398" text-anchor="middle" font-size="14" fill="var(--lab-ink)" data-en="GPU util lies, the queue tells the truth" data-ru="GPU-утилизация врёт, очередь говорит правду">GPU util lies, the queue tells the truth</text>
   </g>
 </svg>`,
@@ -218,7 +220,7 @@ def desired_replicas(replicas, metric, target, min_r=1, max_r=10):
         },
         starter: `def hpa_step(replicas, metric, target, tol=0.1, min_r=1, max_r=10):
     """One HPA tick: no change inside the band, formula outside it."""
-    # TODO: ratio = metric / target; band is inclusive [1-tol, 1+tol]
+    # TODO: utilization ratio from the metric and the target; the tolerance band is inclusive
 `,
         tests: [
           { name: "inside the band: hold", hidden: false, code: "eq(hpa_step(2, 2.1, 2), 2)" },

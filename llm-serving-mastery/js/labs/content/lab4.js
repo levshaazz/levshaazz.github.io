@@ -8,6 +8,7 @@
   window.LABS_CONTENT = window.LABS_CONTENT || {};
 
   LABS_CONTENT["4"] = {
+    budget: 40,
     title: {
       en: "Inside vLLM: the serving lifecycle",
       ru: "Внутри vLLM: жизненный цикл сервинга",

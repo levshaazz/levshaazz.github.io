@@ -8,6 +8,7 @@
   window.LABS_CONTENT = window.LABS_CONTENT || {};
 
   LABS_CONTENT["6"] = {
+    budget: 50,
     title: {
       en: "Load: finding the saturation knee",
       ru: "Нагрузка: поиск колена насыщения",
@@ -257,7 +258,7 @@
         prev_tps = tps
     return knee`,
         hints: [
-          { en: "Trace [10, 20, 30, 60] with γ = 0.5: ток/с: 125 → 200 (+60%, qualifies) → 250 (+25%, stops) → capped 250 (+0%). Knee: batch 20, 200 tok/s.", ru: "Трасса [10, 20, 30, 60] при γ = 0.5: ток/с: 125 → 200 (+60%, засчитано) → 250 (+25%, стоп) → 250, срезанные потолком (+0%). Колено: batch 20, 200 ток/с." },
+          { en: "Trace [10, 20, 30, 60] with γ = 0.5: tok/s: 125 → 200 (+60%, qualifies) → 250 (+25%, stops) → capped 250 (+0%). Knee: batch 20, 200 tok/s.", ru: "Трасса [10, 20, 30, 60] при γ = 0.5: ток/с: 125 → 200 (+60%, засчитано) → 250 (+25%, стоп) → 250, срезанные потолком (+0%). Колено: batch 20, 200 ток/с." },
         ],
         numpy: false,
         timeoutMs: 4000,

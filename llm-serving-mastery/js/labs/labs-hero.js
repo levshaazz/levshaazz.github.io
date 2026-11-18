@@ -66,25 +66,47 @@
   function injectSwitcher() {
     if (!document.querySelector(".lab-shell")) return;
     if (document.querySelector(".cb-switch")) return;
+    const ru = (document.documentElement.lang || "en") === "ru";
+    const cbLabel = ru ? "Режимы цветовосприятия" : "Colorblind mode";
     const bar = document.createElement("div");
     bar.className = "cb-switch";
     bar.setAttribute("role", "region");
-    bar.setAttribute("aria-label", "Colorblind mode");
+    bar.setAttribute("aria-label", cbLabel);
+    const panel = document.createElement("div");
+    panel.className = "cb-panel";
+    panel.hidden = true;
     const modes = [["normal", "Normal"], ["deut", "Deut"], ["prot", "Prot"], ["trit", "Trit"], ["mono", "Mono"]];
     const saved = localStorage.getItem("lsm.cb") || "normal";
     const apply = (mode) => {
       document.documentElement.dataset.cb = mode === "normal" ? "" : mode;
-      bar.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === mode)));
+      panel.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === mode)));
     };
     modes.forEach(([mode, label]) => {
       const b = document.createElement("button");
       b.type = "button"; b.dataset.mode = mode; b.textContent = label;
       b.addEventListener("click", () => {
-        localStorage.setItem("lsm.cb", mode);
+        try { localStorage.setItem("lsm.cb", mode); } catch (e) { /* private mode */ }
         apply(mode);
       });
-      bar.appendChild(b);
+      panel.appendChild(b);
     });
+    // Collapsed palette button by default: the always-on bar overlapped figure
+    // captions and progress dots at viewport bottom-left on viewports ≤800px
+    // tall (audit P1) and page content on narrow screens. Expanded panel opens
+    // above the button, so captions stay readable even while it is open.
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "cb-toggle";
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-label", cbLabel);
+    toggle.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="5" cy="8" r="3.4" fill="#56b4e9"/><circle cx="11" cy="8" r="3.4" fill="#e69f00" fill-opacity="0.85"/></svg>';
+    toggle.addEventListener("click", () => {
+      const open = panel.hidden;
+      panel.hidden = !open;
+      toggle.setAttribute("aria-expanded", String(open));
+    });
+    bar.appendChild(toggle);
+    bar.appendChild(panel);
     document.body.appendChild(bar);
     apply(saved === "" ? "normal" : saved);
     window.addEventListener("storage", (e) => { if (e.key === "lsm.cb" && e.newValue != null) apply(e.newValue); });
