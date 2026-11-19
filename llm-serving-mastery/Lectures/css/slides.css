@@ -425,6 +425,16 @@
 
 /* Worked formula: equation -> units/meaning -> calculation -> limits.
    Use native math/body tokens and bounded content, never auto-shrink this pattern. */
+/* L3-8 (audit 2026-11-18): on short viewports the frame's bottom chrome bar
+   (breadcrumb + page counter) overlays the last formula line. The body is
+   height:100%, so reserve the chrome band inside the content box — the global
+   auto-fit then scales the grid down instead of clipping it. */
+@media (max-height: 900px) {
+  .slide[data-type="formula"].is-active > .slide-body,
+  .slide[data-type="formula"].formula-worked.is-active > .slide-body {
+    padding-bottom: calc(var(--sp-4) + 30px);
+  }
+}
 .slide[data-type="formula"].formula-worked > .slide-body {
   display: grid;
   grid-template-rows: auto auto auto auto auto;

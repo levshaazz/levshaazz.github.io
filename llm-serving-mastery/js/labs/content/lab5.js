@@ -102,9 +102,9 @@
   </g>
   <g id="g-marks">
     <text x="60" y="300" font-size="15" fill="var(--lab-ink)" data-en="finish marks:" data-ru="отметки завершения:">finish marks:</text>
-    <text x="190" y="300" font-size="15" fill="var(--lab-ink)" class="mono">B → 1</text>
-    <text x="270" y="300" font-size="15" fill="var(--lab-ink)" class="mono">C → 2</text>
-    <text x="350" y="300" font-size="15" fill="var(--lab-ink)" class="mono">A → 5</text>
+    <text x="230" y="300" font-size="15" fill="var(--lab-ink)" class="mono">B → 1</text>
+    <text x="310" y="300" font-size="15" fill="var(--lab-ink)" class="mono">C → 2</text>
+    <text x="390" y="300" font-size="15" fill="var(--lab-ink)" class="mono">A → 5</text>
     <line x1="150" y1="316" x2="600" y2="316" stroke="var(--lab-muted)" stroke-width="1"/>
     <circle cx="240" cy="316" r="5" fill="var(--fig-warm)"/>
     <circle cx="330" cy="316" r="5" fill="var(--lab-good)"/>

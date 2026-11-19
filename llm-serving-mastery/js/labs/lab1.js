@@ -105,9 +105,9 @@
   function markDone(id) {
     var p = loadProgress(); p[id] = 1;
     try { localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) { /* private mode */ }
-    renderProgress();
+    renderProgress(true);
   }
-  function renderProgress() {
+  function renderProgress(live) {
     var p = loadProgress();
     var n = IDS.filter(function (id) { return p[id]; }).length;
     var fill = document.querySelector("[data-lab-progress-fill]");
@@ -118,6 +118,64 @@
       var ex = document.querySelector('[data-lab-checkpoint="' + id + '"]');
       if (ex) ex.dataset.state = p[id] ? "pass" : "";
     });
+    // L1a-2 + L1a-5: reward как в лабах 02–12; бейдж у прогресса, живой
+    // скролл только при завершении в этой сессии (reload не дёргает страницу)
+    var reward = document.querySelector("[data-lab-reward]");
+    if (reward && n === IDS.length && reward.dataset.open !== "1") {
+      reward.dataset.open = "1";
+      var badge = document.querySelector("[data-lab-reward-badge]");
+      if (badge) badge.hidden = false;
+      startRewardLab1(reward);
+      if (live) reward.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }
+
+  // L1a-2: компактная версия reward-анимации labs-render (lab1 рендерится сам)
+  function startRewardLab1(reward) {
+    var canvas = reward.querySelector("canvas");
+    var caption = reward.querySelector(".lab-reward-caption");
+    if (caption) caption.textContent = (document.documentElement.dataset.lang === "ru")
+      ? "Лаба 01 пройдена полностью — все 9 чекпойнтов."
+      : "Lab 01 completed — all 9 checkpoints.";
+    if (!canvas || !canvas.getContext) return;
+    var ctx = canvas.getContext("2d");
+    var ru = document.documentElement.dataset.lang === "ru";
+    var labels = ru ? ["клиент", "edge", "движок", "токены"] : ["client", "edge", "engine", "tokens"];
+    var seed = 7919;
+    function rnd() { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; }
+    var W = canvas.width = Math.max(320, canvas.clientWidth * (window.devicePixelRatio || 1));
+    var H = canvas.height = Math.max(120, canvas.clientHeight * (window.devicePixelRatio || 1));
+    var xs = [0.08, 0.36, 0.64, 0.92];
+    var tokens = [];
+    for (var i = 0; i < 14; i += 1) tokens.push({ x: rnd() * W, lane: 0.3 + rnd() * 0.4, v: 0.6 + rnd() * 1.2, r: 2 + rnd() * 2.5 });
+    var accent = getComputedStyle(document.querySelector(".lab-shell")).getPropertyValue("--lab-accent").trim() || "#38e1ff";
+    var ink = getComputedStyle(document.documentElement).getPropertyValue("--ink").trim() || "#e8eef7";
+    var t0 = null;
+    function draw(ts) {
+      if (!t0) t0 = ts;
+      ctx.clearRect(0, 0, W, H);
+      ctx.strokeStyle = ink; ctx.globalAlpha = 0.35;
+      ctx.beginPath(); ctx.moveTo(xs[0] * W, H / 2); ctx.lineTo(xs[3] * W, H / 2); ctx.stroke();
+      ctx.globalAlpha = 1;
+      xs.forEach(function (x, i2) {
+        ctx.fillStyle = accent;
+        ctx.beginPath(); ctx.arc(x * W, H / 2, 9, 0, 7); ctx.fill();
+        ctx.fillStyle = ink;
+        ctx.font = Math.round(H * 0.09) + "px system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(labels[i2] || "", x * W, H / 2 + 26);
+      });
+      tokens.forEach(function (tk) {
+        tk.x += tk.v * (H * 0.01);
+        if (tk.x > W) tk.x = -10;
+        ctx.globalAlpha = 0.8;
+        ctx.fillStyle = accent;
+        ctx.beginPath(); ctx.arc(tk.x, H / 2 + Math.sin(tk.x / 60 + tk.lane * 9) * H * 0.08, tk.r, 0, 7); ctx.fill();
+        ctx.globalAlpha = 1;
+      });
+      requestAnimationFrame(draw);
+    }
+    requestAnimationFrame(draw);
   }
 
   // -------------------------------------------------------------- lifecycle
@@ -198,6 +256,12 @@
     }
     btn.addEventListener("click", check);
     input.addEventListener("keydown", function (e) { if (e.key === "Enter") check(); });
+    // L1a-6: решённый квиз после reload показывает решённый вид
+    if (loadProgress()[id]) {
+      input.value = String(answer);
+      verdict.dataset.state = "pass";
+      verdict.textContent = T.v_pass + " (≈ " + answer + " " + unit + ")";
+    }
   }
 
   // --------------------------------------------------------------- sandbox

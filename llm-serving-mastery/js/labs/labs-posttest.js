@@ -53,6 +53,7 @@
       const lang = (opts && opts.lang) || "en";
       const seedPrefix = (opts && opts.seedPrefix) || "";
       const onCorrect = (opts && opts.onCorrect) || (() => {});
+      const solvedMap = (opts && opts.solved) || {};
       const trl = (f) => tr(f, lang);
       const allPairs = items.map((it, itemIndex) => shuffleOptions(it, seedPrefix, itemIndex));
       const okPos = allPairs.map((ps) => ps.findIndex((p) => p.ok));
@@ -109,6 +110,17 @@
           });
           list.appendChild(btn);
         });
+        // L1a-6: уже решённый пост-тест после reload восстанавливает решённый вид
+        if (solvedMap[it.id]) {
+          const okIndex = pairs.findIndex((p2) => p2.ok);
+          const btns = list.querySelectorAll(".lab-mc-opt");
+          btns.forEach((b) => { b.disabled = true; });
+          if (btns[okIndex]) btns[okIndex].classList.add("right");
+          verdict.dataset.state = "pass";
+          verdict.textContent = lang === "ru" ? "верно" : "correct";
+          explain.style.display = "block";
+          explain.textContent = trl(it.explain);
+        }
         card.appendChild(list);
         card.appendChild(verdict);
         card.appendChild(explain);

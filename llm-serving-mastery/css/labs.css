@@ -71,6 +71,8 @@
 .lab-shell .lab-note { color: var(--lab-muted); }
 
 /* -------------------------------------------------------------- progress */
+.lab-reward-badge { display: inline-block; margin-left: auto; padding: 0.12rem 0.6rem; border-radius: 999px; border: 1px solid var(--lab-accent, #38e1ff); color: var(--lab-accent, #38e1ff); font: 600 0.72rem/1.4 ui-monospace, monospace; text-decoration: none; }
+.lab-reward-badge[hidden] { display: none; }
 .lab-progress { display: flex; align-items: center; gap: 0.7rem; min-width: 210px; }
 .lab-progress-track { flex: 1; height: 8px; border-radius: 999px; background: rgba(148, 163, 184, 0.15); overflow: hidden; }
 .lab-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--lab-accent), var(--lab-accent-2)); box-shadow: 0 0 12px rgba(56, 225, 255, 0.55); transition: width .3s ease; }

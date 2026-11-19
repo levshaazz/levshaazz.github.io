@@ -26,9 +26,9 @@
   function markDone(id) {
     const p = loadProgress(); p[id] = 1;
     try { localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) { /* private mode */ }
-    renderProgress();
+    renderProgress(true);
   }
-  function renderProgress() {
+  function renderProgress(live) {
     const p = loadProgress();
     const n = IDS.filter((id) => p[id]).length;
     const fill = document.querySelector("[data-lab-progress-fill]");
@@ -48,6 +48,11 @@
     if (reward && IDS.length && n === IDS.length && reward.dataset.open !== "1") {
       reward.dataset.open = "1";
       startReward(reward);
+      // бейдж у полосы прогресса (L1a-5): reward живёт внизу страницы —
+      // на reload без скролла, при живом завершении — плавный скролл к нему
+      const badge = document.querySelector("[data-lab-reward-badge]");
+      if (badge) badge.hidden = false;
+      if (live) reward.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   }
 
@@ -160,6 +165,13 @@
       hint.dataset.open = hint.dataset.open === "1" ? "0" : "1";
     });
     root.appendChild(card);
+    // L1a-6: уже решённый квиз после reload восстанавливает вид решённого,
+    // а не пустого (точки зелёные, а поле и вердикт — нет)
+    if (loadProgress()[q.id]) {
+      input.value = String(q.answer);
+      verdict.dataset.state = "pass";
+      verdict.textContent = T.vPass + " (≈ " + q.answer + " " + unit + ")";
+    }
   }
 
   // ------------------------------------------------------------- exercises
@@ -459,13 +471,17 @@
       const ptSection = document.querySelector("[data-lab-posttest]");
       if (ptSection) ptSection.hidden = false;
       (content.posttest || []).forEach((it) => IDS.push(it.id));
+      const prog0 = loadProgress();
+      const solvedPost = {};
+      (content.posttest || []).forEach((it) => { if (prog0[it.id]) solvedPost[it.id] = 1; });
       window.LSMPosttest.render(postHost, content.posttest, {
         lang,
         seedPrefix: labId,
+        solved: solvedPost,
         onCorrect: (id) => {
           const p = loadProgress(); p[id] = 1;
           try { localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) {}
-          renderProgress();
+          renderProgress(true);
         },
       });
       // IDS уже содержит posttest-ids: перерисовать прогресс после регистрации
