@@ -16,7 +16,7 @@
         });
         if(!item.hidden) count++;
       }
-      const counter=root.querySelector('[data-filter-count]');const tpl=counter.dataset.filterCountTemplate||`${count} of ${items.length} entries`;counter.textContent=tpl.replace('{n}',String(count)).replace('{m}',String(items.length));
+      const counter=root.querySelector('[data-filter-count]');const ru=document.documentElement.lang==='ru';const tpl=counter.dataset.filterCountTemplate||(ru?`Показано: ${count} из ${items.length}`:`${count} of ${items.length} entries`);counter.textContent=tpl.replace('{n}',String(count)).replace('{m}',String(items.length));
       root.querySelector('[data-filter-empty]').hidden=count!==0;
       const url=new URL(location.href);
       controls.forEach(el=>{const value=el.value.trim();if(value && value!=='all')url.searchParams.set(el.dataset.filterKey,value);else url.searchParams.delete(el.dataset.filterKey);});
