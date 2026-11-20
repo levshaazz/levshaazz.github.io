@@ -132,6 +132,16 @@
           en: "128 + 9 = SIGKILL: the kernel killed the process — the application never printed this code itself.",
           ru: "128 + 9 = SIGKILL: процесс убило ядро — приложение само этот код не печатало.",
         },
+        followUp: {
+          q: { en: "Why can't 137 be an application exit code?", ru: "Почему 137 не может быть кодом приложения?" },
+          options: [
+            { en: "Exit codes ≥ 128 are reserved for signal deaths: the shell/docker encodes 128 + signal, and an application's own exit statuses live below 128", ru: "Коды выхода ≥ 128 зарезервированы за смертями от сигналов: shell/docker кодирует 128 + сигнал, а собственные статусы приложения живут ниже 128" },
+            { en: "Applications cannot print numbers above 100", ru: "Приложения не могут печатать числа выше 100" },
+            { en: "137 is reserved by POSIX for OOM kills only", ru: "137 зарезервирован POSIX специально под OOM-kill" },
+          ],
+          answer: 0,
+          explain: { en: "The 128-offset convention is how the runtime layer tells «the kernel killed it» from «the program returned it». That is why diagnose_exit decodes the signal FIRST and only then reads application branches.", ru: "Соглашение о смещении 128 — способ слоя рантайма отличить «убило ядро» от «программа вернула сама». Именно поэтому diagnose_exit сначала декодирует сигнал и лишь потом читает ветки приложения." },
+        },
       },
       {
         id: "q2",
@@ -144,6 +154,16 @@
           en: "0.1 × 2^5: the intervals grow — 0.1, 0.2, 0.4, 0.8, 1.6, 3.2.",
           ru: "0.1 × 2^5: интервалы растут — 0.1, 0.2, 0.4, 0.8, 1.6, 3.2.",
         },
+        followUp: {
+          q: { en: "Why is the exponent 5 and not 6 for the 6th restart?", ru: "Почему показатель 5, а не 6 для 6-го рестарта?" },
+          options: [
+            { en: "The schedule is 0-based: restart k waits base × 2^k, so restarts 0..5 are the first six, and the 6th waits 0.1 × 2^5", ru: "Расписание нумеруется с нуля: рестарт k ждёт base × 2^k, поэтому первые шесть — это рестарты 0..5, и 6-й ждёт 0.1 × 2^5" },
+            { en: "The exponent is always restarts − 1 divided by 2", ru: "Показатель всегда равен (рестарты − 1) / 2" },
+            { en: "The first restart has no delay, so it is skipped in the count", ru: "У первого рестарта нет задержки, поэтому он пропускается в счёте" },
+          ],
+          answer: 0,
+          explain: { en: "Count the sequence: 0.1, 0.2, 0.4, 0.8, 1.6, 3.2 — six values, exponents 0..5. Off-by-one here is the classic bug, which is why Exercise 1's tests trace the whole list, not one value.", ru: "Посчитай последовательность: 0.1, 0.2, 0.4, 0.8, 1.6, 3.2 — шесть значений, показатели 0..5. Off-by-one здесь — классический баг, поэтому тесты упражнения 1 трассируют весь список, а не одно значение." },
+        },
       },
       {
         id: "q3",
@@ -155,6 +175,16 @@
         hint: {
           en: "1.18 + 0.491 = 1.671. The bake price is a heavy pull and a light start.",
           ru: "1.18 + 0.491 = 1.671. Цена bake — тяжёлый pull и лёгкий старт.",
+        },
+        followUp: {
+          q: { en: "Why do the two sizes ADD instead of the weights hiding inside the base layer?", ru: "Почему размеры СКЛАДЫВАЮТСЯ, а не веса прячутся внутри базового слоя?" },
+          options: [
+            { en: "Layers stack, they do not merge: the weights COPY layer adds its own bytes on top of the base bytes — every layer's data lives in the image", ru: "Слои складываются стопкой, а не сливаются: слой с копией весов добавляет свои байты поверх байтов базы — данные каждого слоя живут в образе" },
+            { en: "Docker deduplicates identical bytes, and the weights are new bytes — so they add", ru: "Docker дедуплицирует одинаковые байты, а веса — новые байты, поэтому они складываются" },
+            { en: "The weights compress inside the layer, so the sum is approximate", ru: "Веса сжимаются внутри слоя, поэтому сумма приблизительна" },
+          ],
+          answer: 0,
+          explain: { en: "Union layers share files by layer, never shrink them: baking the weights trades pull time for start time, and the bill 1.67 GB is exactly why «minimizing the image is recovery speed».", ru: "Union-слои делят файлы по слоям и никогда не сжимают их: запекание весов меняет время pull на время старта, и счёт 1.67 ГБ — точная причина, почему «минимизация образа — это скорость восстановления»." },
         },
       },
     ],
@@ -475,6 +505,56 @@ def verify_chain(entries):
         timeoutMs: 4000,
       },
     ],
+    challenge: {
+      id: "chal1",
+      word: { en: "challenge", ru: "челлендж" },
+      title: {
+        en: "★ Grow the chain on your own engine",
+        ru: "★ Вырасти цепочку на своём движке",
+      },
+      brief: {
+        en: "Needs the Layer 2 runtime. Make <strong>at least two measured experiments</strong> with the «Эксперимент» button, then press «Журнал» and «Проверить цепочку». Report what you saw: the gateway must hold <strong>≥ 2 experiment entries</strong>, the chain must verify clean, and the last sequence number must match the entry count (every entry appends exactly one seq). No tests guide you — the numbers are your own journal's.",
+        ru: "Нужен рантайм слоя 2. Сделай <strong>минимум два измеренных эксперимента</strong> кнопкой «Эксперимент», затем нажми «Журнал» и «Проверить цепочку». Отчитайся, что видел: в шлюзе должно быть <strong>≥ 2 записей-экспериментов</strong>, цепочка обязана верифицироваться чисто, а последний seq должен соответствовать числу записей (каждая запись добавляет ровно один seq). Тестов-каркаса нет — числа из твоего собственного журнала.",
+      },
+      goal: {
+        en: "Report your live journal: total entries ≥ 2 (with ≥ 2 experiments), chain verified, last_seq = entries − 1.",
+        ru: "Отчитайся по живому журналу: записей ≥ 2 (из них ≥ 2 эксперимента), цепочка верна, last_seq = записей − 1.",
+      },
+      mode: "report",
+      fields: [
+        { key: "n", label: { en: "entries (journal line)", ru: "записей (строка журнала)" }, type: "number" },
+        { key: "experiments", label: { en: "experiments you ran", ru: "экспериментов сделано" }, type: "number" },
+        { key: "last_seq", label: { en: "last seq (# of the newest entry)", ru: "последний seq (# новейшей записи)" }, type: "number" },
+        { key: "chain", label: { en: "chain verify (true/false)", ru: "проверка цепочки (true/false)" }, type: "text", placeholder: { en: "true", ru: "true" } },
+      ],
+      check: (v) => {
+        const n = parseInt(String(v.n || ""), 10);
+        const exp = parseInt(String(v.experiments || ""), 10);
+        const last = parseInt(String(v.last_seq || ""), 10);
+        const chain = String(v.chain || "").trim().toLowerCase();
+        if (![n, exp, last].every((x) => Number.isFinite(x)) || !["true", "1", "да", "ok"].includes(chain)) {
+          return { ok: false, note: { en: "fill every field; chain must be true — a broken chain is an incident, not a report", ru: "заполни все поля; chain обязан быть true — сломанная цепь это инцидент, а не отчёт" } };
+        }
+        if (exp < 2) {
+          return { ok: false, note: { en: "run at least 2 experiments - one data point is an anecdote", ru: "сделай минимум 2 эксперимента — одна точка это анекдот" } };
+        }
+        if (n < 3) {
+          return { ok: false, note: { en: "at least 3 entries: the genesis + your two experiments", ru: "минимум 3 записи: genesis + твои два эксперимента" } };
+        }
+        if (last !== n - 1) {
+          return { ok: false, note: { en: "seqs are 0-based and append-only: last_seq must be entries − 1 (" + (n - 1) + "), got " + last, ru: "seq нумеруется с нуля и только растёт: last_seq должен быть записей − 1 (" + (n - 1) + "), а не " + last } };
+        }
+        return { ok: true, note: { en: n + " entries, " + exp + " experiments, chain verified, head seq " + last + " — your journal is a real hash chain now", ru: n + " записей, " + exp + " эксперимента, цепочка верна, головной seq " + last + " — твой журнал теперь настоящая хэш-цепочка" } };
+      },
+      reference: `# A walk you already know from Exercise 4, on YOUR data:
+#   1) press «Эксперимент» twice (different prompts if you like);
+#   2) press «Журнал» - note the entry count and the head hash prefix;
+#   3) press «Проверить цепочку» - expect «chain verified».
+# Report: entries (the count), experiments (>= 2), last_seq (entries - 1,
+# seqs start at the genesis 0), chain = true.
+# The point: the chain's head hash commits to ALL history - the number you
+# report is unforgeable without redoing every measurement.`,
+    },
     runtime: {
       title: {
         en: "Measure on your own engine: the practice runtime",

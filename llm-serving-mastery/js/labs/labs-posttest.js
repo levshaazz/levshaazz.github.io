@@ -47,8 +47,12 @@
     /**
      * render(host, items, opts)
      *  items: [{id, q:{en,ru}, options:[{en,ru},...], answer: <index>, explain:{en,ru}}]
+     *         optional per item: tag:{en,ru} (a head chip, e.g. a cross-topic
+     *         bridge), context:{en,ru} (a lead-in paragraph), code:string
+     *         (a read-only module shown above the question — code-reading).
      *  opts:  { lang, seedPrefix, onCorrect(id) }
      */
+    shuffleOptions,
     render(host, items, opts) {
       const lang = (opts && opts.lang) || "en";
       const seedPrefix = (opts && opts.seedPrefix) || "";
@@ -70,10 +74,21 @@
         const card = el("div", "lab-card lab-mc");
         card.dataset.labCheckpoint = it.id;
         const head = el("div", "lab-mc-head");
+        if (it.tag) head.appendChild(el("span", "lab-mc-tag", trl(it.tag)));
         head.appendChild(el("span", "lab-ex-status", it.id.toUpperCase()));
         head.appendChild(el("span", "lab-dot", ""));
         card.appendChild(head);
         card.appendChild(el("h3", "", trl(it.q)));
+        if (it.code) {
+          // чужой код показывается как есть: textContent, не innerHTML;
+          // прокручиваемый регион обязан быть клавиатурно-достижимым (axe)
+          const codeBox = document.createElement("pre");
+          codeBox.className = "lab-mc-code";
+          codeBox.tabIndex = 0;
+          codeBox.textContent = typeof it.code === "string" ? it.code : trl(it.code);
+          card.appendChild(codeBox);
+        }
+        if (it.context) card.appendChild(el("p", "lab-mc-context", trl(it.context)));
         const list = el("div", "lab-mc-options");
         let attempts = 0;
         let solved = false;

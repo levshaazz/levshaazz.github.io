@@ -138,6 +138,16 @@
           en: "wall = 0.18 + (256 − 1) / 55. The first of the 256 tokens is inside TTFT.",
           ru: "wall = 0.18 + (256 − 1) / 55. Первый из 256 токенов уже внутри TTFT.",
         },
+        followUp: {
+          q: { en: "Why 255 gaps and not 256?", ru: "Почему 255 промежутков, а не 256?" },
+          options: [
+            { en: "The first token arrives together with the TTFT: only the remaining 255 pay the decode cadence", ru: "Первый токен приходит вместе с TTFT: каденс decode оплачивают только оставшиеся 255" },
+            { en: "The engine drops every 256th token as padding", ru: "Движок отбрасывает каждый 256-й токен как паддинг" },
+            { en: "256 is the wall seconds, so the gaps are 256 − TTFT", ru: "256 — это секунды wall, поэтому промежутков 256 − TTFT" },
+          ],
+          answer: 0,
+          explain: { en: "TTFT already contains prefill + one decode step. Charging 256 gaps pays the first token twice — the model breaks exactly on short answers, where the double-charge is the largest share.", ru: "TTFT уже содержит prefill и один decode-шаг. Плата за 256 промежутков дважды оплачивает первый токен — модель ломается ровно на коротких ответах, где двойной платёж и есть наибольшая доля." },
+        },
       },
       {
         id: "q2",
@@ -150,6 +160,16 @@
           en: "0.18 + (24 − 1) / 55 = 0.18 + 23/55. Charging 24 gaps instead of 23 breaks the model.",
           ru: "0.18 + (24 − 1) / 55 = 0.18 + 23/55. Посчитать 24 промежутка вместо 23 — сломать модель.",
         },
+        followUp: {
+          q: { en: "Why is a single-token answer exactly TTFT, with zero decode time?", ru: "Почему однотокенный ответ — это ровно TTFT, с нулевым decode-временем?" },
+          options: [
+            { en: "The first token is produced inside TTFT (prefill + one step), and there are no further gaps to pay", ru: "Первый токен производится внутри TTFT (prefill + один шаг), и дальше платить за промежутки не за что" },
+            { en: "Decode is skipped entirely for short answers", ru: "Для коротких ответов decode пропускается целиком" },
+            { en: "A single token answers instantly — TTFT applies only to long prompts", ru: "Один токен отвечается мгновенно — TTFT касается только длинных промптов" },
+          ],
+          answer: 0,
+          explain: { en: "TTFT = prefill + the first decode step. With n = 1 there are n − 1 = 0 gaps after it: the formula collapses to TTFT, as the tests of Exercise 1 pin.", ru: "TTFT = prefill + первый decode-шаг. При n = 1 после него n − 1 = 0 промежутков: формула схлопывается в TTFT, что и закрепляют тесты упражнения 1." },
+        },
       },
       {
         id: "q3",
@@ -161,6 +181,16 @@
         hint: {
           en: "(11 − 1) gaps in (2.30 − 0.30) s. Dividing 11 by the window would charge TTFT to decode.",
           ru: "(11 − 1) промежутков за (2.30 − 0.30) с. Делить 11 на всё окно — приписывать TTFT к decode.",
+        },
+        followUp: {
+          q: { en: "Why is the measured window (t_last − t_first) and not the full 2.30 s?", ru: "Почему измеренное окно — это (t_last − t_first), а не все 2.30 с?" },
+          options: [
+            { en: "The window before the first token is prefill, already reported as TTFT — decode owns only the gaps after it", ru: "Окно до первого токена — это prefill, уже отчитанный как TTFT; decode владеет только промежутками после него" },
+            { en: "The server clock starts at 2.30 s", ru: "Часы сервера стартуют в 2.30 с" },
+            { en: "The first token does not count as a token at all", ru: "Первый токен вообще не считается токеном" },
+          ],
+          answer: 0,
+          explain: { en: "Charging decode the full window quietly moves 0.30 s of prefill into the decode rate: 10/2.30 = 4.3 instead of 10/2.0 = 5.0. The stream clock starts at the first chunk.", ru: "Платя decode всё окно, ты тихо переносишь 0.30 с prefill в скорость decode: 10/2.30 = 4.3 вместо 10/2.0 = 5.0. Часы стрима стартуют на первом чанке." },
         },
       },
     ],
@@ -255,6 +285,66 @@
         timeoutMs: 4000,
       },
     ],
+    challenge: {
+      id: "chal1",
+      word: { en: "challenge", ru: "челлендж" },
+      title: {
+        en: "★ Find the answer length where prefill stops mattering",
+        ru: "★ Найди длину ответа, с которой prefill перестаёт значить",
+      },
+      brief: {
+        en: "On the declared service (TTFT 180 ms, decode 55 tok/s) the prefill share <code>ttft / wall</code> shrinks as answers grow. No tests guide you: derive, search or scan — the page recomputes everything from your numbers and additionally verifies <strong>minimality</strong>: n − 1 must NOT satisfy the goal (otherwise a smaller answer already did).",
+        ru: "На заявленном сервисе (TTFT 180 мс, decode 55 ток/с) доля prefill <code>ttft / wall</code> падает с ростом ответа. Тестов-каркаса нет: выводи, ищи или сканируй — страница пересчитывает всё по твоим числам и дополнительно проверяет <strong>минимальность</strong>: n − 1 уже НЕ должен удовлетворять цели (иначе меньший ответ справился бы раньше).",
+      },
+      goal: {
+        en: "Print one line: <code>n=… share_pct=…</code> — the MINIMAL n whose prefill share drops below 5 %.",
+        ru: "Напечатай одну строку: <code>n=… share_pct=…</code> — МИНИМАЛЬНОЕ n, при котором доля prefill падает ниже 5 %.",
+      },
+      mode: "run",
+      numpy: false,
+      timeoutMs: 30000,
+      starter: `# Declared service: TTFT = 0.18 s, decode = 55 tok/s.
+# Nominal wall: wall = 0.18 + (n - 1) / 55.
+# Prefill share: ttft / wall. Goal: the share drops below 5 %.
+# The page reads ONE summary line in exactly this shape:
+#   n=<token count> share_pct=<share in percent>
+# Find the MINIMAL such n - the page checks n-1 fails the goal.
+
+# TODO: derive or scan for the minimal n, then print the line.
+`,
+      check: (res) => {
+        const out = String(res.stdout || "");
+        const mm = out.match(/n\s*=\s*([0-9]+)[\s\S]*?share_pct\s*=\s*([0-9]+(?:\.[0-9]+)?)/i);
+        if (!mm) {
+          return { ok: false, note: { en: "no summary line found - print exactly: n=… share_pct=…", ru: "итоговой строки нет — напечатай ровно: n=… share_pct=…" } };
+        }
+        const n = parseInt(mm[1], 10), shareClaimed = parseFloat(mm[2]);
+        if (!(n >= 2)) {
+          return { ok: false, note: { en: "n must be a whole number >= 2", ru: "n — целое ≥ 2" } };
+        }
+        const shareAt = (k) => 0.18 / (0.18 + (k - 1) / 55) * 100;
+        const share = shareAt(n);
+        if (Math.abs(share - shareClaimed) > 0.2) {
+          return { ok: false, note: { en: "share_pct must follow the declared model: n " + n + " gives " + share.toFixed(2) + " %", ru: "share_pct обязан следовать заявленной модели: n " + n + " даёт " + share.toFixed(2) + " %" } };
+        }
+        if (share >= 5) {
+          return { ok: false, note: { en: "at n " + n + " the share is " + share.toFixed(2) + " % - still at or above 5 %", ru: "при n " + n + " доля равна " + share.toFixed(2) + " % — всё ещё не ниже 5 %" } };
+        }
+        if (shareAt(n - 1) < 5) {
+          return { ok: false, note: { en: "not minimal: n − 1 = " + (n - 1) + " already reaches " + shareAt(n - 1).toFixed(2) + " %", ru: "не минимально: n − 1 = " + (n - 1) + " уже даёт " + shareAt(n - 1).toFixed(2) + " %" } };
+        }
+        return { ok: true, note: { en: "n = " + n + " is the first length below 5 % prefill (" + share.toFixed(2) + " %); n − 1 = " + (n - 1) + " still sits at " + shareAt(n - 1).toFixed(2) + " %", ru: "n = " + n + " — первая длина с долей prefill ниже 5 % (" + share.toFixed(2) + " %); n − 1 = " + (n - 1) + " ещё на " + shareAt(n - 1).toFixed(2) + " %" } };
+      },
+      reference: `# Solve the inequality directly:
+#   0.18 / (0.18 + (n-1)/55) < 0.05
+#   0.18 < 0.009 + (n-1)/1100  ->  n - 1 > 188.1  ->  n >= 190
+n = 190
+wall = 0.18 + (n - 1) / 55
+share = 0.18 / wall * 100
+print(f"n={n} share_pct={share:.2f}")
+# n = 190: share 4.98 % (first below 5 %); n = 189: 5.00 % - still at the line.
+# A grid walk finds the same boundary; the page also proves n-1 fails.`,
+    },
     posttest: [
       {
         id: "p1",

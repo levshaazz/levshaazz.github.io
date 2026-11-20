@@ -54,6 +54,12 @@
       if (badge) badge.hidden = false;
       if (live) reward.scrollIntoView({ behavior: "smooth", block: "center" });
     }
+    // ★-челлендж живёт ВНЕ счёта чекпойнтов: свой бейдж у полосы прогресса
+    const chBadge = document.querySelector("[data-lab-challenge-badge]");
+    if (chBadge) {
+      const chSolved = Object.keys(p).some((k) => k.indexOf("ch:") === 0 && p[k] === 1);
+      chBadge.hidden = !chSolved;
+    }
   }
 
   // Seeded "tokens through the serving path" animation — the lab completion
@@ -116,8 +122,69 @@
     return node;
   }
 
+  // ------------------------------------------------- quiz follow-up (why?)
+  // Second step of a numeric quiz: after the correct number the student names
+  // WHY it is correct — picks the true cause out of SOLO distractors. The
+  // checkpoint closes only after the reason is right (POE: the number alone
+  // can come from plugging into a formula without understanding).
+  function renderFollowUp(card, q, quizIndex, solvedNow) {
+    const fu = q.followUp;
+    const LETTERS = ["A", "B", "C", "D", "E"];
+    const wrap = el("div", "lab-follow");
+    wrap.appendChild(el("p", "lab-follow-q", tr(fu.q)));
+    const pairs = (window.LSMPosttest && window.LSMPosttest.shuffleOptions)
+      ? window.LSMPosttest.shuffleOptions(fu, labId + ":fu", quizIndex)
+      : fu.options.map((opt, i) => ({ opt, ok: i === fu.answer }));
+    const list = el("div", "lab-follow-options");
+    const fuVerdict = el("p", "lab-verdict");
+    fuVerdict.setAttribute("aria-live", "polite");
+    const explain = el("p", "lab-follow-explain");
+    let solved = !!solvedNow;
+    let attempts = 0;
+    pairs.forEach((pair, i) => {
+      const btn = el("button", "lab-mc-opt");
+      btn.type = "button";
+      btn.appendChild(el("span", "lab-mc-letter", LETTERS[i]));
+      btn.appendChild(el("span", "lab-mc-text", tr(pair.opt)));
+      btn.addEventListener("click", () => {
+        if (solved) return;
+        attempts += 1;
+        if (pair.ok) {
+          solved = true;
+          btn.classList.add("right");
+          list.querySelectorAll(".lab-mc-opt").forEach((b) => { b.disabled = true; });
+          fuVerdict.dataset.state = "pass";
+          fuVerdict.textContent = T.fuCorrect + (attempts > 1 ? " · " + (lang === "ru" ? "с " + attempts + "-й попытки" : "on attempt " + attempts) : "");
+          explain.style.display = "block";
+          explain.textContent = tr(fu.explain);
+          markDone(q.id);
+        } else {
+          btn.classList.add("wrong");
+          btn.disabled = true;
+          fuVerdict.dataset.state = "fail";
+          fuVerdict.textContent = T.fuFail;
+        }
+      });
+      list.appendChild(btn);
+    });
+    if (solvedNow) {
+      const okIndex = pairs.findIndex((p2) => p2.ok);
+      const btns = list.querySelectorAll(".lab-mc-opt");
+      btns.forEach((b) => { b.disabled = true; });
+      if (btns[okIndex]) btns[okIndex].classList.add("right");
+      fuVerdict.dataset.state = "pass";
+      fuVerdict.textContent = T.fuCorrect;
+      explain.style.display = "block";
+      explain.textContent = tr(fu.explain);
+    }
+    wrap.appendChild(list);
+    wrap.appendChild(fuVerdict);
+    wrap.appendChild(explain);
+    card.appendChild(wrap);
+  }
+
   // ---------------------------------------------------------------- quizzes
-  function renderQuiz(root, q) {
+  function renderQuiz(root, q, quizIndex) {
     IDS.push(q.id);
     const card = el("div", "lab-card lab-quiz lab-exercise");
     card.dataset.labQuiz = q.id;
@@ -147,13 +214,19 @@
       hint.textContent = tr(q.hint);
       card.appendChild(hint);
     }
+    let fuOpened = false;
     function doCheck() {
       const v = parseFloat(String(input.value).replace(",", "."));
       if (!isFinite(v)) { verdict.dataset.state = "fail"; verdict.textContent = T.vNum; return; }
       if (Math.abs(v - q.answer) <= q.tol) {
         verdict.dataset.state = "pass";
         verdict.textContent = T.vPass + " (≈ " + q.answer + " " + unit + ")";
-        markDone(q.id);
+        if (q.followUp) {
+          // число верное, но чекпойнт закрывается только после верной причины
+          if (!fuOpened) { fuOpened = true; renderFollowUp(card, q, quizIndex, false); }
+        } else {
+          markDone(q.id);
+        }
       } else {
         verdict.dataset.state = "fail";
         verdict.textContent = Math.abs(v - q.answer) <= q.tol * 3 ? T.vClose : T.vFail;
@@ -171,7 +244,60 @@
       input.value = String(q.answer);
       verdict.dataset.state = "pass";
       verdict.textContent = T.vPass + " (≈ " + q.answer + " " + unit + ")";
+      if (q.followUp) { fuOpened = true; renderFollowUp(card, q, quizIndex, true); }
     }
+  }
+
+  // CM5 editor with the a11y wrapper pattern; textarea fallback when the
+  // vendor bundle is absent. Shared by exercises and the ★ challenge.
+  function buildEditor(panel, labelText, initial) {
+    const ta = document.createElement("textarea");
+    ta.spellcheck = false;
+    ta.value = initial;
+    ta.setAttribute("aria-label", labelText);
+    let editor = null; // CodeMirror instance when the vendor is available
+    const getCode = () => (editor ? editor.getValue() : ta.value);
+    const setCode = (v) => { if (editor) editor.setValue(v); else ta.value = v; };
+    ta.addEventListener("keydown", (e) => {
+      if (e.key === "Tab" && !editor) {
+        e.preventDefault();
+        const s = ta.selectionStart, epos = ta.selectionEnd;
+        ta.value = ta.value.slice(0, s) + "  " + ta.value.slice(epos);
+        ta.selectionStart = ta.selectionEnd = s + 2;
+      }
+    });
+    panel.appendChild(ta);
+    // Upgrade to CodeMirror when the vendored editor is on the page.
+    if (window.CodeMirror) {
+      editor = window.CodeMirror.fromTextArea(ta, {
+        mode: "python", lineNumbers: true, indentUnit: 4, viewportMargin: 12, theme: "dracula",
+      });
+      editor.setSize("100%", "296px");
+      // CM5's contenteditable wrapper has no accessible name (axe rule "label").
+      const cmWrap = editor.getWrapperElement();
+      cmWrap.setAttribute("role", "textbox");
+      cmWrap.setAttribute("aria-multiline", "true");
+      cmWrap.setAttribute("aria-label", ta.getAttribute("aria-label") || labelText);
+      // Keyboard-only students enter through the wrapper — without tabindex the
+      // editors were unreachable by Tab. CM5 binds key handling to its hidden
+      // textarea, so the wrapper forwards focus into it; the textarea itself
+      // stays non-tabbable (it keeps its label so SR announces it on entry).
+      cmWrap.setAttribute("tabindex", "0");
+      let cmReenter = false;
+      cmWrap.addEventListener("focus", () => {
+        if (cmReenter) { cmReenter = false; return; }
+        editor.focus();
+      });
+      // Tab is indentation inside CM — Esc hands focus back to the wrapper so
+      // keyboard users can Tab on; without it the editor is a keyboard trap.
+      editor.setOption("extraKeys", { Esc: () => { cmReenter = true; cmWrap.focus(); } });
+      // CM5's offscreen measuring textarea must not join the Tab order.
+      cmWrap.querySelectorAll("textarea").forEach(mt => {
+        mt.setAttribute("tabindex", "-1");
+        mt.setAttribute("aria-label", cmWrap.getAttribute("aria-label"));
+      });
+    }
+    return { getCode, setCode };
   }
 
   // ------------------------------------------------------------- exercises
@@ -194,52 +320,7 @@
       return panel;
     };
     const leftPanel = mkPanel(T.editor);
-    const ta = document.createElement("textarea");
-    ta.spellcheck = false;
-    ta.value = tr(ex.starter);
-    ta.setAttribute("aria-label", T.editor);
-    let editor = null; // CodeMirror instance when the vendor is available
-    const getCode = () => (editor ? editor.getValue() : ta.value);
-    const setCode = (v) => { if (editor) editor.setValue(v); else ta.value = v; };
-    ta.addEventListener("keydown", (e) => {
-      if (e.key === "Tab" && !editor) {
-        e.preventDefault();
-        const s = ta.selectionStart, epos = ta.selectionEnd;
-        ta.value = ta.value.slice(0, s) + "  " + ta.value.slice(epos);
-        ta.selectionStart = ta.selectionEnd = s + 2;
-      }
-    });
-    leftPanel.appendChild(ta);
-    // Upgrade to CodeMirror when the vendored editor is on the page.
-    if (window.CodeMirror) {
-      editor = window.CodeMirror.fromTextArea(ta, {
-        mode: "python", lineNumbers: true, indentUnit: 4, viewportMargin: 12, theme: "dracula",
-      });
-      editor.setSize("100%", "296px");
-      // CM5's contenteditable wrapper has no accessible name (axe rule "label").
-      const cmWrap = editor.getWrapperElement();
-      cmWrap.setAttribute("role", "textbox");
-      cmWrap.setAttribute("aria-multiline", "true");
-      cmWrap.setAttribute("aria-label", ta.getAttribute("aria-label") || T.editor);
-      // Keyboard-only students enter through the wrapper — without tabindex the
-      // editors were unreachable by Tab. CM5 binds key handling to its hidden
-      // textarea, so the wrapper forwards focus into it; the textarea itself
-      // stays non-tabbable (it keeps its label so SR announces it on entry).
-      cmWrap.setAttribute("tabindex", "0");
-      let cmReenter = false;
-      cmWrap.addEventListener("focus", () => {
-        if (cmReenter) { cmReenter = false; return; }
-        editor.focus();
-      });
-      // Tab is indentation inside CM — Esc hands focus back to the wrapper so
-      // keyboard users can Tab on; without it the editor is a keyboard trap.
-      editor.setOption("extraKeys", { Esc: () => { cmReenter = true; cmWrap.focus(); } });
-      // CM5's offscreen measuring textarea must not join the Tab order.
-      cmWrap.querySelectorAll("textarea").forEach(mt => {
-        mt.setAttribute("tabindex", "-1");
-        mt.setAttribute("aria-label", cmWrap.getAttribute("aria-label"));
-      });
-    }
+    const { getCode, setCode } = buildEditor(leftPanel, T.editor, tr(ex.starter));
     grid.appendChild(leftPanel);
 
     const rightPanel = mkPanel(T.tests);
@@ -305,7 +386,9 @@
       }
       results.innerHTML = "";
       stdoutBox.textContent = "";
-      appendOut(T.loading);
+      // удалённый рантайм подключён? — скажи это честно в выводе, а не тихо
+      const remote = window.LSMColab && window.LSMColab.active();
+      appendOut(remote ? T.remoteLoading : T.loading);
       const started = Date.now();
       const res = await window.LSMPython.run(getCode(), ex.tests || [], {
         numpy: !!ex.numpy, timeoutMs: ex.timeoutMs || 4000,
@@ -324,7 +407,7 @@
         lockRuns(true);
         return;
       }
-      appendOut(T.done.replace("{s}", wall), "ok");
+      appendOut((remote ? T.remoteDone : T.done).replace("{s}", wall), "ok");
 
       if (res.status === "syntax" || res.status === "error") {
         appendOut((res.error || "error"), "err");
@@ -385,6 +468,195 @@
     root.appendChild(card);
   }
 
+
+  // ------------------------------------------------------------- challenge
+  // ★ Челлендж после капстоуна лабы: открытая цель без тестов-каркаса.
+  // Проверка по результату (stdout / поля отчёта / честная само-декларация),
+  // эталонное решение открывается только после решения. В счёт чекпойнтов
+  // и reward не входит — у него свой бейдж у полосы прогресса.
+  function renderChallenge(root, ch) {
+    const card = el("div", "lab-card lab-challenge");
+    const head = el("div", "lab-ch-head");
+    head.appendChild(el("span", "lab-ch-star", "★"));
+    head.appendChild(el("span", "lab-ch-word", tr(ch.word) || (lang === "ru" ? "челлендж" : "challenge")));
+    head.appendChild(el("span", "lab-ch-att", ""));
+    card.appendChild(head);
+    card.appendChild(el("h3", "", tr(ch.title)));
+    card.appendChild(el("p", "", tr(ch.brief)));
+    card.appendChild(el("p", "lab-ch-goal", tr(ch.goal)));
+
+    const solvedKey = "ch:" + ch.id;
+    const attKey = "ch:" + ch.id + ":att";
+    let attempts = Number(loadProgress()[attKey] || 0);
+    const attEl = head.querySelector(".lab-ch-att");
+    const showAttempts = () => {
+      attEl.textContent = attempts
+        ? (lang === "ru" ? "проверок: " + attempts : "checks: " + attempts)
+        : "";
+    };
+    showAttempts();
+
+    const controls = el("div", "lab-controls");
+    const verdict = el("p", "lab-verdict");
+    verdict.setAttribute("aria-live", "polite");
+    const note = el("p", "lab-ch-note");
+    const setNote = (r) => { note.textContent = r && r.note != null ? tr(r.note) : ""; };
+
+    function bumpAttempts() {
+      attempts += 1;
+      const p = loadProgress(); p[attKey] = attempts;
+      try { localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) { /* private mode */ }
+      showAttempts();
+    }
+    function solve() {
+      const p = loadProgress(); p[solvedKey] = 1;
+      try { localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) { /* private mode */ }
+      verdict.dataset.state = "pass";
+      verdict.textContent = T.chSolved;
+      const refBtn = card.querySelector("[data-lab-ch-ref-btn]");
+      if (refBtn) refBtn.hidden = false;
+      renderProgress(true);
+    }
+
+    if (ch.mode === "run") {
+      // редактор без тест-панели: студент пишет код, печатающий метрики цели;
+      // проверяет не каркас тестов, а сами напечатанные числа (ch.check(res))
+      const grid = el("div", "lab-editor");
+      const panel = el("div", "lab-panel");
+      const bar = el("div", "lab-panel-bar");
+      bar.appendChild(el("i", "")); bar.appendChild(el("i", "")); bar.appendChild(el("i", ""));
+      bar.appendChild(el("span", "lab-panel-title", T.editor));
+      panel.appendChild(bar);
+      const ed = buildEditor(panel, T.editor, tr(ch.starter));
+      grid.appendChild(panel);
+      card.appendChild(grid);
+      const out = el("div", "lab-timeline");
+      out.setAttribute("aria-live", "polite");
+      card.appendChild(out);
+      const runBtn = el("button", "button", T.chRun || T.run);
+      runBtn.type = "button";
+      runBtn.addEventListener("click", async () => {
+        runBtn.disabled = true;
+        const remote = window.LSMColab && window.LSMColab.active();
+        out.textContent = "";
+        const line = (text, cls) => {
+          const l = el("div", cls, ""); l.textContent = text;
+          out.appendChild(l); out.scrollTop = out.scrollHeight;
+        };
+        line(remote ? T.remoteLoading : T.loading, "");
+        bumpAttempts();
+        let res;
+        try {
+          res = await window.LSMPython.run(ed.getCode(), [], {
+            numpy: !!ch.numpy, timeoutMs: ch.timeoutMs || 60000,
+          });
+        } catch (e) {
+          res = { status: "runner-error", error: String(e), results: [], stdout: "" };
+        }
+        out.textContent = "";
+        (res.stdout || "").split("\n").forEach((ln) => line(ln, ""));
+        if (res.status === "timeout") line(T.timeoutShort, "err");
+        else if (res.status === "runner-error") line(T.runnerError + " " + (res.error || ""), "err");
+        else if (res.status === "syntax" || res.status === "error") line(res.error || "error", "err");
+        let r;
+        try { r = ch.check(res) || { ok: false }; } catch (e) { r = { ok: false, note: String(e.message || e) }; }
+        setNote(r);
+        if (r.ok && res.status !== "timeout") solve();
+        else { verdict.dataset.state = "fail"; verdict.textContent = T.chNotYet; }
+        runBtn.disabled = false;
+      });
+      controls.appendChild(runBtn);
+    } else if (ch.mode === "report") {
+      // свои числа из живого слоя-2 или внешнего прогона: поля отчёта +
+      // правдоподобие (диапазоны, связь величин) проверяет ch.check(values)
+      const fieldsWrap = el("div", "lab-ch-fields");
+      (ch.fields || []).forEach((f) => {
+        const w = el("label", "lab-ch-field");
+        w.appendChild(el("span", "", tr(f.label)));
+        const inp = document.createElement("input");
+        inp.type = f.type === "text" ? "text" : "number";
+        if (f.placeholder) inp.placeholder = tr(f.placeholder);
+        inp.setAttribute("aria-label", tr(f.label));
+        inp.dataset.chField = f.key;
+        w.appendChild(inp);
+        fieldsWrap.appendChild(w);
+      });
+      card.appendChild(fieldsWrap);
+      const checkBtn = el("button", "button", T.chCheck || T.check);
+      checkBtn.type = "button";
+      checkBtn.addEventListener("click", () => {
+        const values = {};
+        card.querySelectorAll("[data-ch-field]").forEach((inp) => {
+          values[inp.dataset.chField] = inp.value.trim();
+        });
+        bumpAttempts();
+        let r;
+        try { r = ch.check(values) || { ok: false }; } catch (e) { r = { ok: false, note: String(e.message || e) }; }
+        setNote(r);
+        if (r.ok) solve();
+        else { verdict.dataset.state = "fail"; verdict.textContent = T.chNotYet; }
+      });
+      controls.appendChild(checkBtn);
+    } else {
+      // selfcheck: анализ без автопроверки — рассуждение + честная декларация
+      const ta = document.createElement("textarea");
+      ta.className = "lab-ch-reasoning";
+      ta.rows = 4;
+      ta.spellcheck = false;
+      ta.setAttribute("aria-label", T.chReasoning);
+      ta.placeholder = tr(ch.reasoningHint) || "";
+      card.appendChild(ta);
+      const decl = el("label", "lab-ch-declare");
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      decl.appendChild(cb);
+      decl.appendChild(el("span", "", tr(ch.declare) || (lang === "ru" ? "Я проверил это сам" : "I verified this myself")));
+      card.appendChild(decl);
+      const doneBtn = el("button", "button", T.chDone || T.check);
+      doneBtn.type = "button";
+      doneBtn.addEventListener("click", () => {
+        if (!cb.checked) {
+          verdict.dataset.state = "fail";
+          verdict.textContent = T.chDeclareFirst;
+          return;
+        }
+        bumpAttempts();
+        solve();
+      });
+      controls.appendChild(doneBtn);
+    }
+
+    card.appendChild(controls);
+    card.appendChild(verdict);
+    card.appendChild(note);
+
+    // эталон скрыт до решения — кнопка появляется только после достижения цели
+    const refBtn = el("button", "button secondary", T.solution);
+    refBtn.type = "button";
+    refBtn.hidden = true;
+    refBtn.dataset.labChRefBtn = "";
+    const refBox = el("pre", "lab-solution");
+    refBox.style.display = "none";
+    refBtn.addEventListener("click", () => {
+      if (refBox.style.display === "none") {
+        refBox.textContent = ch.reference || "";
+        refBox.style.display = "block";
+        refBtn.textContent = T.hideSolution;
+      } else {
+        refBox.style.display = "none";
+        refBtn.textContent = T.solution;
+      }
+    });
+    controls.appendChild(refBtn);
+    card.appendChild(refBox);
+    if (loadProgress()[solvedKey]) {
+      // restore: решённый челлендж после reload показывает вердикт и эталон
+      verdict.dataset.state = "pass";
+      verdict.textContent = T.chSolved;
+      refBtn.hidden = false;
+    }
+    root.appendChild(card);
+  }
 
   // ------------------------------------------------------------------- hero
   // Seeded "requests → edge → engine → tokens" flow, one accent color per lab.
@@ -488,9 +760,15 @@
       renderProgress();
     }
     const quizRoot = document.querySelector("[data-lab-quizzes]");
-    (content.quizzes || []).forEach((q) => renderQuiz(quizRoot, q));
+    (content.quizzes || []).forEach((q, qi) => renderQuiz(quizRoot, q, qi));
     const exRoot = document.querySelector("[data-lab-exercises]");
     (content.exercises || []).forEach((ex) => renderExercise(exRoot, ex));
+    const chHost = document.querySelector("[data-lab-challenge]");
+    if (chHost && content.challenge) {
+      const chSection = document.querySelector("[data-lab-challenge-section]");
+      if (chSection) chSection.hidden = false;
+      renderChallenge(chHost, content.challenge);
+    }
     const heroHost = document.querySelector("[data-lab-hero]");
     if (heroHost) renderHero(heroHost, null, tr(content.heroCaption) || "");
     const footer = document.querySelector("[data-lab-footer]");

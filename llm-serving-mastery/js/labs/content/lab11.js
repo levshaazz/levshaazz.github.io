@@ -164,6 +164,16 @@
           en: "(16 + 4) / 2 + 1.5 — weights and KV divide, the fixed part does not.",
           ru: "(16 + 4) / 2 + 1.5 — веса и KV делятся, фикс нет.",
         },
+        followUp: {
+          q: { en: "Why doesn't the fixed 1.5 GB divide by the TP degree here?", ru: "Почему фиксированные 1.5 ГБ не делятся на степень TP здесь?" },
+          options: [
+            { en: "Activations, buffers and the runtime context belong to the pod's own process — each pod carries its own copy no matter how the weights were sharded", ru: "Активации, буферы и контекст рантайма принадлежат процессу самого пода — каждый под несёт свою копию, как бы ни были нарезаны веса" },
+            { en: "The fixed part is shared via a volume, so it counts once per cluster", ru: "Фикс делится через volume, поэтому считается один раз на кластер" },
+            { en: "It does divide — the 1.5 in the formula is already the per-pod share", ru: "Делится — 1.5 в формуле уже является per-pod долей" },
+          ],
+          answer: 0,
+          explain: { en: "TP shards the WEIGHT matrices across GPUs inside one engine; the per-pod overhead is not a matrix and has no shard dimension. Requests == limits then pin this exact number as Guaranteed QoS.", ru: "TP режет МАТРИЦЫ ВЕСОВ между GPU внутри одного движка; overhead пода — не матрица, у него нет измерения шарда. Requests == limits затем закрепляют это число как Guaranteed QoS." },
+        },
       },
       {
         id: "q2",
@@ -176,6 +186,16 @@
           en: "budget = period × failureThreshold; solve 5 × f = 200.",
           ru: "бюджет = период × failureThreshold; реши 5 × f = 200.",
         },
+        followUp: {
+          q: { en: "Why budget 200 s and not exactly 165 s for the 165 s cold start?", ru: "Почему бюджет 200 с, а не ровно 165 с под холодный старт?" },
+          options: [
+            { en: "The measured 165 s is a median of real runs: a budget exactly on the median kills half your pods — headroom is the difference between a probe and a coin flip", ru: "Измеренные 165 с — медиана реальных прогонов: бюджет ровно на медиане убивает половину подов — запас и есть разница между пробой и подбрасыванием монеты" },
+            { en: "Kubernetes forbids budgets within 15 % of the measured value", ru: "Kubernetes запрещает бюджеты ближе 15 % к измеренному значению" },
+            { en: "The extra 35 s are spent on the /health TLS handshake", ru: "Лишние 35 с уходят на TLS-handshake /health" },
+          ],
+          answer: 0,
+          explain: { en: "The lab's own habit: a point sitting exactly on a bound breaks at the first held-out run (T07's margins lesson, replayed here). 200 = 5 × 40 gives ~20 % headroom over the median cold start.", ru: "Привычка самой лабы: точка ровно на границе ломается на первом же held-out (урок запасов из T07, повторенный здесь). 200 = 5 × 40 даёт ~20 % запаса над медианным холодным стартом." },
+        },
       },
       {
         id: "q3",
@@ -187,6 +207,16 @@
         hint: {
           en: "floor = replicas − maxUnavailable; maxSurge does not raise the floor.",
           ru: "граница = replicas − maxUnavailable; maxSurge границу не поднимает.",
+        },
+        followUp: {
+          q: { en: "Why doesn't maxSurge 1 keep the floor at 4?", ru: "Почему maxSurge 1 не держит границу на 4?" },
+          options: [
+            { en: "A surged pod serves nothing until it is Ready — and readiness is gated on the weight load, so during the 165 s load the fleet serves 3", ru: "Surge-под не обслуживает ничего до Ready — а готовность гейтится загрузкой весов, поэтому во время 165-секундной загрузки флот обслуживает 3" },
+            { en: "Surge pods are counted as capacity as soon as they schedule", ru: "Surge-поды считаются ёмкостью сразу после планирования" },
+            { en: "maxSurge applies only to scale-down, not to rollouts", ru: "maxSurge применяется только к скейл-дауну, а не к роллаутам" },
+          ],
+          answer: 0,
+          explain: { en: "Surge buys TIME, not capacity: the new pod exists but carries no tokens while loading weights. That is why the safe cadence pairs maxUnavailable 0 (protect the floor) with maxSurge 1 (buy overlap) — neither knob alone does the job.", ru: "Surge покупает ВРЕМЯ, а не ёмкость: новый под существует, но не несёт токены, пока грузит веса. Поэтому безопасный темп — пара maxUnavailable 0 (защитить границу) + maxSurge 1 (купить перекрытие) — ни одна ручка сама не справляется." },
         },
       },
     ],
@@ -320,12 +350,72 @@ class ReleaseSim:
         raise ValueError('unknown revision: %s' % revision)`,
         hints: [
           { en: "rollback(rev) is just upgrade(stored_values_of_rev) — plus the ValueError guard.", ru: "rollback(rev) — это просто upgrade(сохранённых_values_ревизии) — плюс защита от ValueError." },
-          { en: "Copy on the way in AND on the way out: history() returning live references lets a caller corrupt the ledger.", ru: "Копируй и на входе, и на выходе: history(), вернувшая живые ссылки, позволяет вызывающему испортить журнал." },
+          { en: "Copy on the way in AND on the way out: history() returning live references lets a caller corrupt the ledger.", ru: "Копируй и на входе, и на выходе: history(), вернувшая живые ссылки, позволяет вызывающему испортить журнал." },
         ],
         numpy: false,
         timeoutMs: 4000,
       },
     ],
+    challenge: {
+      id: "chal1",
+      word: { en: "challenge", ru: "челлендж" },
+      title: {
+        en: "★ Budget the startup probe: cover the cold start, respect the dead-pod clock",
+        ru: "★ Составь бюджет startupProbe: накрыть холодный старт, уважить часы мёртвого пода",
+      },
+      brief: {
+        en: "You write the probe spec. Knob grids: <code>period_s ∈ {2, 5, 10}</code>, <code>failureThreshold ∈ {20, 30, 40, 60}</code>. Two constraints at once: the budget <code>period × threshold</code> must cover the measured 165 s cold start (T09-fleet) AND must not exceed <strong>300 s</strong> — a pod that is truly dead should not keep its slots hostage for five minutes. No tests guide you; the page recomputes the budget from your knobs.",
+        ru: "Ты пишешь спецификацию пробы. Сетки ручек: <code>period_s ∈ {2, 5, 10}</code>, <code>failureThreshold ∈ {20, 30, 40, 60}</code>. Два ограничения сразу: бюджет <code>period × threshold</code> обязан накрыть измеренные 165 с холодного старта (T09-fleet) И не превысить <strong>300 с</strong> — по-настоящему мёртвый под не должен держать свои слоты заложниками пять минут. Тестов-каркаса нет; страница пересчитывает бюджет по твоим ручкам.",
+      },
+      goal: {
+        en: "Print one line: <code>period_s=… threshold=… budget_s=…</code> with 165 ≤ budget ≤ 300.",
+        ru: "Напечатай одну строку: <code>period_s=… threshold=… budget_s=…</code> с 165 ≤ budget ≤ 300.",
+      },
+      mode: "run",
+      numpy: false,
+      timeoutMs: 30000,
+      starter: `# Knob grids: period_s in {2, 5, 10}; failureThreshold in {20, 30, 40, 60}.
+# Budget = period_s * failure_threshold.
+# Cover:   budget >= 165  (the measured T09-fleet cold start)
+# Respect: budget <= 300  (a truly dead pod must be caught this fast)
+# The page reads ONE summary line in exactly this shape:
+#   period_s=<from grid> threshold=<from grid> budget_s=<seconds>
+
+# TODO: scan the design space, print a point satisfying both bounds.
+`,
+      check: (res) => {
+        const out = String(res.stdout || "");
+        const mm = out.match(/period_s\s*=\s*([0-9]+)[\s\S]*?threshold\s*=\s*([0-9]+)[\s\S]*?budget_s\s*=\s*([0-9]+(?:\.[0-9]+)?)/i);
+        if (!mm) {
+          return { ok: false, note: { en: "no summary line found - print exactly: period_s=… threshold=… budget_s=…", ru: "итоговой строки нет — напечатай ровно: period_s=… threshold=… budget_s=…" } };
+        }
+        const period = parseInt(mm[1], 10), thr = parseInt(mm[2], 10), budgetClaimed = parseFloat(mm[3]);
+        if (![2, 5, 10].includes(period) || ![20, 30, 40, 60].includes(thr)) {
+          return { ok: false, note: { en: "the knobs must come from the declared grids: period " + period + ", threshold " + thr, ru: "ручки обязаны быть из заявленных сеток: period " + period + ", threshold " + thr } };
+        }
+        const budget = period * thr;
+        if (Math.abs(budget - budgetClaimed) > 0.5) {
+          return { ok: false, note: { en: "budget must follow the model: " + period + " × " + thr + " = " + budget, ru: "бюджет обязан следовать модели: " + period + " × " + thr + " = " + budget } };
+        }
+        if (budget < 165) {
+          return { ok: false, note: { en: "budget " + budget + " s < 165 s - the probe kills loading pods (CrashLoop by probe)", ru: "бюджет " + budget + " с < 165 с — проба убивает грузящиеся поды (CrashLoop по вине пробы)" } };
+        }
+        if (budget > 300) {
+          return { ok: false, note: { en: "budget " + budget + " s > 300 s - a dead pod holds its slots too long", ru: "бюджет " + budget + " с > 300 с — мёртвый под слишком долго держит свои слоты" } };
+        }
+        return { ok: true, note: { en: period + " s × " + thr + " = " + budget + " s: covers the 165 s cold start with " + Math.round(budget - 165) + " s headroom, catches a dead pod within " + budget + " s", ru: period + " с × " + thr + " = " + budget + " с: накрывает холодный старт 165 с с запасом " + Math.round(budget - 165) + " с и ловит мёртвый под за " + budget + " с" } };
+      },
+      reference: `# The design space is small enough to print whole:
+for period in (2, 5, 10):
+    for thr in (20, 30, 40, 60):
+        budget = period * thr
+        mark = "OK " if 165 <= budget <= 300 else "   "
+        print(f"{mark}period_s={period} threshold={thr} budget_s={budget}")
+# Feasible: (5, 40)=200, (5, 60)=300, (10, 20)=200, (10, 30)=300.
+# period_s=2 can never reach 165 (cap 120) - too chatty by half.
+# A pro pick: 10 x 30 = 300 - the fewest probes per healthy pod inside
+# the dead-pod clock; or 5 x 40 = 200 for tighter catch-up.`,
+    },
     posttest: [
       {
         id: "p1",
@@ -346,7 +436,20 @@ class ReleaseSim:
         q: { en: "A release history holds revisions [1, 2, 3]. After `helm rollback 1` the history is\u2026", ru: "История релиза хранит ревизии [1, 2, 3]. После <code>helm rollback 1</code> история — это\u2026" },
         options: [{ en: "[1, 2, 3, 4] where 4 has revision 1's content", ru: "[1, 2, 3, 4], где 4 несёт содержимое ревизии 1" }, { en: "[1] — the history is rewritten", ru: "[1] — история переписана" }, { en: "[2, 3] — revision 1 is consumed", ru: "[2, 3] — ревизия 1 израсходована" }],
         answer: 0,
-        explain: { en: "Helm never rewrites history: a rollback appends a new revision whose content matches the target. That is why ReleaseSim.rollback() calls upgrade() under the hood.", ru: "Helm никогда не переписывает историю: откат добавляет новую ревизию с содержимым целевой. Поэтому ReleaseSim.rollback() под капотом вызывает upgrade()." },
+        explain: { en: "Helm never rewrites history: a rollback appends a new revision whose content matches the target. That is why ReleaseSim.rollback() calls upgrade() under the hood.", ru: "Helm никогда не переписывает историю: откат добавляет новую ревизию с\u00a0содержимым целевой. Поэтому ReleaseSim.rollback() под капотом вызывает upgrade()." },
+      },
+      {
+        id: "b1",
+        tag: { en: "bridge · T09", ru: "мост · T09" },
+        context: { en: "T09 named the members of «crashed → answering»: extract layers + weight loading + server init + first /health. In T09 you measured them by restarting a compose fleet by hand.", ru: "T09 назвала члены «упал → снова отвечает»: extract слоёв + загрузка весов + init сервера + первый /health. В T09 ты измерял их, рестартуя compose-флот руками." },
+        q: { en: "Where do those T09 members go in a rolling update with maxUnavailable 0, maxSurge 1?", ru: "Куда деваются члены T09 при rolling update с maxUnavailable 0 и maxSurge 1?" },
+        options: [
+          { en: "Into the surge pod: it stays Not Ready — and serves nothing — until every member completes; that wait is exactly why surge is speed, not capacity", ru: "В surge-под: он остаётся Not Ready — и не обслуживает ничего — пока не завершатся все члены; это ожидание и есть причина, почему surge — скорость, а не ёмкость" },
+          { en: "They vanish: the image is already on the node, so a new pod is Ready instantly", ru: "Они исчезают: образ уже на узле, поэтому новый под Ready мгновенно" },
+          { en: "They are paid by the old pods while the new one loads", ru: "Их платят старые поды, пока новый грузится" },
+        ],
+        answer: 0,
+        explain: { en: "A fresh pod replays the whole member chain: even a warm node skips only the extract — the weights load, the server inits, /health answers. StartupProbe gates traffic on exactly this chain: the probe budget from this lab's quizzes is the T09 members, priced.", ru: "Свежий под переигрывает всю цепочку членов: тёплый узел экономит только extract — веса грузятся, сервер инициализируется, /health отвечает. StartupProbe гейтит трафик ровно по этой цепочке: бюджет пробы из квизов этой лабы — это члены T09, оценённые в секундах." },
       },
     ],
     reward: {

@@ -135,6 +135,16 @@
           en: "Seats = capacity + queue = 8; everyone past them is refused: 24 − 8.",
           ru: "Места = capacity + queue = 8; все, кто сверх, получают отказ: 24 − 8.",
         },
+        followUp: {
+          q: { en: "Why does the queue count toward the seats that answer honestly?", ru: "Почему очередь считается в места, которые отвечают честно?" },
+          options: [
+            { en: "Queued requests have been accepted: they wait inside the system, so the honest 429 starts only past slots + queue", ru: "Запросы в очереди уже приняты: они ждут внутри системы, поэтому честный 429 начинается только за слотами + очередью" },
+            { en: "The queue is unlimited, so nothing is ever refused", ru: "Очередь безгранична, поэтому отказов не бывает вовсе" },
+            { en: "Only service slots answer 429 — the queue answers 200", ru: "429 отвечают только слоты обслуживания — очередь отвечает 200" },
+          ],
+          answer: 0,
+          explain: { en: "The envelope's point: a bounded queue is honest waiting; an unbounded queue hides overload as latency. That is why rejection starts exactly at capacity + queue_slots, not at capacity.", ru: "В этом смысл конверта: ограниченная очередь — честное ожидание; безграничная очередь прячет перегрузку в латентности. Поэтому отказ начинается ровно за capacity + queue_slots, а не за capacity." },
+        },
       },
       {
         id: "q2",
@@ -147,6 +157,16 @@
           en: "W = 0.15 + 0.02 × 64 = 0.15 + 1.28.",
           ru: "W = 0.15 + 0.02 × 64 = 0.15 + 1.28.",
         },
+        followUp: {
+          q: { en: "Why does the TTFT term stay constant while tokens multiply?", ru: "Почему член TTFT остаётся постоянным, а токены множатся?" },
+          options: [
+            { en: "TTFT pays for prefill (reading the prompt) once per request; each generated token adds its own decode step", ru: "TTFT платит за prefill (чтение промпта) один раз за запрос; каждый генерируемый токен добавляет свой decode-шаг" },
+            { en: "TTFT is a per-token fee capped at the first 64 tokens", ru: "TTFT — это потокенная плата с потолком на первых 64 токенах" },
+            { en: "The mock charges TTFT per client connection, not per request", ru: "Мок берёт TTFT за клиентское соединение, а не за запрос" },
+          ],
+          answer: 0,
+          explain: { en: "W = ttft + per_token × n: one prefill, n decode steps. This is the same two-phase split as T04's wall model — the mock just names its constants.", ru: "W = ttft + per_token × n: один prefill, n шагов decode. То же двухфазное разложение, что в wall-модели T04 — мок лишь называет свои константы." },
+        },
       },
       {
         id: "q3",
@@ -158,6 +178,16 @@
         hint: {
           en: "λ* = seats / W = 8 / 0.47 ≈ 17.0.",
           ru: "λ* = места / W = 8 / 0.47 ≈ 17.0.",
+        },
+        followUp: {
+          q: { en: "Why do the queue seats appear in the knee λ* = seats / W?", ru: "Почему места очереди входят в колено λ* = seats / W?" },
+          options: [
+            { en: "Little's law counts everything IN the system: L = λ × W with L = 8 means queued requests hold their place too, so they extend the honest-admission range", ru: "Закон Литтла считает всё ВНУТРИ системы: L = λ × W при L = 8 означает, что очередь тоже держит свои места, расширяя диапазон честного допуска" },
+            { en: "Queue seats serve requests in parallel with the slots", ru: "Места очереди обслуживают запросы параллельно со слотами" },
+            { en: "They do not — the knee is always capacity / W", ru: "Не входят — колено всегда capacity / W" },
+          ],
+          answer: 0,
+          explain: { en: "A queued request is in the system (it will be served), so Little's law with L = seats admits λ up to seats/W before the envelope overflows. Past that knee, extra demand is refused immediately — 429, not delay.", ru: "Запрос в очереди находится в системе (он будет обслужен), поэтому закон Литтла при L = seats допускает λ до seats/W, прежде чем конверт переполнится. За коленом лишний спрос отбивается сразу — 429, а не задержка." },
         },
       },
     ],
@@ -303,12 +333,69 @@ eq(classify_outcome(400), 'failed')` },
         return 'cancelled'
     return 'failed'`,
         hints: [
-          { en: "Four branches, each with one named outcome; 0 is the disconnect probe from http_request, not a success.", ru: "Четыре ветки, у каждой — свой именованный исход; 0 — сигнал обрыва соединения из http_request, а не успех." },
+          { en: "Four branches, each with one named outcome; 0 is the disconnect probe from http_request, not a success.", ru: "Четыре ветки, у каждой — свой именованный исход; 0 — сигнал обрыва соединения из http_request, а не успех." },
         ],
         numpy: false,
         timeoutMs: 4000,
       },
     ],
+    challenge: {
+      id: "chal1",
+      word: { en: "challenge", ru: "челлендж" },
+      title: {
+        en: "★ Tune the live burst: many served, few excuses",
+        ru: "★ Оттюни живой бурст: много обслуженных, мало отговорок",
+      },
+      brief: {
+        en: "Needs the Layer 2 runtime (docker compose up — the section below). Run real bursts with the burst button and choose <code>slots</code> and <code>queue_slots</code> yourself (arrivals fixed at 24) so that <strong>completed ≥ 8</strong> while <strong>rejected ≤ 10</strong> — better than the default 4+4 that drops 16. No tests guide you; the page checks your report against the admission envelope the gateway actually enforces.",
+        ru: "Нужен рантайм слоя 2 (docker compose up — секция ниже). Гоняй настоящие бурсты кнопкой «Бурст» и подбери собственные <code>slots</code> и <code>queue_slots</code> (заявки фиксированы — 24) так, чтобы <strong>completed ≥ 8</strong> при <strong>rejected ≤ 10</strong> — лучше дефолтных 4+4, теряющих 16. Тестов-каркаса нет; страница сверяет твой отчёт с конвертом допуска, который реально исполняет шлюз.",
+      },
+      goal: {
+        en: "Report one burst from YOUR gateway: slots + queue_slots so that 24 arrivals give completed ≥ 8 and rejected ≤ 10.",
+        ru: "Отчитайся одним бурстом СВОЕГО шлюза: slots + queue_slots так, чтобы 24 заявки дали completed ≥ 8 и rejected ≤ 10.",
+      },
+      mode: "report",
+      fields: [
+        { key: "slots", label: { en: "slots (in flight)", ru: "slots (в полёте)" }, type: "number" },
+        { key: "queue", label: { en: "queue_slots (waiting)", ru: "queue_slots (ждут)" }, type: "number" },
+        { key: "admitted", label: { en: "admitted (from the burst line)", ru: "admitted (из строки бурста)" }, type: "number" },
+        { key: "rejected", label: { en: "rejected (429 ×)", ru: "rejected (429 ×)" }, type: "number" },
+        { key: "seq", label: { en: "journal entry #", ru: "запись журнала #" }, type: "number" },
+      ],
+      check: (v) => {
+        const num = (k) => parseInt(String(v[k] || ""), 10);
+        const slots = num("slots"), queue = num("queue"), admitted = num("admitted"), rejected = num("rejected"), seq = num("seq");
+        if (![slots, queue, admitted, rejected, seq].every((x) => Number.isFinite(x) && x >= 0)) {
+          return { ok: false, note: { en: "fill every field with a whole non-negative number", ru: "заполни каждое поле целым неотрицательным числом" } };
+        }
+        if (slots < 1) {
+          return { ok: false, note: { en: "at least one service slot, otherwise nothing completes", ru: "нужен хотя бы один слот обслуживания, иначе не завершится ничего" } };
+        }
+        if (slots > 8 || queue > 16) {
+          return { ok: false, note: { en: "the burst form caps slots at 8 and queue_slots at 16 - report a burst you could actually run", ru: "форма бурста ограничивает slots до 8 и queue_slots до 16 — отчитайся бурстом, который реально можно запустить" } };
+        }
+        if (admitted !== slots + queue) {
+          return { ok: false, note: { en: "the envelope admits exactly slots + queue_slots = " + (slots + queue) + " (arrivals 24 cover them)", ru: "конверт допускает ровно slots + queue_slots = " + (slots + queue) + " (24 заявки их покрывают)" } };
+        }
+        if (admitted + rejected !== 24) {
+          return { ok: false, note: { en: "admitted + rejected must equal the 24 arrivals, got " + (admitted + rejected), ru: "admitted + rejected должны давать 24 заявки, а дают " + (admitted + rejected) } };
+        }
+        if (rejected > 10) {
+          return { ok: false, note: { en: "rejected " + rejected + " > 10 - keep trading queue seats against refusals", ru: "rejected " + rejected + " > 10 — продолжай менять места очереди на отказы" } };
+        }
+        if (admitted < 8) {
+          return { ok: false, note: { en: "completed ceiling is admitted = " + admitted + " < 8 - widen the envelope", ru: "потолок completed равен admitted = " + admitted + " < 8 — расширяй конверт" } };
+        }
+        return { ok: true, note: { en: "slots " + slots + " + queue " + queue + ": " + admitted + " admitted, " + rejected + " rejected (journal #" + seq + ") - the envelope beat the default", ru: "slots " + slots + " + queue " + queue + ": допущено " + admitted + ", отбито " + rejected + " (журнал #" + seq + ") — конверт обыграл дефолт" } };
+      },
+      reference: `# The envelope's closed form (your Exercise 2) is what the gateway runs.
+# arrivals = 24, so admitted = slots + queue_slots (when seats <= 24) and
+# rejected = 24 - admitted. The burst form caps slots at 8, queue at 16,
+# so the best honest admission is 8 + 16 = 24 seats -> rejected 0.
+# A comfortable point inside the caps: slots=8, queue_slots=8 -> admitted
+# 16, rejected 8. The lesson: queue seats convert instant 429s into honest
+# waiting; they cost nothing but time. Report YOUR real burst + journal #.`,
+    },
     runtime: {
       title: {
         en: "Drill on your own gateway: the practice runtime",
@@ -354,6 +441,19 @@ eq(classify_outcome(400), 'failed')` },
         options: [{ en: "admits 4 and queues 4 (8 in system), rejects 16 with 429", ru: "допускает 4 и ставит в очередь 4 (8 в системе), отбивает 16 с 429" }, { en: "admits all 24", ru: "\u0434\u043e\u043f\u0443\u0441\u043a\u0430\u0435\u0442 \u0432\u0441\u0435 24" }, { en: "rejects all 24", ru: "\u043e\u0442\u0431\u0438\u0432\u0430\u0435\u0442 \u0432\u0441\u0435 24" }],
         answer: 0,
         explain: { en: "admitted = min(arrivals, slots + queue) = 8; the rest get immediate 429 instead of hidden waiting.", ru: "admitted = min(\u0437\u0430\u044f\u0432\u043a\u0438, \u0441\u043b\u043e\u0442\u044b + \u043e\u0447\u0435\u0440\u0435\u0434\u044c) = 8; \u043e\u0441\u0442\u0430\u043b\u044c\u043d\u044b\u0435 \u043f\u043e\u043b\u0443\u0447\u0430\u044e\u0442 \u043d\u0435\u043c\u0435\u0434\u043b\u0435\u043d\u043d\u044b\u0439 429 \u0432\u043c\u0435\u0441\u0442\u043e \u0441\u043a\u0440\u044b\u0442\u043e\u0433\u043e \u043e\u0436\u0438\u0434\u0430\u043d\u0438\u044f." },
+      },
+      {
+        id: "b1",
+        tag: { en: "bridge · T06", ru: "мост · T06" },
+        context: { en: "T06 taught the saturation knee: the load where demand hits the seats. Here the seats are the gateway's slots + queue, and each request holds its seat for W seconds.", ru: "T06 учила колену насыщения: нагрузке, при которой спрос упирается в места. Здесь места — это slots + queue шлюза, и каждый запрос держит своё место W секунд." },
+        q: { en: "Clients switch to 32-token requests (W = 0.15 + 0.02 × 32 = 0.79 s). What happens to the gateway's knee λ* = seats / W?", ru: "Клиенты переходят на запросы по 32 токена (W = 0.15 + 0.02 × 32 = 0.79 с). Что происходит с коленом шлюза λ* = места / W?" },
+        options: [
+          { en: "It drops to ≈ 10 req/s: the seats are the same, but each request holds its seat almost twice as long", ru: "Падает до ≈ 10 req/s: места те же, но каждый запрос держит своё место почти вдвое дольше" },
+          { en: "It rises to ≈ 34 req/s: longer requests are more efficient per seat", ru: "Растёт до ≈ 34 req/s: длинные запросы эффективнее на место" },
+          { en: "It does not move: the knee depends only on the number of seats", ru: "Не двигается: колено зависит только от числа мест" },
+        ],
+        answer: 0,
+        explain: { en: "λ* = 8 / 0.79 ≈ 10.1 req/s (was ≈ 17). The T06 mechanism transfers unchanged: the knee is seats divided by hold time. Note what does NOT change: the synchronous burst of 24 still admits 8 and rejects 16 — the envelope counts arrivals against seats, not seconds. What shrinks is the sustained load the gateway can absorb before honest 429s begin.", ru: "λ* = 8 / 0.79 ≈ 10.1 req/s (было ≈ 17). Механизм T06 переносится без изменений: колено — это места, делённые на время удержания. А вот что НЕ меняется: синхронный бурст из 24 по-прежнему допускает 8 и отбивает 16 — конверт считает заявки против мест, а не секунды. Сжимается тот постоянный темп, который шлюз вмещает до первых честных 429." },
       },
     ],
     reward: {

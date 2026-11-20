@@ -143,7 +143,17 @@
         answer: 0.2, tol: 0.005, unit: { en: "scale", ru: "scale" },
         hint: {
           en: "absmax = 1.4 (magnitude, not the signed max). scale = 1.4 / 7.",
-          ru: "absmax = 1.4 (по модулю, а не максимум со знаком). scale = 1.4 / 7.",
+          ru: "absmax = 1.4 (по модулю, а не максимум со знаком). scale = 1.4 / 7.",
+        },
+        followUp: {
+          q: { en: "Why divide by 7 and not by 8 or 15?", ru: "Почему делить на 7, а не на 8 или 15?" },
+          options: [
+            { en: "The largest POSITIVE code is 7: absmax must land exactly on it, so scale = absmax / 7 (−8 stays spare)", ru: "Наибольший ПОЛОЖИТЕЛЬНЫЙ код — 7: absmax обязан попасть ровно в него, поэтому scale = absmax / 7 (код −8 остаётся запасным)" },
+            { en: "The signed grid is symmetric, so the divisor is half of 16", ru: "Знаковая сетка симметрична, поэтому делитель — половина от 16" },
+            { en: "There are 16 codes in total, so the divisor is 16 − 1 = 15", ru: "Кодов всего 16, поэтому делитель равен 16 − 1 = 15" },
+          ],
+          answer: 0,
+          explain: { en: "The absmax policy maps the row's largest magnitude to the TOP POSITIVE code 7. Dividing by 8 is the signed-range trap; by 15 — the unsigned one. Either leaves the outlier clipped.", ru: "Политика absmax отображает максимальный модуль строки в СТАРШИЙ ПОЛОЖИТЕЛЬНЫЙ код 7. Деление на 8 — ловушка знакового диапазона, на 15 — беззнакового. В обоих случаях выброс уходит в клип." },
         },
       },
       {
@@ -155,7 +165,17 @@
         answer: 2, tol: 0.01, unit: { en: "code", ru: "код" },
         hint: {
           en: "0.37 / 0.2 = 1.85 → round to nearest → 2. No clipping needed here.",
-          ru: "0.37 / 0.2 = 1.85 → округление к ближайшему → 2. Клип тут не нужен.",
+          ru: "0.37 / 0.2 = 1.85 → округление к ближайшему → 2. Клип тут не нужен.",
+        },
+        followUp: {
+          q: { en: "Why 2 — and not 1 (truncation)?", ru: "Почему 2, а не 1 (усечение)?" },
+          options: [
+            { en: "Rounding goes to the NEAREST grid point: 1.85 sits 0.15 from 2 and 0.85 from 1", ru: "Округление идёт к БЛИЖАЙШЕЙ точке сетки: 1.85 стоит в 0.15 от 2 и в 0.85 от 1" },
+            { en: "Ties-to-even rounds 1.85 down because 1 is odd", ru: "Связи-к-чётному округляют 1.85 вниз, потому что 1 нечётная" },
+            { en: "The clip pulls every code below 2 up to 2", ru: "Клип подтягивает все коды ниже 2 вверх к двойке" },
+          ],
+          answer: 0,
+          explain: { en: "Truncation biases codes toward zero and roughly doubles the error of the small weights. Ties-to-even matters only at exact .5 — 1.85 is not a tie.", ru: "Усечение смещает коды к нулю и примерно удваивает ошибку малых весов. Связи-к-чётному работают только ровно на 0.5 — 1.85 не связь." },
         },
       },
       {
@@ -168,6 +188,16 @@
         hint: {
           en: "Code 2 reconstructs to 2 × 0.2 = 0.4; the signed error is 0.4 − 0.37.",
           ru: "Код 2 реконструируется в 2 × 0.2 = 0.4; знаковая ошибка равна 0.4 − 0.37.",
+        },
+        followUp: {
+          q: { en: "Why is the sign +0.03 and not −0.03?", ru: "Почему знак +0.03, а не −0.03?" },
+          options: [
+            { en: "The course convention is error = reconstruction − original: 0.4 − 0.37 = +0.03", ru: "Соглашение курса: ошибка = реконструкция − оригинал: 0.4 − 0.37 = +0.03" },
+            { en: "Quantization always inflates weights, so the error must be positive", ru: "Квантование всегда раздувает веса, поэтому ошибка обязана быть положительной" },
+            { en: "The sign follows the code: code 2 is positive, so the error is positive", ru: "Знак наследуется от кода: код 2 положительный, значит и ошибка положительная" },
+          ],
+          answer: 0,
+          explain: { en: "A sign convention is a contract, not a truth: this course (and the notebook trace) defines error = reconstructed − original. Some texts flip it — always check which one you are reading.", ru: "Знаковое соглашение — это контракт, а не истина: этот курс (и трассировка тетради) определяет ошибку = реконструкция − оригинал. В некоторых текстах знак перевёрнут — всегда проверяй, какой перед тобой." },
         },
       },
     ],
@@ -258,6 +288,92 @@
         timeoutMs: 4000,
       },
     ],
+    challenge: {
+      id: "chal1",
+      word: { en: "challenge", ru: "челлендж" },
+      title: {
+        en: "★ Beat the absmax/7 policy: find a better scale",
+        ru: "★ Побей политику absmax/7: найди scale лучше",
+      },
+      brief: {
+        en: "The row is fixed: <code>[0.13, −0.88, 1.12, −2.40]</code> on the signed INT4 grid [−8, 7]. The absmax/7 policy picks scale = 2.40/7 ≈ 0.343 and lands at MSE ≈ 0.0118 — but absmax is a <em>range</em> policy, not an MSE-optimal one. No tests guide you: search any way you like (grid, bisection, reasoning) and print what you found. The page recomputes the MSE from your scale itself — with ties-to-even rounding and clipping, exactly like the lab — so printed numbers must agree with the round trip.",
+        ru: "Строка фиксирована: <code>[0.13, −0.88, 1.12, −2.40]</code> на знаковой сетке INT4 [−8, 7]. Политика absmax/7 берёт scale = 2.40/7 ≈ 0.343 и даёт MSE ≈ 0.0118 — но absmax — политика <em>диапазона</em>, а не оптимума по MSE. Тестов-каркаса нет: ищи как угодно (сетка, бисекция, рассуждение) и печатай найденное. Страница сама пересчитывает MSE от твоего scale — со связями-к-чётному и клипом, ровно как в лабе, — поэтому числа обязаны сходиться с циклом квантования.",
+      },
+      goal: {
+        en: "Print one line: <code>scale=… mse=…</code> where the recomputed MSE ≤ 0.008 — meaningfully better than the absmax/7 policy (0.0118).",
+        ru: "Напечатай одну строку: <code>scale=… mse=…</code>, где пересчитанный MSE ≤ 0.008 — заметно лучше политики absmax/7 (0.0118).",
+      },
+      mode: "run",
+      numpy: false,
+      timeoutMs: 30000,
+      starter: `# The row (fixed):  values = [0.13, -0.88, 1.12, -2.40]
+# Declared round trip: code = clip(round(v / scale)) into [-8, 7],
+# reconstruction = scale * code, MSE = mean((v - recon)**2).
+# The page reads ONE summary line in exactly this shape:
+#   scale=<your scale> mse=<your claimed MSE>
+# Search any way you like. The page recomputes the MSE itself.
+
+# TODO: search for a scale with MSE <= 0.02, then print the line.
+`,
+      check: (res) => {
+        const out = String(res.stdout || "");
+        const mm = out.match(/scale\s*=\s*([0-9]+(?:\.[0-9]+)?)[\s\S]*?mse\s*=\s*([0-9]+(?:\.[0-9]+)?)/i);
+        if (!mm) {
+          return { ok: false, note: { en: "no summary line found - print exactly: scale=… mse=…", ru: "итоговой строки нет — напечатай ровно: scale=… mse=…" } };
+        }
+        const scale = parseFloat(mm[1]), mseClaimed = parseFloat(mm[2]);
+        if (!(scale > 0)) {
+          return { ok: false, note: { en: "scale must be positive", ru: "scale обязан быть положительным" } };
+        }
+        // same round trip as the lab: Python round (ties to even) + clip
+        const pyRound = (x) => {
+          const f = Math.floor(x), d = x - f;
+          if (d > 0.5) return f + 1;
+          if (d < 0.5) return f;
+          return (f % 2 === 0) ? f : f + 1;
+        };
+        const row = [0.13, -0.88, 1.12, -2.40];
+        let acc = 0;
+        for (const v of row) {
+          const code = Math.max(-8, Math.min(7, pyRound(v / scale)));
+          const recon = scale * code;
+          acc += (v - recon) * (v - recon);
+        }
+        const mse = acc / row.length;
+        if (Math.abs(mse - mseClaimed) > 1e-6 + mse * 0.02) {
+          return { ok: false, note: { en: "your printed mse does not match the recomputed round trip: scale " + scale + " gives MSE " + mse.toFixed(6), ru: "напечатанный mse не сходится с пересчитанным циклом: scale " + scale + " даёт MSE " + mse.toFixed(6) } };
+        }
+        if (mse > 0.008) {
+          return { ok: false, note: { en: "MSE " + mse.toFixed(6) + " > 0.008 - not better enough than the absmax/7 policy (0.0118); search on", ru: "MSE " + mse.toFixed(6) + " > 0.008 — недостаточно лучше политики absmax/7 (0.0118); ищи дальше" } };
+        }
+        return { ok: true, note: { en: "scale " + scale + " → MSE " + mse.toFixed(6) + " — the absmax policy lost to your search", ru: "scale " + scale + " → MSE " + mse.toFixed(6) + " — политика absmax проиграла твоему поиску" } };
+      },
+      reference: `# absmax/7 picks scale = 2.40/7 = 0.3429 -> MSE 0.011833, dominated by the
+# small weights sitting far from grid points. A slightly smaller scale
+# spends grid steps where the mass of the row is and pays a little more
+# clip error on the outlier - total MSE drops about 2x.
+values = [0.13, -0.88, 1.12, -2.40]
+
+def mse_at(scale):
+    tot = 0.0
+    for v in values:
+        q = max(-8, min(7, round(v / scale)))
+        tot += (v - scale * q) ** 2
+    return tot / len(values)
+
+best = None
+s = 0.01
+while s <= 1.0:
+    m = mse_at(s)
+    if best is None or m < best[1]:
+        best = (s, m)
+    s += 0.001
+print(f"scale={best[0]:.3f} mse={best[1]:.6f}")
+# grid search finds scale ~0.296 with MSE ~0.0055 - about 2x better than
+# the absmax policy's 0.0118. Lesson: range-derived scales are robust,
+# not optimal; real kernels special-case outliers (per-group scales,
+# AWQ/GPTQ-style calibration search).`,
+    },
     posttest: [
       {
         id: "p1",
@@ -279,6 +395,39 @@
         options: [{ en: "+0.03 (recon \u2212 original)", ru: "+0.03 (\u0440\u0435\u043a\u043e\u043d \u2212 \u043e\u0440\u0438\u0433\u0438\u043d\u0430\u043b)" }, { en: "\u22120.03 (original \u2212 recon)", ru: "\u22120.03 (\u043e\u0440\u0438\u0433\u0438\u043d\u0430\u043b \u2212 \u0440\u0435\u043a\u043e\u043d)" }, { en: "0.03 / 0.37", ru: "0.03 / 0.37" }],
         answer: 0,
         explain: { en: "Course convention: error = reconstruction \u2212 original = 0.4 \u2212 0.37 = +0.03. Sign conventions must match the notebook.", ru: "\u0421\u043e\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u0435 \u043a\u0443\u0440\u0441\u0430: \u043e\u0448\u0438\u0431\u043a\u0430 = \u0440\u0435\u043a\u043e\u043d\u0441\u0442\u0440\u0443\u043a\u0446\u0438\u044f \u2212 \u043e\u0440\u0438\u0433\u0438\u043d\u0430\u043b = 0.4 \u2212 0.37 = +0.03. \u0417\u043d\u0430\u043a \u0434\u043e\u043b\u0436\u0435\u043d \u0441\u043e\u0432\u043f\u0430\u0434\u0430\u0442\u044c \u0441\u00a0\u0442\u0440\u0430\u0441\u0441\u0438\u0440\u043e\u0432\u043a\u043e\u0439 \u0442\u0435\u0442\u0440\u0430\u0434\u0438." },
+      },
+      {
+        id: "r1",
+        tag: { en: "code reading", ru: "код-чтение" },
+        q: { en: "This «vendor» module reports MSE 0.0786 on the TOY row (scale 0.25); the lab's honest round trip gives 0.0642. Which line is the degradation?", ru: "Этот «вендорский» модуль выдаёт MSE 0.0786 на TOY-строке (scale 0.25), а честный цикл лабы — 0.0642. Какая строка — деградация?" },
+        code: `# quant_lib.py - row-wise symmetric INT4 helper (vendor module, v1.3)
+GRID_LO, GRID_HI = -8, 7
+
+def row_scale(row):
+    absmax = max(abs(v) for v in row)
+    return absmax / 7 if absmax else 1.0
+
+def quantize(row, scale):
+    codes = []
+    for v in row:
+        codes.append(int(v / scale))          # <- A
+    return [max(GRID_LO, min(GRID_HI, c)) for c in codes]
+
+def dequantize(codes, scale):
+    return [scale * c for c in codes]
+
+def mse(row, scale):
+    rec = dequantize(quantize(row, scale), scale)
+    return sum((v - r) ** 2 for v, r in zip(row, rec)) / len(row)
+`,
+        context: { en: "Reproduce it in any exercise editor or the ★ editor: mse([-1.83, -0.52, 0.24, 2.25], 0.25) prints 0.0786 — the degradation is real and stable, not a typo.", ru: "Воспроизведи в любом редакторе упражнений или в ★-редакторе: mse([−1.83, −0.52, 0.24, 2.25], 0.25) печатает 0.0786 — деградация реальная и стабильная, не опечатка." },
+        options: [
+          { en: "Line A: int() truncates toward zero instead of rounding to nearest — codes drift toward zero and the small weights' errors grow", ru: "Строка A: int() усекает к нулю вместо округления к ближайшему — коды смещаются к нулю, и ошибки малых весов растут" },
+          { en: "row_scale: absmax/7 is the wrong policy — it should divide by 8", ru: "row_scale: absmax/7 — неверная политика, надо делить на 8" },
+          { en: "mse: the denominator must be len(row) − 1, not len(row)", ru: "mse: в знаменателе должно быть len(row) − 1, а не len(row)" },
+        ],
+        answer: 0,
+        explain: { en: "int(-2.08) = -2 and int(0.96) = 0: truncation biases every code toward zero (Python's int() truncates, it does not round). On the TOY row 0.24 loses its grid point (code 0 instead of 1) and the MSE grows 0.0642 → 0.0786. The scale policy and the denominator are correct.", ru: "int(−2.08) = −2, int(0.96) = 0: усечение смещает каждый код к нулю (Python-овский int() усекает, а не округляет). На TOY-строке 0.24 теряет свою точку сетки (код 0 вместо 1), и MSE растёт с 0.0642 до 0.0786. Политика scale и знаменатель здесь корректны." },
       },
     ],
     reward: {

@@ -124,6 +124,16 @@
           en: "step = W + b × batch = 60 + 2 × 20.",
           ru: "step = W + b × batch = 60 + 2 × 20.",
         },
+        followUp: {
+          q: { en: "Why exactly 100 ms? Pick the true cause.", ru: "Почему именно 100\u00a0мс? Выбери верную причину." },
+          options: [
+            { en: "W is paid once per step; each of the 20 sequences adds its own b = 2 ms: 60 + 2 × 20", ru: "W платится один раз за шаг; каждая из 20 последовательностей добавляет свои b = 2\u00a0мс: 60 + 2 × 20" },
+            { en: "The step grows quadratically: every sequence multiplies by every other one", ru: "Шаг растёт квадратично: каждая последовательность умножается на каждую" },
+            { en: "W scales with the batch: weights are re-read for every client, 60 × 20", ru: "W масштабируется с батчем: веса перечитываются для каждого клиента, 60 × 20" },
+          ],
+          answer: 0,
+          explain: { en: "One weight read serves the whole batch; the per-sequence cost is only b. That is why batching pays at all.", ru: "Одно чтение весов обслуживает весь батч; на\u00a0каждую последовательность приходится только b. Именно поэтому батчинг вообще выгоден." },
+        },
       },
       {
         id: "q2",
@@ -134,7 +144,17 @@
         answer: 125, tol: 0.5, unit: { en: "tok/s", ru: "ток/с" },
         hint: {
           en: "step = 60 + 2 × 10 = 80 ms; throughput = 10 × 1000 / 80.",
-          ru: "step = 60 + 2 × 10 = 80 мс; throughput = 10 × 1000 / 80.",
+          ru: "step = 60 + 2 × 10 = 80 мс; throughput = 10 × 1000 / 80.",
+        },
+        followUp: {
+          q: { en: "Why 125 tok/s and not 167 (10 × 1000 / 60)?", ru: "Почему 125 ток/с, а\u00a0не 167 (10 × 1000 / 60)?" },
+          options: [
+            { en: "The step is 60 + 2 × 10 = 80 ms: 12.5 steps per second × 10 tokens = 125", ru: "Шаг равен 60 + 2 × 10 = 80\u00a0мс: 12.5 шага в\u00a0секунду × 10 токенов = 125" },
+            { en: "b does not matter at small batches, so the step stays 60 ms", ru: "b не влияет при малых батчах, поэтому шаг остаётся 60\u00a0мс" },
+            { en: "The roof 1000 / b = 500 tok/s is already reached at batch 10", ru: "Крыша 1000 / b = 500 ток/с достигается уже при batch = 10" },
+          ],
+          answer: 0,
+          explain: { en: "Every live sequence adds b to every step — that is the whole cost of batching. Ignoring b over-quotes throughput by ×1.33.", ru: "Каждая живая последовательность добавляет b к\u00a0каждому шагу — в\u00a0этом вся цена батчинга. Игнорирование b завышает throughput в\u00a01.33 раза." },
         },
       },
       {
@@ -146,7 +166,17 @@
         answer: 250, tol: 0.5, unit: { en: "tok/s", ru: "ток/с" },
         hint: {
           en: "Effective batch = min(128, 30) = 30; step = 60 + 2 × 30 = 120 ms; 30 × 1000 / 120. The 98 extra clients only fill the queue.",
-          ru: "Эффективный batch = min(128, 30) = 30; step = 60 + 2 × 30 = 120 мс; 30 × 1000 / 120. Лишние 98 клиентов лишь заполняют очередь.",
+          ru: "Эффективный batch = min(128, 30) = 30; step = 60 + 2 × 30 = 120 мс; 30 × 1000 / 120. Лишние 98 клиентов лишь заполняют очередь.",
+        },
+        followUp: {
+          q: { en: "Why does the model still say 250 tok/s with 128 clients?", ru: "Почему модель всё ещё говорит 250 ток/с при 128 клиентах?" },
+          options: [
+            { en: "The working batch is pinned at the cap 30; the extra 98 clients only fill the queue", ru: "Рабочий батч зажат потолком 30; лишние 98 клиентов лишь заполняют очередь" },
+            { en: "The model averages over all arrivals: batch 128 gives ≈ 405 tok/s, quoted down", ru: "Модель усредняет по всем пришедшим: batch = 128 даёт ≈ 405 ток/с, называется с округлением вниз" },
+            { en: "Clients beyond the cap are dropped, so the batch collapses to 10", ru: "Клиенты сверх потолка отбрасываются, и батч падает до 10" },
+          ],
+          answer: 0,
+          explain: { en: "max_num_seqs caps the working set; beyond it, demand turns into queueing, not tokens — that is the knee mechanism.", ru: "max_num_seqs ограничивает рабочий набор; за\u00a0ним спрос превращается в\u00a0ожидание в\u00a0очереди, а\u00a0не в\u00a0токены — в\u00a0этом механизм колена." },
         },
       },
     ],
@@ -265,6 +295,69 @@
       },
 
     ],
+    challenge: {
+      id: "chal1",
+      word: { en: "challenge", ru: "челлендж" },
+      title: {
+        en: "★ Pick the cap: ≥ 300 tok/s inside a 160 ms step budget",
+        ru: "★ Подбери потолок: ≥ 300 ток/с в бюджете шага 160 мс",
+      },
+      brief: {
+        en: "The teaching model is yours to search. Find <code>max_num_seqs</code> (the working batch) so the model holds <strong>≥ 300 tok/s</strong> while the decode step stays <strong>≤ 160 ms</strong> (W = 60, b = 2). There is no test scaffold here: the page only reads the numbers you print — and accepts them only if they follow the declared model.",
+        ru: "Учебная модель — твоя для поиска. Найди <code>max_num_seqs</code> (рабочий батч) так, чтобы модель держала <strong>≥ 300 ток/с</strong>, а decode-шаг не выходил за <strong>160\u00a0мс</strong> (W = 60, b = 2). Тестов-каркаса нет: страница читает только числа, которые ты напечатаешь, — и принимает их, лишь если они следуют заявленной модели.",
+      },
+      goal: {
+        en: "Print one summary line: <code>cap=… step_ms=… tok_s=…</code> with step ≤ 160 ms and tok/s ≥ 300.",
+        ru: "Напечатай одну итоговую строку: <code>cap=… step_ms=… tok_s=…</code> с шагом ≤ 160\u00a0мс и throughput ≥ 300 ток/с.",
+      },
+      mode: "run",
+      numpy: false,
+      timeoutMs: 30000,
+      starter: `# Goal: BOTH constraints at once - throughput >= 300 tok/s while the decode
+# step stays <= 160 ms (W = 60, b = 2). Search any way you like: a loop, a
+# formula, a grid. The page reads ONE summary line in exactly this shape:
+#   cap=<max_num_seqs> step_ms=<step in ms> tok_s=<throughput>
+
+# TODO: find a cap satisfying both constraints and print the summary line.
+`,
+      check: (res) => {
+        const out = String(res.stdout || "");
+        const mm = out.match(/cap\s*=\s*([0-9]+(?:\.[0-9]+)?)[\s\S]*?step_ms\s*=\s*(-?[0-9]+(?:\.[0-9]+)?)[\s\S]*?tok_s\s*=\s*(-?[0-9]+(?:\.[0-9]+)?)/i);
+        if (!mm) {
+          return { ok: false, note: { en: "no summary line found - print exactly: cap=… step_ms=… tok_s=…", ru: "итоговой строки нет — напечатай ровно: cap=… step_ms=… tok_s=…" } };
+        }
+        const cap = parseFloat(mm[1]), step = parseFloat(mm[2]), tok = parseFloat(mm[3]);
+        const stepModel = 60 + 2 * cap;
+        const tokModel = (cap * 1000.0) / stepModel;
+        const consistent = Math.abs(step - stepModel) <= Math.max(0.5, stepModel * 0.01) &&
+          Math.abs(tok - tokModel) <= tokModel * 0.01;
+        if (!consistent) {
+          return { ok: false, note: { en: "the numbers must follow the declared model: step = 60 + 2 × cap, tok/s = cap × 1000 / step", ru: "числа должны следовать заявленной модели: шаг = 60 + 2 × cap, ток/с = cap × 1000 / шаг" } };
+        }
+        if (step > 160) {
+          return { ok: false, note: { en: "step " + step + " ms exceeds the 160 ms budget - the cap is too high", ru: "шаг " + step + " мс превышает бюджет 160\u00a0мс — потолок слишком высок" } };
+        }
+        if (tok < 300) {
+          return { ok: false, note: { en: "throughput " + tok + " tok/s is below the 300 tok/s goal - the cap is too low", ru: "throughput " + tok + " ток/с ниже цели 300 ток/с — потолок слишком низок" } };
+        }
+        return { ok: true, note: { en: "cap " + cap + ": step " + step + " ms ≤ 160, " + tok + " tok/s ≥ 300 - inside the feasible band", ru: "cap " + cap + ": шаг " + step + " мс ≤ 160, " + tok + " ток/с ≥ 300 — внутри допустимой полосы" } };
+      },
+      reference: `# Closed form: both constraints are monotone in cap.
+#   step <= 160  ->  60 + 2*cap <= 160          ->  cap <= 50
+#   tok  >= 300  ->  cap*1000/(60+2*cap) >= 300 ->  cap >= 45
+# Any cap in the band 45..50 satisfies both; the smallest is 45.
+
+for cap in range(1, 200):
+    step = 60 + 2 * cap
+    tok = cap * 1000.0 / step
+    if step <= 160 and tok >= 300:
+        print(f"cap={cap} step_ms={step:.1f} tok_s={tok:.1f}")
+        break
+
+# The grid finds 45; the algebra proves the whole band 45..50 works - and
+# that both borders are active: below 45 the throughput goal fails, above
+# 50 the step budget fails.`,
+    },
     posttest: [
       {
         id: "p1",

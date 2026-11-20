@@ -125,6 +125,16 @@
           en: "ridge = compute ceiling / bandwidth. Keep the units: TFLOP/s divided by GB/s.",
           ru: "хребет = крыша вычислений / пропускная способность. Следи за единицами: дели TFLOP/s на GB/s.",
         },
+        followUp: {
+          q: { en: "Why exactly 100 FLOP/B? Pick the true cause.", ru: "Почему именно 100 FLOP/Б? Выбери верную причину." },
+          options: [
+            { en: "The units cancel: TFLOP/s ÷ GB/s leaves 10³ FLOP/B, and 60/600 = 0.1 × 10³ = 100", ru: "Единицы сокращаются: TFLOP/s ÷ GB/s оставляет 10³ FLOP/Б, а 60/600 = 0.1 × 10³ = 100" },
+            { en: "The ridge is bandwidth ÷ compute = 600/60 = 10", ru: "Хребет — это bandwidth ÷ compute = 600/60 = 10" },
+            { en: "The ridge is always 1000 for fp16 GPUs", ru: "Хребет всегда 1000 для fp16-GPU" },
+          ],
+          answer: 0,
+          explain: { en: "At the ridge both roofs are equal: intensity × bandwidth = compute. Solve for intensity — the units do the work: (10¹² FLOP/s)/(10⁹ B/s) = 10³ FLOP/B.", ru: "На хребте обе крыши равны: intensity × bandwidth = compute. Вырази intensity — работу делают единицы: (10¹² FLOP/с)/(10⁹ Б/с) = 10³ FLOP/Б." },
+        },
       },
       {
         id: "q2",
@@ -137,6 +147,16 @@
           en: "20 FLOP/B is left of the ridge: the bandwidth roof bounds you — intensity × bandwidth.",
           ru: "20 FLOP/Б левее хребта: ограничивает крыша памяти — интенсивность × пропускная способность.",
         },
+        followUp: {
+          q: { en: "Why 12 and not the compute roof 60?", ru: "Почему 12, а не крыша вычислений 60?" },
+          options: [
+            { en: "Left of the ridge the data movement is the bottleneck: 20 × 600 GB/s = 12 000 GFLOP/s = 12 TFLOP/s", ru: "Левее хребта узкое место — перемещение данных: 20 × 600 GB/s = 12 000 GFLOP/s = 12 TFLOP/s" },
+            { en: "The min() always picks the smaller number, which is always the compute roof", ru: "min() всегда берёт меньшее число, а это всегда крыша вычислений" },
+            { en: "Decode wastes 80 % of the compute on overhead", ru: "Decode тратит 80 % вычислений на накладные расходы" },
+          ],
+          answer: 0,
+          explain: { en: "Left of the ridge, intensity × bandwidth < compute: the weights stream limits you. The compute roof only binds right of the ridge.", ru: "Левее хребта intensity × bandwidth < compute: ограничивает поток весов. Крыша вычислений связывает только правее хребта." },
+        },
       },
       {
         id: "q3",
@@ -148,6 +168,16 @@
         hint: {
           en: "2 × 36 × 2 × 128 × 2 bytes = 36 864 B; divide by 1024.",
           ru: "2 × 36 × 2 × 128 × 2 байта = 36 864 Б; раздели на 1024.",
+        },
+        followUp: {
+          q: { en: "Why does the leading 2 matter so much here?", ru: "Почему ведущая двойка здесь так важна?" },
+          options: [
+            { en: "It is K and V: every token stores two state tensors, so forgetting it understates the bill exactly ×2", ru: "Это K и V: каждый токен хранит два тензора состояния, поэтому забыть её — занизить платёж ровно вдвое" },
+            { en: "It is the fp16 two-byte size — counted twice for safety", ru: "Это двухбайтность fp16 — посчитанная дважды для надёжности" },
+            { en: "It is the number of KV caches kept per GPU", ru: "Это число KV-кэшей, держащихся на GPU" },
+          ],
+          answer: 0,
+          explain: { en: "2 × 36 × 2 × 128 × 2 B = 36 864 B. Drop the first 2 and every pool estimate halves: 87 381 tokens instead of 174 762 — the classic understatement.", ru: "2 × 36 × 2 × 128 × 2 Б = 36 864 Б. Убери первую двойку — и каждая оценка пула делится пополам: 87 381 токен вместо 174 762. Классическое занижение." },
         },
       },
     ],
@@ -228,6 +258,64 @@
         timeoutMs: 4000,
       },
     ],
+    challenge: {
+      id: "chal1",
+      word: { en: "challenge", ru: "челлендж" },
+      title: {
+        en: "★ Fit 20 sessions of 4096 tokens into the 6 GiB pool",
+        ru: "★ Умести 20 сессий по 4096 токенов в пул 6 ГиБ",
+      },
+      brief: {
+        en: "You design the engine's KV shape: choose <code>kv_heads ∈ {1, 2, 4, 8}</code> and the element width <code>bytes ∈ {1, 2}</code> (fp8/fp16) with the fixed <code>layers = 36</code>, <code>head_dim = 128</code>. Each session holds a 4096-token context. No tests guide you — the page reads only the numbers you print and accepts them only if they follow the declared KV formula.",
+        ru: "Ты проектируешь KV-форму движка: выбери <code>kv_heads ∈ {1, 2, 4, 8}</code> и ширину элемента <code>bytes ∈ {1, 2}</code> (fp8/fp16) при фиксированных <code>layers = 36</code>, <code>head_dim = 128</code>. Каждая сессия держит контекст 4096 токенов. Тестов-каркаса нет — страница читает только напечатанные числа и принимает их, лишь если они следуют заявленной KV-формуле.",
+      },
+      goal: {
+        en: "Print one line: <code>kv_heads=… bytes=… kib=… sessions=…</code> with sessions ≥ 20, where sessions = floor(6 GiB ÷ per-token bytes ÷ 4096).",
+        ru: "Напечатай одну строку: <code>kv_heads=… bytes=… kib=… sessions=…</code> с sessions ≥ 20, где sessions = floor(6 ГиБ ÷ байты на токен ÷ 4096).",
+      },
+      mode: "run",
+      numpy: false,
+      timeoutMs: 30000,
+      starter: `# Goal: pick kv_heads (1/2/4/8) and bytes (1 = fp8, 2 = fp16) so that a
+# 6 GiB KV pool holds >= 20 sessions of 4096 tokens each.
+# Declared per-token bill: 2 * 36 * kv_heads * 128 * bytes (bytes, K + V).
+# The page reads ONE summary line in exactly this shape:
+#   kv_heads=<1|2|4|8> bytes=<1|2> kib=<KiB per token> sessions=<floor>
+
+# TODO: try the shapes, compute the bill and the sessions, print the line.
+`,
+      check: (res) => {
+        const out = String(res.stdout || "");
+        const mm = out.match(/kv_heads\s*=\s*([1248])\b[\s\S]*?bytes\s*=\s*([12])\b[\s\S]*?kib\s*=\s*([0-9]+(?:\.[0-9]+)?)[\s\S]*?sessions\s*=\s*([0-9]+)/i);
+        if (!mm) {
+          return { ok: false, note: { en: "no summary line found - print exactly: kv_heads=… bytes=… kib=… sessions=…", ru: "итоговой строки нет — напечатай ровно: kv_heads=… bytes=… kib=… sessions=…" } };
+        }
+        const kv = parseInt(mm[1], 10), bytesEl = parseInt(mm[2], 10);
+        const kib = parseFloat(mm[3]), sessions = parseInt(mm[4], 10);
+        const bytesTok = 2 * 36 * kv * 128 * bytesEl;
+        const kibModel = bytesTok / 1024;
+        if (Math.abs(kib - kibModel) > Math.max(0.1, kibModel * 0.01)) {
+          return { ok: false, note: { en: "kib must follow the declared bill: 2 × 36 × kv_heads × 128 × bytes / 1024 = " + kibModel.toFixed(2), ru: "kib обязан следовать заявленному платежу: 2 × 36 × kv_heads × 128 × bytes / 1024 = " + kibModel.toFixed(2) } };
+        }
+        const sessModel = Math.floor(6 * 1024 * 1024 * 1024 / (bytesTok * 4096));
+        if (sessions !== sessModel) {
+          return { ok: false, note: { en: "sessions must be floor(6 GiB ÷ " + bytesTok + " B ÷ 4096) = " + sessModel, ru: "sessions — это floor(6 ГиБ ÷ " + bytesTok + " Б ÷ 4096) = " + sessModel } };
+        }
+        if (sessModel < 20) {
+          return { ok: false, note: { en: sessModel + " sessions < 20 - the shape is too heavy, trade kv_heads or bytes down", ru: sessModel + " сессий < 20 — форма слишком тяжёлая, снижай kv_heads или bytes" } };
+        }
+        return { ok: true, note: { en: kv + " kv-heads × " + (bytesEl === 1 ? "fp8" : "fp16") + ": " + kibModel.toFixed(0) + " KiB/token → " + sessModel + " sessions ≥ 20", ru: kv + " kv-голов × " + (bytesEl === 1 ? "fp8" : "fp16") + ": " + kibModel.toFixed(0) + " КиБ/токен → " + sessModel + " сессий ≥ 20" } };
+      },
+      reference: `# The bill is 2 * 36 * kv * 128 * bytes; sessions = 6 GiB // (bill * 4096).
+# Walk the shapes honestly and watch the lever work:
+for kv in (1, 2, 4, 8):
+    for b in (1, 2):
+        bill = 2 * 36 * kv * 128 * b
+        sessions = 6 * 1024**3 // (bill * 4096)
+        print(f"kv_heads={kv} bytes={b} kib={bill / 1024:.1f} sessions={sessions}")
+# kv_heads=8 with fp16 doubles the bill twice: 10 sessions - too heavy.
+# Any of kv<=4 at fp16 (or kv=8 at fp8) clears the 20-session goal.`,
+    },
     posttest: [
       {
         id: "p1",

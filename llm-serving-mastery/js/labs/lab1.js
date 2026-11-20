@@ -128,6 +128,14 @@
       startRewardLab1(reward);
       if (live) reward.scrollIntoView({ behavior: "smooth", block: "center" });
     }
+    // ★-челлендж живёт вне счёта чекпойнтов: свой бейдж у полосы прогресса
+    var chBadge = document.querySelector("[data-lab-challenge-badge]");
+    if (chBadge) {
+      var chSolved = Object.keys(p).some(function (k) {
+        return k.indexOf("ch:") === 0 && k.indexOf(":att") === -1 && p[k] === 1;
+      });
+      chBadge.hidden = !chSolved;
+    }
   }
 
   // L1a-2: компактная версия reward-анимации labs-render (lab1 рендерится сам)
@@ -243,12 +251,18 @@
     if (hintBtn) hintBtn.addEventListener("click", function () {
       hint.dataset.open = hint.dataset.open === "1" ? "0" : "1";
     });
+    var fuOpened = false;
     function check() {
       var v = parseFloat(String(input.value).replace(",", "."));
       if (!isFinite(v)) { verdict.dataset.state = "fail"; verdict.textContent = T.v_num; return; }
       if (Math.abs(v - answer) <= tol) {
         verdict.dataset.state = "pass"; verdict.textContent = T.v_pass + " (≈ " + answer + " " + unit + ")";
-        markDone(id);
+        if (window.LAB1_FU && window.LAB1_FU[id]) {
+          // число верное, но чекпойнт закрывается только после верной причины
+          if (!fuOpened) { fuOpened = true; renderFollowUpLab1(root, window.LAB1_FU[id], id, false); }
+        } else {
+          markDone(id);
+        }
       } else {
         verdict.dataset.state = "fail";
         verdict.textContent = Math.abs(v - answer) <= tol * 3 ? T.v_close : T.v_fail;
@@ -261,6 +275,9 @@
       input.value = String(answer);
       verdict.dataset.state = "pass";
       verdict.textContent = T.v_pass + " (≈ " + answer + " " + unit + ")";
+      if (window.LAB1_FU && window.LAB1_FU[id]) {
+        fuOpened = true; renderFollowUpLab1(root, window.LAB1_FU[id], id, true);
+      }
     }
   }
 
@@ -364,6 +381,230 @@
     });
   }
 
+  // ------------------------------------------------ quiz follow-up (why?)
+  // Second step of a numeric quiz: name the reason, close the checkpoint.
+  // Mirrors labs-render.js renderFollowUp for the self-rendered lab 01.
+  function renderFollowUpLab1(root, fu, quizId, solvedNow) {
+    var LETTERS = ["A", "B", "C", "D", "E"];
+    var ru = document.documentElement.dataset.lang === "ru";
+    var trField = function (f) { return (typeof f === "string") ? f : (f[ru ? "ru" : "en"] || f.en || ""); };
+    var wrap = document.createElement("div"); wrap.className = "lab-follow";
+    var q = document.createElement("p"); q.className = "lab-follow-q"; q.textContent = trField(fu.q);
+    wrap.appendChild(q);
+    var list = document.createElement("div"); list.className = "lab-follow-options";
+    var fuVerdict = document.createElement("p"); fuVerdict.className = "lab-verdict";
+    fuVerdict.setAttribute("aria-live", "polite");
+    var explain = document.createElement("p"); explain.className = "lab-follow-explain";
+    var solved = !!solvedNow;
+    var attempts = 0;
+    var pairs;
+    if (window.LSMPosttest && window.LSMPosttest.shuffleOptions) {
+      pairs = window.LSMPosttest.shuffleOptions(
+        { id: quizId + ":fu", options: fu.options, answer: fu.answer }, "lab1:fu", 0);
+    } else {
+      pairs = fu.options.map(function (o, i) { return { opt: o, ok: i === fu.answer }; });
+    }
+    function mark() {
+      var p = loadProgress(); p[quizId] = 1;
+      try { localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) { /* private mode */ }
+      renderProgress(true);
+    }
+    pairs.forEach(function (pair, i) {
+      var btn = document.createElement("button");
+      btn.type = "button"; btn.className = "lab-mc-opt";
+      var letter = document.createElement("span"); letter.className = "lab-mc-letter";
+      letter.textContent = LETTERS[i];
+      var text = document.createElement("span"); text.className = "lab-mc-text";
+      text.textContent = trField(pair.opt);
+      btn.appendChild(letter); btn.appendChild(text);
+      btn.addEventListener("click", function () {
+        if (solved) return;
+        attempts += 1;
+        if (pair.ok) {
+          solved = true;
+          btn.classList.add("right");
+          list.querySelectorAll(".lab-mc-opt").forEach(function (b) { b.disabled = true; });
+          fuVerdict.dataset.state = "pass";
+          fuVerdict.textContent = T.fuCorrect || "OK";
+          explain.style.display = "block";
+          explain.textContent = trField(fu.explain);
+          mark();
+        } else {
+          btn.classList.add("wrong"); btn.disabled = true;
+          fuVerdict.dataset.state = "fail";
+          fuVerdict.textContent = T.fuFail || "not the cause";
+        }
+      });
+      list.appendChild(btn);
+    });
+    if (solvedNow) {
+      var okIndex = -1;
+      pairs.forEach(function (p2, i) { if (p2.ok) okIndex = i; });
+      var btns = list.querySelectorAll(".lab-mc-opt");
+      btns.forEach(function (b) { b.disabled = true; });
+      if (btns[okIndex]) btns[okIndex].classList.add("right");
+      fuVerdict.dataset.state = "pass";
+      fuVerdict.textContent = T.fuCorrect || "OK";
+      explain.style.display = "block";
+      explain.textContent = trField(fu.explain);
+    }
+    wrap.appendChild(list); wrap.appendChild(fuVerdict); wrap.appendChild(explain);
+    root.appendChild(wrap);
+  }
+
+  // ------------------------------------------------------------- challenge
+  // ★ report-mode challenge on the lab's own declared model: the student
+  // experiments with the sandbox and reports a configuration + measurement;
+  // the page replays the arithmetic (jitter-tolerant) and checks the goal.
+  var CHALLENGE = {
+    title: { en: "★ Fit a warm answer in 3 s with ≥ 40 tokens", ru: "★ Уложи тёплый ответ в 3 с при ≥ 40 токенах" },
+    brief: {
+      en: "The declared model is yours to search: pick a prompt length and <code>max_tokens</code> so a WARM answer (Exercise 1's form, cold unchecked) finishes within <strong>3 s</strong> while producing <strong>≥ 40 tokens</strong>. No tests guide you: experiment, read your own metrics, report what you measured — the page replays the arithmetic with the declared jitter tolerance.",
+      ru: "Заявленная модель — твоя для поиска: подбери длину промпта и <code>max_tokens</code> так, чтобы ТЁПЛЫЙ ответ (форма упражнения 1, без галочки cold) уложился в <strong>3 с</strong>, выдав <strong>≥ 40 токенов</strong>. Тестов-каркаса нет: экспериментируй, читай свои метрики, отчитывайся об измеренном — страница пересчитывает арифметику с заявленным допуском на джиттер.",
+    },
+    goal: {
+      en: "Report one line of your experiment: prompt characters, max_tokens, and the «Last token» seconds of the warm run.",
+      ru: "Отчитайся одной строкой своего эксперимента: символов в промпте, max_tokens и секунды метрики «Последний токен» тёплого прогона.",
+    },
+    fields: [
+      { key: "chars", label: { en: "prompt characters", ru: "символов в промпте" } },
+      { key: "n", label: { en: "max_tokens", ru: "max_tokens" } },
+      { key: "total", label: { en: "last token, s (your metric)", ru: "последний токен, с (твоя метрика)" } },
+    ],
+    check: function (v) {
+      var chars = parseInt(String(v.chars || ""), 10);
+      var n = parseInt(String(v.n || ""), 10);
+      var total = parseFloat(String(v.total || "").replace(",", "."));
+      if (![chars, n].every(Number.isFinite) || !isFinite(total)) {
+        return { ok: false, note: { en: "fill every field with numbers (the seconds accept a comma)", ru: "заполни все поля числами (секунды можно с запятой)" } };
+      }
+      var tokens = Math.max(1, Math.ceil(chars / 4));
+      if (tokens > 512) {
+        return { ok: false, note: { en: "the prompt exceeds the declared 512-token limit", ru: "промпт превышает заявленный лимит в 512 токенов" } };
+      }
+      if (!Number.isInteger(n) || n < 1 || n > 256) {
+        return { ok: false, note: { en: "max_tokens must be an integer from 1 to 256 — the gateway would 400 this", ru: "max_tokens — целое от 1 до 256 — иначе шлюз ответил бы 400" } };
+      }
+      var base = (40 + 0.625 * tokens + 60 * (n - 1)) / 1000;
+      if (n < 40) {
+        return { ok: false, note: { en: "only " + n + " tokens - the goal asks for >= 40", ru: "всего " + n + " токенов — цель требует ≥ 40" } };
+      }
+      if (base > 3) {
+        return { ok: false, note: { en: "the model gives " + base.toFixed(2) + " s for that shape - over the 3 s budget; shorten the prompt or the answer", ru: "модель даёт " + base.toFixed(2) + " с для такой формы — за бюджетом 3 с; укороти промпт или ответ" } };
+      }
+      if (Math.abs(total - base) > 0.12 * base) {
+        return { ok: false, note: { en: "your reported " + total + " s is too far from the model's " + base.toFixed(2) + " s (±10 % jitter) - run the experiment and report ITS metric", ru: "твои " + total + " с слишком далеко от модельных " + base.toFixed(2) + " с (джиттер ±10 %) — прогони эксперимент и отчитайся ЕГО метрикой" } };
+      }
+      return { ok: true, note: { en: chars + " chars ≈ " + tokens + " tokens + " + n + " output: nominal " + base.toFixed(2) + " s ≤ 3 s — the goal is met with " + (3 - base).toFixed(2) + " s to spare", ru: chars + " символов ≈ " + tokens + " токенов + " + n + " на выходе: номинально " + base.toFixed(2) + " с ≤ 3 с — цель достигнута с запасом " + (3 - base).toFixed(2) + " с" } };
+    },
+    reference: `# The algebra: warm wall = (40 + 0.625 * prompt_tokens + 60 * (n - 1)) / 1000 s.
+# A 400-character prompt is ~100 tokens; the answer needs >= 40 tokens.
+n = 40
+prompt_tokens = 100
+wall_s = (40 + 0.625 * prompt_tokens + 60 * (n - 1)) / 1000
+print(wall_s)   # 2.396 s - fits with 0.6 s to spare
+# Longer answers cost 60 ms each - the step dominates, so the tightest
+# legal shape is a short prompt and exactly 40 output tokens. Anything
+# beyond n = 49 breaks the budget no matter how short the prompt is.`,
+  };
+
+  function initChallengeLab1() {
+    var host = document.querySelector("[data-lab-challenge]");
+    if (!host) return;
+    var section = document.querySelector("[data-lab-challenge-section]");
+    if (section) section.hidden = false;
+    var ru = document.documentElement.dataset.lang === "ru";
+    var trField = function (f) { return (typeof f === "string") ? f : (f[ru ? "ru" : "en"] || f.en || ""); };
+    var card = document.createElement("div"); card.className = "lab-card lab-challenge";
+    var head = document.createElement("div"); head.className = "lab-ch-head";
+    var star = document.createElement("span"); star.className = "lab-ch-star"; star.textContent = "★";
+    var word = document.createElement("span"); word.className = "lab-ch-word";
+    word.textContent = ru ? "челлендж" : "challenge";
+    var att = document.createElement("span"); att.className = "lab-ch-att";
+    head.appendChild(star); head.appendChild(word); head.appendChild(att);
+    card.appendChild(head);
+    var h3 = document.createElement("h3"); h3.textContent = trField(CHALLENGE.title); card.appendChild(h3);
+    var brief = document.createElement("p"); brief.innerHTML = trField(CHALLENGE.brief); card.appendChild(brief);
+    var goal = document.createElement("p"); goal.className = "lab-ch-goal"; goal.innerHTML = trField(CHALLENGE.goal); card.appendChild(goal);
+
+    var attempts = 0;
+    var KEYCH = "ch:chal1";
+    var ATT = "ch:chal1:att";
+    function showAttempts() {
+      att.textContent = attempts ? (ru ? "проверок: " + attempts : "checks: " + attempts) : "";
+    }
+    function bump() {
+      attempts += 1;
+      var p = loadProgress(); p[ATT] = attempts;
+      try { localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) {}
+      showAttempts();
+    }
+    attempts = Number(loadProgress()[ATT] || 0);
+    showAttempts();
+
+    var fieldsWrap = document.createElement("div"); fieldsWrap.className = "lab-ch-fields";
+    CHALLENGE.fields.forEach(function (f) {
+      var w = document.createElement("label"); w.className = "lab-ch-field";
+      var lab = document.createElement("span"); lab.textContent = trField(f.label);
+      var inp = document.createElement("input");
+      inp.type = "text"; inp.setAttribute("aria-label", trField(f.label));
+      inp.dataset.chField = f.key;
+      w.appendChild(lab); w.appendChild(inp);
+      fieldsWrap.appendChild(w);
+    });
+    card.appendChild(fieldsWrap);
+    var controls = document.createElement("div"); controls.className = "lab-controls";
+    var checkBtn = document.createElement("button"); checkBtn.type = "button"; checkBtn.className = "button";
+    checkBtn.textContent = T.chCheck || "Check";
+    controls.appendChild(checkBtn);
+    var refBtn = document.createElement("button"); refBtn.type = "button";
+    refBtn.className = "button secondary"; refBtn.hidden = true;
+    refBtn.textContent = ru ? "Показать эталон" : "Show solution";
+    controls.appendChild(refBtn);
+    card.appendChild(controls);
+    var verdict = document.createElement("p"); verdict.className = "lab-verdict";
+    verdict.setAttribute("aria-live", "polite");
+    card.appendChild(verdict);
+    var note = document.createElement("p"); note.className = "lab-ch-note"; card.appendChild(note);
+    var refBox = document.createElement("pre"); refBox.className = "lab-solution";
+    refBox.style.display = "none";
+    card.appendChild(refBox);
+    refBtn.addEventListener("click", function () {
+      if (refBox.style.display === "none") {
+        refBox.textContent = CHALLENGE.reference;
+        refBox.style.display = "block";
+      } else {
+        refBox.style.display = "none";
+      }
+    });
+    checkBtn.addEventListener("click", function () {
+      var values = {};
+      card.querySelectorAll("[data-ch-field]").forEach(function (inp) {
+        values[inp.dataset.chField] = inp.value.trim();
+      });
+      bump();
+      var r = CHALLENGE.check(values) || { ok: false };
+      note.textContent = r.note ? trField(r.note) : "";
+      if (r.ok) {
+        var p = loadProgress(); p[KEYCH] = 1;
+        try { localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) {}
+        verdict.dataset.state = "pass";
+        verdict.textContent = T.chSolved || "challenge solved";
+        refBtn.hidden = false;
+        renderProgress(true);
+      } else {
+        verdict.dataset.state = "fail";
+        verdict.textContent = T.chNotYet || "goal not met";
+      }
+    });
+    if (loadProgress()[KEYCH]) {
+      verdict.dataset.state = "pass";
+      verdict.textContent = T.chSolved || "challenge solved";
+      refBtn.hidden = false;
+    }
+    host.appendChild(card);
+  }
+
   // ------------------------------------------------------------------ init
   document.addEventListener("DOMContentLoaded", function () {
     if (window.LSMPosttest && window.LAB1_POSTTEST) {
@@ -383,5 +624,6 @@
     initQuiz("q2", 160, 10, "ms");
     initQuiz("q3", 3.94, 0.12, "s");
     initEx1(); initEx2(); initEx3();
+    initChallengeLab1();
   });
 })();

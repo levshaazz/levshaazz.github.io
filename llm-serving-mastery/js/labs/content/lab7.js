@@ -130,6 +130,16 @@
           en: "Margin = thr − floor = 1650 − 1200. It clears the SLO too: 450 ≤ 800, so the config is feasible.",
           ru: "Запас = thr − floor = 1650 − 1200. SLO тоже выдержан: 450 ≤ 800, значит конфигурация допустима.",
         },
+        followUp: {
+          q: { en: "Why is the throughput margin thr − floor and not thr − SLO?", ru: "Почему запас по throughput — это thr − floor, а не thr − SLO?" },
+          options: [
+            { en: "Each bound pairs with its own metric: the floor guards throughput, the SLO guards p95 — mixing them compares incompatible units", ru: "Каждая граница парна своей метрике: floor охраняет throughput, SLO охраняет p95 — смешивание сравнивает несовместимые единицы" },
+            { en: "SLO is always larger than floor, so thr − SLO is the honest margin", ru: "SLO всегда больше floor, поэтому thr − SLO — честный запас" },
+            { en: "Margins only exist after the freeze, so the formula changes then", ru: "Запасы существуют только после заморозки, поэтому формула тогда меняется" },
+          ],
+          answer: 0,
+          explain: { en: "The conjunction is two separate comparisons: thr ≥ floor (tok/s against tok/s) and p95 ≤ SLO (ms against ms). Each margin answers «how far from ITS bound» — 450 tok/s and 350 ms, never a mix.", ru: "Конъюнкция — два отдельных сравнения: thr ≥ floor (ток/с к ток/с) и p95 ≤ SLO (мс к мс). Каждый запас отвечает «как далеко от СВОЕЙ границы» — 450 ток/с и 350 мс, никогда не смесь." },
+        },
       },
       {
         id: "q2",
@@ -142,6 +152,16 @@
           en: "Tail margin = SLO − p95 = 800 − 450. A negative value here would be an SLO violation you can read before the held-out run.",
           ru: "Запас по хвосту = SLO − p95 = 800 − 450. Отрицательное значение здесь — нарушение SLO, которое видно ещё до held-out.",
         },
+        followUp: {
+          q: { en: "Why do we read the p95 margin as SLO − p95 (not p95 − SLO)?", ru: "Почему запас по p95 читается как SLO − p95 (а не p95 − SLO)?" },
+          options: [
+            { en: "Margin = ceiling − measured, so a positive number means headroom; the flipped order would call every good config negative", ru: "Запас = потолок − измеренное, поэтому положительное число означает запас; перевёрнутый порядок назвал бы отрицательным каждую хорошую конфигурацию" },
+            { en: "p95 is subtracted first by convention in all monitoring systems", ru: "p95 вычитается первым по конвенции во всех системах мониторинга" },
+            { en: "The order matters only when the margin is exactly zero", ru: "Порядок имеет значение только при ровно нулевом запасе" },
+          ],
+          answer: 0,
+          explain: { en: "Sign carries meaning: +350 ms is headroom, −350 ms is a violation already sitting in the sweep table. Flipping the order hides violations as «positive» numbers — the exact confusion the units bug of Exercise 3 exploits.", ru: "Знак несёт смысл: +350 мс — запас, −350 мс — уже сидящее в свип-таблице нарушение. Перевёрнутый порядок прячет нарушения за «положительными» числами — ровно та путаница, на которой играет баг с единицами из упражнения 3." },
+        },
       },
       {
         id: "q3",
@@ -152,7 +172,17 @@
         answer: 5, tol: 0.1, unit: { en: "configs", ru: "конфигураций" },
         hint: {
           en: "1 + 3 + 1 = 5 — the notebook freezes exactly this budget and forbids more.",
-          ru: "1 + 3 + 1 = 5 — тетрадь замораживает именно этот бюджет и больше не разрешает.",
+          ru: "1 + 3 + 1 = 5 — тетрадь замораживает именно этот бюджет и больше не разрешает.",
+        },
+        followUp: {
+          q: { en: "Why bound the plan at 5 configs instead of sweeping all combinations?", ru: "Почему план ограничен 5 конфигурациями, а не полным перебором?" },
+          options: [
+            { en: "Every config is a measured run: the frozen budget keeps the search honest, comparable and affordable — failed rows stay in the table, nothing is hidden", ru: "Каждая конфигурация — измеренный прогон: замороженный бюджет держит поиск честным, сравнимым и посильным — неудачные строки остаются в таблице, ничего не прячется" },
+            { en: "Five is a hardware limit of the GPU cluster", ru: "Пять — аппаратный лимит GPU-кластера" },
+            { en: "The other combinations are mathematically guaranteed to be worse", ru: "Остальные комбинации математически гарантированно хуже" },
+          ],
+          answer: 0,
+          explain: { en: "An unconstrained sweep is where cherry-picking lives: with a frozen plan (baseline + OFAT + one pair) the numbers are comparable across sweeps and the failures stay visible. That discipline, not the count 5 itself, is what transfers to real tuning.", ru: "Безграничный свип — место жительства cherry-picking: замороженный план (baseline + OFAT + одна пара) делает числа сравнимыми между свипами, а неудачи — видимыми. Переносится на реальный тюнинг именно эта дисциплина, а не само число 5." },
         },
       },
     ],
@@ -275,6 +305,73 @@
         timeoutMs: 4000,
       },
     ],
+    challenge: {
+      id: "chal1",
+      word: { en: "challenge", ru: "челлендж" },
+      title: {
+        en: "★ p95 ≤ 400 ms at thr ≥ 1400 tok/s: find the working point",
+        ru: "★ p95 ≤ 400 мс при thr ≥ 1400 ток/с: найди рабочую точку",
+      },
+      brief: {
+        en: "A harder SLO than the lab's own sweep. The declared toy model of the engine: <code>thr = 800 + 25 × seqs</code>; <code>p95 = 250 + 5 × seqs + 4000 × (0.95 − mem)²</code> — more sequences buy throughput and latency, more memory (closer to 0.95) buys latency back. Knob grids: <code>seqs ∈ {8, 16, 24, 32, 40, 48, 56, 64}</code>, <code>mem ∈ {0.70, 0.75, 0.80, 0.85, 0.90, 0.95}</code>. No tests guide you: run your own OFAT or full grid — the page only checks the numbers you print, against the declared model.",
+        ru: "SLO жёстче, чем в свипе самой лабы. Заявленная игрушечная модель движка: <code>thr = 800 + 25 × seqs</code>; <code>p95 = 250 + 5 × seqs + 4000 × (0.95 − mem)²</code> — больше последовательностей покупает throughput и латентность, больше памяти (ближе к 0.95) откупает латентность обратно. Сетки ручек: <code>seqs ∈ {8, 16, 24, 32, 40, 48, 56, 64}</code>, <code>mem ∈ {0.70, 0.75, 0.80, 0.85, 0.90, 0.95}</code>. Тестов-каркаса нет: гоняй свой OFAT или полный грид — страница проверяет только напечатанные числа, по заявленной модели.",
+      },
+      goal: {
+        en: "Print one line: <code>seqs=… mem=… thr=… p95=…</code> with thr ≥ 1400 AND p95 ≤ 400.",
+        ru: "Напечатай одну строку: <code>seqs=… mem=… thr=… p95=…</code> с thr ≥ 1400 И p95 ≤ 400.",
+      },
+      mode: "run",
+      numpy: false,
+      timeoutMs: 30000,
+      starter: `# Declared toy model (see the brief):
+#   thr = 800 + 25 * seqs
+#   p95 = 250 + 5 * seqs + 4000 * (0.95 - mem) ** 2
+# Grids: seqs in {8, 16, 24, 32, 40, 48, 56, 64}; mem in {0.70 ... 0.95}.
+# Goal: thr >= 1400 AND p95 <= 400.
+# The page reads ONE summary line in exactly this shape:
+#   seqs=<from grid> mem=<from grid> thr=<tok/s> p95=<ms>
+
+# TODO: sweep the grid (or reason it out), print a satisfying point.
+`,
+      check: (res) => {
+        const out = String(res.stdout || "");
+        const mm = out.match(/seqs\s*=\s*([0-9]+)[\s\S]*?mem\s*=\s*(0\.[0-9]+)[\s\S]*?thr\s*=\s*([0-9]+(?:\.[0-9]+)?)[\s\S]*?p95\s*=\s*([0-9]+(?:\.[0-9]+)?)/i);
+        if (!mm) {
+          return { ok: false, note: { en: "no summary line found - print exactly: seqs=… mem=… thr=… p95=…", ru: "итоговой строки нет — напечатай ровно: seqs=… mem=… thr=… p95=…" } };
+        }
+        const seqs = parseInt(mm[1], 10), mem = parseFloat(mm[2]);
+        const thrClaimed = parseFloat(mm[3]), p95Claimed = parseFloat(mm[4]);
+        const seqsGrid = [8, 16, 24, 32, 40, 48, 56, 64];
+        const memGrid = [0.70, 0.75, 0.80, 0.85, 0.90, 0.95];
+        if (!seqsGrid.includes(seqs) || !memGrid.some((m) => Math.abs(m - mem) < 1e-9)) {
+          return { ok: false, note: { en: "the knobs must come from the declared grids: seqs " + seqs + ", mem " + mem, ru: "ручки обязаны быть из заявленных сеток: seqs " + seqs + ", mem " + mem } };
+        }
+        const thr = 800 + 25 * seqs;
+        const p95 = 250 + 5 * seqs + 4000 * Math.pow(0.95 - mem, 2);
+        if (Math.abs(thr - thrClaimed) > 1 || Math.abs(p95 - p95Claimed) > 1) {
+          return { ok: false, note: { en: "the numbers must follow the declared model: seqs " + seqs + ", mem " + mem + " give thr " + thr + ", p95 " + p95.toFixed(1), ru: "числа обязаны следовать заявленной модели: seqs " + seqs + ", mem " + mem + " дают thr " + thr + ", p95 " + p95.toFixed(1) } };
+        }
+        if (thr < 1400) {
+          return { ok: false, note: { en: "thr " + thr + " < 1400 - under the throughput floor", ru: "thr " + thr + " < 1400 — ниже пола по throughput" } };
+        }
+        if (p95 > 400) {
+          return { ok: false, note: { en: "p95 " + p95.toFixed(1) + " > 400 - the SLO is broken; more memory, fewer sequences", ru: "p95 " + p95.toFixed(1) + " > 400 — SLO сломан; больше памяти, меньше последовательностей" } };
+        }
+        return { ok: true, note: { en: "seqs " + seqs + " × mem " + mem + ": thr " + thr + " ≥ 1400, p95 " + p95.toFixed(1) + " ≤ 400 — a working point with margins", ru: "seqs " + seqs + " × mem " + mem + ": thr " + thr + " ≥ 1400, p95 " + p95.toFixed(1) + " ≤ 400 — рабочая точка с запасами" } };
+      },
+      reference: `# Full grid first, judgment second: the tight p95 bound kills the high-seqs
+# rows even at full memory, and low memory kills the rest.
+for seqs in (8, 16, 24, 32, 40, 48, 56, 64):
+    for mem in (0.70, 0.75, 0.80, 0.85, 0.90, 0.95):
+        thr = 800 + 25 * seqs
+        p95 = 250 + 5 * seqs + 4000 * (0.95 - mem) ** 2
+        mark = "OK " if thr >= 1400 and p95 <= 400 else "   "
+        print(f"{mark}seqs={seqs} mem={mem} thr={thr} p95={p95:.1f}")
+# Feasible: exactly two points - (24, 0.90) with p95 380 and (24, 0.95)
+# with p95 370. (32, 0.95) misses by 10 ms: 250 + 160 = 410 > 400.
+# The working point by the lab's rule: seqs=24 (thr 1400, ties -> first),
+# and the margin read says: take mem=0.95 - same throughput, +10 ms tail.`,
+    },
     posttest: [
       {
         id: "p1",

@@ -286,3 +286,39 @@ html[data-cb="mono"] .lab-shell { --lab-accent: #c9ced6 !important; --lab-accent
 .lab-glossary-table th { width: 30%; color: var(--lab-accent); font-weight: 600; }
 .lab-glossary-table td { color: var(--lab-ink); }
 .lab-fig-canvas.fig-settle g { transition: none !important; }
+
+/* -------------------------------------------- quiz follow-up (why? step) */
+/* Second step of a numeric quiz: the reason behind the number. Reuses the
+   post-test option buttons (.lab-mc-opt) inside a quiz card. */
+.lab-follow { margin-top: 0.7rem; border-top: 1px dashed var(--lab-line); padding-top: 0.6rem; }
+.lab-follow-q { font-weight: 600; margin: 0 0 0.55rem; }
+.lab-follow-options { display: grid; gap: 0.45rem; }
+.lab-follow-explain { font-size: 0.88rem; color: var(--lab-muted); margin-top: 0.4rem; }
+
+/* -------------------------------- tagged post-test cards (bridge / read) */
+.lab-mc-tag { font: 700 0.72rem/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.06em; color: var(--lab-accent); border: 1px solid var(--lab-accent); border-radius: 999px; padding: 0.12rem 0.6rem; white-space: nowrap; }
+.lab-mc-code { margin: 0.6rem 0 0.2rem; padding: 0.7rem 0.8rem; border-radius: 10px; background: #0b0e15; border: 1px solid var(--lab-line); font: 0.78rem/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre; overflow: auto; max-height: 340px; }
+.lab-mc-context { font-size: 0.92rem; color: var(--lab-muted); margin-top: 0.4rem; }
+
+/* ---------------------------------- ★ challenge (outside the checkpoints) */
+.lab-challenge { border: 1.5px dashed var(--lab-accent); box-shadow: 0 0 18px rgba(56, 225, 255, 0.08); }
+.lab-ch-head { display: flex; align-items: center; gap: 0.5rem; }
+.lab-ch-star { color: var(--lab-accent); font-size: 1.1rem; }
+.lab-ch-word { font: 700 0.72rem/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.14em; text-transform: uppercase; color: var(--lab-accent); }
+.lab-ch-att { margin-left: auto; font: 600 0.8rem/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--lab-muted); }
+.lab-ch-goal { border: 1px solid var(--lab-line); border-left: 3px solid var(--lab-accent); border-radius: 8px; background: rgba(148, 163, 184, 0.06); padding: 0.55rem 0.75rem; font-weight: 600; }
+.lab-ch-note { font-size: 0.88rem; color: var(--lab-muted); min-height: 1.2em; }
+.lab-challenge .lab-editor textarea, .lab-challenge .lab-panel .CodeMirror { height: 220px; }
+.lab-challenge .lab-editor textarea { min-height: 220px; }
+.lab-ch-fields { display: flex; gap: 0.7rem; flex-wrap: wrap; margin-top: 0.4rem; }
+.lab-ch-field { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.86rem; color: var(--lab-muted); }
+.lab-ch-field input { font: inherit; padding: 0.4rem 0.6rem; border-radius: 8px; border: 1px solid var(--lab-line); background: #0b0e15; color: var(--lab-ink); width: 11rem; }
+.lab-ch-reasoning { width: 100%; font: inherit; padding: 0.6rem 0.7rem; border-radius: 8px; border: 1px solid var(--lab-line); background: #0b0e15; color: var(--lab-ink); resize: vertical; }
+.lab-ch-declare { display: flex; gap: 0.5rem; align-items: baseline; margin-top: 0.5rem; font-size: 0.9rem; color: var(--lab-muted); }
+.lab-challenge-badge { display: inline-block; margin-left: 0; padding: 0.12rem 0.6rem; border-radius: 999px; border: 1px dashed var(--lab-accent, #38e1ff); color: var(--lab-accent, #38e1ff); font: 600 0.72rem/1.4 ui-monospace, monospace; text-decoration: none; }
+.lab-challenge-badge[hidden] { display: none; }
+
+/* ----------------------------------------------- remote runtime (Colab) */
+.lab-colab-panel input { font: inherit; padding: 0.4rem 0.6rem; border-radius: 8px; border: 1px solid var(--lab-line); background: #0b0e15; color: var(--lab-ink); }
+.lab-colab-url { width: min(30rem, 100%); }
+.lab-colab-token { width: 13rem; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }

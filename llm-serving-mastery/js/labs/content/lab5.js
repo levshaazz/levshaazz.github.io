@@ -147,6 +147,16 @@
           en: "Round up: ceil(17 / 16) = 2 — only one of the second block's 16 positions is used.",
           ru: "Округляй вверх: ceil(17 / 16) = 2 — второй блок занят лишь одной позицией из 16.",
         },
+        followUp: {
+          q: { en: "Why must the allocation round UP instead of just 17 / 16 ≈ 1.06?", ru: "Почему аллокация округляет ВВЕРХ, а не берёт 17 / 16 ≈ 1.06?" },
+          options: [
+            { en: "A block is a physical unit: the leftover position still needs a whole second block, so the 15 empty slots are paid in full", ru: "Блок — физическая единица: оставшаяся позиция всё равно требует целый второй блок, поэтому 15 пустых слотов оплачиваются целиком" },
+            { en: "Fractions of blocks are stored in the metadata, so 1.06 is exact", ru: "Доли блоков хранятся в метаданных, поэтому 1.06 — точное значение" },
+            { en: "Rounding up compensates for fragmentation elsewhere in the pool", ru: "Округление вверх компенсирует фрагментацию в других местах пула" },
+          ],
+          answer: 0,
+          explain: { en: "Blocks are allocated whole — that is what «paged» means. The 15 unused positions of the second block are the tail waste the whole lab accounts for.", ru: "Блоки выделяются целиком — именно это значит «paged». 15 неиспользуемых позиций второго блока — тот хвостовой waste, который считает вся лаба." },
+        },
       },
       {
         id: "q2",
@@ -157,7 +167,17 @@
         answer: 31, tol: 0.2, unit: { en: "positions", ru: "позиция" },
         hint: {
           en: "Blocks: 2 + 2 + 3 = 7, capacity 7 × 16 = 112; live 17 + 31 + 33 = 81; waste = 112 − 81 = 31. One ceil over the sum would give 6 blocks and hide the tails.",
-          ru: "Блоки: 2 + 2 + 3 = 7, ёмкость 7 × 16 = 112; живых 17 + 31 + 33 = 81; waste = 112 − 81 = 31. Один ceil по сумме дал бы 6 блоков и спрятал хвосты.",
+          ru: "Блоки: 2 + 2 + 3 = 7, ёмкость 7 × 16 = 112; живых 17 + 31 + 33 = 81; waste = 112 − 81 = 31. Один ceil по сумме дал бы 6 блоков и спрятал хвосты.",
+        },
+        followUp: {
+          q: { en: "Why can't the three tails merge into one shared tail?", ru: "Почему три хвоста не могут слиться в один общий?" },
+          options: [
+            { en: "Requests never share blocks: each block table is per-request, so every tail is reserved for its own request alone", ru: "Запросы никогда не делят блоки: block table у каждого свой, поэтому каждый хвост резервируется под свой запрос" },
+            { en: "The scheduler merges tails at the next tick boundary", ru: "Scheduler сливает хвосты на следующей границе тиков" },
+            { en: "Tails merge when the block size divides the total length", ru: "Хвосты сливаются, когда размер блока делит суммарную длину" },
+          ],
+          answer: 0,
+          explain: { en: "The one-pool figure promises ceil(81/16) = 6 blocks precisely by merging tails that cannot merge: 7 real block tables hold 112 slots. The 16-slot gap is the undercount every downstream waste figure inherits.", ru: "Фигура «один пул» обещает ceil(81/16) = 6 блоков ровно тем, что склеивает несклеиваемые хвосты: 7 реальных block tables держат 112 слотов. Разница в 16 слотов — то занижение, которое наследует вся дальнейшая арифметика waste." },
         },
       },
       {
@@ -169,7 +189,17 @@
         answer: 2, tol: 0.2, unit: { en: "tick", ru: "тика" },
         hint: {
           en: "C is admitted at tick 1, works during [1, 2); completion is recorded at the next boundary: tick 2. Static mode would keep C waiting until the whole cohort empties.",
-          ru: "C подсаживается в тик 1, работает в [1, 2); завершение фиксируется на следующей границе: тик 2. Static-режим держал бы C до опустошения всей когорты.",
+          ru: "C подсаживается в тик 1, работает в [1, 2); завершение фиксируется на следующей границе: тик 2. Static-режим держал бы C до опустошения всей когорты.",
+        },
+        followUp: {
+          q: { en: "Why does C finish at tick 2 and not at tick 1, right when it is admitted?", ru: "Почему C завершается на тике 2, а не на тике 1 — сразу при подсадке?" },
+          options: [
+            { en: "Admission and one decode step are different events: C is admitted at the boundary 1, works during [1, 2), and its completion is recorded at the next boundary", ru: "Подсадка и один decode-шаг — разные события: C подсаживается на границе 1, работает в [1, 2), и завершение фиксируется на следующей границе" },
+            { en: "C's request is queued twice before it starts", ru: "Запрос C дважды попадает в очередь до старта" },
+            { en: "Tick 1 is reserved for B's output tokens", ru: "Тик 1 зарезервирован под выходные токены B" },
+          ],
+          answer: 0,
+          explain: { en: "A unit tick of work occupies exactly one interval: start at the boundary, finish at the next one. B's own work was [0, 1) — that is why B's slot freed only at boundary 1.", ru: "Единичный тик работы занимает ровно один интервал: старт на границе, финиш на следующей. Работа B была [0, 1) — поэтому его слот освободился только на границе 1." },
         },
       },
     ],
@@ -286,6 +316,79 @@
         timeoutMs: 4000,
       },
     ],
+    challenge: {
+      id: "chal1",
+      word: { en: "challenge", ru: "челлендж" },
+      title: {
+        en: "★ Plan two requests against a 16-block pool",
+        ru: "★ Спланируй два запроса под пул из 16 блоков",
+      },
+      brief: {
+        en: "The pool holds <code>16 blocks × 16 = 256 slots</code>; two requests will be paged independently. You choose their retained lengths <code>L1</code> and <code>L2</code> (whole positions, ≥ 1). Three constraints at once: <strong>live ≥ 180</strong>, <strong>waste ≤ 50</strong> (tails never merge), <strong>allocated ≤ 256</strong>. No tests guide you — the page recomputes every number from the declared ceil-per-request model.",
+        ru: "Пул держит <code>16 блоков × 16 = 256 слотов</code>; два запроса будут пейджиться независимо. Ты выбираешь их длины <code>L1</code> и <code>L2</code> (целые позиции, ≥ 1). Три ограничения сразу: <strong>live ≥ 180</strong>, <strong>waste ≤ 50</strong> (хвосты не сливаются), <strong>allocated ≤ 256</strong>. Тестов-каркаса нет — страница пересчитывает все числа по заявленной модели ceil-на-запрос.",
+      },
+      goal: {
+        en: "Print one line: <code>l1=… l2=… waste=… allocated=…</code> satisfying all three constraints.",
+        ru: "Напечатай одну строку: <code>l1=… l2=… waste=… allocated=…</code>, удовлетворяющую всем трём ограничениям.",
+      },
+      mode: "run",
+      numpy: false,
+      timeoutMs: 30000,
+      starter: `# Pool: 16 blocks of 16 = 256 slots. Two requests, paged independently:
+# blocks = ceil(L1/16) + ceil(L2/16); allocated = blocks * 16;
+# waste = allocated - (L1 + L2).
+# Constraints: live = L1 + L2 >= 180, waste <= 50, allocated <= 256.
+# The page reads ONE summary line in exactly this shape:
+#   l1=<len> l2=<len> waste=<tail slots> allocated=<slots>
+
+# TODO: search for lengths satisfying all three constraints, print the line.
+`,
+      check: (res) => {
+        const out = String(res.stdout || "");
+        const mm = out.match(/l1\s*=\s*([0-9]+)[\s\S]*?l2\s*=\s*([0-9]+)[\s\S]*?waste\s*=\s*([0-9]+)[\s\S]*?allocated\s*=\s*([0-9]+)/i);
+        if (!mm) {
+          return { ok: false, note: { en: "no summary line found - print exactly: l1=… l2=… waste=… allocated=…", ru: "итоговой строки нет — напечатай ровно: l1=… l2=… waste=… allocated=…" } };
+        }
+        const l1 = parseInt(mm[1], 10), l2 = parseInt(mm[2], 10);
+        const wasteClaimed = parseInt(mm[3], 10), allocClaimed = parseInt(mm[4], 10);
+        if (!(l1 >= 1 && l2 >= 1)) {
+          return { ok: false, note: { en: "lengths must be whole positions >= 1", ru: "длины — целые позиции ≥ 1" } };
+        }
+        const blocks = Math.ceil(l1 / 16) + Math.ceil(l2 / 16);
+        const allocated = blocks * 16;
+        const waste = allocated - (l1 + l2);
+        if (allocClaimed !== allocated || wasteClaimed !== waste) {
+          return { ok: false, note: { en: "the numbers must follow the declared model: lengths " + l1 + "/" + l2 + " give blocks " + blocks + ", allocated " + allocated + ", waste " + waste, ru: "числа обязаны следовать заявленной модели: длины " + l1 + "/" + l2 + " дают блоков " + blocks + ", allocated " + allocated + ", waste " + waste } };
+        }
+        if (l1 + l2 < 180) {
+          return { ok: false, note: { en: "live " + (l1 + l2) + " < 180 - the requests are too short", ru: "live " + (l1 + l2) + " < 180 — запросы слишком короткие" } };
+        }
+        if (waste > 50) {
+          return { ok: false, note: { en: "waste " + waste + " > 50 - too many unused tail slots", ru: "waste " + waste + " > 50 — слишком много пустых хвостов" } };
+        }
+        if (allocated > 256) {
+          return { ok: false, note: { en: "allocated " + allocated + " > 256 - over the pool", ru: "allocated " + allocated + " > 256 — сверх пула" } };
+        }
+        return { ok: true, note: { en: l1 + "/" + l2 + ": " + blocks + " blocks, allocated " + allocated + " ≤ 256, waste " + waste + " ≤ 50, live " + (l1 + l2) + " ≥ 180", ru: l1 + "/" + l2 + ": блоков " + blocks + ", allocated " + allocated + " ≤ 256, waste " + waste + " ≤ 50, live " + (l1 + l2) + " ≥ 180" } };
+      },
+      reference: `# All three constraints in one loop over candidate lengths:
+def blocks(L):
+    return (L + 15) // 16
+
+for l1 in range(1, 260):
+    for l2 in range(1, 260):
+        blocks_total = blocks(l1) + blocks(l2)
+        allocated = blocks_total * 16
+        live = l1 + l2
+        waste = allocated - live
+        if live >= 180 and waste <= 50 and allocated <= 256:
+            print(f"l1={l1} l2={l2} waste={waste} allocated={allocated}")
+            raise SystemExit
+# The scan stops at 1/179: blocks 1 + 12 = 13, allocated 208, live 180,
+# waste 28 - one tiny request and one huge one. 97/87 works too
+# (blocks 13, allocated 208, waste 24). Notice the tension: longer
+# requests raise live but also the tails.`,
+    },
     posttest: [
       {
         id: "p1",
@@ -307,6 +410,33 @@
         options: [{ en: "the waiting request, from the next step", ru: "\u0436\u0434\u0443\u0449\u0435\u043c\u0443 \u0437\u0430\u043f\u0440\u043e\u0441\u0443, \u043d\u0430\u0447\u0438\u043d\u0430\u044f \u0441\u043e \u0441\u043b\u0435\u0434\u0443\u044e\u0449\u0435\u0433\u043e \u0448\u0430\u0433\u0430" }, { en: "nobody until the whole batch finishes", ru: "\u043d\u0438\u043a\u043e\u043c\u0443, \u043f\u043e\u043a\u0430 \u043d\u0435 \u0437\u0430\u0432\u0435\u0440\u0448\u0438\u0442\u0441\u044f \u0432\u0435\u0441\u044c \u0431\u0430\u0442\u0447" }, { en: "the longest request", ru: "\u0441\u0430\u043c\u043e\u043c\u0443 \u0434\u043b\u0438\u043d\u043d\u043e\u043c\u0443 \u0437\u0430\u043f\u0440\u043e\u0441\u0443" }],
         answer: 0,
         explain: { en: "That is the whole point of continuous batching: the finished request's slot is reused on the next step \u2014 no batch-boundary waiting.", ru: "\u0412 \u044d\u0442\u043e\u043c \u0441\u043c\u044b\u0441\u043b \u043d\u0435\u043f\u0440\u0435\u0440\u044b\u0432\u043d\u043e\u0433\u043e \u0431\u0430\u0442\u0447\u0438\u043d\u0433\u0430: \u0441\u043b\u043e\u0442 \u0437\u0430\u0432\u0435\u0440\u0448\u0438\u0432\u0448\u0435\u0433\u043e\u0441\u044f \u0437\u0430\u043f\u0440\u043e\u0441\u0430 \u043f\u0435\u0440\u0435\u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0435\u0442\u0441\u044f \u043d\u0430 \u0441\u043b\u0435\u0434\u0443\u044e\u0449\u0435\u043c \u0448\u0430\u0433\u0435 \u2014 \u0431\u0435\u0437 \u043e\u0436\u0438\u0434\u0430\u043d\u0438\u044f \u0433\u0440\u0430\u043d\u0438\u0446 \u0431\u0430\u0442\u0447\u0430." },
+      },
+      {
+        id: "r1",
+        tag: { en: "code reading", ru: "код-чтение" },
+        q: { en: "This «server» module handles the toy cohort [5, 1, 1] on 2 slots with makespan 6; continuous batching finishes at 2. Which mechanism is the degradation?", ru: "Этот «серверный» модуль обслуживает игрушечную когорту [5, 1, 1] на 2 слотах с makespan 6; continuous batching завершает на 2. Какой механизм — деградация?" },
+        code: `# toy_server.py - cohort runner (vendor module, v0.9)
+def run_cohort(work, slots):
+    """Finish tick of the LAST request; unit ticks, FIFO arrivals."""
+    running = []           # (finish_tick, slot_id)
+    clock = 0
+    for i, w in enumerate(work):
+        if len(running) >= slots:
+            clock = max(r[0] for r in running)   # <- A
+            running = []                          # <- B
+        running.append((clock + w, i))            # <- C
+    return max(r[0] for r in running)
+
+# run_cohort([5, 1, 1], 2) -> 6, continuous batching gives 2
+`,
+        context: { en: "Reproduce it in any exercise editor or the ★ editor: run_cohort([5, 1, 1], 2) prints 6 — three times worse than the trace from Exercise 4's finish_ticks([5, 1, 1], 2) = [5, 1, 2].", ru: "Воспроизведи в любом редакторе упражнений или в ★-редакторе: run_cohort([5, 1, 1], 2) печатает 6 — втрое хуже трассы из упражнения 4: finish_ticks([5, 1, 1], 2) = [5, 1, 2]." },
+        options: [
+          { en: "Lines A–B: the slot is cleared only when the WHOLE batch empties — B's freed slot idles instead of taking C at boundary 1 (static, not continuous batching)", ru: "Строки A–B: слот очищается, только когда опустеет ВЕСЬ батч — освободившийся слот B простаивает вместо того, чтобы взять C на границе 1 (static вместо continuous-батчинга)" },
+          { en: "Line C: requests should be appended in reverse order (SJF, not FIFO)", ru: "Строка C: запросы надо добавлять в обратном порядке (SJF, а не FIFO)" },
+          { en: "The max() over running is wrong — it should be min()", ru: "max() по running неверен — должен быть min()" },
+        ],
+        answer: 0,
+        explain: { en: "The module runs static batches: C waits for the entire cohort to drain (clock jumps to 5) and only then starts, finishing at 6. Continuous batching admits C the moment B frees a slot — finish 2, as Exercise 4's slot_free walk shows. FIFO vs SJF is a policy choice; empty slots are the degradation.", ru: "Модуль гоняет static-батчи: C ждёт, пока опустеет вся когорта (clock прыгает на 5), и только тогда стартует — финиш на 6. Continuous batching подсаживает C в момент, когда B освободил слот, — финиш 2, как показывает обход slot_free из упражнения 4. FIFO против SJF — вопрос политики; простаивающие слоты — вот деградация." },
       },
     ],
     reward: {

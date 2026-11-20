@@ -154,6 +154,16 @@
           en: "ceil(3 × 8 / 2) = 12, then clamp into [min, max].",
           ru: "ceil(3 × 8 / 2) = 12, затем кламп в [min, max].",
         },
+        followUp: {
+          q: { en: "Why does the clamp fire on scale-up too, not only on scale-down?", ru: "Почему кламп срабатывает и на скейл-апе, а не только на скейл-дауне?" },
+          options: [
+            { en: "maxReplicas is the cost fuse: without it one metric spike would summon unbounded pods — and every fresh pod pays the 165 s weight load", ru: "maxReplicas — это предохранитель бюджета: без него один пик метрики призывает неограниченные поды — а каждый свежий под платит 165 с загрузки весов" },
+            { en: "The clamp only affects the number written to the spec, never the actual pods", ru: "Кламп влияет только на число в спецификации, но не на реальные поды" },
+            { en: "It does not: scale-up always ignores maxReplicas by design", ru: "Не срабатывает: скейл-ап всегда игнорирует maxReplicas по дизайну" },
+          ],
+          answer: 0,
+          explain: { en: "The formula's order is ceil FIRST, clamp SECOND — under-provisioning is forbidden, but so is unbounded spend. This lab's own tolerance and windows soften noise; the clamp is the last line against a bad metric.", ru: "Порядок формулы — сначала ceil, потом кламп — запрещает нехватку реплик, но и безграничные траты тоже. Tolerance и окна смягчают шум; кламп — последняя линия обороны от плохой метрики." },
+        },
       },
       {
         id: "q2",
@@ -166,6 +176,16 @@
           en: "2.2 / 2 = 1.1 — exactly on the band edge; the band is inclusive, so: no change.",
           ru: "2.2 / 2 = 1.1 — ровно на краю полосы; края полосы включены: без изменений.",
         },
+        followUp: {
+          q: { en: "Why is the tolerance band inclusive at exactly ±10 %?", ru: "Почему полоса tolerance включительна ровно на ±10 %?" },
+          options: [
+            { en: "The band exists to absorb noise: an edge ratio is not clearly off-target, and scaling on it would flap the fleet on metric jitter", ru: "Полоса существует ради поглощения шума: краевое отношение не является явно вне цели, и скейл на нём дёргал бы флот на джиттере метрики" },
+            { en: "Floating-point rounding makes the edge unreachable, so inclusion is decorative", ru: "Округление float делает край недостижимым, так что включительность — декорация" },
+            { en: "It is not inclusive — the quiz answer is an exception", ru: "Она не включительна — ответ квиза исключение" },
+          ],
+          answer: 0,
+          explain: { en: "Every corner case of the band is a flapping decision: exclude the edge and a metric oscillating around 1.1× target scales up and down every tick. Inclusive edges make «hold» the default for anything not clearly off.", ru: "Каждый краевой случай полосы — решение о флаттере: исключи край, и метрика, осциллирующая вокруг 1.1× цели, скейлит вверх-вниз каждый тик. Включительные края делают «держать» поведением по умолчанию для всего, что не выбилось явно." },
+        },
       },
       {
         id: "q3",
@@ -177,6 +197,16 @@
         hint: {
           en: "300 / 15 — and the window takes the max of everything it still holds.",
           ru: "300 / 15 — и окно берёт максимум всего, что ещё держит.",
+        },
+        followUp: {
+          q: { en: "Why does the window take the MAX of the recommendations, not the latest?", ru: "Почему окно берёт МАКСИМУМ рекомендаций, а не последнюю?" },
+          options: [
+            { en: "Scale-down is the cautious direction: the max means a recent spike still «holds» the fleet up until it is fully out of the window", ru: "Скейл-даун — осторожное направление: максимум означает, что недавний пик продолжает «держать» флот наверху, пока полностью не выйдет из окна" },
+            { en: "The max approximates the average over a saw-shaped metric", ru: "Максимум аппроксимирует среднее по пилообразной метрике" },
+            { en: "Kubernetes computes the max because recommendations are negative for scale-down", ru: "Kubernetes считает максимум, потому что рекомендации при скейл-дауне отрицательны" },
+          ],
+          answer: 0,
+          explain: { en: "With the LLM cold start (~165 s) a wrong scale-down is expensive to undo: the window max turns a saw-shaped metric into a held fleet (Exercise 3's held_ticks). Latest-wins is what the buggy starter did.", ru: "При холодном старте LLM (~165 с) ошибочный скейл-даун дорого откатывать: максимум окна превращает пилообразную метрику в удержанный флот (held_ticks из упражнения 3). «Последняя выигрывает» — то, что делал багованный стартер." },
         },
       },
     ],
@@ -358,6 +388,79 @@ class HPASim:
         timeoutMs: 4000,
       },
     ],
+    challenge: {
+      id: "chal1",
+      word: { en: "challenge", ru: "челлендж" },
+      title: {
+        en: "★ Absorb the burst of 60 in one tick, step ≤ 120 ms",
+        ru: "★ Вобрать бурст из 60 за один тик, шаг ≤ 120 мс",
+      },
+      brief: {
+        en: "You tune the controller's knobs for one burst tick: <code>60</code> arrivals hit a fresh fleet (1 replica, empty queue). Knob grids: <code>target_queue ∈ {1, 2, 4, 8}</code>, <code>max_r ∈ {2, 3, 4}</code>; the per-pod model stays T06's (<code>cap 30</code>, step <code>60 + 2 × batch</code>). Goal: the tick <strong>serves all 60</strong> (queue empty after) with <strong>step ≤ 120 ms</strong>. No tests guide you — the page replays the controller arithmetic exactly as HPASim does (ceil, clamp, serve, batch).",
+        ru: "Ты тюнишь ручки контроллера на одном тике-бурсте: <code>60</code> заявок бьют в свежий флот (1 реплика, пустая очередь). Сетки ручек: <code>target_queue ∈ {1, 2, 4, 8}</code>, <code>max_r ∈ {2, 3, 4}</code>; модель пода остаётся T06 (<code>cap 30</code>, шаг <code>60 + 2 × batch</code>). Цель: тик <strong>обслуживает все 60</strong> (очередь пуста после) с <strong>шагом ≤ 120 мс</strong>. Тестов-каркаса нет — страница переигрывает арифметику контроллера ровно как HPASim (ceil, кламп, обслуживание, батч).",
+      },
+      goal: {
+        en: "Print one line: <code>target_queue=… max_r=… served=… step_ms=…</code> with served = 60 and step ≤ 120 ms.",
+        ru: "Напечатай одну строку: <code>target_queue=… max_r=… served=… step_ms=…</code> с served = 60 и шагом ≤ 120 мс.",
+      },
+      mode: "run",
+      numpy: false,
+      timeoutMs: 30000,
+      starter: `# One burst tick: queue = 60, replicas start at 1 (fresh fleet).
+# Knobs from the grids: target_queue in {1, 2, 4, 8}; max_r in {2, 3, 4}.
+# Controller arithmetic (as in HPASim.tick):
+#   metric   = queue / replicas                 = 60
+#   rec      = clamp(ceil(replicas * metric / target_queue), 1, max_r)
+#   replicas = rec                              (scale-up is immediate)
+#   served   = min(queue, replicas * cap)       with cap = 30
+#   batch    = min(cap, ceil(served / replicas)); step_ms = 60 + 2 * batch
+# The page reads ONE summary line:
+#   target_queue=<from grid> max_r=<from grid> served=<tokens> step_ms=<ms>
+# Goal: served = 60 AND step_ms <= 120.
+
+# TODO: try the knob pairs by hand or scan them, print the line.
+`,
+      check: (res) => {
+        const out = String(res.stdout || "");
+        const mm = out.match(/target_queue\s*=\s*([0-9]+)[\s\S]*?max_r\s*=\s*([0-9]+)[\s\S]*?served\s*=\s*([0-9]+)[\s\S]*?step_ms\s*=\s*([0-9]+(?:\.[0-9]+)?)/i);
+        if (!mm) {
+          return { ok: false, note: { en: "no summary line found - print exactly: target_queue=… max_r=… served=… step_ms=…", ru: "итоговой строки нет — напечатай ровно: target_queue=… max_r=… served=… step_ms=…" } };
+        }
+        const tq = parseInt(mm[1], 10), maxR = parseInt(mm[2], 10);
+        const servedClaimed = parseInt(mm[3], 10), stepClaimed = parseFloat(mm[4]);
+        if (![1, 2, 4, 8].includes(tq) || ![2, 3, 4].includes(maxR)) {
+          return { ok: false, note: { en: "the knobs must come from the declared grids: target_queue " + tq + ", max_r " + maxR, ru: "ручки обязаны быть из заявленных сеток: target_queue " + tq + ", max_r " + maxR } };
+        }
+        const rec = Math.min(Math.max(Math.ceil(60 / tq), 1), maxR);
+        const served = Math.min(60, rec * 30);
+        const batch = served ? Math.min(30, Math.ceil(served / rec)) : 0;
+        const step = 60 + 2 * batch;
+        if (servedClaimed !== served || Math.abs(step - stepClaimed) > 0.5) {
+          return { ok: false, note: { en: "the controller arithmetic gives: rec " + rec + ", served " + served + ", step " + step + " ms for those knobs", ru: "арифметика контроллера даёт: rec " + rec + ", обслужено " + served + ", шаг " + step + " мс для этих ручек" } };
+        }
+        if (served < 60) {
+          return { ok: false, note: { en: "served " + served + " < 60 - the burst left " + (60 - served) + " unserved; raise max_r or lower target_queue", ru: "обслужено " + served + " < 60 — бурст оставил " + (60 - served) + " необслуженными; подними max_r или снизь target_queue" } };
+        }
+        if (step > 120) {
+          return { ok: false, note: { en: "step " + step + " ms > 120 ms - the batch is too fat; spread it over more replicas", ru: "шаг " + step + " мс > 120 мс — батч слишком жирный; размажь его по большим репликам" } };
+        }
+        return { ok: true, note: { en: "tq " + tq + ", max_r " + maxR + " → rec " + rec + " replicas: served " + served + ", step " + step + " ms — burst absorbed in one tick", ru: "tq " + tq + ", max_r " + maxR + " → rec " + rec + " реплик: обслужено " + served + ", шаг " + step + " мс — бурст вобран за один тик" } };
+      },
+      reference: `# Walk the knob pairs - it is 12 lines, cheaper than guessing:
+for tq in (1, 2, 4, 8):
+    for max_r in (2, 3, 4):
+        rec = min(max(-(-60 // tq), 1), max_r)      # ceil + clamp
+        served = min(60, rec * 30)
+        batch = min(30, -(-served // rec)) if served else 0
+        step = 60 + 2 * batch
+        mark = "OK " if served == 60 and step <= 120 else "   "
+        print(f"{mark}target_queue={tq} max_r={max_r} rec={rec} served={served} step_ms={step}")
+# target_queue=1 asks for 60 replicas - every max_r clamps it, and the fat
+# 30-batch breaks the step budget. Several pairs win (tq 2 x max_r 4 gives
+# rec 4, served 60, batch 15, step 90; tq 4 x max_r 3 gives step 100; the
+# tq 8 rows pass only where the clamp leaves exactly enough replicas).
+# The clamp and the batch ceiling fight each other - tuning is the truce.`,
+    },
     posttest: [
       {
         id: "p1",
@@ -379,6 +482,19 @@ class HPASim:
         options: [{ en: "the maximum recommendation seen in the window — anti-flapping", ru: "максимум рекомендаций за окно — анти-флаттер" }, { en: "the minimum, to save money fastest", ru: "минимум, чтобы быстрее сэкономить" }, { en: "the average over the window", ru: "среднее за окно" }],
         answer: 0,
         explain: { en: "Scale-up is instant because the shortage hurts now; scale-down waits for the window max so a saw-shaped metric cannot flap the fleet.", ru: "Скейл-ап мгновенный, потому что дефицит болит сейчас; скейл-даун ждёт максимум за окно, чтобы пилообразная метрика не дёргала флот." },
+      },
+      {
+        id: "b1",
+        tag: { en: "bridge · T03", ru: "мост · T03" },
+        context: { en: "T03 quantized weights to INT4; T09 priced the cold start (weight loading dominates). This lab prices scale-up decisions: a fresh pod pays the load again before it serves.", ru: "T03 квантовала веса в INT4; T09 оценила холодный старт (доминирует загрузка весов). Эта лаба оценивает решения скейл-апа: свежий под снова платит загрузку, прежде чем обслуживать." },
+        q: { en: "The fleet swaps to an INT4-quantized backend. What changes for the HPA's scale-up, honestly?", ru: "Флот переезжает на INT4-квантованный бэкенд. Что честно меняется для скейл-апа HPA?" },
+        options: [
+          { en: "The weight-loading member of the cold start shrinks (~4× smaller file), so a fresh pod turns Ready sooner — scale-up's hidden cost drops; the ceil formula and the windows do not change", ru: "Член загрузки весов холодного старта сжимается (файл ~в 4 раза меньше), поэтому свежий под быстрее становится Ready — скрытая цена скейл-апа падает; формула ceil и окна не меняются" },
+          { en: "The ceil formula divides by 4 for quantized weights", ru: "Формула ceil делит на 4 для квантованных весов" },
+          { en: "Quantization removes the cold start entirely - scale-up becomes instant", ru: "Квантизация убирает холодный старт целиком — скейл-ап становится мгновенным" },
+        ],
+        answer: 0,
+        explain: { en: "T03 × T09 × this lab, multiplied honestly: quantization shrinks the DOMINANT member of the T09 chain, shortening the Not-Ready window; the HPA arithmetic (ceil, tolerance, windows) is controller math and does not know about bytes. The window's 300 s stays because it guards against metric noise, not against slow loads.", ru: "T03 × T09 × эта лаба, умноженные честно: квантизация сжимает ДОМИНИРУЮЩИЙ член цепочки T09, укорачивая окно Not-Ready; арифметика HPA (ceil, tolerance, окна) — математика контроллера, и байт она не знает. Окно 300 с остаётся: оно защищает от шума метрики, а не от медленной загрузки." },
       },
     ],
     reward: {

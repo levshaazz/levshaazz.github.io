@@ -195,6 +195,16 @@
           en: "800/4 + 120·3/4 + 25·3 = 200 + 90 + 75.",
           ru: "800/4 + 120·3/4 + 25·3 = 200 + 90 + 75.",
         },
+        followUp: {
+          q: { en: "Why does the beat term multiply (p − 1) and not p?", ru: "Почему член такта умножается на (p − 1), а не на p?" },
+          options: [
+            { en: "The row-parallel block needs one all-reduce per block, and a block only synchronizes GPUs AGAINST each other — with p = 1 there is nothing to synchronize", ru: "Row-parallel-блок требует один all-reduce на блок, а синхронизировать друг против друга нужно только при p > 1 — при p = 1 синхронизировать нечего" },
+            { en: "The first GPU's beat is free because it is closest to the switch", ru: "Такт первого GPU бесплатен, потому что он ближе всех к свитчу" },
+            { en: "The beat is charged per extra tensor, not per extra GPU", ru: "Такт берётся за лишний тензор, а не за лишний GPU" },
+          ],
+          answer: 0,
+          explain: { en: "The beat is the COST OF COORDINATION: p − 1 peers must be waited for at each all-reduce. One GPU coordinates with nobody — that is why t(1) = 800 exactly and every added GPU brings +25 ms on top of the byte share.", ru: "Такт — это ЦЕНА КООРДИНАЦИИ: на каждом all-reduce ждут p − 1 напарников. Один GPU ни с кем не координируется — поэтому t(1) = 800 ровно, а каждый добавленный GPU приносит +25 мс поверх байтовой доли." },
+        },
       },
       {
         id: "q2",
@@ -207,6 +217,16 @@
           en: "800/8 + 120·7/8 + 25·7 = 100 + 105 + 175 — more than t(4): the beats ate the division.",
           ru: "800/8 + 120·7/8 + 25·7 = 100 + 105 + 175 — больше, чем t(4): такты съели деление.",
         },
+        followUp: {
+          q: { en: "Why exactly does «double the GPUs» make the step SLOWER here?", ru: "Почему удвоение GPU делает шаг здесь МЕДЛЕННЕЕ?" },
+          options: [
+            { en: "Going 4 → 8 saves 100 ms of compute but adds 100 ms of beats and 15 ms of byte share: −100 + 115 = +15 ms net", ru: "Переход 4 → 8 экономит 100 мс вычислений, но добавляет 100 мс тактов и 15 мс байтовой доли: −100 + 115 = +15 мс чистыми" },
+            { en: "Eight GPUs cannot fit in one switch domain, so the model halves the bandwidth", ru: "Восемь GPU не влезают в один switch-домен, поэтому модель делит bandwidth пополам" },
+            { en: "The weights no longer fit at tp = 8, so swapping dominates", ru: "Веса уже не помещаются при tp = 8, поэтому доминирует своппинг" },
+          ],
+          answer: 0,
+          explain: { en: "The beat is linear in (p − 1) while the compute saving is 1/p: past the knee each addition buys less division and pays a full extra beat. That is why knee_degree() exists as a method — the optimum is found by rule, not assumed.", ru: "Такт линеен по (p − 1), а экономия вычислений — 1/p: за коленом каждая добавка покупает меньше деления и платит целый лишний такт. Поэтому knee_degree() существует как метод — оптимум находится правилом, а не предполагается." },
+        },
       },
       {
         id: "q3",
@@ -218,6 +238,16 @@
         hint: {
           en: "(16+4)/1 + 1.5 = 21.5 > 15; (16+4)/2 + 1.5 = 11.5 ≤ 15.",
           ru: "(16+4)/1 + 1.5 = 21.5 > 15; (16+4)/2 + 1.5 = 11.5 ≤ 15.",
+        },
+        followUp: {
+          q: { en: "Why doesn't tp = 1 fit, and why is the answer exactly 2?", ru: "Почему tp = 1 не помещается, и почему ответ ровно 2?" },
+          options: [
+            { en: "At p = 1 the whole 20 GB of weights+KV lands on one GPU plus the 1.5 GB fixed part — over budget; at p = 2 the divisible part halves to 10 + 1.5 = 11.5 ≤ 15", ru: "При p = 1 все 20 ГБ весов+KV ложатся на один GPU плюс фикс 1.5 ГБ — за бюджетом; при p = 2 делимая часть halves до 10 + 1.5 = 11.5 ≤ 15" },
+            { en: "Because the model forbids odd TP degrees", ru: "Потому что модель запрещает нечётные степени TP" },
+            { en: "Because 1.5 × 2 = 3 GB of fixed memory must also divide", ru: "Потому что 1.5 × 2 = 3 ГБ фиксированной памяти тоже должны делиться" },
+          ],
+          answer: 0,
+          explain: { en: "The ledger's lesson: the fixed 1.5 GB (activations, CUDA context, buffers) NEVER divides — that is exactly why more GPUs eventually stop helping in the ledger too. p = 2 is the first degree where the divisible part fits with the fixed part attached.", ru: "Урок ведомости: фиксированные 1.5 ГБ (активации, CUDA-контекст, буферы) НЕ делятся никогда — ровно поэтому и в ведомости больше GPU рано или поздно перестаёт помогать. p = 2 — первая степень, где делимая часть помещается вместе с фиксированной." },
         },
       },
     ],
@@ -434,6 +464,75 @@ def mlp_forward_tp(x, w_up, w_down, parts):
         timeoutMs: 4000,
       },
     ],
+    challenge: {
+      id: "chal1",
+      word: { en: "challenge", ru: "челлендж" },
+      title: {
+        en: "★ A different machine: find its knee by rule",
+        ru: "★ Другая машина: найди её колено по правилу",
+      },
+      brief: {
+        en: "The lab's knee (5) belongs to the course knobs — copy nothing. This machine declares <code>C = 1600 ms, B = 90 ms, beat = 40 ms</code>, degrees 1..12. Run your own <code>knee_degree</code> rule (minimal degree with the strictly smallest t(p)) on the NEW knobs. No tests guide you — the page recomputes the whole curve from the declared model and checks both your knee and its step time.",
+        ru: "Колено лабы (5) принадлежит курсовым ручкам — ничего не копируй. Эта машина заявляет <code>C = 1600 мс, B = 90 мс, beat = 40 мс</code>, степени 1..12. Прогони своё правило <code>knee_degree</code> (минимальная степень со строго минимальным t(p)) на НОВЫХ ручках. Тестов-каркаса нет — страница пересчитывает всю кривую по заявленной модели и проверяет и колено, и время шага.",
+      },
+      goal: {
+        en: "Print one line: <code>knee=… t_knee=…</code> — the minimal degree with the smallest t(p) on the new machine.",
+        ru: "Напечатай одну строку: <code>knee=… t_knee=…</code> — минимальную степень с минимальным t(p) на новой машине.",
+      },
+      mode: "run",
+      numpy: false,
+      timeoutMs: 30000,
+      starter: `# New machine: C = 1600 ms, B = 90 ms, beat = 40 ms, degrees 1..12.
+# Declared model: t(p) = C/p + B*(p-1)/p + beat*(p-1).
+# Rule (as in TPSim.knee_degree): the MINIMAL degree whose t(p) is the
+# strictly smallest. The page reads ONE summary line:
+#   knee=<degree> t_knee=<step ms>
+# Adapt your Exercise 4 class - do not copy the lab's answer.
+
+# TODO: walk the degrees, apply the rule, print the line.
+`,
+      check: (res) => {
+        const out = String(res.stdout || "");
+        const mm = out.match(/knee\s*=\s*([0-9]+)[\s\S]*?t_knee\s*=\s*([0-9]+(?:\.[0-9]+)?)/i);
+        if (!mm) {
+          return { ok: false, note: { en: "no summary line found - print exactly: knee=… t_knee=…", ru: "итоговой строки нет — напечатай ровно: knee=… t_knee=…" } };
+        }
+        const knee = parseInt(mm[1], 10), tClaimed = parseFloat(mm[2]);
+        const t = (p) => 1600 / p + 90 * (p - 1) / p + 40 * (p - 1);
+        let best = 1;
+        for (let p = 2; p <= 12; p += 1) {
+          if (t(p) < t(best)) best = p;
+        }
+        if (knee !== best) {
+          return { ok: false, note: { en: "the rule on this machine gives knee " + best + " (t " + t(best).toFixed(1) + " ms), got " + knee, ru: "правило на этой машине даёт колено " + best + " (t " + t(best).toFixed(1) + " мс), а не " + knee } };
+        }
+        if (Math.abs(t(knee) - tClaimed) > 0.5) {
+          return { ok: false, note: { en: "t(" + knee + ") = " + t(knee).toFixed(1) + " ms by the declared model, not " + tClaimed, ru: "t(" + knee + ") = " + t(knee).toFixed(1) + " мс по заявленной модели, а не " + tClaimed } };
+        }
+        return { ok: true, note: { en: "knee " + knee + " at " + t(knee).toFixed(1) + " ms — the rule transferred to a machine it never saw", ru: "колено " + knee + " на " + t(knee).toFixed(1) + " мс — правило перенеслось на машину, которой оно никогда не видело" } };
+      },
+      reference: `class TPSim:
+    def __init__(self, compute_ms, bytes_term_ms, beat_ms):
+        self.C, self.B, self.beat = compute_ms, bytes_term_ms, beat_ms
+
+    def step_time(self, degree):
+        p = degree
+        return self.C / p + self.B * (p - 1) / p + self.beat * (p - 1)
+
+    def knee_degree(self, max_degree):
+        best_d, best_t = 1, self.step_time(1)
+        for d in range(2, max_degree + 1):
+            if self.step_time(d) < best_t:
+                best_d, best_t = d, self.step_time(d)
+        return best_d
+
+sim = TPSim(1600, 90, 40)
+knee = sim.knee_degree(12)
+print(f"knee={knee} t_knee={sim.step_time(knee):.1f}")
+# knee = 6, t(6) = 266.7 + 75 + 200 = 541.7 ms. The class is the point:
+# the RULE transferred, only the constants changed - that is what makes
+# it a model and not a lookup table.`,
+    },
     posttest: [
       {
         id: "p1",
