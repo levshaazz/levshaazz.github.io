@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 506" role="img" aria-label="A declared manifest sheet pointing at three pod cards under a Service bar: two pods are Ready and one is booting, and the floor line under all three says the capacity never dips">
+  <rect width="900" height="506" fill="#FAF6ED"/>
+  <!-- the manifest sheet: desired state -->
+  <rect x="70" y="120" width="270" height="280" rx="10" fill="#FFFDF8" stroke="#14181F" stroke-width="3"/>
+  <text x="92" y="162" font-family="Georgia, serif" font-size="24" font-weight="bold" fill="#14181F">Deployment · desired</text>
+  <line x1="92" y1="178" x2="318" y2="178" stroke="#14181F" stroke-width="2"/>
+  <text x="92" y="216" font-family="Georgia, serif" font-size="21" fill="#14181F">replicas: 3</text>
+  <text x="92" y="252" font-family="Georgia, serif" font-size="21" fill="#14181F">memory: 11.5Gi (p=2)</text>
+  <text x="92" y="288" font-family="Georgia, serif" font-size="21" fill="#14181F">nvidia.com/gpu: 2</text>
+  <text x="92" y="324" font-family="Georgia, serif" font-size="21" fill="#2A6FDB">startupProbe 5s × 40</text>
+  <text x="92" y="360" font-family="Georgia, serif" font-size="21" fill="#14181F">maxUnavailable: 0</text>
+  <!-- the Service stripe: stable address -->
+  <rect x="470" y="120" width="360" height="48" rx="8" fill="#2A6FDB"/>
+  <text x="650" y="152" font-family="Georgia, serif" font-size="22" fill="#FFFDF8" text-anchor="middle">Service · one stable address</text>
+  <!-- pods -->
+  <rect x="470" y="240" width="100" height="86" rx="10" fill="#FFFDF8" stroke="#146957" stroke-width="3"/>
+  <text x="520" y="290" font-family="Georgia, serif" font-size="20" fill="#146957" text-anchor="middle">Ready</text>
+  <rect x="600" y="240" width="100" height="86" rx="10" fill="#FFFDF8" stroke="#146957" stroke-width="3"/>
+  <text x="650" y="290" font-family="Georgia, serif" font-size="20" fill="#146957" text-anchor="middle">Ready</text>
+  <rect x="730" y="240" width="100" height="86" rx="10" fill="#FFFDF8" stroke="#89540A" stroke-width="3" stroke-dasharray="10 8"/>
+  <text x="780" y="278" font-family="Georgia, serif" font-size="20" fill="#89540A" text-anchor="middle">booting</text>
+  <text x="780" y="306" font-family="Georgia, serif" font-size="19" fill="#89540A" text-anchor="middle">165 s</text>
+  <!-- routing lines: Service to Ready pods only -->
+  <line x1="520" y1="168" x2="520" y2="240" stroke="#146957" stroke-width="3"/>
+  <line x1="650" y1="168" x2="650" y2="240" stroke="#146957" stroke-width="3"/>
+  <line x1="780" y1="168" x2="780" y2="228" stroke="#89540A" stroke-width="3" stroke-dasharray="6 7"/>
+  <line x1="780" y1="228" x2="780" y2="240" stroke="#89540A" stroke-width="3"/>
+  <!-- the manifest drives the fleet -->
+  <line x1="340" y1="260" x2="440" y2="260" stroke="#14181F" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 452 260 L 434 251 L 434 269 Z" fill="#14181F"/>
+  <!-- the capacity floor -->
+  <line x1="470" y1="356" x2="830" y2="356" stroke="#AF372B" stroke-width="3" stroke-dasharray="12 9"/>
+  <text x="650" y="388" font-family="Georgia, serif" font-size="21" fill="#AF372B" text-anchor="middle">floor: replicas − maxUnavailable = 3</text>
+  <text x="450" y="452" font-family="Georgia, serif" font-size="22" font-style="italic" fill="#6B7280" text-anchor="middle">declare the state — the dispatcher reconciles</text>
+</svg>

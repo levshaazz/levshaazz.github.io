@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 506" role="img" aria-label="A thermostat dial for the autoscaler: the metric ratio sits in a shaded dead band from 0.9 to 1.1 where the fleet holds, a red zone on the right scales pods up by the ceiling, and a blue zone on the left waits for the 300-second window before removing a pod">
+  <rect width="900" height="506" fill="#FAF6ED"/>
+  <!-- the metric axis -->
+  <line x1="110" y1="300" x2="790" y2="300" stroke="#14181F" stroke-width="3" stroke-linecap="round"/>
+  <!-- the dead band: hold -->
+  <rect x="370" y="220" width="160" height="80" fill="#146957" opacity="0.14"/>
+  <line x1="370" y1="220" x2="370" y2="300" stroke="#146957" stroke-width="3" stroke-dasharray="9 7"/>
+  <line x1="530" y1="220" x2="530" y2="300" stroke="#146957" stroke-width="3" stroke-dasharray="9 7"/>
+  <text x="450" y="248" font-family="Georgia, serif" font-size="22" fill="#146957" text-anchor="middle">hold · ±10 %</text>
+  <text x="450" y="284" font-family="Georgia, serif" font-size="20" fill="#146957" text-anchor="middle">inclusive edges</text>
+  <!-- ticks -->
+  <text x="370" y="336" font-family="Georgia, serif" font-size="21" fill="#6B7280" text-anchor="middle">0.9</text>
+  <text x="450" y="336" font-family="Georgia, serif" font-size="21" fill="#6B7280" text-anchor="middle">1.0</text>
+  <text x="530" y="336" font-family="Georgia, serif" font-size="21" fill="#6B7280" text-anchor="middle">1.1</text>
+  <text x="450" y="376" font-family="Georgia, serif" font-size="21" fill="#6B7280" text-anchor="middle">metric / target — queue depth per pod</text>
+  <!-- the pointer: parked inside the band -->
+  <circle cx="487" cy="212" r="11" fill="#14181F"/>
+  <line x1="487" y1="222" x2="487" y2="252" stroke="#14181F" stroke-width="4"/>
+  <!-- right: scale up now -->
+  <line x1="530" y1="180" x2="700" y2="180" stroke="#AF372B" stroke-width="4" stroke-linecap="round"/>
+  <path d="M 716 180 L 698 171 L 698 189 Z" fill="#AF372B"/>
+  <text x="618" y="160" font-family="Georgia, serif" font-size="22" fill="#AF372B" text-anchor="middle">outside the band: ceil → +pods</text>
+  <text x="618" y="212" font-family="Georgia, serif" font-size="19" fill="#AF372B" text-anchor="middle">window 0 s — pain is now</text>
+  <!-- left: scale down waits -->
+  <line x1="370" y1="180" x2="200" y2="180" stroke="#2A6FDB" stroke-width="4" stroke-linecap="round"/>
+  <path d="M 184 180 L 202 171 L 202 189 Z" fill="#2A6FDB"/>
+  <text x="285" y="160" font-family="Georgia, serif" font-size="22" fill="#2A6FDB" text-anchor="middle">window 300 s → −pods</text>
+  <text x="285" y="212" font-family="Georgia, serif" font-size="19" fill="#2A6FDB" text-anchor="middle">max of 20 ticks — the past votes</text>
+  <!-- the honest footer -->
+  <text x="450" y="452" font-family="Georgia, serif" font-size="22" font-style="italic" fill="#6B7280" text-anchor="middle">GPU 90 % is batching — the queue is the signal</text>
+</svg>
