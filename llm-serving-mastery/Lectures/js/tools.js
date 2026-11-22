@@ -27,10 +27,14 @@
   }
 
   function loadPrefs() {
+    /* No saved preference → the deck's own authored default (its initial
+       data-lang), not a hardcoded language: bilingual decks open exactly as
+       their <html> declares, and a saved pref keeps travelling across decks. */
+    const initial = document.documentElement.dataset.lang || 'ru';
     try {
-      return Object.assign({ lang: 'ru', theme: 'light' },
+      return Object.assign({ lang: initial, theme: 'light' },
         JSON.parse(localStorage.getItem(LS_KEY) || '{}'));
-    } catch { return { lang: 'ru', theme: 'light' }; }
+    } catch { return { lang: initial, theme: 'light' }; }
   }
   function savePrefs() {
     try { localStorage.setItem(LS_KEY, JSON.stringify(prefs)); } catch {}

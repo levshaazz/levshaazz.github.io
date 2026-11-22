@@ -127,13 +127,13 @@
       {
         id: "q1",
         q: {
-          en: "A burst of 24 clients hits a gateway with 4 service slots and 4 queue seats. How many honest 429 answers does the envelope predict?",
-          ru: "Бурст из 24 клиентов бьёт в шлюз с 4 слотами обслуживания и 4 местами очереди. Сколько честных 429 предсказывает конверт?",
+          en: "A burst of 30 clients hits a gateway with 4 service slots and 4 queue seats. How many honest 429 answers does the envelope predict?",
+          ru: "Бурст из 30 клиентов бьёт в шлюз с 4 слотами обслуживания и 4 местами очереди. Сколько честных 429 предсказывает конверт?",
         },
-        answer: 16, tol: 0.5, unit: { en: "requests", ru: "запросов" },
+        answer: 22, tol: 0.5, unit: { en: "requests", ru: "запросов" },
         hint: {
-          en: "Seats = capacity + queue = 8; everyone past them is refused: 24 − 8.",
-          ru: "Места = capacity + queue = 8; все, кто сверх, получают отказ: 24 − 8.",
+          en: "Seats = capacity + queue = 8; everyone past them is refused: 30 − 8.",
+          ru: "Места = capacity + queue = 8; все, кто сверх, получают отказ: 30 − 8.",
         },
         followUp: {
           q: { en: "Why does the queue count toward the seats that answer honestly?", ru: "Почему очередь считается в места, которые отвечают честно?" },
@@ -149,13 +149,13 @@
       {
         id: "q2",
         q: {
-          en: "With the declared mock handles (ttft 0.15 s, 0.02 s per token), how long does one full 64-token request take, in seconds?",
-          ru: "С объявленными ручками мока (<code>ttft</code> 0.15 с, 0.02 с за токен) — сколько длится полный запрос на 64 токена, в секундах?",
+          en: "With the declared mock handles (ttft 0.15 s, 0.02 s per token), how long does one full 96-token request take, in seconds?",
+          ru: "С объявленными ручками мока (<code>ttft</code> 0.15 с, 0.02 с за токен) — сколько длится полный запрос на 96 токенов, в секундах?",
         },
-        answer: 1.43, tol: 0.01, unit: { en: "s", ru: "с" },
+        answer: 2.07, tol: 0.01, unit: { en: "s", ru: "с" },
         hint: {
-          en: "W = 0.15 + 0.02 × 64 = 0.15 + 1.28.",
-          ru: "W = 0.15 + 0.02 × 64 = 0.15 + 1.28.",
+          en: "W = 0.15 + 0.02 × 96 = 0.15 + 1.92.",
+          ru: "W = 0.15 + 0.02 × 96 = 0.15 + 1.92.",
         },
         followUp: {
           q: { en: "Why does the TTFT term stay constant while tokens multiply?", ru: "Почему член TTFT остаётся постоянным, а токены множатся?" },
@@ -171,13 +171,13 @@
       {
         id: "q3",
         q: {
-          en: "Queue knee λ* for 16-token requests (W = 0.47 s) with 8 in-system seats — in req/s?",
-          ru: "Колено очереди λ* для запросов на 16 токенов (W = 0.47 с) при 8 местах в системе — в req/s?",
+          en: "Queue knee λ* for the same 96-token requests (W from q2) with 8 in-system seats — in req/s?",
+          ru: "Колено очереди λ* для тех же запросов на 96 токенов (W из q2) при 8 местах в системе — в req/s?",
         },
-        answer: 17, tol: 0.5, unit: { en: "req/s", ru: "req/s" },
+        answer: 3.86, tol: 0.5, unit: { en: "req/s", ru: "req/s" },
         hint: {
-          en: "λ* = seats / W = 8 / 0.47 ≈ 17.0.",
-          ru: "λ* = места / W = 8 / 0.47 ≈ 17.0.",
+          en: "λ* = seats / W = 8 / 2.07 ≈ 3.86.",
+          ru: "λ* = места / W = 8 / 2.07 ≈ 3.86.",
         },
         followUp: {
           q: { en: "Why do the queue seats appear in the knee λ* = seats / W?", ru: "Почему места очереди входят в колено λ* = seats / W?" },
