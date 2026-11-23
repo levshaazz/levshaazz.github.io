@@ -396,7 +396,9 @@ assert adaptersim([], 3) == {"swaps": 0, "waited": 0}, "an empty stream pays not
       },
       goal: { en: "Print one line: W=<from 1..6> — on STREAM: swaps ≤ 2, waited ≤ 4, W ≤ 4.", ru: "Напечатай одну строку: W=<из 1..6> — на STREAM: переключения ≤ 2, ожидавшие ≤ 4, W ≤ 4." },
       mode: "run", numpy: false, timeoutMs: 5000,
-      starter: `# STREAM from the capstone is already defined (six requests, two tenants).
+      starter: `# STREAM: the declared six-request stream (two tenants), exactly the
+# sequence the page-side replay uses.
+STREAM = ['A', 'B', 'A', 'B', 'A', 'B']
 # Declared model (page-side recompute uses exactly this):
 #   windows of W arrivals, grouped by tenant in first-appearance order;
 #   a swap = serving a tenant that differs from the loaded one (costs 2 ms);
@@ -494,7 +496,7 @@ print("W=3")
       },
       {
         id: "b1",
-        bridge: { en: "bridge · T13", ru: "мост · T13" },
+        tag: { en: "bridge · T13", ru: "мост · T13" },
         q: { en: "The tenant p95 you computed here is trustworthy because…", ru: "p95 арендатора, который ты считал здесь, заслуживает доверия, потому что…" },
         options: [
           { en: "it slices the same hash-chained journal T13 verified — an edited entry would fail the chain before it poisoned the percentile", ru: "он режет тот же хэш-цепочечный журнал, что верифицировала T13 — правленая запись упадёт на цепочке раньше, чем отравит перцентиль" },

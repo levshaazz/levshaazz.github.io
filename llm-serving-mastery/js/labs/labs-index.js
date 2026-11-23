@@ -8,7 +8,7 @@
     try {
       const p = JSON.parse(localStorage.getItem("lsm.lab" + n) || "{}");
       total = Number(tile.dataset.labTotal || p.total || 0);
-      done = Object.keys(p).filter(k => p[k] && k !== "total").length;
+      done = Object.keys(p).filter(k => p[k] && k !== "total" && k.indexOf(":") === -1).length;
     } catch (e) { return; }
     const svg = tile.querySelector(".lab-ring");
     if (!svg || !total) return;

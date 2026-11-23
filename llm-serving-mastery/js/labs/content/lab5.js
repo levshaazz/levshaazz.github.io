@@ -59,7 +59,7 @@
     <text x="545" y="156" text-anchor="middle" font-size="21" fill="var(--lab-muted)" class="mono fig-ghost">ceil(81 / 16) = 6</text>
     <text x="545" y="188" text-anchor="middle" font-size="14" fill="var(--fig-warm)" class="fig-ghost" data-en="it hides the 31-slot tails" data-ru="он прячет хвосты в 31 слот">it hides the 31-slot tails</text>
     <text x="380" y="262" font-size="15" fill="var(--lab-good)" data-en="real block tables: 7 blocks" data-ru="реальные block tables: 7 блоков">real block tables: 7 blocks</text>
-    <text x="380" y="288" font-size="13" fill="var(--lab-muted)" data-en="requests never share blocks" data-ru="запросы никогда не делят блоки">requests never share blocks</text>
+    <text x="460" y="288" font-size="13" fill="var(--lab-muted)" data-en="requests never share blocks" data-ru="запросы никогда не делят блоки">requests never share blocks</text>
   </g>
 </svg>`,
         stages: [

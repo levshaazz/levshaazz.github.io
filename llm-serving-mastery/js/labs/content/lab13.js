@@ -192,7 +192,7 @@
             { en: "Fifteen hours", ru: "Пятнадцать часов" },
           ],
           answer: 0,
-          explain: { en: "Burn rate is a speed: at 15× the budget lasts a fifteenth of the month — about two days. That is why 8.3× already pages: an evening at that pace eats a work-week of allowance.", ru: "Burn rate — скорость: на 15× бюджет живёт пятнадцатую часть месяца — около двух дней. Поэтому уже 8.3× пейджит: вечер на таком темпе съедает рабочую неделю allowance." },
+          explain: { en: "Burn rate is a speed: at 15× the budget lasts a fifteenth of the month — about two days. That is why 8.3× already pages: an evening at that pace eats a work-week of allowance.", ru: "Burn rate — скорость: на 15× бюджет живёт пятнадцатую часть месяца — около двух дней. Поэтому уже 8.3× пейджит: вечер на таком темпе съедает недельный запас бюджета." },
         },
       },
       {
@@ -624,6 +624,7 @@ eq(d['total'], 1)` },
         hints: [
           { en: "Two rules only: empty is 'regressed'; all-or-nothing on the rest. The judgment (LLM-as-judge) is a different, non-deterministic tool — this gate is deliberately strict arithmetic.", ru: "Правила два: пусто — 'regressed'; остальное — всё или ничего. Судья (LLM-as-judge) — другой, недетерминированный инструмент; этот гейт нарочно строгая арифметика." },
         ],
+        injectEntries: true, injectEval: true, fixtureEval: [true, true, false, true, true],
         numpy: false, timeoutMs: 4000,
       },
     ],
@@ -637,7 +638,11 @@ eq(d['total'], 1)` },
       },
       goal: { en: "Print one line: fast=<from {6, 8.3, 12}> slow=<from {2, 3, 5}> — pages == [126] and tickets == [] on TRACE.", ru: "Напечатай одну строку: fast=<из {6, 8.3, 12}> slow=<из {2, 3, 5}> — pages == [126] и tickets == [] на TRACE." },
       mode: "run", numpy: false, timeoutMs: 5000,
-      starter: `# TRACE from the capstone is already defined (144 buckets).
+      starter: `# TRACE: the same 144-bucket burn-rate day as the capstone (Exercise 5).
+# 60 quiet buckets, then 6 x 0.4, 24 quiet, one 0.7, 34 quiet,
+# the breach [1.0, 8.3, 1.0], then 16 quiet.
+TRACE = [0.0]*60 + [0.4]*6 + [0.0]*24 + [0.7] + [0.0]*34 + [1.0, 8.3, 1.0] + [0.0]*16
+assert len(TRACE) == 144
 # Declared model (page-side recompute uses exactly this):
 #   fast_burn(t) = (TRACE[t] / 10) / 0.01
 #   slow_burn(t) = (sum(TRACE[t-5..t]) / 60) / 0.01
@@ -673,7 +678,7 @@ eq(d['total'], 1)` },
         const verdict = "pages [" + pages.join(", ") + "], tickets [" + tickets.join(", ") + "]";
         if (pages.length !== 1 || pages[0] !== 126) return { ok: false, note: { en: "Your pair gives " + verdict + " — the goal is exactly one page, at bucket 126.", ru: "Твоя пара даёт " + verdict + " — цель ровно один пейдж, по корзине 126." } };
         if (tickets.length !== 0) return { ok: false, note: { en: "Your pair gives " + verdict + " — the goal is zero tickets.", ru: "Твоя пара даёт " + verdict + " — цель ноль тикетов." } };
-        return { ok: true, note: { en: "fast=" + fast + " slow=" + slow + " gives pages [126], tickets [] — the breach pages alone, the lunch stays off the board, nothing is invented. This is alert design: severe enough to spare the shoulders, patient enough to spare the lunch.", ru: "fast=" + fast + " slow=" + slow + " даёт pages [126], tickets [] — breach пейджит в одиночку, обед не попадает на доску, ничего не выдумано. Это дизайн алертов: строго enough, чтобы пощадить плечи, терпеливо enough, чтобы пощадить обед." } };
+        return { ok: true, note: { en: "fast=" + fast + " slow=" + slow + " gives pages [126], tickets [] — the breach pages alone, the lunch stays off the board, nothing is invented. This is alert design: severe enough to spare the shoulders, patient enough to spare the lunch.", ru: "fast=" + fast + " slow=" + slow + " даёт pages [126], tickets [] — breach пейджит в одиночку, обед не попадает на доску, ничего не выдумано. Это дизайн алертов: достаточно строгий, чтобы пощадить плечи, и достаточно терпеливый, чтобы пощадить обед." } };
       },
       reference: `# The unique grid answer, and why it is unique:
 #   fast=6   -> the 1.0-minute shoulders (fast burn 10x) page too: pages [125.126.127]
@@ -748,7 +753,7 @@ print("fast=12 slow=5")
       },
       {
         id: "b1",
-        bridge: { en: "bridge · T08", ru: "мост · T08" },
+        tag: { en: "bridge · T08", ru: "мост · T08" },
         q: { en: "The journal you verified here is the same species as the Topic 08 terminal-outcome journal because…", ru: "Журнал, который вы проверяли здесь, — тот же вид, что журнал исходов Темы 08, потому что…" },
         options: [
           { en: "Both are append-only and hash-sealed: each entry hashes the previous one, so an edit is a detected event, not a silent rewrite", ru: "Оба append-only и запечатаны хэшами: каждая запись хэширует предыдущую, поэтому правка — обнаруживаемое событие, а не тихая перепись" },

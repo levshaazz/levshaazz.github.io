@@ -45,7 +45,7 @@
     <circle cx="200" cy="110" r="7" fill="var(--lab-muted)"/>
     <text x="206" y="136" font-size="13" fill="var(--lab-muted)" class="mono">default 1200·860</text>
     <circle cx="250" cy="115" r="7" fill="var(--lab-muted)"/>
-    <text x="256" y="141" font-size="13" fill="var(--lab-muted)" class="mono">chunked 1250·840</text>
+    <text x="256" y="163" font-size="13" fill="var(--lab-muted)" class="mono">chunked 1250·840</text>
     <circle cx="500" cy="305" r="7" fill="var(--lab-good)"/>
     <text x="500" y="290" text-anchor="middle" font-size="13" fill="var(--lab-good)" class="mono">seqs-32 1600·470</text>
     <circle cx="550" cy="315" r="7" fill="var(--lab-good)"/>

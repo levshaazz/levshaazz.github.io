@@ -72,7 +72,7 @@
     <text x="445" y="228" font-size="13" fill="var(--lab-ink)" class="mono" data-en="pod 2" data-ru="под 2">pod 2</text>
     <circle cx="542" cy="220" r="5" fill="var(--lab-good)"/>
     <text x="445" y="248" font-size="13" fill="var(--lab-muted)" class="mono">16+4+1.5 GB</text>
-    <text x="430" y="290" font-size="13" fill="var(--lab-muted)" data-en="green dot = Ready (probe passed)" data-ru="зелёная точка = Ready (проба прошла)">green dot = Ready (probe passed)</text>
+    <text x="430" y="398" font-size="13" fill="var(--lab-muted)" data-en="green dot = Ready (probe passed)" data-ru="зелёная точка = Ready (проба прошла)">green dot = Ready (probe passed)</text>
   </g>
   <g id="g-service">
     <rect x="430" y="330" width="280" height="42" rx="9" fill="none" stroke="var(--lab-good)" stroke-width="2"/>
@@ -84,7 +84,7 @@
     <text x="60" y="320" font-size="13" fill="var(--lab-muted)" data-en="pod IPs may churn underneath" data-ru="IP подов могут меняться под ним">pod IPs may churn underneath</text>
   </g>
   <g id="g-gpu">
-    <rect x="50" y="340" width="300" height="56" rx="9" fill="none" stroke="var(--fig-warm)" stroke-width="1.5"/>
+    <rect x="50" y="340" width="316" height="56" rx="9" fill="none" stroke="var(--fig-warm)" stroke-width="1.5"/>
     <text x="66" y="362" font-size="13" fill="var(--fig-warm)" class="mono" data-en="time-slicing ×4: no mem isolation" data-ru="time-slicing ×4: без изоляции памяти">time-slicing ×4: no mem isolation</text>
     <text x="66" y="384" font-size="13" fill="var(--lab-muted)" class="mono" data-en="MIG: hardware slices, isolated" data-ru="MIG: аппаратные слайсы, изоляция">MIG: hardware slices, isolated</text>
   </g>
@@ -126,11 +126,11 @@
     <rect x="60" y="268" width="648" height="26" rx="6" fill="none" stroke="var(--lab-good)" stroke-width="1.5"/>
     <text x="60" y="320" font-size="14" fill="var(--lab-good)" data-en="pod 3s turns Ready, THEN pod 0 dies — capacity never dips below 3" data-ru="pod 3s становится Ready, и только потом pod 0 умирает — ёмкость не ниже 3">pod 3s turns Ready, THEN pod 0 dies — capacity never dips below 3</text>
     <circle cx="620" cy="281" r="6" fill="var(--lab-good)" class="fig-pulse"/>
-    <text x="60" y="352" font-size="13" fill="var(--lab-muted)" data-en="the floor is replicas − maxUnavailable; surge only adds speed" data-ru="нижняя граница — replicas − maxUnavailable; surge добавляет только скорость">the floor is replicas − maxUnavailable; surge only adds speed</text>
+    <text x="60" y="257" font-size="13" fill="var(--lab-muted)" data-en="the floor is replicas − maxUnavailable; surge only adds speed" data-ru="нижняя граница — replicas − maxUnavailable; surge добавляет только скорость">the floor is replicas − maxUnavailable; surge only adds speed</text>
   </g>
   <g id="g-bad">
     <path d="M 60 300 L 200 300 L 230 386 L 330 386 L 360 300 L 708 300" fill="none" stroke="var(--fig-warm)" stroke-width="2.5" class="fig-ghost"/>
-    <text x="280" y="378" text-anchor="middle" font-size="13" fill="var(--fig-warm)" class="fig-ghost" data-en="maxUnavailable 2: the dip — app alive, rollout stuck" data-ru="maxUnavailable 2: яма — приложение живо, роллаут завис">maxUnavailable 2: the dip — app alive, rollout stuck</text>
+    <text x="280" y="410" text-anchor="middle" font-size="13" fill="var(--fig-warm)" class="fig-ghost" data-en="maxUnavailable 2: the dip — app alive, rollout stuck" data-ru="maxUnavailable 2: яма — приложение живо, роллаут завис">maxUnavailable 2: the dip — app alive, rollout stuck</text>
   </g>
 </svg>`,
         stages: [

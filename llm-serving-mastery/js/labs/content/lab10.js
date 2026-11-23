@@ -242,7 +242,7 @@
         followUp: {
           q: { en: "Why doesn't tp = 1 fit, and why is the answer exactly 2?", ru: "Почему tp = 1 не помещается, и почему ответ ровно 2?" },
           options: [
-            { en: "At p = 1 the whole 20 GB of weights+KV lands on one GPU plus the 1.5 GB fixed part — over budget; at p = 2 the divisible part halves to 10 + 1.5 = 11.5 ≤ 15", ru: "При p = 1 все 20 ГБ весов+KV ложатся на один GPU плюс фикс 1.5 ГБ — за бюджетом; при p = 2 делимая часть halves до 10 + 1.5 = 11.5 ≤ 15" },
+            { en: "At p = 1 the whole 20 GB of weights+KV lands on one GPU plus the 1.5 GB fixed part — over budget; at p = 2 the divisible part halves to 10 + 1.5 = 11.5 ≤ 15", ru: "При p = 1 все 20 ГБ весов+KV ложатся на один GPU плюс фикс 1.5 ГБ — за бюджетом; при p = 2 делимая часть делится пополам: 10 + 1.5 = 11.5 ≤ 15" },
             { en: "Because the model forbids odd TP degrees", ru: "Потому что модель запрещает нечётные степени TP" },
             { en: "Because 1.5 × 2 = 3 GB of fixed memory must also divide", ru: "Потому что 1.5 × 2 = 3 ГБ фиксированной памяти тоже должны делиться" },
           ],

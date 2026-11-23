@@ -57,7 +57,7 @@
     <path d="M 586 292 L 586 232 L 452 232" fill="none" stroke="var(--fig-warm)" stroke-width="2.5" class="fig-flow"/>
     <circle cx="447" cy="232" r="8" fill="var(--fig-warm)"/>
     <text x="447" y="212" text-anchor="middle" font-size="14" fill="var(--fig-warm)" class="mono">clip → 7</text>
-    <text x="60" y="212" font-size="14" fill="var(--fig-warm)" data-en="INT4 cannot store 9" data-ru="INT4 не может хранить 9">INT4 cannot store 9</text>
+    <text x="250" y="220" font-size="14" fill="var(--fig-warm)" data-en="INT4 cannot store 9" data-ru="INT4 не может хранить 9">INT4 cannot store 9</text>
   </g>
   <g id="g-recon">
     <circle cx="447" cy="300" r="8" fill="var(--lab-good)"/>
@@ -95,7 +95,7 @@
     <rect x="288" y="296" width="92" height="10" rx="3" fill="var(--fig-warm)"/>
     <text x="392" y="306" font-size="14" fill="var(--fig-warm)" class="mono">−0.50</text>
     <text x="278" y="306" text-anchor="end" font-size="13" fill="var(--fig-warm)" class="mono">w3</text>
-    <text x="430" y="306" font-size="13" fill="var(--fig-warm)" data-en="the outlier" data-ru="выброс">the outlier</text>
+    <text x="470" y="306" font-size="13" fill="var(--fig-warm)" data-en="the outlier" data-ru="выброс">the outlier</text>
     <text x="60" y="382" font-size="13" fill="var(--lab-muted)" class="mono">MSE = (0.08² + 0.02² + 0.01² + 0.50²) / 4 = 0.064225</text>
   </g>
   <g id="g-inA">
@@ -313,7 +313,7 @@
 #   scale=<your scale> mse=<your claimed MSE>
 # Search any way you like. The page recomputes the MSE itself.
 
-# TODO: search for a scale with MSE <= 0.02, then print the line.
+# TODO: search for a scale with MSE <= 0.008, then print the line.
 `,
       check: (res) => {
         const out = String(res.stdout || "");

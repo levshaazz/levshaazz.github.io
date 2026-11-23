@@ -517,10 +517,11 @@
 n = 40
 prompt_tokens = 100
 wall_s = (40 + 0.625 * prompt_tokens + 60 * (n - 1)) / 1000
-print(wall_s)   # 2.396 s - fits with 0.6 s to spare
+print(wall_s)   # 2.4425 s - fits with 0.56 s to spare
 # Longer answers cost 60 ms each - the step dominates, so the tightest
-# legal shape is a short prompt and exactly 40 output tokens. Anything
-# beyond n = 49 breaks the budget no matter how short the prompt is.`,
+# legal shape is a short prompt and exactly 40 output tokens. The n
+# budget depends on prompt length: with a short prompt (≤128 chars
+# ≈ ≤32 tokens) n = 50 still fits (2.98 s ≤ 3 s).`,
   };
 
   function initChallengeLab1() {

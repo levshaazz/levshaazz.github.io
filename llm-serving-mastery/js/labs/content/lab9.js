@@ -57,7 +57,7 @@
     <path d="M 372 226 L 292 202" fill="none" stroke="var(--lab-bad)" stroke-width="2" class="fig-flow"/>
   </g>
   <g id="g-law">
-    <text x="380" y="316" font-size="16" fill="var(--lab-ink)" data-en="the law: a hit survives while nothing below changed" data-ru="закон: hit живёт, пока не изменилось ничего ниже">the law: a hit survives while nothing below changed</text>
+    <text x="380" y="316" font-size="16" fill="var(--lab-ink)" data-en="the law: a hit survives while nothing below changed" data-ru="закон: hit живёт, пока низ не менялся">the law: a hit survives while nothing below changed</text>
     <text x="380" y="344" font-size="14" fill="var(--lab-muted)" data-en="rarely-changing layers go low — order decides the bill" data-ru="редко меняющиеся слои — вниз; порядок решает счёт">rarely-changing layers go low — order decides the bill</text>
   </g>
 </svg>`,

@@ -82,25 +82,25 @@
   <g id="g-head">
     <text x="90" y="70" font-size="13" fill="var(--lab-muted)" class="mono" data-en="OBSERVED" data-ru="НАБЛЮДАЕМ">OBSERVED</text>
     <text x="410" y="70" font-size="13" fill="var(--lab-muted)" class="mono" data-en="MEANING" data-ru="СМЫСЛ">MEANING</text>
-    <line x1="70" y1="82" x2="690" y2="82" stroke="var(--lab-muted)" stroke-width="1"/>
+    <line x1="70" y1="82" x2="740" y2="82" stroke="var(--lab-muted)" stroke-width="1"/>
   </g>
   <g id="g-r1">
     <text x="90" y="120" font-size="15" fill="var(--lab-ink)" class="mono">stop + DONE</text>
     <text x="410" y="120" font-size="15" fill="var(--lab-good)" data-en="protocol complete" data-ru="протокол завершён">protocol complete</text>
-    <circle cx="668" cy="115" r="8" fill="var(--lab-good)"/>
+    <circle cx="730" cy="115" r="8" fill="var(--lab-good)"/>
   </g>
   <g id="g-r2">
     <text x="90" y="180" font-size="15" fill="var(--lab-ink)" class="mono">length + DONE</text>
     <text x="410" y="180" font-size="15" fill="var(--fig-warm)" data-en="generation capped by max_tokens" data-ru="генерация срезана max_tokens">generation capped by max_tokens</text>
-    <circle cx="668" cy="175" r="8" fill="var(--fig-warm)"/>
+    <circle cx="730" cy="175" r="8" fill="var(--fig-warm)"/>
   </g>
   <g id="g-r34">
     <text x="90" y="240" font-size="15" fill="var(--lab-ink)" class="mono">content, then EOF</text>
     <text x="410" y="240" font-size="15" fill="var(--lab-bad)" data-en="connection died — partial response" data-ru="соединение умерло — частичный ответ">connection died — partial response</text>
     <text x="90" y="300" font-size="15" fill="var(--lab-ink)" class="mono">error + DONE</text>
     <text x="410" y="300" font-size="15" fill="var(--lab-bad)" data-en="terminal frame ≠ success" data-ru="терминальный кадр ≠ успех">terminal frame ≠ success</text>
-    <circle cx="668" cy="235" r="8" fill="var(--lab-bad)"/>
-    <circle cx="668" cy="295" r="8" fill="var(--lab-bad)"/>
+    <circle cx="730" cy="235" r="8" fill="var(--lab-bad)"/>
+    <circle cx="730" cy="295" r="8" fill="var(--lab-bad)"/>
   </g>
   <g id="g-verdict">
     <text x="380" y="366" text-anchor="middle" font-size="16" fill="var(--lab-ink)" data-en="no single check suffices: read the pair, not one badge" data-ru="одной проверки мало: читай пару, а не один бейдж">no single check suffices: read the pair, not one badge</text>

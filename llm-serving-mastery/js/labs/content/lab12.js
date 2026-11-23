@@ -53,10 +53,10 @@
   <g id="g-band">
     <line x1="80" y1="248" x2="700" y2="248" stroke="var(--fig-warm)" stroke-width="1.5" stroke-dasharray="5 4"/>
     <line x1="80" y1="286" x2="700" y2="286" stroke="var(--fig-warm)" stroke-width="1.5" stroke-dasharray="5 4"/>
-    <text x="90" y="274" font-size="13" fill="var(--fig-warm)" data-en="target ±10 % — inside the band: do nothing" data-ru="цель ±10 % — внутри полосы: ничего не делать">target ±10 % — inside the band: do nothing</text>
+    <text x="300" y="274" font-size="13" fill="var(--fig-warm)" data-en="target ±10 % — inside the band: do nothing" data-ru="цель ±10 % — внутри полосы: ничего не делать">target ±10 % — inside the band: do nothing</text>
   </g>
   <g id="g-ceil">
-    <rect x="470" y="40" width="230" height="52" rx="9" fill="none" stroke="var(--lab-accent)" stroke-width="2"/>
+    <rect x="445" y="40" width="280" height="52" rx="9" fill="none" stroke="var(--lab-accent)" stroke-width="2"/>
     <text x="585" y="62" text-anchor="middle" font-size="14" fill="var(--lab-accent)" class="mono">ceil(2 × 6 / 2) = 6 → 4</text>
     <text x="585" y="82" text-anchor="middle" font-size="13" fill="var(--lab-muted)" data-en="clamped into [min, max]" data-ru="зажато в [min, max]">clamped into [min, max]</text>
   </g>
@@ -65,7 +65,7 @@
     <text x="380" y="362" text-anchor="middle" font-size="14" fill="var(--lab-bad)" data-en="ordered 4 — running 1: boot pays ~165 s (11 ticks × 15 s)" data-ru="заказано 4 — работает 1: boot платит ~165 с (11 тиков × 15 с)">ordered 4 — running 1: boot pays ~165 s (11 ticks × 15 s)</text>
   </g>
   <g id="g-window">
-    <rect x="470" y="40" width="230" height="52" rx="9" fill="none" stroke="var(--fig-warm)" stroke-width="2"/>
+    <rect x="445" y="40" width="280" height="52" rx="9" fill="none" stroke="var(--fig-warm)" stroke-width="2"/>
     <text x="585" y="62" text-anchor="middle" font-size="14" fill="var(--fig-warm)" class="mono" data-en="scale-down: max of 300 s window" data-ru="скейл-даун: максимум за 300 с">scale-down: max of 300 s window</text>
     <text x="585" y="82" text-anchor="middle" font-size="13" fill="var(--lab-muted)" data-en="20 ticks of 15 s" data-ru="20 тиков по 15 с">20 ticks of 15 s</text>
     <text x="380" y="378" font-size="14" fill="var(--fig-warm)" data-en="metric falls: the window holds the fleet up" data-ru="метрика падает: окно держит флот наверху">metric falls: the window holds the fleet up</text>
@@ -107,7 +107,7 @@
     <rect x="342" y="160" width="22" height="42" rx="4" fill="var(--lab-accent)" opacity="0.55"/>
     <rect x="368" y="160" width="22" height="42" rx="4" fill="var(--lab-accent)" opacity="0.25"/>
     <rect x="394" y="160" width="22" height="42" rx="4" fill="var(--lab-accent)" opacity="0.12"/>
-    <text x="370" y="226" text-anchor="middle" font-size="13" fill="var(--lab-muted)" data-en="continuous batching fills slots at step boundaries (T05)" data-ru="continuous batching заполняет слоты на границах шага (T05)">continuous batching fills slots at step boundaries (T05)</text>
+    <text x="350" y="226" text-anchor="middle" font-size="13" fill="var(--lab-muted)" data-en="continuous batching fills slots (T05)" data-ru="continuous batching заполняет слоты (T05)">continuous batching fills slots (T05)</text>
     <text x="370" y="248" text-anchor="middle" font-size="13" fill="var(--lab-muted)" class="mono" data-en="cap 30 · working point 250 tok/s (T06)" data-ru="кап 30 · рабочая точка 250 ток/с (T06)">cap 30 · working point 250 tok/s (T06)</text>
   </g>
   <g id="g-meters">
@@ -117,7 +117,7 @@
     <text x="536" y="173" font-size="13" fill="var(--fig-warm)" data-en="calm, not overload" data-ru="спокойствие, не перегруз">calm, not overload</text>
     <rect x="520" y="200" width="200" height="70" rx="9" fill="none" stroke="var(--lab-good)" stroke-width="1.5"/>
     <text x="528" y="226" font-size="14" fill="var(--lab-good)" class="mono" data-en="queue depth: 0 per pod" data-ru="очередь: 0 на под">queue depth: 0 per pod</text>
-    <text x="528" y="250" font-size="13" fill="var(--lab-good)" data-en="nobody waiting — do not scale" data-ru="никто не ждёт — не масштабируй">nobody waiting — do not scale</text>
+    <text x="522" y="250" font-size="13" fill="var(--lab-good)" data-en="nobody waiting — do not scale" data-ru="никто не ждёт — не масштабируй">nobody waiting — do not scale</text>
   </g>
   <g id="g-scale">
     <rect x="520" y="290" width="200" height="70" rx="9" fill="none" stroke="var(--lab-accent)" stroke-width="2"/>
