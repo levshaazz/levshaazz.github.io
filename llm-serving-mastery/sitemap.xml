@@ -197,6 +197,13 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://levshaazz.github.io/llm-serving-mastery/en/labs/15/"/>
   </url>
   <url>
+    <loc>https://levshaazz.github.io/llm-serving-mastery/en/labs/16/</loc>
+    <lastmod>2026-11-23</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://levshaazz.github.io/llm-serving-mastery/en/labs/16/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://levshaazz.github.io/llm-serving-mastery/ru/labs/16/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://levshaazz.github.io/llm-serving-mastery/en/labs/16/"/>
+  </url>
+  <url>
     <loc>https://levshaazz.github.io/llm-serving-mastery/en/labs/2/</loc>
     <lastmod>2026-11-23</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://levshaazz.github.io/llm-serving-mastery/en/labs/2/"/>
@@ -622,6 +629,13 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://levshaazz.github.io/llm-serving-mastery/en/labs/15/"/>
     <xhtml:link rel="alternate" hreflang="ru" href="https://levshaazz.github.io/llm-serving-mastery/ru/labs/15/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://levshaazz.github.io/llm-serving-mastery/en/labs/15/"/>
+  </url>
+  <url>
+    <loc>https://levshaazz.github.io/llm-serving-mastery/ru/labs/16/</loc>
+    <lastmod>2026-11-23</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://levshaazz.github.io/llm-serving-mastery/en/labs/16/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://levshaazz.github.io/llm-serving-mastery/ru/labs/16/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://levshaazz.github.io/llm-serving-mastery/en/labs/16/"/>
   </url>
   <url>
     <loc>https://levshaazz.github.io/llm-serving-mastery/ru/labs/2/</loc>

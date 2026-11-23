@@ -190,6 +190,28 @@
           explain: { en: "A queued request is in the system (it will be served), so Little's law with L = seats admits λ up to seats/W before the envelope overflows. Past that knee, extra demand is refused immediately — 429, not delay.", ru: "Запрос в очереди находится в системе (он будет обслужен), поэтому закон Литтла при L = seats допускает λ до seats/W, прежде чем конверт переполнится. За коленом лишний спрос отбивается сразу — 429, а не задержка." },
         },
       },
+      {
+        id: "q4",
+        q: {
+          en: "The gateway runs a batch window of 3 ticks: 2 of its 4 slots go to the batch pool (offline inference), the rest serve interactive traffic. An interactive request must be served within 2 ticks (the SLA). How many interactive requests does the gateway serve during the first 2 ticks of the window?",
+          ru: "Шлюз держит batch-окно в 3\u00a0тика: 2 из 4\u00a0слотов уходят batch-пулу (офлайн-инференс), остальные обслуживают интерактив. Интерактивный запрос должен быть обслужен за 2\u00a0тика (SLA). Сколько интерактивных запросов шлюз обслужит за первые 2\u00a0тика окна?",
+        },
+        answer: 4, tol: 0.5, unit: { en: "requests", ru: "запросов" },
+        hint: {
+          en: "Each tick the interactive side keeps 4 − 2 = 2 slots; within the 2-tick SLA that is 2 × 2.",
+          ru: "В каждый тик интерактиву остаются 4 − 2 = 2\u00a0слота; за 2\u00a0тика SLA это 2 × 2.",
+        },
+        followUp: {
+          q: { en: "Why not hand the batch pool all 4 slots for the whole window?", ru: "Почему не отдать batch-пулу все 4\u00a0слота на всё окно?" },
+          options: [
+            { en: "An interactive SLA timeout costs ×2 in the metric, while a served batch job earns only 0.5 — starving interactive slots for batch always loses", ru: "Таймаут интерактивного SLA стоит в метрике ×2, а обслуженная batch-работа приносит только 0.5 — голодание интерактива ради батча всегда проигрывает" },
+            { en: "Batch jobs cannot be queued — each one permanently owns a dedicated slot", ru: "Batch-задания нельзя ставить в очередь — каждое навсегда занимает выделенный слот" },
+            { en: "The engine cannot mix interactive and batch requests in one slot pool", ru: "Движок не умеет смешивать интерактивные и batch-заявки в одном пуле слотов" },
+          ],
+          answer: 0,
+          explain: { en: "The two-queue economy (capstone contract v2): M2 = served_inter − 2 × timed_out_inter + 0.5 × served_batch. Offline traffic is patient and cheap per job, but a timed-out interactive request costs four batch credits. Handing slots to batch is the policy's right — bounded by B_MAX and priced by the metric, never the whole envelope.", ru: "Экономика двух очередей (контракт капстоуна v2): M2 = served_inter − 2 × timed_out_inter + 0.5 × served_batch. Офлайн-трафик терпелив и дёшев за работу, но таймаут интерактива стоит четырёх batch-кредитов. Отдать слоты батчу — право политики, ограниченное потолком B_MAX и оплачиваемое метрикой, но никогда весь конверт." },
+        },
+      },
     ],
     exercises: [
     {

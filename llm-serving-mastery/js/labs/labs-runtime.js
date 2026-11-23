@@ -89,6 +89,22 @@
       actions.appendChild(pwrap);
     }
 
+    // Lab 16: a draft toggle for the speculative A/B. The gateway routes
+    // spec=true to engine-spec; readiness is probed with the rest of /health.
+    let draftNote = null;
+    let draftBox = null;
+    if (spec.specToggle) {
+      const dwrap = el("label", "lab-rt-num lab-rt-draft");
+      draftBox = document.createElement("input");
+      draftBox.type = "checkbox";
+      draftBox.dataset.rtDraft = "";
+      dwrap.appendChild(draftBox);
+      dwrap.appendChild(el("span", "", tr(spec.specToggle)));
+      actions.appendChild(dwrap);
+      draftNote = el("div", "lab-runtime-status lab-runtime-draft-note");
+      card.appendChild(draftNote);
+    }
+
     const expBtn = el("button", "button", tr(T().experiment));
     expBtn.type = "button"; expBtn.dataset.rtExp = "";
     actions.appendChild(expBtn);
@@ -164,6 +180,13 @@
       renderChip(chipHost, "wait", tr(T().probing));
       try {
         const h = await fetchJson("/health", { timeoutMs: 2000 });
+        if (draftNote) {
+          const sp = h.spec_engine || {};
+          const spOk = h.status === "ok" && sp.ok === true;
+          draftNote.innerHTML = "";
+          draftNote.appendChild(el("span", "lab-runtime-chip lab-runtime-" + (spOk ? "ok" : "off"),
+            (spOk ? "● " : "○ ") + tr(spOk ? T().draftOk : T().draftNotReady)));
+        }
         if (h.status === "ok") {
           renderChip(chipHost, "on", tr(T().connected) + " — " + (h.journal_entries || 0) + " " + tr(T().entriesWord));
           return true;
@@ -183,15 +206,15 @@
 
     expBtn.addEventListener("click", async () => {
       if (!(await probe())) { log(tr(T().needRuntime), "err"); return; }
-      log("POST /experiment → " + tr(T().running));
+      log("POST /experiment" + (draftBox && draftBox.checked ? " (spec)" : "") + " → " + tr(T().running));
       try {
         const pin = card.querySelector("[data-rt-prompt-field]");
         const prompt = (pin && pin.value.trim()) || tr(spec.experimentPrompt || (spec.burst && spec.burst.prompt));
         const r = await fetchJson("/experiment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: prompt, max_tokens: 32 }),
-          timeoutMs: 120000,
+          body: JSON.stringify({ prompt: prompt, max_tokens: 32, spec: !!(draftBox && draftBox.checked) }),
+          timeoutMs: 180000,
         });
         setMetric("wall", r.metrics.wall_s.toFixed(3) + " s");
         setMetric("tok", r.metrics.tok_per_s.toFixed(1));
