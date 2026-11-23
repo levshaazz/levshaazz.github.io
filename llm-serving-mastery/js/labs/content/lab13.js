@@ -252,7 +252,7 @@ def verify_chain(entries):
     # and compare seq, hash and prev. Return (True, None) or (False, index).
 `,
         tests: [
-          `import hashlib, json
+          { name: "clean chain verifies; tamper breaks at 7; gap and prev-flip", hidden: true, code: `import hashlib, json
 
 def _mk(rows):
     prev = "0" * 64
@@ -277,7 +277,7 @@ assert verify_chain(gapped) == (False, 2), "a removed entry is a seq gap at its 
 flipped = [dict(e) for e in clean]
 flipped[3]["prev"] = "f" * 64
 assert verify_chain(flipped) == (False, 3), "a prev-flip breaks at the flipped entry"
-`
+` }
         ],
         solution: `import hashlib, json
 
@@ -332,7 +332,7 @@ def golden_signals(entries):
     # TODO: collect ttfts from experiment entries, counts from burst entries.
 `,
         tests: [
-          `import math
+          { name: "fixture p95/err; nearest-rank mini; diluted burst", hidden: true, code: `import math
 
 p95, err = golden_signals(ENTRIES)
 assert abs(p95 - 7700.0) < 1e-9, f"p95 nearest-rank = 7700, got {p95}"
@@ -349,7 +349,7 @@ assert errm == 0.0, "no burst entries -> err_rate 0.0"
 full = list(ENTRIES) + [{"seq": 12, "ts": "t", "kind": "burst", "payload": {"arrivals": 10, "admitted": 10, "rejected": 0, "queue_slots": 8}, "prev": "0", "hash": "h"}]
 _, errf = golden_signals(full)
 assert abs(errf - 28/54) < 1e-3, "window semantics: total rejected / total arrivals over all bursts = 28/54"
-`,
+` }
         ],
         solution: `import math
 
@@ -380,12 +380,12 @@ def golden_signals(entries):
     # TODO: one line. Fractions in, speed out — no percents anywhere.
 `,
         tests: [
-          `assert abs(burn_rate(30, 360) - 8.3333) < 1e-3, "the slide 9 example: 30/360 over a 1% budget"
+          { name: "slide-9 burn; quiz windows; slo parameter; percent trap", hidden: true, code: `assert abs(burn_rate(30, 360) - 8.3333) < 1e-3, "the slide 9 example: 30/360 over a 1% budget"
 assert abs(burn_rate(1.5, 10) - 15.0) < 1e-9, "1.5 of 10 minutes against 1% -> 15"
 assert abs(burn_rate(5.4, 60) - 9.0) < 1e-9, "quiz q3's slow window"
 assert abs(burn_rate(10, 100, slo=0.999) - 100.0) < 1e-6, "a 99.9% promise has a 0.1% budget: 10x tighter"
 assert abs(burn_rate(50, 100) - 50.0) < 1e-9, "half the window breaching is burn 50, not 5000 or 0.5"
-`,
+` }
         ],
         solution: `def burn_rate(bad_min, window_min, slo=0.99):
     return (bad_min / window_min) / (1 - slo)
@@ -411,13 +411,13 @@ def decide(fast_burn, slow_burn):
     # TODO: fast lane first; both edges inclusive.
 `,
         tests: [
-          `assert decide(8.3, 0.0) == "page", "exactly 8.3 on the fast lane pages"
+          { name: "inclusive edges and lane order", hidden: true, code: `assert decide(8.3, 0.0) == "page", "exactly 8.3 on the fast lane pages"
 assert decide(8.3, 3.0) == "page", "both lanes burning is a page — fast speaks first"
 assert decide(0.0, 3.0) == "ticket", "exactly 3.0 on the slow lane tickets"
 assert decide(3.0, 3.0) == "ticket", "fast below the page line: the slow lane decides"
 assert decide(2.9, 2.9) == "ok", "just below both lines: a calm evening"
 assert decide(9.0, 0.0) == "page" and decide(0.0, 9.0) == "ticket", "no lane mixes into the other"
-`,
+` }
         ],
         solution: `FAST_TH = 8.3
 SLOW_TH = 3.0
@@ -460,7 +460,7 @@ def journalsim(bad_minutes, fast_th=8.3, slow_th=3.0):
 assert len(TRACE) == 144, "24 h of ten-minute buckets"
 `,
         tests: [
-          `r = journalsim(TRACE)
+          { name: "declared day; quiet day; raised fast line", hidden: true, code: `r = journalsim(TRACE)
 assert r["pages"] == [125, 126, 127], f"the breach pages itself AND both shoulders (1.0 bad min of 10 is already burn 10x) — got {r['pages']}"
 assert r["tickets"] == [64, 65, 66], f"the noisy lunch tickets only when the rolling hour carries 2+ bad minutes — got {r['tickets']}"
 assert r["ok"] == 138, f"144 - 3 pages - 3 tickets — got {r['ok']}"
@@ -471,7 +471,7 @@ assert rq == {"pages": [], "tickets": [], "ok": 144}, "a quiet day never fires"
 
 r2 = journalsim(TRACE, fast_th=12.0, slow_th=5.0)
 assert r2["pages"] == [126], "raising the fast line to 12 spares the shoulders: only the breach itself pages"
-`,
+` }
         ],
         solution: `def journalsim(bad_minutes, fast_th=8.3, slow_th=3.0):
     pages, tickets = [], []
