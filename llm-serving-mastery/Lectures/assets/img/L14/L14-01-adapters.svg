@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 506" role="img" aria-label="One frozen base serving many tenants through small LoRA adapters: interleaved tenants pay a swap per turn, grouped tenants pay one">
+  <rect width="900" height="506" fill="#FAF6ED"/>
+  <!-- the frozen base: a wide pedestal -->
+  <rect x="120" y="360" width="660" height="70" rx="8" fill="#2A6FDB" opacity="0.85"/>
+  <text x="450" y="406" font-family="Georgia, serif" font-size="24" fill="#FAF6ED" text-anchor="middle">frozen base — 491 MB, shared by everyone</text>
+  <!-- three adapters stacked on top -->
+  <rect x="200" y="286" width="120" height="56" rx="8" fill="#146957"/>
+  <rect x="390" y="286" width="120" height="56" rx="8" fill="#146957"/>
+  <rect x="580" y="286" width="120" height="56" rx="8" fill="#146957"/>
+  <text x="260" y="322" font-family="Georgia, serif" font-size="22" fill="#FAF6ED" text-anchor="middle">A · 0.22 MB</text>
+  <text x="450" y="322" font-family="Georgia, serif" font-size="22" fill="#FAF6ED" text-anchor="middle">B · 0.22 MB</text>
+  <text x="640" y="322" font-family="Georgia, serif" font-size="22" fill="#FAF6ED" text-anchor="middle">C · 0.22 MB</text>
+  <text x="450" y="262" font-family="Georgia, serif" font-size="22" fill="#146957" text-anchor="middle">three tenants — three small adapters, one base</text>
+  <!-- interleaved stream on the left: swaps everywhere -->
+  <text x="130" y="96" font-family="Georgia, serif" font-size="22" fill="#6B7280">interleaved — 5 swaps</text>
+  <circle cx="180" cy="150" r="22" fill="#2A6FDB"/>
+  <circle cx="260" cy="150" r="22" fill="#146957"/>
+  <circle cx="340" cy="150" r="22" fill="#2A6FDB"/>
+  <circle cx="420" cy="150" r="22" fill="#146957"/>
+  <circle cx="500" cy="150" r="22" fill="#2A6FDB"/>
+  <circle cx="580" cy="150" r="22" fill="#146957"/>
+  <text x="220" y="158" font-family="Georgia, serif" font-size="22" fill="#6B7280">⇄</text>
+  <text x="300" y="158" font-family="Georgia, serif" font-size="22" fill="#6B7280">⇄</text>
+  <text x="380" y="158" font-family="Georgia, serif" font-size="22" fill="#6B7280">⇄</text>
+  <text x="460" y="158" font-family="Georgia, serif" font-size="22" fill="#6B7280">⇄</text>
+  <text x="540" y="158" font-family="Georgia, serif" font-size="22" fill="#6B7280">⇄</text>
+  <!-- grouped stream on the right: one swap -->
+  <text x="640" y="96" font-family="Georgia, serif" font-size="22" fill="#6B7280">grouped — 1 swap</text>
+  <circle cx="680" cy="150" r="22" fill="#146957"/>
+  <circle cx="730" cy="150" r="22" fill="#146957"/>
+  <circle cx="780" cy="150" r="22" fill="#146957"/>
+  <line x1="800" y1="150" x2="824" y2="150" stroke="#AF372B" stroke-width="3"/>
+  <circle cx="846" cy="150" r="22" fill="#2A6FDB"/>
+  <!-- the bill -->
+  <line x1="130" y1="196" x2="846" y2="196" stroke="#AF372B" stroke-width="2" stroke-dasharray="6 8"/>
+  <text x="450" y="486" font-family="Georgia, serif" font-size="24" fill="#89540A" text-anchor="middle">a swap is 2 ms — the batch window is the lever</text>
+</svg>
