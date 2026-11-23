@@ -554,9 +554,10 @@ assert r2["pages"] == [126], "raising the fast line to 12 spares the shoulders: 
 # (their fast burn is 10x!) and which slow threshold stays silent
 # on the lunch (its best rolling burn is 4x) while still not being "off".
 `,
-      check: (out) => {
+      check: (res) => {
+        const out = String(res.stdout || "");
         const trace = (window.LABS_CONTENT["13"].__trace || []);
-        const m = String(out).match(/fast\s*=\s*([0-9.]+)\s+slow\s*=\s*([0-9.]+)/);
+        const m = out.match(/fast\s*=\s*([0-9.]+)\s+slow\s*=\s*([0-9.]+)/);
         if (!m) return { ok: false, note: { en: "Print one line: fast=<value> slow=<value>.", ru: "Напечатай одну строку: fast=<значение> slow=<значение>." } };
         const fast = Number(m[1]), slow = Number(m[2]);
         const gF = [6, 8.3, 12], gS = [2, 3, 5];
