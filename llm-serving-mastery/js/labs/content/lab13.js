@@ -254,6 +254,21 @@ def verify_chain(entries):
         tests: [
           { name: "clean chain verifies; tamper breaks at 7; gap and prev-flip", hidden: true, code: `import hashlib, json
 
+ENTRIES = [
+    {"seq": 0, "ts": "2026-11-22T21:00:12Z", "kind": "experiment", "payload": {"prompt": "digest", "ttft_ms": 810, "wall_s": 1.44, "out_tokens": 38}, "prev": "0000000000000000000000000000000000000000000000000000000000000000", "hash": "5afd7406d67e2003902b6f3ce7e32d8d6782ae4e3bc1e77fb2188b761eea37ca"},
+    {"seq": 1, "ts": "2026-11-22T21:00:41Z", "kind": "experiment", "payload": {"prompt": "digest", "ttft_ms": 790, "wall_s": 1.41, "out_tokens": 38}, "prev": "5afd7406d67e2003902b6f3ce7e32d8d6782ae4e3bc1e77fb2188b761eea37ca", "hash": "b26d745d01a0687a7761bd7c57371e519603f9cf110388b02413bd1c5e3f73fc"},
+    {"seq": 2, "ts": "2026-11-22T21:01:05Z", "kind": "experiment", "payload": {"prompt": "digest", "ttft_ms": 805, "wall_s": 1.43, "out_tokens": 38}, "prev": "b26d745d01a0687a7761bd7c57371e519603f9cf110388b02413bd1c5e3f73fc", "hash": "2b7d9b1c1c82c402cd9fb3482858c0375baa813059313bb493b271ae5c49486c"},
+    {"seq": 3, "ts": "2026-11-22T21:01:33Z", "kind": "experiment", "payload": {"prompt": "kv", "ttft_ms": 7700, "wall_s": 9.87, "out_tokens": 38}, "prev": "2b7d9b1c1c82c402cd9fb3482858c0375baa813059313bb493b271ae5c49486c", "hash": "b2c062f1963cf90e06411e60d71c64d039a970453cce33db5e67000d8ab8e55e"},
+    {"seq": 4, "ts": "2026-11-22T21:02:02Z", "kind": "experiment", "payload": {"prompt": "kv", "ttft_ms": 7250, "wall_s": 9.51, "out_tokens": 38}, "prev": "b2c062f1963cf90e06411e60d71c64d039a970453cce33db5e67000d8ab8e55e", "hash": "fb6363922c9f618638f2d632dfb1807e5ad57c4c4ddd2c82a3b946370333b892"},
+    {"seq": 5, "ts": "2026-11-22T21:02:30Z", "kind": "experiment", "payload": {"prompt": "digest", "ttft_ms": 820, "wall_s": 1.46, "out_tokens": 38}, "prev": "fb6363922c9f618638f2d632dfb1807e5ad57c4c4ddd2c82a3b946370333b892", "hash": "728e7f3ebfdbd47f99a51d845749558fb2620d53b5b34411ec81ed833e7a6c42"},
+    {"seq": 6, "ts": "2026-11-22T21:03:10Z", "kind": "burst", "payload": {"arrivals": 24, "admitted": 8, "rejected": 16, "queue_slots": 8}, "prev": "728e7f3ebfdbd47f99a51d845749558fb2620d53b5b34411ec81ed833e7a6c42", "hash": "c9e8b01a27e742f655599550de5307e19ca6eddf53612161ac47ffa194c5aa1d"},
+    {"seq": 7, "ts": "2026-11-22T21:03:41Z", "kind": "burst", "payload": {"arrivals": 24, "admitted": 8, "rejected": 12, "queue_slots": 8}, "prev": "c9e8b01a27e742f655599550de5307e19ca6eddf53612161ac47ffa194c5aa1d", "hash": "ecb27d9aeacd98fdf623f35fea8c7ac06b0da8e3e4d38c2d3bd8244352a9ce45"},
+    {"seq": 8, "ts": "2026-11-22T21:04:12Z", "kind": "experiment", "payload": {"prompt": "digest", "ttft_ms": 830, "wall_s": 1.47, "out_tokens": 38}, "prev": "ecb27d9aeacd98fdf623f35fea8c7ac06b0da8e3e4d38c2d3bd8244352a9ce45", "hash": "3951b8782a8728f513bf6262a32d815b7fdb47a55a4cd8a0bff5639f3f3a3d89"},
+    {"seq": 9, "ts": "2026-11-22T21:04:47Z", "kind": "experiment", "payload": {"prompt": "digest", "ttft_ms": 800, "wall_s": 1.42, "out_tokens": 38}, "prev": "3951b8782a8728f513bf6262a32d815b7fdb47a55a4cd8a0bff5639f3f3a3d89", "hash": "54d04c24bb82f4569f3ba4ff43b1e6361409e52972c476d036ad3228be5ba741"},
+    {"seq": 10, "ts": "2026-11-22T21:05:16Z", "kind": "experiment", "payload": {"prompt": "kv", "ttft_ms": 7150, "wall_s": 9.34, "out_tokens": 38}, "prev": "54d04c24bb82f4569f3ba4ff43b1e6361409e52972c476d036ad3228be5ba741", "hash": "af9d7c830e501980af6921a3326cb776baefd53f16b39b9d48a80f9214f45ab6"},
+    {"seq": 11, "ts": "2026-11-22T21:05:48Z", "kind": "experiment", "payload": {"prompt": "kv", "ttft_ms": 7600, "wall_s": 9.71, "out_tokens": 38}, "prev": "af9d7c830e501980af6921a3326cb776baefd53f16b39b9d48a80f9214f45ab6", "hash": "9f6f8fa0915d51d7ee5e46e93843395ba2e6a0ca0663a1f10cf2ebd2422acbe5"}
+]
+
 def _mk(rows):
     prev = "0" * 64
     out = []
@@ -333,6 +348,21 @@ def golden_signals(entries):
 `,
         tests: [
           { name: "fixture p95/err; nearest-rank mini; diluted burst", hidden: true, code: `import math
+
+ENTRIES = [
+    {"seq": 0, "ts": "2026-11-22T21:00:12Z", "kind": "experiment", "payload": {"prompt": "digest", "ttft_ms": 810, "wall_s": 1.44, "out_tokens": 38}, "prev": "0000000000000000000000000000000000000000000000000000000000000000", "hash": "5afd7406d67e2003902b6f3ce7e32d8d6782ae4e3bc1e77fb2188b761eea37ca"},
+    {"seq": 1, "ts": "2026-11-22T21:00:41Z", "kind": "experiment", "payload": {"prompt": "digest", "ttft_ms": 790, "wall_s": 1.41, "out_tokens": 38}, "prev": "5afd7406d67e2003902b6f3ce7e32d8d6782ae4e3bc1e77fb2188b761eea37ca", "hash": "b26d745d01a0687a7761bd7c57371e519603f9cf110388b02413bd1c5e3f73fc"},
+    {"seq": 2, "ts": "2026-11-22T21:01:05Z", "kind": "experiment", "payload": {"prompt": "digest", "ttft_ms": 805, "wall_s": 1.43, "out_tokens": 38}, "prev": "b26d745d01a0687a7761bd7c57371e519603f9cf110388b02413bd1c5e3f73fc", "hash": "2b7d9b1c1c82c402cd9fb3482858c0375baa813059313bb493b271ae5c49486c"},
+    {"seq": 3, "ts": "2026-11-22T21:01:33Z", "kind": "experiment", "payload": {"prompt": "kv", "ttft_ms": 7700, "wall_s": 9.87, "out_tokens": 38}, "prev": "2b7d9b1c1c82c402cd9fb3482858c0375baa813059313bb493b271ae5c49486c", "hash": "b2c062f1963cf90e06411e60d71c64d039a970453cce33db5e67000d8ab8e55e"},
+    {"seq": 4, "ts": "2026-11-22T21:02:02Z", "kind": "experiment", "payload": {"prompt": "kv", "ttft_ms": 7250, "wall_s": 9.51, "out_tokens": 38}, "prev": "b2c062f1963cf90e06411e60d71c64d039a970453cce33db5e67000d8ab8e55e", "hash": "fb6363922c9f618638f2d632dfb1807e5ad57c4c4ddd2c82a3b946370333b892"},
+    {"seq": 5, "ts": "2026-11-22T21:02:30Z", "kind": "experiment", "payload": {"prompt": "digest", "ttft_ms": 820, "wall_s": 1.46, "out_tokens": 38}, "prev": "fb6363922c9f618638f2d632dfb1807e5ad57c4c4ddd2c82a3b946370333b892", "hash": "728e7f3ebfdbd47f99a51d845749558fb2620d53b5b34411ec81ed833e7a6c42"},
+    {"seq": 6, "ts": "2026-11-22T21:03:10Z", "kind": "burst", "payload": {"arrivals": 24, "admitted": 8, "rejected": 16, "queue_slots": 8}, "prev": "728e7f3ebfdbd47f99a51d845749558fb2620d53b5b34411ec81ed833e7a6c42", "hash": "c9e8b01a27e742f655599550de5307e19ca6eddf53612161ac47ffa194c5aa1d"},
+    {"seq": 7, "ts": "2026-11-22T21:03:41Z", "kind": "burst", "payload": {"arrivals": 24, "admitted": 8, "rejected": 12, "queue_slots": 8}, "prev": "c9e8b01a27e742f655599550de5307e19ca6eddf53612161ac47ffa194c5aa1d", "hash": "ecb27d9aeacd98fdf623f35fea8c7ac06b0da8e3e4d38c2d3bd8244352a9ce45"},
+    {"seq": 8, "ts": "2026-11-22T21:04:12Z", "kind": "experiment", "payload": {"prompt": "digest", "ttft_ms": 830, "wall_s": 1.47, "out_tokens": 38}, "prev": "ecb27d9aeacd98fdf623f35fea8c7ac06b0da8e3e4d38c2d3bd8244352a9ce45", "hash": "3951b8782a8728f513bf6262a32d815b7fdb47a55a4cd8a0bff5639f3f3a3d89"},
+    {"seq": 9, "ts": "2026-11-22T21:04:47Z", "kind": "experiment", "payload": {"prompt": "digest", "ttft_ms": 800, "wall_s": 1.42, "out_tokens": 38}, "prev": "3951b8782a8728f513bf6262a32d815b7fdb47a55a4cd8a0bff5639f3f3a3d89", "hash": "54d04c24bb82f4569f3ba4ff43b1e6361409e52972c476d036ad3228be5ba741"},
+    {"seq": 10, "ts": "2026-11-22T21:05:16Z", "kind": "experiment", "payload": {"prompt": "kv", "ttft_ms": 7150, "wall_s": 9.34, "out_tokens": 38}, "prev": "54d04c24bb82f4569f3ba4ff43b1e6361409e52972c476d036ad3228be5ba741", "hash": "af9d7c830e501980af6921a3326cb776baefd53f16b39b9d48a80f9214f45ab6"},
+    {"seq": 11, "ts": "2026-11-22T21:05:48Z", "kind": "experiment", "payload": {"prompt": "kv", "ttft_ms": 7600, "wall_s": 9.71, "out_tokens": 38}, "prev": "af9d7c830e501980af6921a3326cb776baefd53f16b39b9d48a80f9214f45ab6", "hash": "9f6f8fa0915d51d7ee5e46e93843395ba2e6a0ca0663a1f10cf2ebd2422acbe5"}
+]
 
 p95, err = golden_signals(ENTRIES)
 assert abs(p95 - 7700.0) < 1e-9, f"p95 nearest-rank = 7700, got {p95}"
@@ -460,7 +490,10 @@ def journalsim(bad_minutes, fast_th=8.3, slow_th=3.0):
 assert len(TRACE) == 144, "24 h of ten-minute buckets"
 `,
         tests: [
-          { name: "declared day; quiet day; raised fast line", hidden: true, code: `r = journalsim(TRACE)
+          { name: "declared day; quiet day; raised fast line", hidden: true, code: `TRACE = [0.0]*60 + [0.4]*6 + [0.0]*24 + [0.7] + [0.0]*34 + [1.0, 8.3, 1.0] + [0.0]*16
+assert len(TRACE) == 144
+
+r = journalsim(TRACE)
 assert r["pages"] == [125, 126, 127], f"the breach pages itself AND both shoulders (1.0 bad min of 10 is already burn 10x) — got {r['pages']}"
 assert r["tickets"] == [64, 65, 66], f"the noisy lunch tickets only when the rolling hour carries 2+ bad minutes — got {r['tickets']}"
 assert r["ok"] == 138, f"144 - 3 pages - 3 tickets — got {r['ok']}"
