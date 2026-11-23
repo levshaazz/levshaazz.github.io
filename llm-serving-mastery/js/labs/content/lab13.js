@@ -10,7 +10,7 @@
   window.LABS_CONTENT = window.LABS_CONTENT || {};
 
   LABS_CONTENT["13"] = {
-    budget: 60,
+    budget: 75,
     title: {
       en: "LLMOps observability: the on-call journal",
       ru: "LLMOps-наблюдаемость: журнал дежурного",
@@ -529,6 +529,103 @@ assert r2["pages"] == [126], "raising the fast line to 12 spares the shoulders: 
         ],
         numpy: false, timeoutMs: 5000,
       },
+      {
+        id: "ex6",
+        title: { en: "Exercise 6 · Canary arithmetic: how long until the budget burns", ru: "Упражнение 6 · Арифметика canary: за сколько минут сгорит бюджет" },
+        brief: {
+          en: "A canary release routes a <code>share</code> of live traffic to the candidate. Declared model: canary share <code>5 %</code>, stable error rate <code>1 %</code>, canary error rate <code>2 %</code>, traffic <code>10 000</code> requests per minute, error budget <code>20</code> extra bad answers before auto-rollback. Implement <code>CanarySim(share, baseline_rate, canary_rate)</code> with <code>extra_errors(requests)</code> — <code>requests × share × (canary_rate − baseline_rate)</code> — and <code>rollback_minutes(budget, requests)</code>: minutes until the budget burns, <code>float('inf')</code> when the canary is not worse than baseline. First predict by hand for the declared numbers: extra errors per minute, minutes to rollback.",
+          ru: "Канареечный релиз ведёт <code>share</code> живого трафика на кандидата. Заявленная модель: доля canary <code>5\u00a0%</code>, частота ошибок стабильного яруса <code>1\u00a0%</code>, canary <code>2\u00a0%</code>, трафик <code>10\u00a0000</code> запросов в минуту, бюджет ошибки <code>20</code> лишних плохих ответов до авто-отката. Реализуй <code>CanarySim(share, baseline_rate, canary_rate)</code> с <code>extra_errors(requests)</code> — <code>requests × share × (canary_rate − baseline_rate)</code> — и <code>rollback_minutes(budget, requests)</code>: минуты до выгорания бюджета, <code>float('inf')</code>, когда canary не хуже baseline. Сначала предскажи руками для заявленных чисел: лишние ошибки за минуту и минуты до отката.",
+        },
+        starter: `class CanarySim:
+    """Declared canary-rollout model (teaching arithmetic).
+
+    share: canary traffic share, 0..1;
+    baseline_rate / canary_rate: error rates of stable / canary tiers.
+    """
+
+    def __init__(self, share, baseline_rate, canary_rate):
+        # TODO: store the three knobs
+        ...
+
+    def extra_errors(self, requests):
+        """Extra bad answers for the given requests vs staying on baseline."""
+        # TODO: requests * share * (canary_rate - baseline_rate)
+        ...
+
+    def rollback_minutes(self, budget, requests):
+        """Minutes until the error budget burns at this traffic.
+
+        float('inf') when the canary is not worse than baseline.
+        """
+        # TODO: budget / extra_errors(requests); guard extra <= 0 -> inf
+        ...`,
+        tests: [
+          { name: "declared point: 5 extra bad answers per minute", hidden: false, code: `approx(CanarySim(0.05, 0.01, 0.02).extra_errors(10000), 5.0, 1e-9)` },
+          { name: "declared budget burns in 4 minutes", hidden: false, code: `approx(CanarySim(0.05, 0.01, 0.02).rollback_minutes(20, 10000), 4.0, 1e-9)` },
+          { name: "wider share, worse canary", hidden: false, code: `approx(CanarySim(0.10, 0.02, 0.05).extra_errors(10000), 30.0, 1e-9)` },
+          { name: "no regression — never rolls back", hidden: true, code: `eq(CanarySim(0.05, 0.02, 0.02).rollback_minutes(20, 10000), float('inf'))` },
+          { name: "half the traffic, same deadline", hidden: true, code: `approx(CanarySim(0.5, 0.01, 0.02).rollback_minutes(20, 1000), 4.0, 1e-9)` },
+        ],
+        solution: `class CanarySim:
+    def __init__(self, share, baseline_rate, canary_rate):
+        self.share = share
+        self.e0 = baseline_rate
+        self.e1 = canary_rate
+
+    def extra_errors(self, requests):
+        return requests * self.share * (self.e1 - self.e0)
+
+    def rollback_minutes(self, budget, requests):
+        extra = self.extra_errors(requests)
+        if extra <= 0:
+            return float('inf')
+        return budget / extra`,
+        hints: [
+          { en: "extra per minute = 10 000 × 0.05 × (0.02 − 0.01) — the share prices the exposure.", ru: "лишние за минуту = 10\u00a0000 × 0.05 × (0.02 − 0.01) — доля оценивает экспозицию." },
+          { en: "rollback_minutes divides the budget by the per-minute burn; a canary at or below baseline burns nothing — return float('inf').", ru: "rollback_minutes делит бюджет на минутный расход; canary не хуже baseline не жжёт ничего — верни float('inf')." },
+        ],
+        numpy: false, timeoutMs: 4000,
+      },
+      {
+        id: "ex7",
+        title: { en: "Exercise 7 · The eval gate: promote or regress", ru: "Упражнение 7 · Eval-гейт: промо или регрессия" },
+        brief: {
+          en: "A deploy gate over a deterministic eval set: the button in the runtime section below runs <code>5</code> fixture prompts (<code>temperature 0</code>) through YOUR gateway and stores the pass/fail flags; they are injected into this exercise as <code>results</code> (offline — a declared fixture, practice material, never evidence). Implement <code>eval_gate(results)</code>: <code>'promote'</code> iff there is at least one result and ALL passed — a deterministic set is all-or-nothing. A shadow deployment runs the candidate without answering users; a canary (Exercise 6) limits the blast radius instead — the gate decides which one you may run.",
+          ru: "Гейт деплоя над детерминированным eval-набором: кнопка в секции рантайма ниже гоняет <code>5</code> фикстур-промптов (<code>temperature 0</code>) через твой шлюз и сохраняет флаги прошла/не прошла; они инжектируются в это упражнение как <code>results</code> (офлайн — декларированная фикстура, учебный материал, никогда не evidence). Реализуй <code>eval_gate(results)</code>: <code>'promote'</code> тогда и только тогда, когда есть хотя бы один результат и прошли ВСЕ — детерминированный набор «всё или ничего». Теневой деплой гоняет кандидата без ответов пользователям; canary (упражнение 6) ограничивает радиус удара — гейт решает, что тебе можно.",
+        },
+        starter: `def eval_gate(results):
+    """Deterministic deploy gate over eval results (list of bool).
+
+    Returns {'passed': int, 'total': int, 'verdict': 'promote' | 'regressed'};
+    'promote' iff at least one result exists and ALL passed.
+    An empty list is 'regressed': no evidence — no promotion.
+    """
+    # TODO: count passed; empty -> 'regressed'; all passed -> 'promote'
+    ...`,
+        tests: [
+          { name: "clean set promotes 5/5", hidden: false, code: `d = eval_gate([True, True, True, True, True])
+eq(d['verdict'], 'promote')
+eq(d['passed'], 5)
+eq(d['total'], 5)` },
+          { name: "one regression stops the promotion", hidden: false, code: `d = eval_gate([True, True, False, True, True])
+eq(d['verdict'], 'regressed')
+eq(d['passed'], 4)
+eq(d['total'], 5)` },
+          { name: "no evidence — no promotion", hidden: true, code: `eq(eval_gate([])['verdict'], 'regressed')` },
+          { name: "single-fixture gate", hidden: true, code: `d = eval_gate([True])
+eq(d['verdict'], 'promote')
+eq(d['total'], 1)` },
+        ],
+        solution: `def eval_gate(results):
+    passed = sum(1 for r in results if r)
+    total = len(results)
+    verdict = 'promote' if total > 0 and passed == total else 'regressed'
+    return {'passed': passed, 'total': total, 'verdict': verdict}`,
+        hints: [
+          { en: "Two rules only: empty is 'regressed'; all-or-nothing on the rest. The judgment (LLM-as-judge) is a different, non-deterministic tool — this gate is deliberately strict arithmetic.", ru: "Правила два: пусто — 'regressed'; остальное — всё или ничего. Судья (LLM-as-judge) — другой, недетерминированный инструмент; этот гейт нарочно строгая арифметика." },
+        ],
+        numpy: false, timeoutMs: 4000,
+      },
     ],
     challenge: {
       id: "challenge",
@@ -600,6 +697,15 @@ print("fast=12 slow=5")
       experimentPrompt: {
         en: "Run two experiments and one burst, then press «Проверить цепочку»: the gateway's verdict and your own walk must agree.",
         ru: "Сделай два эксперимента и один бурст, затем нажми «Проверить цепочку»: вердикт шлюза и твой собственный ход обязаны сойтись.",
+      },
+      evalSet: {
+        fixtures: [
+          { prompt: "What is 17 + 25? Answer with just the number.", expect: "42" },
+          { prompt: "What is the capital of France? Answer with just the city name.", expect: "paris" },
+          { prompt: "How many days does a leap year have? Answer with just the number.", expect: "366" },
+          { prompt: "Name the color of the sky on a clear day in one word.", expect: "blue" },
+          { prompt: "What is 9 × 6? Answer with just the number.", expect: "54" },
+        ],
       },
       footer: {
         en: "The live journal is yours and machine-local; the declared fixture above stays the grading surface. If the runtime is offline, this section says so honestly — nothing here pretends.",

@@ -322,3 +322,22 @@ html[data-cb="mono"] .lab-shell { --lab-accent: #c9ced6 !important; --lab-accent
 .lab-colab-panel input { font: inherit; padding: 0.4rem 0.6rem; border-radius: 8px; border: 1px solid var(--lab-line); background: #0b0e15; color: var(--lab-ink); }
 .lab-colab-url { width: min(30rem, 100%); }
 .lab-colab-token { width: 13rem; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+/* Parsons problems (market backlog wave 3): click-to-place assembly,
+   keyboard operable — no drag-and-drop (mobile + background-tab throttling). */
+.lab-parsons .lab-parsons-head { margin: 0.9rem 0 0.4rem; font-size: 0.86rem; color: var(--lab-muted); }
+.lab-parsons .lab-parsons-bank,
+.lab-parsons .lab-parsons-seq { display: flex; flex-direction: column; gap: 0.45rem; min-height: 2.2rem; }
+.lab-parsons .lab-parsons-seq { border: 1px dashed var(--lab-line); border-radius: 10px; padding: 0.55rem; }
+.lab-parsons .lab-parsons-step {
+  text-align: left; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--lab-line);
+  color: var(--lab-ink); border-radius: 9px; padding: 0.5rem 0.7rem;
+  font: inherit; font-size: 0.95rem; cursor: pointer; min-height: 36px;
+}
+.lab-parsons .lab-parsons-step:hover { border-color: var(--lab-accent); }
+.lab-parsons .lab-parsons-step.placed { border-color: var(--lab-accent); background: rgba(56, 225, 255, 0.06); }
+.lab-parsons .lab-parsons-line { display: flex; align-items: center; gap: 0.45rem; }
+.lab-parsons .lab-parsons-num { color: var(--lab-muted); min-width: 1.6rem; text-align: right; }
+.lab-parsons .lab-parsons-line .lab-parsons-step { flex: 1; }
+.lab-parsons .lab-parsons-move { padding: 0.25rem 0.55rem; min-height: 32px; }
+.lab-parsons .lab-parsons-empty { color: var(--lab-muted); font-size: 0.88rem; }

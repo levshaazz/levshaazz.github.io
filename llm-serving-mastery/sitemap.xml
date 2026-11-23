@@ -435,6 +435,13 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://levshaazz.github.io/llm-serving-mastery/en/topics/14/"/>
   </url>
   <url>
+    <loc>https://levshaazz.github.io/llm-serving-mastery/en/welcome/</loc>
+    <lastmod>2026-11-23</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://levshaazz.github.io/llm-serving-mastery/en/welcome/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://levshaazz.github.io/llm-serving-mastery/ru/welcome/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://levshaazz.github.io/llm-serving-mastery/en/welcome/"/>
+  </url>
+  <url>
     <loc>https://levshaazz.github.io/llm-serving-mastery/ru/book/01/</loc>
     <lastmod>2026-11-23</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://levshaazz.github.io/llm-serving-mastery/en/book/01/"/>
@@ -867,5 +874,12 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://levshaazz.github.io/llm-serving-mastery/en/topics/14/"/>
     <xhtml:link rel="alternate" hreflang="ru" href="https://levshaazz.github.io/llm-serving-mastery/ru/topics/14/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://levshaazz.github.io/llm-serving-mastery/en/topics/14/"/>
+  </url>
+  <url>
+    <loc>https://levshaazz.github.io/llm-serving-mastery/ru/welcome/</loc>
+    <lastmod>2026-11-23</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://levshaazz.github.io/llm-serving-mastery/en/welcome/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://levshaazz.github.io/llm-serving-mastery/ru/welcome/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://levshaazz.github.io/llm-serving-mastery/en/welcome/"/>
   </url>
 </urlset>

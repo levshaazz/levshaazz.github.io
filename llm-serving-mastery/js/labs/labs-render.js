@@ -183,6 +183,119 @@
     card.appendChild(wrap);
   }
 
+  // ------------------------------------------------------ Parsons problems
+  // Assemble-the-solution step between quizzes and exercises (market backlog
+  // wave 3): click a bank step to place it, click a placed step to return it,
+  // arrows to reorder — no drag-and-drop, fully keyboard operable. Distractors
+  // are pool entries absent from `solution`.
+  function renderParsons(root, p) {
+    IDS.push(p.id);
+    const card = el("div", "lab-card lab-exercise lab-parsons");
+    card.dataset.labCheckpoint = p.id;
+    card.appendChild(el("span", "lab-ex-status", p.id.toUpperCase()));
+    card.appendChild(el("h3", "", tr(p.title)));
+    card.appendChild(el("p", "", tr(p.brief)));
+    const bank = el("div", "lab-parsons-bank");
+    const seq = el("div", "lab-parsons-seq");
+    card.appendChild(el("p", "lab-parsons-head", T.parsonsBank));
+    card.appendChild(bank);
+    card.appendChild(el("p", "lab-parsons-head", T.parsonsSeq));
+    card.appendChild(seq);
+    const row = el("div", "lab-answer-row");
+    const check = el("button", "button", T.check);
+    check.type = "button";
+    row.appendChild(check);
+    card.appendChild(row);
+    const verdict = el("p", "lab-verdict");
+    verdict.setAttribute("aria-live", "polite");
+    card.appendChild(verdict);
+
+    const stepLabel = (i) => tr(p.pool[i]);
+    let placed = [];
+    function renderBank() {
+      bank.innerHTML = "";
+      p.pool.forEach((_, i) => {
+        if (placed.includes(i)) return;
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "lab-parsons-step";
+        b.textContent = stepLabel(i);
+        b.setAttribute("aria-label", T.parsonsAdd + ": " + stepLabel(i));
+        b.addEventListener("click", () => { placed.push(i); renderAll(); });
+        bank.appendChild(b);
+      });
+      if (!bank.children.length) bank.appendChild(el("span", "lab-parsons-empty", T.parsonsBankEmpty));
+    }
+    function renderSeq() {
+      seq.innerHTML = "";
+      placed.forEach((idx, pos) => {
+        const line = el("div", "lab-parsons-line");
+        line.appendChild(el("span", "lab-parsons-num", (pos + 1) + "."));
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "lab-parsons-step placed";
+        b.textContent = stepLabel(idx);
+        b.setAttribute("aria-label", T.parsonsRemove + ": " + stepLabel(idx));
+        b.addEventListener("click", () => { placed.splice(pos, 1); renderAll(); });
+        const up = el("button", "button secondary lab-parsons-move", "↑");
+        up.type = "button";
+        up.disabled = pos === 0;
+        up.setAttribute("aria-label", T.parsonsUp + " " + (pos + 1));
+        up.addEventListener("click", () => {
+          const tmp = placed[pos - 1]; placed[pos - 1] = placed[pos]; placed[pos] = tmp;
+          renderAll();
+        });
+        const down = el("button", "button secondary lab-parsons-move", "↓");
+        down.type = "button";
+        down.disabled = pos === placed.length - 1;
+        down.setAttribute("aria-label", T.parsonsDown + " " + (pos + 1));
+        down.addEventListener("click", () => {
+          const tmp = placed[pos + 1]; placed[pos + 1] = placed[pos]; placed[pos] = tmp;
+          renderAll();
+        });
+        line.appendChild(b);
+        line.appendChild(up);
+        line.appendChild(down);
+        seq.appendChild(line);
+      });
+      if (!placed.length) seq.appendChild(el("span", "lab-parsons-empty", T.parsonsSeqEmpty));
+    }
+    function renderAll() {
+      renderBank();
+      renderSeq();
+      verdict.dataset.state = "";
+      verdict.textContent = "";
+    }
+    function doCheck() {
+      const ok = placed.length === p.solution.length && placed.every((v, i) => v === p.solution[i]);
+      if (ok) {
+        placed = p.solution.slice();
+        renderSeq();
+        bank.innerHTML = "";
+        bank.appendChild(el("span", "lab-parsons-empty", T.parsonsBankEmpty));
+        check.disabled = true;
+        verdict.dataset.state = "pass";
+        verdict.textContent = T.parsonsPass;
+        markDone(p.id);
+      } else {
+        verdict.dataset.state = "fail";
+        verdict.textContent = T.parsonsFail;
+      }
+    }
+    check.addEventListener("click", doCheck);
+    root.appendChild(card);
+    // solved view restores after reload, same contract as the quizzes (L1a-6)
+    if (loadProgress()[p.id]) {
+      placed = p.solution.slice();
+      renderSeq();
+      bank.innerHTML = "";
+      bank.appendChild(el("span", "lab-parsons-empty", T.parsonsBankEmpty));
+      check.disabled = true;
+      verdict.dataset.state = "pass";
+      verdict.textContent = T.parsonsPass;
+    } else {
+      renderAll();
+    }
+  }
+
   // ---------------------------------------------------------------- quizzes
   function renderQuiz(root, q, quizIndex) {
     IDS.push(q.id);
@@ -762,6 +875,7 @@
     const quizRoot = document.querySelector("[data-lab-quizzes]");
     (content.quizzes || []).forEach((q, qi) => renderQuiz(quizRoot, q, qi));
     const exRoot = document.querySelector("[data-lab-exercises]");
+    (content.parsons || []).forEach((p) => renderParsons(exRoot, p));
     (content.exercises || []).forEach((ex) => renderExercise(exRoot, ex));
     const chHost = document.querySelector("[data-lab-challenge]");
     if (chHost && content.challenge) {

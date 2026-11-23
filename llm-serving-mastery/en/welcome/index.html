@@ -1,0 +1,164 @@
+<!DOCTYPE html><html lang="en" data-lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>First token · onboarding · LLM Serving Mastery</title><meta name="description" content="No slides first: by the end of this page a real model on your own machine answers you, token by token. Everything runs locally, and your progress never leaves this browser."><link rel="canonical" href="https://levshaazz.github.io/llm-serving-mastery/en/welcome/"><link rel="alternate" hreflang="en" href="https://levshaazz.github.io/llm-serving-mastery/en/welcome/"><link rel="alternate" hreflang="ru" href="https://levshaazz.github.io/llm-serving-mastery/ru/welcome"><link rel="alternate" hreflang="x-default" href="https://levshaazz.github.io/llm-serving-mastery/en/welcome"><link rel="icon" href="/llm-serving-mastery/favicon.svg" type="image/svg+xml"><meta property="og:title" content="First token · onboarding · LLM Serving Mastery"><meta property="og:description" content="No slides first: by the end of this page a real model on your own machine answers you, token by token. Everything runs locally, and your progress never leaves this browser."><meta property="og:image" content="https://levshaazz.github.io/llm-serving-mastery/og.jpg"><meta property="og:url" content="https://levshaazz.github.io/llm-serving-mastery/en/welcome/"><meta property="og:type" content="website"><meta name="twitter:card" content="summary_large_image"><!-- no-flash: apply saved theme before first paint --><script>
+    try {
+      const th = localStorage.getItem('lsm.theme');
+      if (th === 'dark' || (!th && matchMedia('(prefers-color-scheme: dark)').matches))
+        document.documentElement.dataset.theme = 'dark';
+    } catch (e) {}
+  </script><link rel="stylesheet" href="/llm-serving-mastery/_astro/BaseLayout.VvIgAtYP.css"><style>.funnel-bar[data-astro-cid-kyn66zwy]{margin:.4rem 0 .6rem}
+</style></head><body><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="wrap"><div class="topbar"><a class="logo" href="/llm-serving-mastery/en/"><span class="mark">LSM</span></a><nav class="nav" aria-label="Primary"><a href="/llm-serving-mastery/en/">Topics</a><a href="/llm-serving-mastery/en/welcome" aria-current="page">First token</a><a href="/llm-serving-mastery/en/book">Book</a><a href="/llm-serving-mastery/en/leaderboard">Leaderboard</a><a href="/llm-serving-mastery/en/schedule">Schedule</a><a href="/llm-serving-mastery/en/labs">Practice</a><a href="/llm-serving-mastery/en/glossary">Reference</a></nav><div class="controls"><a class="nav-search" href="/llm-serving-mastery/en/search" aria-label="Search" title="Search">⌕</a><div class="langswitch" role="group" aria-label="Language"><a href="/llm-serving-mastery/en/welcome" hreflang="en" aria-current="true" title="English">EN</a><a href="/llm-serving-mastery/ru/welcome" hreflang="ru" title="Русский">RU</a></div><button id="theme-toggle" type="button" aria-label="Toggle theme" title="Toggle theme">◐</button></div></div></div></header><main id="main"><div class="wrap book-page" data-astro-cid-kyn66zwy><header class="page-head" data-astro-cid-kyn66zwy><div class="eyebrow" data-astro-cid-kyn66zwy>Onboarding · before any theory</div><h1 data-astro-cid-kyn66zwy>Your first token in 10 minutes</h1><p class="sub" data-astro-cid-kyn66zwy>No slides first: by the end of this page a real model on your own machine answers you, token by token. Everything runs locally, and your progress never leaves this browser.</p></header><section class="block" data-astro-cid-kyn66zwy><h2 data-astro-cid-kyn66zwy>Your onboarding progress</h2><div class="funnel-bar" style="height:10px;border-radius:6px;background:rgba(128,128,128,.2);overflow:hidden" data-astro-cid-kyn66zwy><div id="funnel-fill" style="height:100%;width:0%;background:var(--accent)" data-astro-cid-kyn66zwy></div></div><ol id="funnel-list" class="reading" style="display:flex;flex-wrap:wrap;gap:.4rem 1rem;list-style:none;padding:0" data-astro-cid-kyn66zwy></ol><div class="action-row" data-astro-cid-kyn66zwy><button class="button secondary" id="funnel-share" type="button" data-astro-cid-kyn66zwy>Share progress (download JSON)</button></div><p class="kicker" id="funnel-saved" hidden data-astro-cid-kyn66zwy>progress file saved</p><p class="kicker" data-astro-cid-kyn66zwy>The funnel events live only in your browser (localStorage). “Share progress” hands the file to YOU — the course never collects it. Practice only, never course evidence.</p></section><section class="block" data-astro-cid-kyn66zwy><h2 data-astro-cid-kyn66zwy>Step 0 · Placement: eight questions, one honest verdict</h2><p class="sub" data-astro-cid-kyn66zwy>No grading, no stakes — the quiz picks your starting depth. Answer “I don’t know”-style by picking any option: wrong answers are information, not shame.</p><div id="quiz-host" data-astro-cid-kyn66zwy></div><div class="action-row" data-astro-cid-kyn66zwy><button class="button" id="place-submit" type="button" data-astro-cid-kyn66zwy>Show my level</button><button class="button secondary" id="place-again" type="button" hidden data-astro-cid-kyn66zwy>Retake the quiz</button></div><p class="sub" id="place-result" hidden data-astro-cid-kyn66zwy></p></section><section class="block" data-astro-cid-kyn66zwy><h2 data-astro-cid-kyn66zwy>Step 1 · Environment: two clicks and two honest probes</h2><p class="sub" data-astro-cid-kyn66zwy>Manual first: Docker Desktop installed, and docker compose up -d run inside the runtime/ folder (the ZIP is in Downloads). Then the page probes your gateway itself: engine health and the pinned model weights.</p><ul class="reading" style="list-style:none;padding:0" data-astro-cid-kyn66zwy><li data-astro-cid-kyn66zwy><label data-astro-cid-kyn66zwy><input type="checkbox" data-env-manual="0" data-astro-cid-kyn66zwy> Docker Desktop installed</label></li><li data-astro-cid-kyn66zwy><label data-astro-cid-kyn66zwy><input type="checkbox" data-env-manual="1" data-astro-cid-kyn66zwy> docker compose up -d executed (runtime/ folder)</label></li><li data-astro-cid-kyn66zwy><label data-astro-cid-kyn66zwy><input type="checkbox" data-env-auto="probe" disabled data-astro-cid-kyn66zwy> Probe my gateway (127.0.0.1:8760)</label></li><li data-astro-cid-kyn66zwy><label data-astro-cid-kyn66zwy><input type="checkbox" data-env-auto="model" disabled data-astro-cid-kyn66zwy> gateway healthy — model Qwen2.5-0.5B, sha256 74a4da8c……, 491 MB verified</label></li></ul><div class="action-row" data-astro-cid-kyn66zwy><button class="button" id="env-probe" type="button" data-astro-cid-kyn66zwy>Probe my gateway (127.0.0.1:8760)</button></div><p class="sub" id="env-verdict" aria-live="polite" data-astro-cid-kyn66zwy></p></section><section class="block" data-astro-cid-kyn66zwy><h2 data-astro-cid-kyn66zwy>Step 2 · The first token</h2><p class="sub" data-astro-cid-kyn66zwy>One short prompt to your real engine, measured honestly on your machine. Watch the journal number — that hash-chained entry is yours.</p><div class="action-row" data-astro-cid-kyn66zwy><button class="button" id="token-btn" type="button" data-astro-cid-kyn66zwy>Send my first request</button></div><p class="sub" id="token-status" aria-live="polite" data-astro-cid-kyn66zwy></p><p class="sub" id="token-out" class="mono" data-astro-cid-kyn66zwy></p></section><section class="block" data-astro-cid-kyn66zwy><h2 data-astro-cid-kyn66zwy>Step 4 · Where to go next</h2><p class="sub" data-astro-cid-kyn66zwy>The full course map lives in “Start here”; the practice path is the labs. Your onboarding progress bar above fills as you go.</p><ul class="reading" data-astro-cid-kyn66zwy><li data-astro-cid-kyn66zwy><a href="/llm-serving-mastery/en/labs/1" data-astro-cid-kyn66zwy>Lab 01 — from one request to the streaming timeline</a></li><li data-astro-cid-kyn66zwy><a href="/llm-serving-mastery/en/labs" data-astro-cid-kyn66zwy>All practice labs</a></li><li data-astro-cid-kyn66zwy><a href="/llm-serving-mastery/en/start" data-astro-cid-kyn66zwy>Start here (the study guide)</a></li><li data-astro-cid-kyn66zwy><a href="/llm-serving-mastery/downloads/lsm-runtime.zip" download data-astro-cid-kyn66zwy>Download the runtime ZIP</a></li></ul></section><p class="kicker" data-astro-cid-kyn66zwy>Onboarding page of the market backlog (2026-11-23 plan). Local, honest, practice-only: nothing on this page is course evidence.</p></div><script>
+    document.addEventListener("DOMContentLoaded", function () {
+      "use strict";
+      var lang = document.documentElement.dataset.lang === "ru" ? "ru" : "en";
+      var T = JSON.parse(document.getElementById("welcome-t").textContent);
+      var ORDER = T.order;
+      var QUESTIONS = JSON.parse(document.getElementById("welcome-q").textContent);
+      var RUNTIME_URL = "http://127.0.0.1:8760";
+      var MODEL_SHA_PREFIX = "74a4da8c";
+
+      function funnelRead() {
+        try { return JSON.parse(localStorage.getItem("lsm.funnel.v1")) || []; } catch (e) { return []; }
+      }
+      function funnelEvent(ev) {
+        var f = funnelRead();
+        if (f.some(function (x) { return x.ev === ev; })) return;
+        f.push({ ev: ev, ts: new Date().toISOString() });
+        try { localStorage.setItem("lsm.funnel.v1", JSON.stringify(f)); } catch (e) {}
+        renderFunnel();
+      }
+      function renderFunnel() {
+        var f = funnelRead();
+        var done = ORDER.filter(function (ev) { return f.some(function (x) { return x.ev === ev; }); });
+        var fill = document.getElementById("funnel-fill");
+        if (fill) fill.style.width = (100 * done.length / ORDER.length) + "%";
+        var list = document.getElementById("funnel-list");
+        if (!list) return;
+        list.innerHTML = "";
+        ORDER.forEach(function (ev) {
+          var li = document.createElement("li");
+          li.textContent = (f.some(function (x) { return x.ev === ev; }) ? "✓ " : "○ ") + T.steps[ev];
+          li.style.color = f.some(function (x) { return x.ev === ev; }) ? "var(--accent)" : "inherit";
+          list.appendChild(li);
+        });
+      }
+      document.getElementById("funnel-share").addEventListener("click", function () {
+        var blob = new Blob([JSON.stringify({ exported: new Date().toISOString(), funnel: funnelRead() }, null, 1)], { type: "application/json" });
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "lsm-progress.json";
+        a.click();
+        URL.revokeObjectURL(a.href);
+        document.getElementById("funnel-saved").hidden = false;
+      });
+
+      // placement: deterministic rotation of option order (correct is index 0 in the source)
+      var host = document.getElementById("quiz-host");
+      QUESTIONS.forEach(function (q, qi) {
+        var wrap = document.createElement("div");
+        wrap.style.marginBottom = "1rem";
+        var p = document.createElement("p");
+        p.textContent = (qi + 1) + ". " + q.q[lang];
+        wrap.appendChild(p);
+        var rot = (qi + 1) % q.options.length;
+        for (var k = 0; k < q.options.length; k++) {
+          var oi = (rot + k) % q.options.length;
+          var lab = document.createElement("label");
+          lab.style.display = "block";
+          var inp = document.createElement("input");
+          inp.type = "radio"; inp.name = "q" + qi; inp.value = String(oi);
+          lab.appendChild(inp);
+          lab.appendChild(document.createTextNode(" " + q.options[oi][lang]));
+          wrap.appendChild(lab);
+        }
+        host.appendChild(wrap);
+      });
+      function placementScore() {
+        var score = 0;
+        for (var qi = 0; qi < QUESTIONS.length; qi++) {
+          var picked = document.querySelector('input[name="q' + qi + '"]:checked');
+          if (picked && picked.value === "0") score += 1;
+        }
+        return score;
+      }
+      document.getElementById("place-submit").addEventListener("click", function () {
+        var score = placementScore();
+        var out = document.getElementById("place-result");
+        out.hidden = false;
+        out.textContent = T.placeScore + ": " + score + "/8 — " + (score >= 6 ? T.placeResultB : T.placeResultA);
+        document.getElementById("place-again").hidden = false;
+        funnelEvent("placement_done");
+      });
+      document.getElementById("place-again").addEventListener("click", function () {
+        document.querySelectorAll('#quiz-host input[type="radio"]').forEach(function (r) { r.checked = false; });
+        document.getElementById("place-result").hidden = true;
+        document.getElementById("place-again").hidden = true;
+      });
+
+      function manualEnvDone() {
+        var boxes = document.querySelectorAll("[data-env-manual]");
+        for (var i = 0; i < boxes.length; i++) if (!boxes[i].checked) return false;
+        return true;
+      }
+      function envMaybeDone() {
+        var probe = document.querySelector('[data-env-auto="probe"]');
+        var model = document.querySelector('[data-env-auto="model"]');
+        if (manualEnvDone() && probe.checked && model.checked) funnelEvent("env_check_ok");
+      }
+      document.querySelectorAll("[data-env-manual]").forEach(function (box) {
+        box.addEventListener("change", envMaybeDone);
+      });
+      document.getElementById("env-probe").addEventListener("click", function () {
+        var verdict = document.getElementById("env-verdict");
+        var ctrl = new AbortController();
+        var timer = setTimeout(function () { ctrl.abort(); }, 2500);
+        fetch(RUNTIME_URL + "/health", { signal: ctrl.signal })
+          .then(function (r) { clearTimeout(timer); return r.json(); })
+          .then(function (h) {
+            var okModel = h.model && String(h.model.sha256 || "").indexOf(MODEL_SHA_PREFIX) === 0;
+            document.querySelector('[data-env-auto="probe"]').checked = !!okModel;
+            document.querySelector('[data-env-auto="model"]').checked = !!okModel;
+            if (okModel) {
+              verdict.textContent = T.envOk.replace("{model}", "Qwen2.5-0.5B").replace("{sha}", MODEL_SHA_PREFIX + "…").replace("{mb}", "491");
+              funnelEvent("runtime_connected");
+            } else {
+              verdict.textContent = T.envBad;
+            }
+            envMaybeDone();
+          })
+          .catch(function () {
+            clearTimeout(timer);
+            verdict.textContent = T.envBad;
+          });
+      });
+
+      document.getElementById("token-btn").addEventListener("click", function () {
+        var status = document.getElementById("token-status");
+        var out = document.getElementById("token-out");
+        status.textContent = T.tokenSent;
+        out.textContent = "";
+        fetch(RUNTIME_URL + "/experiment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt: lang === "ru" ? "Ответь одним коротким предложением." : "Reply with a single short sentence.", max_tokens: 16 }),
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            status.textContent = T.tokenAnswer + ": " + ((data.metrics || {}).tok_per_s) + " tok/s · wall " + ((data.metrics || {}).wall_s) + " s · journal #" + data.journal_seq;
+            out.textContent = (data.answer || "").slice(0, 200);
+            funnelEvent("first_token");
+          })
+          .catch(function (e) {
+            status.textContent = T.envBad;
+          });
+      });
+
+      funnelEvent("welcome_opened");
+      renderFunnel();
+    });
+  </script><script type="application/json" id="welcome-t">{"order":["welcome_opened","placement_done","env_check_ok","runtime_connected","first_token","lab1_started","lab1_done"],"steps":{"welcome_opened":"open this page","placement_done":"placement quiz","env_check_ok":"environment ready","runtime_connected":"runtime connected","first_token":"first token streamed","lab1_started":"Lab 01 opened","lab1_done":"Lab 01 completed"},"placeScore":"score","placeResultA":"Track A — start at Lab 01. It builds the request→token picture from zero, and every later lab reuses it.","placeResultB":"Track B — you may start at Lab 05 (batching) or Lab 07 (tuning). Skim Labs 01–04 when something feels shaky.","envOk":"gateway healthy — model {model}, sha256 {sha}…, {mb} MB verified","envBad":"gateway not reachable — start it (docker compose up -d) or take the Colab path: the companion notebook runs the same layer remotely.","tokenAnswer":"the model said","tokenSent":"streaming from your engine…"}</script><script type="application/json" id="welcome-q">[{"q":{"en":"Why does a transformer keep a KV cache while generating?","ru":"Зачем трансформеру KV-кэш при генерации?"},"options":[{"en":"so each step does not re-compute attention to all past tokens","ru":"чтобы каждый шаг не пересчитывал attention ко всем прошлым токенам"},{"en":"to compress the model weights","ru":"чтобы сжать веса модели"},{"en":"to speed up weight loading from disk","ru":"чтобы ускорить загрузку весов с диска"}]},{"q":{"en":"Quantizing weights to ~4 bits mainly…","ru":"Квантование весов до ~4 бит главным образом…"},"options":[{"en":"shrinks memory and speeds up the memory-bound decode","ru":"снижает память и ускоряет память-ограниченный декод"},{"en":"improves the quality of answers","ru":"повышает качество ответов"},{"en":"makes the model file larger","ru":"делает файл модели больше"}]},{"q":{"en":"Why does batching raise an LLM server’s throughput?","ru":"Почему батчинг повышает throughput LLM-сервера?"},"options":[{"en":"one forward pass moves many sequences at once — the GPU works full","ru":"один forward-проход двигает много последовательностей сразу — GPU работает полный"},{"en":"answers become shorter","ru":"ответы становятся короче"},{"en":"it compresses the KV cache","ru":"он сжимает KV-кэш"}]},{"q":{"en":"TTFT is…","ru":"TTFT — это…"},"options":[{"en":"time to the first token: prompt prefill plus the first decode step","ru":"время до первого токена: prefill промпта плюс первый шаг decode"},{"en":"the full generation time","ru":"время полной генерации"},{"en":"tokens per second","ru":"токенов в секунду"}]},{"q":{"en":"Why pin the inference image by digest?","ru":"Зачем пиновать образ инференса по digest?"},"options":[{"en":"the same byte-for-byte stack on any machine — reproducibility","ru":"тот же стек байт-в-байт на любой машине — воспроизводимость"},{"en":"a digest makes the image download faster","ru":"digest ускоряет скачивание образа"},{"en":"a digest encrypts the image","ru":"digest шифрует образ"}]},{"q":{"en":"A 0.5B model in ~4-bit quantization occupies about…","ru":"Модель 0.5B в квантовании ~4 бита занимает примерно…"},"options":[{"en":"0.5 GB","ru":"0.5 ГБ"},{"en":"2 GB","ru":"2 ГБ"},{"en":"0.06 GB","ru":"0.06 ГБ"}]},{"q":{"en":"SLO 99 % over a 30-day month — the whole error budget is about…","ru":"SLO 99 % на 30-дневный месяц — весь бюджет ошибки это около…"},"options":[{"en":"432 minutes","ru":"432 минуты"},{"en":"43 minutes","ru":"43 минуты"},{"en":"4320 minutes","ru":"4320 минут"}]},{"q":{"en":"The honest answer of a gateway whose queue overflowed…","ru":"Честный ответ шлюза, у которого переполнилась очередь…"},"options":[{"en":"429 + Retry-After","ru":"429 + Retry-After"},{"en":"200 with an empty body","ru":"200 с пустым телом"},{"en":"a timeout with no answer","ru":"таймаут без ответа"}]}]</script></main><footer class="site-footer"><div class="wrap" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;width:100%"><div>LLM Serving Mastery · vLLM, Multi-GPU, and Production Deployment</div><div><a href="/llm-serving-mastery/en/changelog">Changelog</a> · <a href="/llm-serving-mastery/en/provenance">Provenance</a> · <a href="https://github.com/levshaazz/llm-serving-mastery-submission-example">Student example</a></div><div>Updated 2026-11-23 · course build cc1b5c6</div></div></footer><script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const root = document.documentElement;
+      const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      if (next === 'dark') root.dataset.theme = 'dark'; else delete root.dataset.theme;
+      try { localStorage.setItem('lsm.theme', next); } catch (e) {}
+    });
+  </script></body></html>

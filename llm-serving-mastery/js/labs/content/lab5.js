@@ -135,6 +135,23 @@
       ["decode-only toy", "one decode step per tick, prefill = 0", "release", "finishing in [t, t+1) frees the slot at t+1"],
     ],
     scenario: null,
+    parsons: [
+      {
+        id: "ps1",
+        title: { en: "Exercise · Assemble the continuous batching cycle", ru: "Упражнение · Собери цикл continuous batching" },
+        brief: { en: "The mechanic of this lab in five steps — order them; two steps are decoys that break the mechanism.", ru: "Механика этой лабы в пяти шагах — расставь по порядку; два шага — ловушки, ломающие механизм." },
+        pool: [
+          { en: "The engine restarts to admit each new request", ru: "Движок перезапускается, чтобы впустить каждый новый запрос" },
+          { en: "Finished sequences free their KV blocks", ru: "Завершившиеся последовательности освобождают KV-блоки" },
+          { en: "A new request enters the waiting queue", ru: "Новый запрос попадает в очередь ожидания" },
+          { en: "One forward pass moves every batched sequence one token forward", ru: "Один forward-проход двигает каждую последовательность батча на один токен" },
+          { en: "The scheduler packs the active sequences into a step batch", ru: "Планировщик собирает активные последовательности в батч шага" },
+          { en: "Freed seats take the next waiting requests — no engine restart", ru: "Освободившиеся места занимает следующая очередь — без рестарта движка" },
+          { en: "The KV cache is wiped between batch steps", ru: "KV-кэш сбрасывается между шагами батча" },
+        ],
+        solution: [2, 4, 3, 1, 5],
+      },
+    ],
     quizzes: [
       {
         id: "q1",

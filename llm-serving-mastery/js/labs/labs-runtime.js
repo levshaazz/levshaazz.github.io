@@ -106,6 +106,15 @@
     }
 
     const expBtn = el("button", "button", tr(T().experiment));
+
+    // Lab 13: the eval gate — run the declared fixture set through the engine
+    // (temperature 0) and store pass/fail flags for the eval exercise.
+    let evalBtn = null;
+    if (spec.evalSet) {
+      evalBtn = el("button", "button secondary", tr(T().evalBtn));
+      evalBtn.type = "button"; evalBtn.dataset.rtEval = "";
+      actions.appendChild(evalBtn);
+    }
     expBtn.type = "button"; expBtn.dataset.rtExp = "";
     actions.appendChild(expBtn);
 
@@ -225,6 +234,39 @@
         log(tr(T().experimentFail) + " " + e.message, "err");
       }
     });
+
+    const evalBtnEl = card.querySelector("[data-rt-eval]");
+    if (evalBtnEl) {
+      evalBtnEl.addEventListener("click", async () => {
+        if (!(await probe())) { log(tr(T().needRuntime), "err"); return; }
+        const fixtures = spec.evalSet.fixtures || [];
+        const results = [];
+        evalBtnEl.disabled = true;
+        try {
+          for (let i = 0; i < fixtures.length; i++) {
+            const fx = fixtures[i];
+            log(tr(T().evalRunning) + " " + (i + 1) + "/" + fixtures.length + " → " + tr(T().running));
+            const r = await fetchJson("/v1/chat/completions", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ messages: [{ role: "user", content: fx.prompt }], max_tokens: 24, temperature: 0, stream: false }),
+              timeoutMs: 120000,
+            });
+            const got = ((((r || {}).choices || [])[0] || {}).message || {}).content || "";
+            const ok = String(got).toLowerCase().includes(String(fx.expect).toLowerCase());
+            results.push(ok);
+            log((ok ? "✓ " : "✗ ") + tr(T().evalFixture) + " " + (i + 1) + " (" + fx.expect + "): " + String(got).slice(0, 60).replace(/\s+/g, " "), ok ? "ok" : "err");
+          }
+          const passed = results.filter(Boolean).length;
+          try { localStorage.setItem("lsm.eval." + meta().lab, JSON.stringify({ ts: Date.now(), results })); } catch (e) {}
+          log(tr(T().evalDone).replace("{p}", String(passed)).replace("{n}", String(results.length)), passed === results.length ? "ok" : "chunk");
+        } catch (e) {
+          log(tr(T().experimentFail) + " " + e.message, "err");
+        } finally {
+          evalBtnEl.disabled = false;
+        }
+      });
+    }
 
     journalBtn.addEventListener("click", async () => {
       try {
@@ -353,6 +395,20 @@
     }
   }
 
+  // Stored eval results (Lab 13): the eval button writes flags here; the
+  // eval exercise reads them as `results`. JSON booleans round-trip through
+  // python json.loads the same way the journal does.
+  function loadEvalResults() {
+    try {
+      const raw = localStorage.getItem("lsm.eval." + meta().lab);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed.results) ? parsed.results : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
     renderSection();
   });
@@ -363,6 +419,26 @@
     // fetches the live journal and prepends it to the student code. Returns
     // false when the runtime is offline (the renderer reports that).
     async prepareExercise(ex, textarea) {
+      if (ex.injectEval) {
+        let results = loadEvalResults();
+        let fixtureEval = false;
+        if (!results && ex.fixtureEval) {
+          results = ex.fixtureEval;
+          fixtureEval = true;
+        }
+        if (!results) return { ok: false, fixture: false };
+        const MARK = "import json as _rtjson";
+        if (textarea.value.startsWith(MARK)) {
+          const sep = textarea.value.indexOf("\n\n");
+          textarea.value = sep >= 0 ? textarea.value.slice(sep + 2) : "";
+        }
+        const note = fixtureEval
+          ? "# FIXTURE (runtime offline): declared synthetic eval results, not evidence\n"
+          : "";
+        textarea.value = note + "import json as _rtjson\nresults = _rtjson.loads(" +
+          JSON.stringify(JSON.stringify(results)) + ")\n\n" + textarea.value;
+        return { ok: true, fixture: fixtureEval };
+      }
       if (!ex.injectEntries) return { ok: true, fixture: false };
       let inject = await journalInjection(ex);
       let fixture = false;

@@ -59,7 +59,10 @@
     <rect x="470" y="40" width="230" height="52" rx="9" fill="none" stroke="var(--lab-accent)" stroke-width="2"/>
     <text x="585" y="62" text-anchor="middle" font-size="14" fill="var(--lab-accent)" class="mono">ceil(2 × 6 / 2) = 6 → 4</text>
     <text x="585" y="82" text-anchor="middle" font-size="13" fill="var(--lab-muted)" data-en="clamped into [min, max]" data-ru="зажато в [min, max]">clamped into [min, max]</text>
-    <text x="380" y="348" font-size="14" fill="var(--lab-ink)" data-en="outside the band and rising: scale up immediately (window 0 s)" data-ru="вне полосы и растёт: скейл-ап мгновенно (окно 0 с)">outside the band and rising: scale up immediately (window 0 s)</text>
+  </g>
+  <g id="g-boot">
+    <line x1="80" y1="340" x2="700" y2="340" stroke="var(--lab-bad)" stroke-width="1.5" stroke-dasharray="6 5"/>
+    <text x="380" y="362" text-anchor="middle" font-size="14" fill="var(--lab-bad)" data-en="ordered 4 — running 1: boot pays ~165 s (11 ticks × 15 s)" data-ru="заказано 4 — работает 1: boot платит ~165 с (11 тиков × 15 с)">ordered 4 — running 1: boot pays ~165 s (11 ticks × 15 s)</text>
   </g>
   <g id="g-window">
     <rect x="470" y="40" width="230" height="52" rx="9" fill="none" stroke="var(--fig-warm)" stroke-width="2"/>
@@ -72,10 +75,11 @@
     </g>
   </g>
 </svg>`,
-        stages: [
-          { cap: { en: "The metric climbs: queue depth per pod, tick by tick.", ru: "Метрика растёт: глубина очереди на под, тик за тиком." }, show: ["g-metric"] },
+                stages: [
+          { cap: { en: "The metric climbs: queue depth per pod, tick by tick.", ru: "Метрика растёт: глубина очереди на под, тик за тиком." }, show: ["g-metric"] },
           { cap: { en: "The tolerance band: inside it the HPA does nothing.", ru: "Полоса tolerance вокруг цели; внутри неё HPA не делает ничего." }, show: ["g-metric", "g-band"] },
           { cap: { en: "Outside and rising: ceil → clamp 4 — scale up now.", ru: "Вне полосы и рост: ceil → кламп 4 — скейл-ап сразу." }, show: ["g-metric", "g-band", "g-ceil"] },
+          { cap: { en: "Ordered 4, running 1: the boot pays ~165 s of weight load.", ru: "Заказано 4, работает 1: boot платит ~165 с за загрузку весов." }, show: ["g-metric", "g-band", "g-ceil", "g-boot"] },
           { cap: { en: "Metric falls: scale-down reads the 300 s window — no flapping.", ru: "Метрика падает: окно 300 с берёт максимум — без флаттера." }, show: ["g-metric", "g-band", "g-window"] },
         ],
       },
@@ -138,10 +142,30 @@
     model: [
       [{ en: "HPA formula", ru: "формула HPA" }, { en: "desired = ceil(replicas × metric / target)", ru: "desired = ceil(replicas × metric / target)" }, { en: "tolerance", ru: "tolerance" }, { en: "±10 % → no scaling", ru: "±10 % → не скейлим" }],
       [{ en: "windows (k8s defaults)", ru: "окна (дефолты k8s)" }, { en: "up 0 s · down 300 s", ru: "вверх 0 с · вниз 300 с" }, { en: "scale-down rule", ru: "правило скейл-дауна" }, { en: "max recommendation in window", ru: "максимум рекомендаций за окно" }],
+      [{ en: "cold boot of replicas", ru: "холодный старт реплик" }, { en: "boot_ticks × 15 s ≈ 165 s (T09)", ru: "boot_ticks × 15 с ≈ 165 с (T09)" }, { en: "HPASim(boot_ticks=11)", ru: "HPASim(boot_ticks=11)" }, { en: "order fires now, capacity later", ru: "заказ срабатывает сразу, ёмкость — позже" }],
+      [{ en: "scaling metric", ru: "метрика масштабирования" }, { en: "queue_per_pod (default) · concurrency = (queue + last served) / replicas", ru: "queue_per_pod (дефолт) · concurrency = (очередь + обслужено на прошлом тике) / реплики" }, { en: "batching keeps concurrency high at queue 0", ru: "батчинг держит concurrency высоким при пустой очереди" }, { en: "pinned fleet vs flapping", ru: "флот приколот к максимуму против флаттера" }],
       [{ en: "sync tick", ru: "тик синхронизации" }, "15 s", { en: "clamp", ru: "кламп" }, { en: "min ≤ desired ≤ max", ru: "min ≤ desired ≤ max" }],
       [{ en: "one pod's working point (T06)", ru: "рабочая точка пода (T06)" }, { en: "batch 30 → 250 tok/s", ru: "батч 30 → 250 ток/с" }, { en: "LLM scaling signals", ru: "сигналы масштабирования LLM" }, { en: "queue depth · KV pressure · TTFT", ru: "глубина очереди · давление KV · TTFT" }],
     ],
     scenario: null,
+    parsons: [
+      {
+        id: "ps1",
+        title: { en: "Exercise · Assemble the HPA decision", ru: "Упражнение · Собери решение HPA" },
+        brief: { en: "One scaling decision in six steps — two decoys contradict the mechanism you ran in HPASim.", ru: "Одно решение о масштабировании в шести шагах — две ловушки противоречат механике, которую ты гонял в HPASim." },
+        pool: [
+          { en: "Scale-down is held back by the stabilization window", ru: "Скейл-даун сдерживается окном стабилизации" },
+          { en: "The queue is wiped on every scale-up", ru: "Очередь очищается при каждом скейл-апе" },
+          { en: "The signal is computed: queue depth per replica", ru: "Считается сигнал: глубина очереди на поду" },
+          { en: "The recommendation is clamped to the [min, max] replica band", ru: "Рекомендация зажимается в полосу [min, max] реплик" },
+          { en: "The recommendation is ceil(replicas × signal / target)", ru: "Рекомендация = ceil(реплики × сигнал / target)" },
+          { en: "The signal is compared against the target value", ru: "Сигнал сравнивается с целевым значением" },
+          { en: "Pod limits are lifted while the target is exceeded", ru: "Лимиты подов снимаются, пока target превышен" },
+          { en: "The controller applies the new replica count", ru: "Контроллер применяет новое число реплик" },
+        ],
+        solution: [2, 5, 4, 3, 7, 0],
+      },
+    ],
     quizzes: [
       {
         id: "q1",
@@ -317,14 +341,22 @@ class HPASim:
     """The HPA loop over the T06 step model; one tick = one controller pass."""
 
     def __init__(self, w_ms=60.0, b_ms=2.0, cap=30, target_queue=2.0,
-                 min_r=1, max_r=4, window=20):
-        # TODO: store the knobs; replicas = min_r; queue = 0; recs = []
+                 min_r=1, max_r=4, window=20, boot_ticks=0,
+                 metric="queue_per_pod"):
+        # TODO: store the knobs (incl. boot_ticks, metric); replicas = min_r;
+        #       queue = 0; recs = []; booting = []; last_served = 0
         ...
 
     def tick(self, arrivals):
-        # TODO: metric = queue / replicas; recommend ceil(...) clamped;
-        # scale-down via window max, scale-up immediate; serve
-        # min(queue, replicas * cap); step_ms = w + b * batch
+        # TODO v2: mature booting orders first (left -= 1; at 0 replicas += count);
+        # metric: queue_per_pod -> queue / replicas;
+        #         concurrency -> (queue + last_served) / replicas;
+        # recommend ceil(...) clamped; scale-down via window max;
+        # scale-up: with boot_ticks > 0 the added replicas join the 'booting' list
+        # (order: [boot_ticks, added]) and only mature later — capacity this
+        # tick stays at the old count; boot_ticks = 0 joins immediately (v1).
+        # serve min(queue, replicas * cap); remember last_served = served;
+        # step_ms = w + b * batch
         ...
 
     def report(self):
@@ -341,7 +373,8 @@ class HPASim:
 
 class HPASim:
     def __init__(self, w_ms=60.0, b_ms=2.0, cap=30, target_queue=2.0,
-                 min_r=1, max_r=4, window=20):
+                 min_r=1, max_r=4, window=20, boot_ticks=0,
+                 metric="queue_per_pod"):
         self.w, self.b, self.cap, self.target = w_ms, b_ms, cap, target_queue
         self.lo, self.hi, self.window = min_r, max_r, window
         self.replicas = min_r
@@ -350,15 +383,35 @@ class HPASim:
         self.ticks = 0
         self.held = 0
         self.unserved = 0
+        self.boot_ticks = max(0, int(boot_ticks))
+        self.metric_mode = metric
+        self.booting = []      # orders in flight: [ticks_left, count]
+        self.last_served = 0   # previous tick's served (concurrency metric)
 
     def tick(self, arrivals):
+        still = []
+        for left, count in self.booting:
+            left -= 1
+            if left <= 0:
+                self.replicas += count
+            else:
+                still.append([left, count])
+        self.booting = still
         self.queue += arrivals
-        metric = self.queue / self.replicas
+        if self.metric_mode == "concurrency":
+            metric = (self.queue + self.last_served) / self.replicas
+        else:
+            metric = self.queue / self.replicas
         rec = min(max(math.ceil(self.replicas * metric / self.target),
                       self.lo), self.hi)
         self.recs.append(rec)
         if rec >= self.replicas:
-            self.replicas = rec
+            added = min(rec, self.hi) - (self.replicas + sum(c for _, c in self.booting))
+            if added > 0:
+                if self.boot_ticks > 0:
+                    self.booting.append([self.boot_ticks, added])
+                else:
+                    self.replicas += added
         else:
             new_r = max(self.recs[-self.window:])
             if new_r == self.replicas:
@@ -370,6 +423,7 @@ class HPASim:
             self.unserved += 1
         batch = min(self.cap, -(-served // self.replicas)) if served else 0
         step_ms = self.w + self.b * batch
+        self.last_served = served
         self.ticks += 1
         return {'replicas': self.replicas, 'served': served,
                 'queue': self.queue, 'step_ms': step_ms}
@@ -386,6 +440,155 @@ class HPASim:
         ],
         numpy: false,
         timeoutMs: 4000,
+      },
+      {
+        id: "ex5",
+        title: { en: "Exercise 5 · Cold boot: the order fires now, the capacity comes later", ru: "Упражнение 5 · Холодный старт: заказ срабатывает сейчас, ёмкость приходит позже" },
+        brief: {
+          en: "The controller orders replicas instantly — a fresh pod still pays the weight load (~165 s, T09; a tick here is 15 s, so <code>boot_ticks=11</code>). Extend the frozen HPASim with two v2 knobs: <code>boot_ticks</code> (orders mature that many ticks later) and <code>metric</code> (<code>'queue_per_pod'</code> default, or <code>'concurrency'</code> = (queue + last served) / replicas). Scenario, declared: <code>target_queue=2, min_r=1, max_r=4, cap=30, window=3</code>, arrivals <code>[60, 60, 60, 60, 0×5, 60]</code>. Predict first: unserved ticks with <code>boot_ticks=0</code>, <code>=2</code>, <code>=11</code> — and what the <code>concurrency</code> metric does on a drained queue that <code>queue_per_pod</code> does not.",
+          ru: "Контроллер заказывает реплики мгновенно — свежий под всё ещё платит загрузку весов (~165\u00a0с, T09; тик здесь 15\u00a0с, значит <code>boot_ticks=11</code>). Расширь замороженный HPASim двумя ручками v2: <code>boot_ticks</code> (заказы взрослеют через столько тиков) и <code>metric</code> (<code>'queue_per_pod'</code> дефолт, или <code>'concurrency'</code> = (очередь + обслужено на прошлом тике) / реплики). Сценарий заявлен: <code>target_queue=2, min_r=1, max_r=4, cap=30, window=3</code>, arrivals <code>[60, 60, 60, 60, 0×5, 60]</code>. Сначала предскажи: сколько тиков с непустой очередью при <code>boot_ticks=0</code>, <code>=2</code>, <code>=11</code> — и что метрика <code>concurrency</code> делает на опустевшей очереди такого, чего не делает <code>queue_per_pod</code>.",
+        },
+        starter: `import math
+
+class HPASim:
+    """V1 controller below is frozen; you add the two v2 knobs."""
+
+    def __init__(self, w_ms=60.0, b_ms=2.0, cap=30, target_queue=2.0,
+                 min_r=1, max_r=4, window=20, boot_ticks=0,
+                 metric="queue_per_pod"):
+        self.w, self.b, self.cap, self.target = w_ms, b_ms, cap, target_queue
+        self.lo, self.hi, self.window = min_r, max_r, window
+        self.replicas = min_r
+        self.queue = 0
+        self.recs = []
+        self.ticks = 0
+        self.held = 0
+        self.unserved = 0
+        # TODO v2: store boot_ticks and metric ('queue_per_pod' | 'concurrency');
+        # booting = []  (orders in flight: [ticks_left, count]); last_served = 0
+
+    def tick(self, arrivals):
+        # TODO v2 (1): mature booting orders first: left -= 1 for each order;
+        # an order reaching 0 joins: replicas += count
+        self.queue += arrivals
+        # TODO v2 (2): metric = queue / replicas, or for 'concurrency':
+        # metric = (queue + last_served) / replicas
+        metric = self.queue / self.replicas
+        rec = min(max(math.ceil(self.replicas * metric / self.target),
+                      self.lo), self.hi)
+        self.recs.append(rec)
+        if rec >= self.replicas:
+            # v1: self.replicas = rec
+            # TODO v2 (3): added = min(rec, self.hi) - (replicas + sum of
+            # booting counts); if added > 0 and boot_ticks > 0: append order
+            # [boot_ticks, added] to booting (capacity stays old this tick);
+            # if boot_ticks == 0: replicas += added (v1 behavior)
+            self.replicas = rec
+        else:
+            new_r = max(self.recs[-self.window:])
+            if new_r == self.replicas:
+                self.held += 1
+            self.replicas = new_r
+        served = min(self.queue, self.replicas * self.cap)
+        self.queue -= served
+        if self.queue > 0:
+            self.unserved += 1
+        batch = min(self.cap, -(-served // self.replicas)) if served else 0
+        step_ms = self.w + self.b * batch
+        # TODO v2 (4): remember last_served = served
+        self.ticks += 1
+        return {'replicas': self.replicas, 'served': served,
+                'queue': self.queue, 'step_ms': step_ms}
+
+    def report(self):
+        return {'ticks': self.ticks, 'held_ticks': self.held,
+                'unserved_ticks': self.unserved,
+                'final_replicas': self.replicas, 'final_queue': self.queue}
+
+# Declared scenario:
+ARRIVALS = [60, 60, 60, 60, 0, 0, 0, 0, 0, 60]
+# Predict before running: unserved_ticks for boot_ticks = 0, 2, 11.
+# Then explain: the stabilization window holds the OLD fleet up — it cannot
+# speed the boot of the NEW one. And with metric='concurrency' a drained
+# queue still shows load (last served) — the fleet stays pinned at max.
+`,
+        tests: [
+          { name: "defaults are v1: burst scales up and serves", hidden: false, code: "sim = HPASim(target_queue=10, min_r=1, max_r=3, cap=30, window=3)\nr = sim.tick(60)\neq(r['replicas'], 3)\neq(r['served'], 60)\neq(r['queue'], 0)" },
+          { name: "boot_ticks=2: the order fires, the old fleet serves", hidden: false, code: "sim = HPASim(target_queue=2, min_r=1, max_r=4, cap=30, window=3, boot_ticks=2)\nr = sim.tick(60)\neq(r['replicas'], 1)\neq(r['served'], 30)\neq(r['queue'], 30)" },
+          { name: "boot_ticks=2: replicas mature at tick 2", hidden: false, code: "sim = HPASim(target_queue=2, min_r=1, max_r=4, cap=30, window=3, boot_ticks=2)\nsim.tick(60)\nsim.tick(60)\nr = sim.tick(60)\neq(r['replicas'], 4)\neq(sim.report()['unserved_ticks'], 2)" },
+          { name: "boot_ticks=11: the boot outruns the scene", hidden: true, code: "sim = HPASim(target_queue=2, min_r=1, max_r=4, cap=30, window=3, boot_ticks=11)\nfor a in [60, 60, 60, 60, 0, 0, 0, 0, 0, 60]:\n    sim.tick(a)\nrep = sim.report()\neq(rep['unserved_ticks'], 8)\neq(rep['final_replicas'], 1)\neq(rep['final_queue'], 30)" },
+          { name: "concurrency pins the fleet; queue_per_pod drops it", hidden: true, code: "for mode, want in (('queue_per_pod', 1), ('concurrency', 4)):\n    sim = HPASim(target_queue=2, min_r=1, max_r=4, cap=30, window=1, metric=mode)\n    sim.tick(60)\n    r = sim.tick(0)\n    eq(r['replicas'], want)" },
+        ],
+        solution: `import math
+
+class HPASim:
+    def __init__(self, w_ms=60.0, b_ms=2.0, cap=30, target_queue=2.0,
+                 min_r=1, max_r=4, window=20, boot_ticks=0,
+                 metric="queue_per_pod"):
+        self.w, self.b, self.cap, self.target = w_ms, b_ms, cap, target_queue
+        self.lo, self.hi, self.window = min_r, max_r, window
+        self.replicas = min_r
+        self.queue = 0
+        self.recs = []
+        self.ticks = 0
+        self.held = 0
+        self.unserved = 0
+        self.boot_ticks = max(0, int(boot_ticks))
+        self.metric_mode = metric
+        self.booting = []
+        self.last_served = 0
+
+    def tick(self, arrivals):
+        still = []
+        for left, count in self.booting:
+            left -= 1
+            if left <= 0:
+                self.replicas += count
+            else:
+                still.append([left, count])
+        self.booting = still
+        self.queue += arrivals
+        if self.metric_mode == "concurrency":
+            metric = (self.queue + self.last_served) / self.replicas
+        else:
+            metric = self.queue / self.replicas
+        rec = min(max(math.ceil(self.replicas * metric / self.target),
+                      self.lo), self.hi)
+        self.recs.append(rec)
+        if rec >= self.replicas:
+            added = min(rec, self.hi) - (self.replicas + sum(c for _, c in self.booting))
+            if added > 0:
+                if self.boot_ticks > 0:
+                    self.booting.append([self.boot_ticks, added])
+                else:
+                    self.replicas += added
+        else:
+            new_r = max(self.recs[-self.window:])
+            if new_r == self.replicas:
+                self.held += 1
+            self.replicas = new_r
+        served = min(self.queue, self.replicas * self.cap)
+        self.queue -= served
+        if self.queue > 0:
+            self.unserved += 1
+        batch = min(self.cap, -(-served // self.replicas)) if served else 0
+        step_ms = self.w + self.b * batch
+        self.last_served = served
+        self.ticks += 1
+        return {'replicas': self.replicas, 'served': served,
+                'queue': self.queue, 'step_ms': step_ms}
+
+    def report(self):
+        return {'ticks': self.ticks, 'held_ticks': self.held,
+                'unserved_ticks': self.unserved,
+                'final_replicas': self.replicas, 'final_queue': self.queue}`,
+        hints: [
+          { en: "Mature booting BEFORE reading the metric: a pod that finished booting this tick participates in this tick's decision and service.", ru: "Взросление boot-заказов — ДО чтения метрики: под, дозревший этим тиком, участвует в решении и обслуживании этого тика." },
+          { en: "Cap the total order: added = min(rec, hi) − (replicas + booted counts) — pending orders never exceed max_r.", ru: "Суммарный заказ ограничен: added = min(rec, hi) − (реплики + заказанные) — pending не превышает max_r." },
+          { en: "The concurrency contrast needs window=1: with the default window the scale-down is held anyway.", ru: "Контраст concurrency виден при window=1: с дефолтным окном скейл-даун и так удержан." },
+        ],
+        numpy: false,
+        timeoutMs: 6000,
       },
     ],
     challenge: {

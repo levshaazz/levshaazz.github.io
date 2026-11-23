@@ -98,6 +98,20 @@
 
   // --------------------------------------------------------------- progress
   var KEY = "lsm.lab1";
+  // Funnel (market backlog wave 5): onboarding events, local-only. Events are
+  // recorded only when the funnel was already started on the welcome page —
+  // a student who never opened it keeps no funnel state at all.
+  function funnelEvent(ev) {
+    var raw = null;
+    try { raw = localStorage.getItem("lsm.funnel.v1"); } catch (e) { return; }
+    if (!raw) return;
+    var f;
+    try { f = JSON.parse(raw); } catch (e) { return; }
+    if (!Array.isArray(f) || f.some(function (x) { return x.ev === ev; })) return;
+    f.push({ ev: ev, ts: new Date().toISOString() });
+    try { localStorage.setItem("lsm.funnel.v1", JSON.stringify(f)); } catch (e) {}
+  }
+  funnelEvent("lab1_started");
   var IDS = ["q1", "q2", "q3", "ex1", "ex2", "ex3", "p1", "p2", "p3"];
   function loadProgress() {
     try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; }
@@ -123,6 +137,7 @@
     var reward = document.querySelector("[data-lab-reward]");
     if (reward && n === IDS.length && reward.dataset.open !== "1") {
       reward.dataset.open = "1";
+      funnelEvent("lab1_done");
       var badge = document.querySelector("[data-lab-reward-badge]");
       if (badge) badge.hidden = false;
       startRewardLab1(reward);
