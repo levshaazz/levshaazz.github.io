@@ -118,11 +118,12 @@ jobs:
           mkdir -p public/llm-serving-mastery
           rsync --archive --delete course/docs/ public/llm-serving-mastery/
           cp course/docs/index.html public/index.html
+          cp course/docs/404.html public/404.html
           touch public/.nojekyll
           printf '%s\n' "$SOURCE_SHA" > public/.course-source-sha
           git -C public config user.name 'github-actions[bot]'
           git -C public config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git -C public add llm-serving-mastery index.html .nojekyll .course-source-sha
+          git -C public add llm-serving-mastery index.html 404.html .nojekyll .course-source-sha
           if ! git -C public diff --cached --quiet; then
             git -C public commit -m "Publish course site from $SOURCE_SHA"
             git -C public push origin main
