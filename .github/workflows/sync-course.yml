@@ -132,6 +132,7 @@ jobs:
           mkdir -p site/llm-serving-mastery
           cp -a course/docs/. site/llm-serving-mastery/
           cp public/index.html public/.nojekyll public/.course-source-sha site/
+          cp public/404.html site/404.html
       - name: Configure Pages
         if: steps.version.outputs.changed == 'true'
         uses: actions/configure-pages@v5
