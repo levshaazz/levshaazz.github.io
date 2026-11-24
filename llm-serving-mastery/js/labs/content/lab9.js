@@ -90,7 +90,7 @@
     <rect x="60" y="224" width="36" height="40" rx="7" fill="var(--lab-muted)" opacity="0.5"/>
     <text x="78" y="249" text-anchor="middle" font-size="13" fill="var(--lab-muted)" class="mono">~0</text>
     <rect x="100" y="224" width="330" height="40" rx="7" fill="var(--fig-warm)" opacity="0.75"/>
-    <text x="265" y="249" text-anchor="middle" font-size="14" fill="var(--lab-bg)" class="mono">weights 0.491 GB</text>
+    <text x="265" y="249" text-anchor="middle" font-size="14" fill="var(--lab-bg)" class="mono" data-en="weights 0.491 GB" data-ru="веса 0.491 ГБ">weights 0.491 GB</text>
     <rect x="434" y="224" width="110" height="40" rx="7" fill="var(--lab-accent)" opacity="0.35"/>
     <rect x="548" y="224" width="98" height="40" rx="7" fill="var(--lab-good)" opacity="0.45"/>
     <text x="60" y="284" font-size="13" fill="var(--lab-muted)" data-en="still pays weights" data-ru="веса платить всё равно">still pays weights</text>

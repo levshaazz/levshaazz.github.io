@@ -20,7 +20,7 @@
       en: `<p>A gateway is a thin HTTP layer between clients and the engine, and its job is to turn Topic 06 mechanisms into a contract: validation before the queue, a <strong>bounded queue</strong> that answers 429 with <code>Retry-After</code> instead of promising infinite waiting, an <strong>outcome → status</strong> map (invalid 400, overloaded 429, engine down 503, deadline 504, everything else 500 without internals), and cancellation that stops paying for abandoned tokens. HTTP 200 means "an answer was sent", not "the request succeeded" — a client timeout counted as success is a lie the metrics will repeat at 3 a.m.</p>
 <p>The lab habit: freeze the contract table (situation → mechanism → expected code) BEFORE any gateway code, then let drills and the journal check it. All numbers here are a declared mock engine: ttft 0.15 s, 0.02 s per token, 4 service slots + 4 queue seats — arithmetic you can verify by hand, not a vLLM measurement.</p>`,
       ru: `<p>Шлюз — тонкий HTTP-слой между клиентами и движком, и его работа — превратить механизмы Темы 06 в контракт: валидация до очереди, <strong>ограниченная очередь</strong>, отвечающая 429 с <code>Retry-After</code> вместо обещания вечного ожидания, карта <strong>«исход → код»</strong> (invalid 400, overloaded 429, движок лежит 503, deadline 504, остальное 500 без внутренностей) и отмена, которая перестаёт платить за брошенные токены. HTTP 200 означает «ответ отправлен», а не «запрос успешен» — таймаут клиента, засчитанный как успех, — это ложь, которую метрики повторят в 3 часа ночи.</p>
-<p>Привычка лабы: заморозить таблицу контракта (ситуация → механизм → ожидаемый код) ДО кода шлюза, потом дать дриллам и журналу её проверить. Все числа здесь — объявленный мок движка: <code>ttft</code> 0.15 с, 0.02 с за токен, 4 слота обслуживания + 4 места очереди, — арифметика, которую можно проверить руками, а не измерение vLLM.</p>`,
+<p>Привычка лабы: заморозить таблицу контракта (ситуация → механизм → ожидаемый код) ДО кода шлюза, потом дать дриллам и журналу её проверить. Все числа здесь — заявленный мок движка: <code>ttft</code> 0.15 с, 0.02 с за токен, 4 слота обслуживания + 4 места очереди, — арифметика, которую можно проверить руками, а не измерение vLLM.</p>`,
     },
     heroTag: { en: "429, envelope, error map", ru: "429, конверт допуска, карта ошибок" },
     figures: [
@@ -150,7 +150,7 @@
         id: "q2",
         q: {
           en: "With the declared mock handles (ttft 0.15 s, 0.02 s per token), how long does one full 96-token request take, in seconds?",
-          ru: "С объявленными ручками мока (<code>ttft</code> 0.15 с, 0.02 с за токен) — сколько длится полный запрос на 96 токенов, в секундах?",
+          ru: "С заявленными ручками мока (<code>ttft</code> 0.15 с, 0.02 с за токен) — сколько длится полный запрос на 96 токенов, в секундах?",
         },
         answer: 2.07, tol: 0.01, unit: { en: "s", ru: "с" },
         hint: {
@@ -483,7 +483,7 @@ eq(classify_outcome(400), 'failed')` },
     },
     footer: {
       en: "Teaching arithmetic on a declared mock engine (ttft 0.15 s, 0.02 s per token, seats 4+4) — not a vLLM measurement. The recorded gateway drills live in the Topic 08 evidence run (runs/2026-10-26-topic08-gateway-mock); this lab does not execute them.",
-      ru: "Учебная арифметика на объявленном моке движка (<code>ttft</code> 0.15 с, 0.02 с за токен, места 4+4) — не измерение vLLM. Прогоны дриллов шлюза записаны в evidence-прогоне Темы 08 (runs/2026-10-26-topic08-gateway-mock); эта лаба их не исполняет.",
+      ru: "Учебная арифметика на заявленном моке движка (<code>ttft</code> 0.15 с, 0.02 с за токен, места 4+4) — не измерение vLLM. Прогоны дриллов шлюза записаны в evidence-прогоне Темы 08 (runs/2026-10-26-topic08-gateway-mock); эта лаба их не исполняет.",
     },
   };
 })();

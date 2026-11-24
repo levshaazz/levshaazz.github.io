@@ -191,7 +191,7 @@
         },
         starter: `def roofline_ceiling(intensity, compute_tflops, bandwidth_gbps):
     """Attainable TFLOP/s: min(compute roof, intensity x bandwidth / 1000)."""
-    # TODO: one line of arithmetic / одна строка арифметики
+    # TODO: one line of arithmetic
 `,
         tests: [
           { name: "bandwidth-bound left of ridge", hidden: false, code: "eq(roofline_ceiling(20, 60, 600), 12.0)" },
@@ -216,7 +216,7 @@
         },
         starter: `def kv_bytes_per_token(layers, kv_heads, head_dim, bytes_per_elem):
     """Exact bytes of KV payload per live token (K and V)."""
-    # TODO: formula from the "Declared model" block / формула из блока «Заявленная модель»
+    # TODO: formula from the "Declared model" block
 `,
         tests: [
           { name: "Qwen2.5-3B teaching shape", hidden: false, code: "eq(kv_bytes_per_token(36, 2, 128, 2), 36864)" },

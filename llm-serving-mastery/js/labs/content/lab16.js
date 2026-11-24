@@ -33,7 +33,7 @@
         svg: `<svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
   <g id="g-main">
     <rect x="60" y="70" width="300" height="52" rx="9" fill="var(--lab-accent)" opacity="0.14"/>
-    <text x="78" y="102" font-size="15" fill="var(--lab-ink)" class="mono">… сатурн, уран ▌</text>
+    <text x="78" y="102" font-size="15" fill="var(--lab-ink)" class="mono" data-en="… saturn, uranus ▌" data-ru="… сатурн, уран ▌">… saturn, uranus ▌</text>
     <text x="380" y="102" font-size="14" fill="var(--lab-muted)" data-en="big model, mid-decode" data-ru="большая модель, середина декода">big model, mid-decode</text>
   </g>
   <g id="g-draft">
@@ -42,9 +42,9 @@
     <rect x="136" y="172" width="66" height="40" rx="8" fill="var(--fig-warm)" opacity="0.16"/>
     <rect x="212" y="172" width="66" height="40" rx="8" fill="var(--fig-warm)" opacity="0.16"/>
     <rect x="288" y="172" width="66" height="40" rx="8" fill="var(--fig-warm)" opacity="0.16"/>
-    <text x="93" y="197" font-size="14" fill="var(--fig-warm)" text-anchor="middle" class="mono">неп</text>
-    <text x="169" y="197" font-size="14" fill="var(--fig-warm)" text-anchor="middle" class="mono">тун</text>
-    <text x="245" y="197" font-size="14" fill="var(--fig-warm)" text-anchor="middle" class="mono">а ▌</text>
+    <text x="93" y="197" font-size="14" fill="var(--fig-warm)" text-anchor="middle" class="mono" data-en="nep" data-ru="неп">nep</text>
+    <text x="169" y="197" font-size="14" fill="var(--fig-warm)" text-anchor="middle" class="mono" data-en="tun" data-ru="тун">tun</text>
+    <text x="245" y="197" font-size="14" fill="var(--fig-warm)" text-anchor="middle" class="mono" data-en="e ▌" data-ru="а ▌">e ▌</text>
     <text x="321" y="197" font-size="14" fill="var(--fig-warm)" text-anchor="middle" class="mono">⊕?</text>
     <text x="380" y="232" font-size="13" fill="var(--lab-muted)" class="mono" data-en="cost: 4 × 4 ms (declared)" data-ru="цена: 4 × 4 мс (заявлено)">cost: 4 × 4 ms (declared)</text>
   </g>
@@ -109,10 +109,10 @@
       { en: "Explain, from a measured A/B, which formula assumption CPU verification breaks — and where speculation actually wins.", ru: "Объяснять по измеренному A/B, какое предположение формулы ломает CPU-верификация — и где спекуляция выигрывает на самом деле." },
     ],
     model: [
-      ["draft cycle cost", "n × draft_ms + verify_ms", "n = 4, GPU handles (4 / 20)", "36 ms"],
-      ["expected tokens per cycle", "(1 − p^(n+1)) / (1 − p), ceiling n + 1", "p = 0.75, n = 4", "3.05"],
-      ["speedup, GPU handles", "E × decode_ms / cycle_ms", "decode 20 · draft 4 · verify 20", "1.69×"],
-      ["speedup, CPU handles", "same formula", "decode 130 · draft 70 · verify 650", "0.43× — slower"],
+      [{ en: "draft cycle cost", ru: "цена draft-цикла" }, { en: "n × draft_ms + verify_ms", ru: "n × draft_ms + verify_ms" }, { en: "n = 4, GPU handles (4 / 20)", ru: "n = 4, GPU-ручки (4 / 20)" }, { en: "36 ms", ru: "36 мс" }],
+      [{ en: "expected tokens per cycle", ru: "ожидаемые токены за цикл" }, { en: "(1 − p^(n+1)) / (1 − p), ceiling n + 1", ru: "(1 − p^(n+1)) / (1 − p), потолок n + 1" }, { en: "p = 0.75, n = 4", ru: "p = 0.75, n = 4" }, { en: "3.05", ru: "3.05" }],
+      [{ en: "speedup, GPU handles", ru: "ускорение, GPU-ручки" }, { en: "E × decode_ms / cycle_ms", ru: "E × decode_ms / cycle_ms" }, { en: "decode 20 · draft 4 · verify 20", ru: "decode 20 · draft 4 · verify 20" }, { en: "1.69×", ru: "1.69×" }],
+      [{ en: "speedup, CPU handles", ru: "ускорение, CPU-ручки" }, { en: "same formula", ru: "та же формула" }, { en: "decode 130 · draft 70 · verify 650", ru: "decode 130 · draft 70 · verify 650" }, { en: "0.43× — slower", ru: "0.43× — медленнее" }],
     ],
     scenario: null,
     quizzes: [

@@ -22,7 +22,7 @@
     intro: {
       en: `<p>Topic 13 taught you to measure promises per window; this topic splits the same journal by <strong>tenant</strong>. One frozen base serves many tenants through small LoRA adapters, and every number here is a declared teaching model: the rank arithmetic is exact, the 2 ms swap cost is a declared knob, the tenant stream is the deck's six requests plus the star challenge's window dial.</p>
 <p>The two-sided bill is the spine: <strong>switching</strong> (2 ms per tenant change, order-dependent) against <strong>waiting</strong> (requests held for their affinity group). FIFO pays all switching; tenant-pinned queues pay all waiting; the affinity window W trades between them. The per-tenant p95 — nearest-rank over the tenant's own journal slice — is what the T13 discipline looks like one grain finer, and it is the promise the window must protect.</p>`,
-      ru: `<p>Тема 13 учила измерять обещания по окнам; эта тема делит тот же журнал по <strong>арендаторам</strong>. Одна замороженная база обслуживает многих через маленькие LoRA-адаптеры, и каждое число здесь — декларированная учебная модель: арифметика ранга точна, цена переключения 2 ms — декларированная ручка, поток арендаторов — шесть запросов деки плюс диск окна звёздного челленджа.</p>
+      ru: `<p>Тема 13 учила измерять обещания по окнам; эта тема делит тот же журнал по <strong>арендаторам</strong>. Одна замороженная база обслуживает многих через маленькие LoRA-адаптеры, и каждое число здесь — декларированная учебная модель: арифметика ранга точна, цена переключения 2 ms — декларированная ручка, поток арендаторов — шесть запросов слайдов плюс диск окна звёздного челленджа.</p>
 <p>Двусторонний счёт — хребет: <strong>переключения</strong> (2 ms за смену арендатора, зависят от порядка) против <strong>ожиданий</strong> (запросы, удержанные для своей affinity-группы). FIFO платит всем переключениями; очереди с привязкой — всем ожиданием; affinity-окно W торгует между ними. p95 арендатора — nearest-rank по его собственному срезу журнала — это дисциплина T13 зерном тоньше, и именно это обещание окно обязано защищать.</p>`,
     },
     heroTag: { en: "LoRA ledger, swaps, tenant p95", ru: "ведомость LoRA, переключения, p95 арендатора" },
@@ -31,7 +31,7 @@
       [{ en: "rank r", ru: "ранг r" }, { en: "the quality/size dial: r = 16 halves to 8 with most of the delta — measured, not assumed.", ru: "ручка качества/размера: r = 16 уменьшается до 8 с большей частью дельты — измеряется, а не предполагается." }],
       [{ en: "adapter size", ru: "размер адаптера" }, { en: "params = 2 · r · (din + dout) · targets; fp16 doubles the bytes.", ru: "params = 2 · r · (din + dout) · targets; fp16 удваивает байты." }],
       [{ en: "swap", ru: "переключение" }, { en: "loading a different tenant's adapter onto the slot; declared cost 2 ms in this model.", ru: "загрузка чужого адаптера на слот; декларированная цена в этой модели 2 ms." }],
-      [{ en: "affinity window", ru: "affinity-окно" }, { en: "a window of W arrivals, grouped by tenant inside; W trades waits against swaps.", ru: "окно из W пришельцев, сгруппированных внутри; W торгует ожидания против переключений." }],
+      [{ en: "affinity window", ru: "affinity-окно" }, { en: "a window of W arrivals, grouped by tenant inside; W trades waits against swaps.", ru: "окно из W входящих запросов, сгруппированных внутри; W торгует ожидания против переключений." }],
       [{ en: "tenant slice", ru: "срез арендатора" }, { en: "the journal entries whose tenant field matches — the only source for the tenant's promise.", ru: "записи журнала с совпавшим полем tenant — единственный источник обещания арендатора." }],
       [{ en: "tenant p95", ru: "p95 арендатора" }, { en: "nearest-rank p95 over the tenant slice, window named — the T13 discipline one grain finer.", ru: "nearest-rank p95 по срезу арендатора, окно названо — дисциплина T13 зерном тоньше." }],
       [{ en: "FIFO", ru: "FIFO" }, { en: "serve in arrival order: honest to arrivals, brutal to switches.", ru: "сервис в порядке прихода: честно к приходам, жестоко к переключениям." }],
@@ -71,7 +71,7 @@
   </g>
 </svg>`,
         stages: [
-          { cap: { en: "The deck's six requests: A and B alternate — the worst case for switches.", ru: "Шесть запросов деки: A и B чередуются — худший случай для переключений." }, show: ["g-stream", "g-count"] },
+          { cap: { en: "The deck's six requests: A and B alternate — the worst case for switches.", ru: "Шесть запросов слайдов: A и B чередуются — худший случай для переключений." }, show: ["g-stream", "g-count"] },
           { cap: { en: "Grouping collapses 5 swaps to 1 — and the ribbon names where the other four went.", ru: "Группировка сжимает 5 переключений до 1 — и лента называет, куда ушли другие четыре." }, show: ["g-stream", "g-count", "g-ledger"] },
         ],
       },
@@ -134,7 +134,7 @@
         id: "q2",
         q: {
           en: "The deck's six requests arrive A, B, A, B, A, B and the slot starts on A. How many swaps does FIFO pay?",
-          ru: "Шесть запросов деки приходят A, B, A, B, A, B, слот стоит на A. Сколько переключений платит FIFO?",
+          ru: "Шесть запросов слайдов приходят A, B, A, B, A, B, слот стоит на A. Сколько переключений платит FIFO?",
         },
         answer: 5, tol: 0.5, unit: { en: "swaps", ru: "переключений" },
         hint: {
@@ -241,7 +241,7 @@ assert count_swaps(['C','A','B','C'], start='A') == 4, "three tenants rotate: ev
         title: { en: "Exercise 3 · affinity_batches: the window groups", ru: "Упражнение 3 · affinity_batches: группы окна" },
         brief: {
           en: "Implement <code>affinity_batches(stream, w)</code>: cut the stream into windows of <code>w</code> arrivals; inside each window, group requests by tenant in order of the tenant's FIRST appearance. Return a list of batches, each a list of tenant groups. Example: <code>['A','B','A']</code> at w = 3 → <code>[['A','A'],['B']]</code>. This is the lab's routing policy in one pure function.",
-          ru: "Реализуй <code>affinity_batches(stream, w)</code>: режь поток на окна по <code>w</code> пришельцев; внутри окна группируй запросы по арендаторам в порядке ПЕРВОГО появления. Верни список партий, каждая — список групп. Пример: <code>['A','B','A']</code> при w = 3 → <code>[['A','A'],['B']]</code>. Это политика маршрутизации лабы в одной чистой функции.",
+          ru: "Реализуй <code>affinity_batches(stream, w)</code>: режь поток на окна по <code>w</code> входящих запросов; внутри окна группируй запросы по арендаторам в порядке ПЕРВОГО появления. Верни список партий, каждая — список групп. Пример: <code>['A','B','A']</code> при w = 3 → <code>[['A','A'],['B']]</code>. Это политика маршрутизации лабы в одной чистой функции.",
         },
         starter: `def affinity_batches(stream, w):
     """Cut the stream into windows of w; group each window by tenant in
@@ -339,7 +339,7 @@ def tenant_p95(entries, tenant):
         title: { en: "Capstone · AdapterSim: the two-sided ledger", ru: "Капстоун · AdapterSim: двусторонняя ведомость" },
         brief: {
           en: "Implement <code>adaptersim(stream, w, start='A')</code>: route the stream in affinity windows of <code>w</code> (reuse your ex3 grouping), count swaps exactly like ex2 (the loaded tenant carries ACROSS windows), and count <code>waited</code> — every request behind the first in its group. Return <code>{\"swaps\": …, \"waited\": …}</code>. The declared stream is the deck's six requests; the declared dial table on slide 12 is your answer key — your function must reproduce every row.",
-          ru: "Реализуй <code>adaptersim(stream, w, start='A')</code>: маршрутизируй поток affinity-окнами по <code>w</code> (переиспользуй группировку ex3), считай переключения ровно как ex2 (загруженный арендатор несётся ЧЕРЕЗ окна), и считай <code>waited</code> — каждый запрос позади первого в своей группе. Верни <code>{&quot;swaps&quot;: …, &quot;waited&quot;: …}</code>. Декларированный поток — шесть запросов деки; таблица диска на слайде 12 — твой ключ ответов — твоя функция обязана воспроизвести каждую строку.",
+          ru: "Реализуй <code>adaptersim(stream, w, start='A')</code>: маршрутизируй поток affinity-окнами по <code>w</code> (переиспользуй группировку ex3), считай переключения ровно как ex2 (загруженный арендатор несётся ЧЕРЕЗ окна), и считай <code>waited</code> — каждый запрос позади первого в своей группе. Верни <code>{&quot;swaps&quot;: …, &quot;waited&quot;: …}</code>. Декларированный поток — шесть запросов слайдов; таблица диска на слайде 12 — твой ключ ответов — твоя функция обязана воспроизвести каждую строку.",
         },
         starter: `# The deck's declared stream: six requests, two tenants.
 STREAM = ['A', 'B', 'A', 'B', 'A', 'B']
@@ -509,7 +509,7 @@ print("W=3")
     ],
     footer: {
       en: "Declared teaching model of a multi-tenant serving layer: the tenant stream, the 2 ms swap cost and the adapter quality deltas are declared arithmetic over the LoRA rank formula (arXiv 2106.09685) and the deck's six-request stream; the journal canonical form is the real layer-2 gateway's (runtime/gateway/app.py). S-LoRA and Punica are cited as the real-systems line our flat swap cost omits. The live journal you can connect in the Layer-2 section is your own and machine-local.",
-      ru: "Декларированная учебная модель мультитенантного слоя сервинга: поток арендаторов, цена переключения 2 ms и дельты качества адаптеров — декларированная арифметика над формулой ранга LoRA (arXiv 2106.09685) и потоком из шести запросов деки; каноническая форма журнала — настоящая, от шлюза слой-2 (runtime/gateway/app.py). S-LoRA и Punica цитируются как линия реальных систем, которую наша плоская цена переключения опускает. Живой журнал, который можно подключить в секции Layer-2, — твой собственный и машинно-локальный.",
+      ru: "Декларированная учебная модель мультитенантного слоя сервинга: поток арендаторов, цена переключения 2 ms и дельты качества адаптеров — декларированная арифметика над формулой ранга LoRA (arXiv 2106.09685) и потоком из шести запросов слайдов; каноническая форма журнала — настоящая, от шлюза слой-2 (runtime/gateway/app.py). S-LoRA и Punica цитируются как линия реальных систем, которую наша плоская цена переключения опускает. Живой журнал, который можно подключить в секции Layer-2, — твой собственный и машинно-локальный.",
     },
   };
   window.LABS_CONTENT = LABS_CONTENT;

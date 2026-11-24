@@ -658,10 +658,12 @@ for tq in (1, 2, 4, 8):
         step = 60 + 2 * batch
         mark = "OK " if served == 60 and step <= 120 else "   "
         print(f"{mark}target_queue={tq} max_r={max_r} rec={rec} served={served} step_ms={step}")
-# target_queue=1 asks for 60 replicas - every max_r clamps it, and the fat
-# 30-batch breaks the step budget. Several pairs win (tq 2 x max_r 4 gives
-# rec 4, served 60, batch 15, step 90; tq 4 x max_r 3 gives step 100; the
-# tq 8 rows pass only where the clamp leaves exactly enough replicas).
+# target_queue=1 with max_r=1 never serves 60 (the clamp caps rec at 1);
+# tq=1 with max_r=2 lands exactly ON the line: served 60, batch 30,
+# step 120 <= 120 - accepted, but with zero headroom. Several pairs win
+# comfortably (tq 2 x max_r 4 gives rec 4, served 60, batch 15, step 90;
+# tq 4 x max_r 3 gives step 100; the tq 8 rows pass only where the clamp
+# leaves exactly enough replicas).
 # The clamp and the batch ceiling fight each other - tuning is the truce.`,
     },
     posttest: [

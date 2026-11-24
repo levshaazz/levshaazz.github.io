@@ -321,7 +321,7 @@ def verify_chain(entries):
         title: { en: "Exercise 2 · Golden signals: p95 and error rate from one journal", ru: "Упражнение 2 · Золотые сигналы: p95 и доля ошибок из одного журнала" },
         brief: {
           en: "Implement <code>golden_signals(entries) -> (p95_ttft_ms, err_rate)</code>. Take <code>payload.ttft_ms</code> from every <code>experiment</code> entry and the <code>payload.admitted</code>/<code>rejected</code> counts from every <code>burst</code> entry. p95 is <strong>nearest-rank</strong>: sort, take element <code>ceil(0.95 · n) − 1</code> — no interpolation. <code>err_rate = rejected / (admitted + rejected)</code> over all burst entries. On the fixture the answers are already known from the lecture trace: ten experiment timings with two burst-second outliers, two burst drills of 24 arrivals each meeting an 8-seat envelope. Careful: the tampered entry understates one drill's rejections, so the journal's own numbers give 28 of 44 — the golden signal inherits the lie until the chain is verified.",
-          ru: "Реализуй <code>golden_signals(entries) -> (p95_ttft_ms, err_rate)</code>. Возьми <code>payload.ttft_ms</code> из каждой записи <code>experiment</code> и счётчики <code>payload.admitted</code>/<code>rejected</code> из каждой записи <code>burst</code>. p95 — <strong>nearest-rank</strong>: отсортируй, возьми элемент <code>ceil(0.95 · n) − 1</code> — без интерполяции. <code>err_rate = rejected / (admitted + rejected)</code> по всем burst-записям. На фикстуре ответы уже известны из трейса лекции: десять экспериментальных времён с двумя выбросами бурст-секунды, два burst-дрилла по 24 пришельца против конверта на 8 мест. Внимание: правленая запись занижает отказы одного дрилла, поэтому числа журнала дают 28 из 44 — золотой сигнал наследует ложь, пока цепочка не проверена.",
+          ru: "Реализуй <code>golden_signals(entries) -> (p95_ttft_ms, err_rate)</code>. Возьми <code>payload.ttft_ms</code> из каждой записи <code>experiment</code> и счётчики <code>payload.admitted</code>/<code>rejected</code> из каждой записи <code>burst</code>. p95 — <strong>nearest-rank</strong>: отсортируй, возьми элемент <code>ceil(0.95 · n) − 1</code> — без интерполяции. <code>err_rate = rejected / (admitted + rejected)</code> по всем burst-записям. На фикстуре ответы уже известны из трейса лекции: десять экспериментальных времён с двумя выбросами бурст-секунды, два burst-дрилла по 24 входящих запроса против конверта на 8 мест. Внимание: правленая запись занижает отказы одного дрилла, поэтому числа журнала дают 28 из 44 — золотой сигнал наследует ложь, пока цепочка не проверена.",
         },
         starter: `import math
 
@@ -394,7 +394,7 @@ def golden_signals(entries):
 `,
         hints: [
           { en: "Nearest-rank is a person counting from the sorted end: ceil(0.95·10) = 10 -> the 10th element.", ru: "Nearest-rank — человек, считающий от конца отсортированного: ceil(0.95·10) = 10 -> десятый элемент." },
-          { en: "The burst pair on the fixture is the lab 08 drill: 24 arrivals, 8 admitted, 16 rejected.", ru: "Burst-пара на фикстуре — дрилл лабы 08: 24 пришельца, 8 допущено, 16 отклонено." },
+          { en: "The burst pair on the fixture is the lab 08 drill: 24 arrivals, 8 admitted, 16 rejected.", ru: "Burst-пара на фикстуре — дрилл лабы 08: 24 входящих запроса, 8 допущено, 16 отклонено." },
         ],
         numpy: false, timeoutMs: 4000,
       },
@@ -700,7 +700,7 @@ print("fast=12 slow=5")
         ru: "Всё выше работало на <strong>декларированном учебном журнале</strong>. Подключи practice-рантайм (<code>docker compose up -d</code>, шлюз на <code>127.0.0.1:8760</code>), сделай пару измерений — и те же три взгляда станут настоящими: твой журнал копит записи experiment и burst в идентичной хэш-цепочке, <code>GET /journal/verify</code> гоняет собственный верификатор шлюза, а твоя <code>verify_chain()</code> из Упражнения 1 обязана с ним сойтись. Машинно-локально и честно: курс цитирует твой журнал только как твой собственный.",
       },
       experimentPrompt: {
-        en: "Run two experiments and one burst, then press «Проверить цепочку»: the gateway's verdict and your own walk must agree.",
+        en: "Run two experiments and one burst, then press \u00abVerify chain\u00bb: the gateway's verdict and your own walk must agree.",
         ru: "Сделай два эксперимента и один бурст, затем нажми «Проверить цепочку»: вердикт шлюза и твой собственный ход обязаны сойтись.",
       },
       evalSet: {
@@ -766,7 +766,7 @@ print("fast=12 slow=5")
     ],
     footer: {
       en: "Declared teaching model of an on-call day: the trace, the journal fixture and the thresholds are declared arithmetic over the Topic 13 lecture numbers (SLO 99 %, budget 1 %, burn 8.3×, the 21:00 breach at p95 7.2 s) and the lab 08 drill (24 arrivals, 8 admitted, 16 × 429). The journal canonical form is the real layer-2 gateway's (runtime/gateway/app.py, lab 09); the live journal you can connect in the Layer-2 section is your own and machine-local.",
-      ru: "Декларированная учебная модель суток дежурного: трейс, фикстура журнала и пороги — декларированная арифметика поверх чисел лекции Темы 13 (SLO 99 %, бюджет 1 %, burn 8.3×, breach 21:00 с p95 7.2 с) и дрилла лабы 08 (24 пришельца, 8 допущено, 16 × 429). Каноническая форма журнала — настоящая, от шлюза слой-2 (runtime/gateway/app.py, лаба 09); живой журнал, который можно подключить в секции Layer-2, — твой собственный и машинно-локальный.",
+      ru: "Декларированная учебная модель суток дежурного: трейс, фикстура журнала и пороги — декларированная арифметика поверх чисел лекции Темы 13 (SLO 99 %, бюджет 1 %, burn 8.3×, breach 21:00 с p95 7.2 с) и дрилла лабы 08 (24 входящих запроса, 8 допущено, 16 × 429). Каноническая форма журнала — настоящая, от шлюза слой-2 (runtime/gateway/app.py, лаба 09); живой журнал, который можно подключить в секции Layer-2, — твой собственный и машинно-локальный.",
     },
   };
   /* The declared trace, also read by the challenge's page-side recompute. */
