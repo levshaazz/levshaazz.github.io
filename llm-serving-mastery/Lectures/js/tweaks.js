@@ -336,3 +336,76 @@
   /* reapply kept for back-compat with any caller that still invokes it. */
   window.Tweaks = { toggle, setTweak, resetAll, reapply: apply, getState: () => ({ ...state }) };
 })();
+/* title-autofit.js — shrink the title-slide body until its footer fits the slide.
+   WHY: RU titles render taller than EN (decks 09/13 measured +199/+220 px past the
+   slide bottom — the lecturer/status footer was clipped). CSS cannot auto-shrink
+   text, so this bisects the title-body type down until .title-footer's bottom sits
+   inside the slide. Shrinks NOTHING when the slide already fits: the reset pass
+   restores authored sizes and exits on the first measurement.
+   Runs per active title slide on deck:ready, fonts.ready, slide activation
+   (is-active observer), language switch (data-lang) and resize. Never enlarges:
+   the authored size is the upper bound. Scoped to section.slide[data-type="title"].
+   Sizing is design-resolution relative (the stage transform cancels in the
+   overflow ratio), so the fit is viewport-independent. */
+(function () {
+  "use strict";
+  var MIN_K = 0.45;
+
+  function fitSlide(slide) {
+    var body = slide.querySelector(".title-body");
+    var footer = slide.querySelector(".title-footer");
+    var h1 = body && body.querySelector("h1");
+    if (!body || !footer || !h1) return;
+    var subs = [].slice.call(body.querySelectorAll(".subtitle"));
+    var els = [h1].concat(subs);
+    var bases = els.map(function (el) {
+      el.style.fontSize = "";
+      return parseFloat(getComputedStyle(el).fontSize);
+    });
+    function apply(k) {
+      els.forEach(function (el, i) {
+        el.style.fontSize = (bases[i] * k).toFixed(1) + "px";
+      });
+    }
+    function overflow() {
+      var s = slide.getBoundingClientRect();
+      var f = footer.getBoundingClientRect();
+      return f.bottom - s.bottom;
+    }
+    apply(1);
+    if (overflow() <= 0) return;                 // fits as authored — untouched
+    var lo = MIN_K, hi = 1;
+    for (var i = 0; i < 8; i++) {
+      var mid = (lo + hi) / 2;
+      apply(mid);
+      if (overflow() <= 0) hi = mid; else lo = mid;
+    }
+    apply(hi);
+  }
+
+  function fitAll() {
+    [].slice
+      .call(document.querySelectorAll('section.slide[data-type="title"].is-active'))
+      .forEach(fitSlide);
+  }
+
+  var scheduled = false;
+  function scheduleFit() {
+    if (scheduled) return;
+    scheduled = true;
+    setTimeout(function () { scheduled = false; fitAll(); }, 60);
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("deck:ready", scheduleFit);
+    document.addEventListener("slide:enter", scheduleFit);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleFit);
+    window.addEventListener("resize", scheduleFit);
+    new MutationObserver(scheduleFit).observe(document.documentElement, {
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["class", "data-lang"],
+    });
+    scheduleFit();
+  });
+})();

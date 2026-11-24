@@ -34,28 +34,28 @@
     <line x1="80" y1="230" x2="700" y2="230" stroke="var(--lab-muted)" stroke-width="1.5"/>
     <text x="700" y="256" text-anchor="end" font-size="14" fill="var(--lab-muted)" data-en="client time, s" data-ru="время клиента, с">client time, s</text>
     <text x="80" y="256" font-size="13" fill="var(--lab-muted)" class="mono">0</text>
-    <text x="212" y="256" font-size="13" fill="var(--lab-muted)" class="mono">0.2</text>
+    <text x="204" y="256" font-size="13" fill="var(--lab-muted)" class="mono">0.2</text>
     <text x="452" y="256" font-size="13" fill="var(--lab-muted)" class="mono">0.6</text>
     <circle cx="80" cy="230" r="7" fill="var(--lab-muted)"/>
     <text x="80" y="196" text-anchor="middle" font-size="13" fill="var(--lab-muted)" data-en="request sent" data-ru="запрос отправлен">request sent</text>
   </g>
   <g id="g-ttft">
-    <circle cx="220" cy="230" r="8" fill="var(--lab-accent)"/>
-    <text x="220" y="196" text-anchor="middle" font-size="13" fill="var(--lab-accent)" data-en="first token" data-ru="первый токен">first token</text>
-    <line x1="80" y1="150" x2="220" y2="150" stroke="var(--lab-accent)" stroke-width="2" class="fig-flow"/>
+    <circle cx="204" cy="230" r="8" fill="var(--lab-accent)"/>
+    <text x="204" y="196" text-anchor="middle" font-size="13" fill="var(--lab-accent)" data-en="first token" data-ru="первый токен">first token</text>
+    <line x1="80" y1="150" x2="204" y2="150" stroke="var(--lab-accent)" stroke-width="2" class="fig-flow"/>
     <line x1="80" y1="144" x2="80" y2="156" stroke="var(--lab-accent)" stroke-width="2"/>
-    <line x1="220" y1="144" x2="220" y2="156" stroke="var(--lab-accent)" stroke-width="2"/>
-    <text x="150" y="136" text-anchor="middle" font-size="16" fill="var(--lab-accent)" class="mono">TTFT = 0.2 s</text>
-    <text x="150" y="118" text-anchor="middle" font-size="13" fill="var(--lab-muted)" data-en="prefill + one step" data-ru="prefill + один шаг">prefill + one step</text>
+    <line x1="204" y1="144" x2="204" y2="156" stroke="var(--lab-accent)" stroke-width="2"/>
+    <text x="142" y="136" text-anchor="middle" font-size="16" fill="var(--lab-accent)" class="mono">TTFT = 0.2 s</text>
+    <text x="142" y="118" text-anchor="middle" font-size="13" fill="var(--lab-muted)" data-en="prefill + one step" data-ru="prefill + один шаг">prefill + one step</text>
   </g>
   <g id="g-gaps">
-    <circle cx="460" cy="230" r="8" fill="var(--lab-accent)"/>
-    <circle cx="660" cy="230" r="8" fill="var(--lab-accent)"/>
-    <text x="460" y="196" text-anchor="middle" font-size="13" fill="var(--lab-muted)" class="mono">b</text>
-    <text x="660" y="196" text-anchor="middle" font-size="13" fill="var(--lab-muted)" class="mono">c</text>
-    <line x1="220" y1="286" x2="460" y2="286" stroke="var(--fig-warm)" stroke-width="2" class="fig-flow"/>
-    <line x1="460" y1="286" x2="660" y2="286" stroke="var(--fig-warm)" stroke-width="2" class="fig-flow"/>
-    <text x="440" y="312" text-anchor="middle" font-size="15" fill="var(--fig-warm)" data-en="2 gaps in 0.4 s" data-ru="2 промежутка за 0.4 с">2 gaps in 0.4 s</text>
+    <circle cx="328" cy="230" r="8" fill="var(--lab-accent)"/>
+    <circle cx="452" cy="230" r="8" fill="var(--lab-accent)"/>
+    <text x="328" y="196" text-anchor="middle" font-size="13" fill="var(--lab-muted)" class="mono">b</text>
+    <text x="452" y="196" text-anchor="middle" font-size="13" fill="var(--lab-muted)" class="mono">c</text>
+    <line x1="204" y1="286" x2="328" y2="286" stroke="var(--fig-warm)" stroke-width="2" class="fig-flow"/>
+    <line x1="328" y1="286" x2="452" y2="286" stroke="var(--fig-warm)" stroke-width="2" class="fig-flow"/>
+    <text x="328" y="312" text-anchor="middle" font-size="15" fill="var(--fig-warm)" data-en="2 gaps in 0.4 s" data-ru="2 промежутка за 0.4 с">2 gaps in 0.4 s</text>
   </g>
   <g id="g-rate">
     <text x="380" y="366" text-anchor="middle" font-size="21" fill="var(--lab-ink)" class="mono">rate = (n − 1) / (t_last − t_first) = 2 / 0.4 = 5.0 tok/s</text>

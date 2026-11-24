@@ -49,23 +49,23 @@
     <line x1="240" y1="294" x2="240" y2="306" stroke="var(--lab-muted)" stroke-width="1.5"/>
     <text x="380" y="326" text-anchor="middle" font-size="13" fill="var(--lab-muted)" class="mono">8</text>
     <line x1="380" y1="294" x2="380" y2="306" stroke="var(--lab-muted)" stroke-width="1.5"/>
-    <circle cx="586" cy="300" r="8" fill="var(--lab-accent)"/>
-    <text x="586" y="326" text-anchor="middle" font-size="13" fill="var(--lab-accent)" class="mono">9</text>
+    <circle cx="520" cy="300" r="8" fill="var(--lab-accent)"/>
+    <text x="520" y="326" text-anchor="middle" font-size="13" fill="var(--lab-accent)" class="mono">9</text>
     <text x="60" y="266" font-size="16" fill="var(--lab-ink)" class="mono">2.25 / 0.25 = 9 → round → 9</text>
   </g>
   <g id="g-clip">
-    <path d="M 586 292 L 586 232 L 452 232" fill="none" stroke="var(--fig-warm)" stroke-width="2.5" class="fig-flow"/>
-    <circle cx="447" cy="232" r="8" fill="var(--fig-warm)"/>
-    <text x="447" y="212" text-anchor="middle" font-size="14" fill="var(--fig-warm)" class="mono">clip → 7</text>
-    <text x="250" y="220" font-size="14" fill="var(--fig-warm)" data-en="INT4 cannot store 9" data-ru="INT4 не может хранить 9">INT4 cannot store 9</text>
+    <path d="M 520 292 L 520 232 L 250 232" fill="none" stroke="var(--fig-warm)" stroke-width="2.5" class="fig-flow"/>
+    <circle cx="240" cy="232" r="8" fill="var(--fig-warm)"/>
+    <text x="240" y="212" text-anchor="middle" font-size="14" fill="var(--fig-warm)" class="mono">clip → 7</text>
+    <text x="420" y="220" font-size="14" fill="var(--fig-warm)" data-en="INT4 cannot store 9" data-ru="INT4 не может хранить 9">INT4 cannot store 9</text>
   </g>
   <g id="g-recon">
-    <circle cx="447" cy="300" r="8" fill="var(--lab-good)"/>
-    <path d="M 447 292 L 447 252" fill="none" stroke="var(--lab-good)" stroke-width="2"/>
-    <text x="430" y="326" text-anchor="middle" font-size="13" fill="var(--lab-good)" class="mono">1.75</text>
+    <circle cx="240" cy="300" r="8" fill="var(--lab-good)"/>
+    <path d="M 240 292 L 240 252" fill="none" stroke="var(--lab-good)" stroke-width="2"/>
+    <text x="240" y="346" text-anchor="middle" font-size="13" fill="var(--lab-good)" class="mono">1.75</text>
     <text x="60" y="366" font-size="16" fill="var(--lab-ink)" class="mono">7 × 0.25 = 1.75</text>
     <text x="300" y="366" font-size="16" fill="var(--fig-warm)" class="mono">error = 1.75 − 2.25 = −0.50</text>
-    <text x="60" y="392" font-size="13" fill="var(--lab-muted)" data-en="the clip keeps the error in the MSE: 0.064225, not ≈ 0.0017" data-ru="клип сохраняет ошибку в MSE: 0.064225, а не ≈ 0.0017">the clip keeps the error in the MSE: 0.064225, not ≈ 0.0017</text>
+    <text x="60" y="392" font-size="13" fill="var(--lab-muted)" data-en="the clip keeps the error in the MSE: 0.064225, not ≈ 0.0017" data-ru="клип сохраняет ошибку в MSE: 0.064225, а не ≈ 0.0017">the clip keeps the error in the MSE: 0.064225, not ≈ 0.0017</text>
   </g>
 </svg>`,
         stages: [
@@ -86,16 +86,17 @@
     <rect x="288" y="178" width="92" height="10" rx="3" fill="var(--lab-accent)"/>
     <text x="392" y="188" font-size="14" fill="var(--lab-ink)" class="mono">+0.08</text>
     <text x="278" y="188" text-anchor="end" font-size="13" fill="var(--lab-muted)" class="mono">w0</text>
-    <rect x="342" y="216" width="38" height="10" rx="3" fill="var(--lab-accent)"/>
+    <rect x="357" y="216" width="23" height="10" rx="3" fill="var(--lab-accent)"/>
     <text x="392" y="226" font-size="14" fill="var(--lab-ink)" class="mono">+0.02</text>
     <text x="278" y="226" text-anchor="end" font-size="13" fill="var(--lab-muted)" class="mono">w1</text>
-    <rect x="358" y="254" width="22" height="10" rx="3" fill="var(--lab-accent)"/>
+    <rect x="368" y="254" width="12" height="10" rx="3" fill="var(--lab-accent)"/>
     <text x="392" y="264" font-size="14" fill="var(--lab-ink)" class="mono">+0.01</text>
     <text x="278" y="264" text-anchor="end" font-size="13" fill="var(--lab-muted)" class="mono">w2</text>
-    <rect x="288" y="296" width="92" height="10" rx="3" fill="var(--fig-warm)"/>
+    <rect x="180" y="296" width="200" height="10" rx="3" fill="var(--fig-warm)"/>
+    <path d="M 341 293 l 12 12 M 353 293 l 12 12" fill="none" stroke="var(--lab-bg)" stroke-width="2.5"/>
     <text x="392" y="306" font-size="14" fill="var(--fig-warm)" class="mono">−0.50</text>
     <text x="278" y="306" text-anchor="end" font-size="13" fill="var(--fig-warm)" class="mono">w3</text>
-    <text x="470" y="306" font-size="13" fill="var(--fig-warm)" data-en="the outlier" data-ru="выброс">the outlier</text>
+    <text x="470" y="306" font-size="13" fill="var(--fig-warm)" data-en="the outlier — bar clipped, scale broken" data-ru="выброс — бар подрезан, шкала разорвана">the outlier — bar clipped, scale broken</text>
     <text x="60" y="382" font-size="13" fill="var(--lab-muted)" class="mono">MSE = (0.08² + 0.02² + 0.01² + 0.50²) / 4 = 0.064225</text>
   </g>
   <g id="g-inA">

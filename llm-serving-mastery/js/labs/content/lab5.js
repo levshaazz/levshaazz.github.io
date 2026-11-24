@@ -84,20 +84,18 @@
     <text x="191" y="116" text-anchor="middle" font-size="14" fill="var(--lab-accent)" class="mono">C·1</text>
   </g>
   <g id="g-t0">
-    <text x="60" y="170" font-size="15" fill="var(--lab-ink)" class="mono" data-en="tick 0" data-ru="тик 0">tick 0</text>
+    <text x="60" y="168" font-size="15" fill="var(--lab-ink)" class="mono" data-en="slot 1" data-ru="слот 1">slot 1</text>
     <rect x="150" y="150" width="450" height="26" rx="6" fill="var(--lab-accent)" opacity="0.85"/>
     <text x="160" y="168" font-size="13" fill="var(--lab-bg)" class="mono">A</text>
+    <text x="60" y="204" font-size="15" fill="var(--lab-ink)" class="mono" data-en="slot 2" data-ru="слот 2">slot 2</text>
     <rect x="150" y="186" width="90" height="26" rx="6" fill="var(--lab-accent)" opacity="0.55"/>
     <text x="160" y="204" font-size="13" fill="var(--lab-bg)" class="mono">B</text>
   </g>
   <g id="g-t1">
-    <text x="60" y="250" font-size="15" fill="var(--lab-ink)" class="mono" data-en="tick 1" data-ru="тик 1">tick 1</text>
-    <rect x="240" y="150" width="360" height="26" rx="6" fill="var(--lab-accent)" opacity="0.85"/>
-    <rect x="240" y="186" width="90" height="26" rx="6" fill="var(--fig-warm)" opacity="0.7"/>
-    <text x="246" y="204" font-size="13" fill="var(--lab-bg)" class="mono">B✓</text>
-    <path d="M 330 199 L 372 199" fill="none" stroke="var(--lab-good)" stroke-width="2.5" class="fig-flow"/>
-    <rect x="374" y="186" width="90" height="26" rx="6" fill="var(--lab-good)" opacity="0.7"/>
-    <text x="384" y="204" font-size="13" fill="var(--lab-bg)" class="mono">C</text>
+    <line x1="240" y1="146" x2="240" y2="216" stroke="var(--lab-muted)" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <text x="246" y="142" font-size="12" fill="var(--lab-muted)" class="mono" data-en="boundary of tick 1: B done" data-ru="граница тика 1: B завершён">boundary of tick 1: B done</text>
+    <rect x="240" y="186" width="90" height="26" rx="6" fill="var(--lab-good)" opacity="0.7"/>
+    <text x="246" y="204" font-size="13" fill="var(--lab-bg)" class="mono">C</text>
     <text x="480" y="204" font-size="13" fill="var(--lab-good)" data-en="C takes the freed slot" data-ru="C занимает свободный слот">C takes the freed slot</text>
   </g>
   <g id="g-marks">

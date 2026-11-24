@@ -35,17 +35,17 @@
     <text x="700" y="364" text-anchor="end" font-size="14" fill="var(--lab-muted)" data-en="throughput, tok/s" data-ru="throughput, ток/с">throughput, tok/s</text>
     <line x1="200" y1="340" x2="200" y2="70" stroke="var(--fig-warm)" stroke-width="1.5" stroke-dasharray="5 4"/>
     <text x="200" y="362" text-anchor="middle" font-size="13" fill="var(--fig-warm)" class="mono">floor 1200</text>
-    <line x1="80" y1="110" x2="700" y2="110" stroke="var(--fig-warm)" stroke-width="1.5" stroke-dasharray="5 4"/>
-    <text x="92" y="100" font-size="13" fill="var(--fig-warm)" class="mono" data-en="SLO 800 ms" data-ru="SLO 800 мс">SLO 800 ms</text>
+    <line x1="80" y1="155" x2="700" y2="155" stroke="var(--fig-warm)" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <text x="92" y="147" font-size="13" fill="var(--fig-warm)" class="mono" data-en="SLO 800 ms" data-ru="SLO 800 мс">SLO 800 ms</text>
     <text x="60" y="60" font-size="14" fill="var(--lab-muted)" data-en="p95 latency ↑" data-ru="латентность p95 ↑">p95 latency ↑</text>
   </g>
   <g id="g-pts">
-    <circle cx="150" cy="95" r="7" fill="var(--lab-muted)"/>
-    <text x="150" y="80" text-anchor="middle" font-size="13" fill="var(--lab-muted)" class="mono">mem-085 1150·880</text>
-    <circle cx="200" cy="110" r="7" fill="var(--lab-muted)"/>
-    <text x="206" y="136" font-size="13" fill="var(--lab-muted)" class="mono">default 1200·860</text>
-    <circle cx="250" cy="115" r="7" fill="var(--lab-muted)"/>
-    <text x="256" y="163" font-size="13" fill="var(--lab-muted)" class="mono">chunked 1250·840</text>
+    <circle cx="150" cy="125" r="7" fill="var(--lab-muted)"/>
+    <text x="60" y="110" font-size="13" fill="var(--lab-muted)" class="mono">mem-085 1150·880</text>
+    <circle cx="200" cy="135" r="7" fill="var(--lab-muted)"/>
+    <text x="206" y="120" font-size="13" fill="var(--lab-muted)" class="mono">default 1200·860</text>
+    <circle cx="250" cy="145" r="7" fill="var(--lab-muted)"/>
+    <text x="256" y="158" font-size="13" fill="var(--lab-muted)" class="mono">chunked 1250·840</text>
     <circle cx="500" cy="305" r="7" fill="var(--lab-good)"/>
     <text x="500" y="290" text-anchor="middle" font-size="13" fill="var(--lab-good)" class="mono">seqs-32 1600·470</text>
     <circle cx="550" cy="315" r="7" fill="var(--lab-good)"/>
