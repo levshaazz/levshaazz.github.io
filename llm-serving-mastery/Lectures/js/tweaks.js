@@ -349,13 +349,15 @@
    overflow ratio), so the fit is viewport-independent. */
 (function () {
   "use strict";
-  var MIN_K = 0.45;
+  var MIN_K = 0.30;
 
   function fitSlide(slide) {
     var body = slide.querySelector(".title-body");
     var footer = slide.querySelector(".title-footer");
     var h1 = body && body.querySelector("h1");
     if (!body || !footer || !h1) return;
+    if (!h1.textContent.replace(/\s+/g, '')) return; // deck.js has not populated the title yet — a fit here measures a ghost layout
+    if (document.fonts && document.fonts.status && document.fonts.status !== 'loaded') return; // fallback-font metrics would bisect to a wrong floor; fonts.ready re-triggers
     var subs = [].slice.call(body.querySelectorAll(".subtitle"));
     var els = [h1].concat(subs);
     var bases = els.map(function (el) {
@@ -374,13 +376,21 @@
     }
     apply(1);
     if (overflow() <= 0) return;                 // fits as authored — untouched
-    var lo = MIN_K, hi = 1;
-    for (var i = 0; i < 8; i++) {
-      var mid = (lo + hi) / 2;
-      apply(mid);
-      if (overflow() <= 0) hi = mid; else lo = mid;
+    // A line-wrap discontinuity makes overflow(k) non-monotonic: a binary
+    // search can collapse to a tiny k for a few pixels of overflow. Walk the
+    // range from the top and keep the LARGEST fitting step, then refine it in
+    // 1% increments — maximal readable size, wrap discontinuities be damned.
+    var fit = null;
+    for (var kk = 0.95; kk >= MIN_K - 1e-9; kk -= 0.05) {
+      apply(kk);
+      if (overflow() <= 0) { fit = kk; break; }
     }
-    apply(hi);
+    if (fit == null) return; // nothing in range fits; keep the authored size
+    for (var k2 = fit + 0.01; k2 <= fit + 0.049; k2 += 0.01) {
+      apply(k2);
+      if (overflow() > 0) { apply(k2 - 0.01); return; }
+    }
+    apply(fit + 0.04);
   }
 
   function fitAll() {
@@ -400,6 +410,19 @@
     document.addEventListener("deck:ready", scheduleFit);
     document.addEventListener("slide:enter", scheduleFit);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleFit);
+    window.addEventListener("load", scheduleFit);
+    // Fonts/images settle AFTER DOMContentLoaded on cold loads: an early fit
+    // measures a transient layout and its result would stick. Re-fit on a
+    // settling ladder (window.load, image loads, timed ticks) so the LAST
+    // fit always sees the final layout.
+    setTimeout(scheduleFit, 400);
+    setTimeout(scheduleFit, 800);
+    setTimeout(scheduleFit, 1200);
+    setTimeout(scheduleFit, 1600);
+    setTimeout(scheduleFit, 2000);
+    setTimeout(scheduleFit, 2500);
+    setTimeout(scheduleFit, 3000);
+    document.addEventListener("load", scheduleFit, true); // img/svg loads bubble via capture
     window.addEventListener("resize", scheduleFit);
     new MutationObserver(scheduleFit).observe(document.documentElement, {
       subtree: true,
