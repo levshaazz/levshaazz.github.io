@@ -385,7 +385,20 @@
       apply(kk);
       if (overflow() <= 0) { fit = kk; break; }
     }
-    if (fit == null) { apply(1); return; } // nothing in range fits: restore the AUTHORED size — the stage scale keeps it proportional, and a few px of overflow hide in the toolbar reserve. (Leaving the last rung's inline would stick the floor forever.)
+    if (fit == null) { // nothing in the readability range fits the stage: restore the
+      // AUTHORED size first (the stage scale keeps it proportional), then — only if the
+      // footer would be pushed off the stage — descend below MIN_K to the largest k that
+      // keeps the footer on the stage. A clipped footer is strictly worse than a small
+      // title; decks that fit as authored never reach this branch.
+      apply(1);
+      if (overflow() <= 0) return;
+      for (var k3 = 1; k3 >= 0.2; k3 -= 0.05) {
+        apply(k3);
+        if (overflow() <= 0) return;
+      }
+      apply(0.2);
+      return;
+    }
     for (var k2 = fit + 0.01; k2 <= fit + 0.049; k2 += 0.01) {
       apply(k2);
       if (overflow() > 0) { apply(k2 - 0.01); return; }
