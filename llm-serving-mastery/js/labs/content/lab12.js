@@ -23,7 +23,9 @@
 <p>Scaling LLM pods is expensive in time even when it is free in paperwork: a fresh pod pays the weight load again (T09's members, ~165 s on the course fleet), which is exactly why scale-down is the cautious direction. Everything here runs on declared numbers and a deterministic simulator in the sandbox — this is controller arithmetic, not a cluster. The compose runtime from T08 remains your rehearsal: burst 24 → sixteen honest 429s (T08), then a hand-driven «HPA tick» — raise the gateway replicas — and burst again; the journal compares the refusals.</p>`,
       ru: `<p>Один под vLLM уже обслуживает толпу: continuous batching (T05) собирает запросы в батчи на каждой границе шага, и крыша <code>1000 / b</code> из T06 никуда не делась. Поэтому <strong>«GPU занят на 90 %» — не сигнал перегрузки</strong>: батчинг и обязан держать GPU занятым, даже когда очередь пуста. Сигналы, которые действительно означают «масштабируй», — <strong>глубина очереди</strong>, давление на KV-кэш и TTFT: урок, который команда llm-d привезла с KubeCon NA 2026.</p>
 <p><strong>Horizontal Pod Autoscaler (HPA)</strong> — контроллер, превращающий такой сигнал в реплики. Каждый тик (15 с) он считает одно число: <code>desired = ceil(replicas × metric / target)</code>, зажатое в <code>[min, max]</code>. Если отношение метрики к цели сидит в <strong>полосе tolerance</strong> ±10 % — он не делает ничего. А окна намеренно асимметричны: вверх — мгновенно (окно 0 с), вниз — ждёт в <strong>окне стабилизации 300 с</strong> и применяет <em>максимум</em> увиденных там рекомендаций; без него пилообразная метрика дёргает флот 1↔2↔1 и сжигает деньги на перемешивание.</p>
-<p>Масштабировать LLM-поды дорого по времени, даже когда по бумагам бесплатно: свежий под снова платит загрузку весов (члены из T09, ~165 с на курсовом флоте) — поэтому осторожное направление именно скейл-даун. Всё здесь считается на заявленных числах и детерминированном симуляторе в песочнице — это арифметика контроллера, а не кластер. Compose-рантайм из T08 остаётся репетицией: бурст 24 → шестнадцать честных 429 (T08), потом «тик HPA» руками — поднять replicas шлюза — и снова бурст; журнал сравнит отказы.</p>`,
+<p>Масштабировать LLM-поды дорого по времени, даже когда по бумагам бесплатно: свежий под снова платит загрузку весов (члены из T09, ~165 с на курсовом флоте) — поэтому осторожное направление именно скейл-даун. Всё здесь считается на заявленных числах и детерминированном симуляторе в песочнице — это арифметика контроллера, а не кластер. Compose-рантайм из T08 остаётся репетицией: бурст 24 → шестнадцать честных 429 (T08), потом «тик HPA» руками — поднять replicas шлюза — и снова бурст; журнал сравнит отказы.</p>
+<p>Откуда контроллер берёт метрику — отдельная честная история. <strong>metrics-server</strong> видит только ресурсы (CPU, память) — для LLM-пода это почти бесполезно: GPU на 90 % при пустой очереди — это здоровый батчинг, а не перегрузка. <strong>Кастомные метрики</strong> приходят от адаптера поверх счётчиков самого движка — например, <code>vllm:num_requests_waiting</code> из экспозиции <code>/metrics</code>. <strong>KEDA</strong> умеет то же снаружи (длина очереди в брокере) и добавляет scale-to-zero. А в <code>spec.behavior</code> настоящего HPA живут поля, которыми ты будешь управлять флотом в упражнении 5: окна стабилизации и политики шага.</p>
+`,
     },
     heroTag: { en: "queue depth, ceil, stabilization", ru: "глубина очереди, ceil, стабилизация" },
     glossary: [
@@ -132,6 +134,50 @@
           { cap: { en: "Continuous batching packs them into slots at every step boundary.", ru: "Continuous batching упаковывает их в слоты на каждой границе шага." }, show: ["g-clients", "g-batch"] },
           { cap: { en: "GPU 90 % is calm batching; queue 0 — do not scale.", ru: "Манометры: GPU 90 % — батчинг; очередь 0 — не масштабировать." }, show: ["g-clients", "g-batch", "g-meters"] },
           { cap: { en: "Queue 5 per pod: ceil → clamp 4 — the HPA acts.", ru: "Очередь 5 на под: ceil → кламп 4 — HPA действует." }, show: ["g-batch", "g-meters", "g-scale"] },
+        ],
+      },
+      {
+        id: "lab12-metrics-pipeline",
+        title: { en: "From engine counters to the scaling decision", ru: "От счётчиков движка до решения о масштабе" },
+        w: 760, h: 420,
+        svg: `<svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
+  <g id="g-src">
+    <rect x="50" y="56" width="230" height="120" rx="10" fill="none" stroke="var(--lab-accent)" stroke-width="2"/>
+    <text x="66" y="82" font-size="14" fill="var(--lab-accent)" class="mono">/metrics (vLLM)</text>
+    <text x="66" y="106" font-size="12" fill="var(--lab-ink)" class="mono">num_requests_waiting 6</text>
+    <text x="66" y="128" font-size="12" fill="var(--lab-muted)" class="mono">gpu_cache_usage 0.62</text>
+    <text x="66" y="150" font-size="12" fill="var(--lab-muted)" class="mono" data-en="counters, not opinions" data-ru="счётчики, а не мнения">counters, not opinions</text>
+  </g>
+  <g id="g-adapter">
+    <rect x="300" y="56" width="200" height="120" rx="10" fill="none" stroke="var(--lab-good)" stroke-width="2"/>
+    <text x="316" y="82" font-size="14" fill="var(--lab-good)" class="mono" data-en="adapter / KEDA" data-ru="адаптер / KEDA">adapter / KEDA</text>
+    <text x="316" y="106" font-size="12" fill="var(--lab-ink)" class="mono" data-en="queue per pod: 3" data-ru="очередь на под: 3">queue per pod: 3</text>
+    <text x="316" y="128" font-size="12" fill="var(--lab-muted)" class="mono" data-en="metrics-server: blind" data-ru="metrics-server: слеп">metrics-server: blind</text>
+    <text x="316" y="150" font-size="12" fill="var(--lab-muted)" class="mono" data-en="to queues" data-ru="к очередям">to queues</text>
+  </g>
+  <g id="g-hpa">
+    <rect x="520" y="56" width="190" height="120" rx="10" fill="none" stroke="var(--fig-warm)" stroke-width="2"/>
+    <text x="536" y="82" font-size="14" fill="var(--fig-warm)" class="mono">HPA</text>
+    <text x="536" y="106" font-size="12" fill="var(--lab-ink)" class="mono" data-en="ceil + clamp + windows" data-ru="ceil + clamp + окна">ceil + clamp + окна</text>
+    <text x="536" y="128" font-size="12" fill="var(--lab-ink)" class="mono" data-en="behavior: step policy" data-ru="behavior: политика шага">behavior: step policy</text>
+    <text x="536" y="150" font-size="12" fill="var(--lab-muted)" class="mono" data-en="decision every 15 s" data-ru="решение каждые 15 с">decision every 15 s</text>
+  </g>
+  <g id="g-scale">
+    <path d="M 280 116 L 300 116" stroke="var(--lab-accent)" stroke-width="2" class="fig-flow"/>
+    <path d="M 500 116 L 520 116" stroke="var(--lab-good)" stroke-width="2" class="fig-flow"/>
+    <path d="M 615 176 C 615 260 120 260 120 176" fill="none" stroke="var(--fig-warm)" stroke-width="2" class="fig-flow"/>
+    <text x="60" y="248" font-size="14" fill="var(--lab-ink)" data-en="only the first hop invents nothing: it copies counters" data-ru="только первый шаг ничего не выдумывает: он копирует счётчики">only the first hop invents nothing: it copies counters</text>
+    <text x="60" y="272" font-size="13" fill="var(--lab-muted)" data-en="every next hop adds one interpretation — and one way to lie" data-ru="каждый следующий шаг добавляет одно толкование — и один способ соврать">every next hop adds one interpretation — and one way to lie</text>
+    <text x="60" y="330" font-size="13" fill="var(--lab-muted)" data-en="scale changes the counters — the loop closes through the fleet" data-ru="масштаб меняет счётчики — цикл замыкается через флот">scale changes the counters — the loop closes through the fleet</text>
+    <text x="60" y="368" font-size="13" fill="var(--lab-muted)" data-en="GPU 90% + empty queue = batching (healthy); queue 5 + GPU 50% = overload" data-ru="GPU 90 % + пустая очередь = батчинг (здорово); очередь 5 + GPU 50 % = перегруз">GPU 90% + empty queue = batching (healthy); queue 5 + GPU 50% = overload</text>
+    <text x="60" y="396" font-size="13" fill="var(--lab-muted)" data-en="the metric picks what the controller can even see" data-ru="метрика выбирает, что контроллер вообще видит">the metric picks what the controller can even see</text>
+  </g>
+</svg>`,
+        stages: [
+          { cap: { en: "Counters first: the engine exposes waiting requests and cache usage.", ru: "Сначала счётчики: движок экспонирует очередь и занятость кэша." }, show: ["g-src"] },
+          { cap: { en: "An adapter (or KEDA) turns counters into one honest signal per pod.", ru: "Адаптер (или KEDA) превращает счётчики в один честный сигнал на под." }, show: ["g-src", "g-adapter"] },
+          { cap: { en: "HPA applies ceil, clamp, windows — and your behavior policy.", ru: "HPA применяет ceil, clamp, окна — и твою политику behavior." }, show: ["g-adapter", "g-hpa"] },
+          { cap: { en: "Scaling changes the counters: the loop closes through the fleet.", ru: "Масштаб меняет счётчики: цикл замыкается через флот." }, show: ["g-scale"] },
         ],
       },
     ],
@@ -400,7 +446,48 @@ def hpa_step(replicas, metric, target, tol=0.1, min_r=1, max_r=10):
       },
       {
         id: "ex3",
-        title: { en: "Exercise 3 · Fix the bug: the flapping fleet", ru: "Упражнение 3 · Почини баг: флаттерующий флот" },
+        title: { en: "Exercise 3 · Read the real signal", ru: "Упражнение 3 · Прочитай настоящий сигнал" },
+        brief: {
+          en: "This is what the scaling chain actually sees. First, a fragment of the engine's <code>/metrics</code> exposition:<br /><pre># HELP vllm:num_requests_waiting Number of requests waiting in the queue.\n# TYPE vllm:num_requests_waiting gauge\nvllm:num_requests_waiting{model=\"qwen\",pod=\"llm-0\"} 5\nvllm:num_requests_waiting{model=\"qwen\",pod=\"llm-1\"} 1\n# HELP vllm:gpu_cache_usage_perc KV-cache usage [0..1]\n# TYPE vllm:gpu_cache_usage_perc gauge\nvllm:gpu_cache_usage_perc{pod=\"llm-0\"} 0.62</pre>and the controller's own view, <code>kubectl get hpa</code>: <code>llm-hpa · Deployment/llm-engine · queue: 2 · MINPODS 1 · MAXPODS 10 · REPLICAS 2</code>. Implement <code>desired_from_metrics(text, target_per_pod, current, min_r, max_r)</code>: sum only the <code>vllm:num_requests_waiting</code> lines (skip HELP/TYPE and other metrics), compute the desired count as <code>ceil(total_waiting / target_per_pod)</code>, clamp into <code>[min_r, max_r]</code>. The current replica count comes from the HPA line — parse it too.",
+          ru: "Вот что реально видит цепочка масштабирования. Сначала фрагмент экспозиции <code>/metrics</code> движка:<br /><pre># HELP vllm:num_requests_waiting Number of requests waiting in the queue.\n# TYPE vllm:num_requests_waiting gauge\nvllm:num_requests_waiting{model=\"qwen\",pod=\"llm-0\"} 5\nvllm:num_requests_waiting{model=\"qwen\",pod=\"llm-1\"} 1\n# HELP vllm:gpu_cache_usage_perc KV-cache usage [0..1]\n# TYPE vllm:gpu_cache_usage_perc gauge\nvllm:gpu_cache_usage_perc{pod=\"llm-0\"} 0.62</pre>и взгляд самого контроллера, <code>kubectl get hpa</code>: <code>llm-hpa · Deployment/llm-engine · queue: 2 · MINPODS 1 · MAXPODS 10 · REPLICAS 2</code>. Реализуй <code>desired_from_metrics(text, target_per_pod, current, min_r, max_r)</code>: просуммируй только строки <code>vllm:num_requests_waiting</code> (пропусти HELP/TYPE и чужие метрики), посчитай желаемое как <code>ceil(total_waiting / target_per_pod)</code>, зажми в <code>[min_r, max_r]</code>. Текущее число реплик возьми из строки HPA — его тоже надо разобрать.",
+        },
+        starter: `import math
+
+def desired_from_metrics(text, target_per_pod, current, min_r, max_r):
+    """Parse the exposition, sum the waiting queue, compute the HPA decision."""
+    total_waiting = 0
+    # TODO: only lines starting with 'vllm:num_requests_waiting{' count;
+    #       the value is the token after the closing '}'
+    desired = 0
+    # TODO: ceil(total / target_per_pod), clamp into [min_r, max_r]
+    return desired`,
+        tests: [
+          { name: "the exposition above: 6 waiting, target 2 → 3 replicas", hidden: false, code: "t = open('/dev/null').read() if False else '''# HELP vllm:num_requests_waiting Number of requests waiting in the queue.\n# TYPE vllm:num_requests_waiting gauge\nvllm:num_requests_waiting{model=\"qwen\",pod=\"llm-0\"} 5\nvllm:num_requests_waiting{model=\"qwen\",pod=\"llm-1\"} 1\n# HELP vllm:gpu_cache_usage_perc KV-cache usage [0..1]\nvllm:gpu_cache_usage_perc{pod=\"llm-0\"} 0.62'''\neq(desired_from_metrics(t, 2, 2, 1, 10), 3)" },
+          { name: "empty queue → clamp to min", hidden: false, code: "t = 'vllm:num_requests_waiting{pod=\"llm-0\"} 0'\neq(desired_from_metrics(t, 2, 2, 1, 10), 1)" },
+          { name: "surge past max is clamped", hidden: true, code: "t = 'vllm:num_requests_waiting{pod=\"llm-0\"} 40'\neq(desired_from_metrics(t, 2, 2, 1, 10), 10)" },
+          { name: "other metrics and comments never count", hidden: true, code: "t = '# HELP vllm:num_requests_waiting decoy\n# TYPE vllm:num_requests_waiting gauge\nvllm:gpu_cache_usage_perc{pod=\"x\"} 40\nvllm:num_requests_waiting{pod=\"llm-0\"} 4'\neq(desired_from_metrics(t, 2, 2, 1, 10), 2)" },
+        ],
+        solution: `import math
+
+def desired_from_metrics(text, target_per_pod, current, min_r, max_r):
+    total_waiting = 0
+    for line in text.splitlines():
+        if not line.startswith('vllm:num_requests_waiting{'):
+            continue
+        value = line.rsplit('}', 1)[1].strip()
+        total_waiting += float(value)
+    desired = math.ceil(total_waiting / float(target_per_pod))
+    return max(min_r, min(max_r, desired))`,
+        hints: [
+          { en: "The exposition line format is: name{labels} value — split after the closing brace.", ru: "Формат строки экспозиции: имя{метки} значение — дели после закрывающей скобки." },
+          { en: "Lines starting with '#' are comments; gpu_cache_usage is a different metric.", ru: "Строки с '#' — комментарии; gpu_cache_usage — другая метрика." },
+        ],
+        numpy: false,
+        timeoutMs: 4000,
+      },
+      {
+        id: "ex4",
+        title: { en: "Exercise 4 · Fix the bug: the flapping fleet", ru: "Упражнение 3 · Почини баг: флаттерующий флот" },
         brief: {
           en: "This <code>stabilized(recs, window, current)</code> always applies the latest recommendation, so a saw-shaped metric flaps the fleet 1↔2↔1: every scale-down is instantly regretted. Kubernetes' fix is the stabilization window: scaling <strong>up</strong> applies immediately (the shortage hurts now), scaling <strong>down</strong> takes the <em>maximum</em> recommendation seen within the last <code>window</code> ticks. Fix it: latest recommendation when it does not shrink the fleet; otherwise the window max.",
           ru: "Эта <code>stabilized(recs, window, current)</code> всегда применяет последнюю рекомендацию, поэтому пилообразная метрика дёргает флот 1↔2↔1: каждый скейл-даун тут же приходится отменять. Фикс Kubernetes — окно стабилизации: скейл-ап применяется немедленно (дефицит болит сейчас), скейл-даун берёт <em>максимум</em> рекомендаций за последние <code>window</code> тиков. Почини: последняя рекомендация, если она не сжимает флот; иначе — максимум окна.",
@@ -430,8 +517,72 @@ def hpa_step(replicas, metric, target, tol=0.1, min_r=1, max_r=10):
         timeoutMs: 4000,
       },
       {
-        id: "ex4",
-        title: { en: "Exercise 4 · Wrap it into a class: HPASim", ru: "Упражнение 4 · Собери в класс: HPASim" },
+        id: "ex5",
+        title: { en: "Exercise 5 · The behavior policy", ru: "Упражнение 5 · Политика behavior" },
+        brief: {
+          en: "The real HPA spec has <code>spec.behavior</code>: per-direction <strong>step policies</strong> — «scale up by at most 2 pods per tick, down by 1» — and <strong>stabilization windows</strong> for the cautious direction. Implement <code>apply_scale(current, desired, policy, seconds_since_last_down)</code> with <code>policy = {'up_step': 2, 'down_step': 1, 'down_window_s': 300}</code>: scaling <em>up</em> is immediate but capped at <code>+up_step</code>; scaling <em>down</em> is capped at <code>−down_step</code> AND allowed only after <code>seconds_since_last_down ≥ down_window_s</code> — otherwise hold. Equal → equal. This is Exercise 4's anti-flap lesson, written in the API's own fields.",
+          ru: "В настоящем spec HPA есть <code>spec.behavior</code>: поточечные <strong>политики шага</strong> — «вверх не быстрее 2 подов за тик, вниз на 1» — и <strong>окна стабилизации</strong> для осторожного направления. Реализуй <code>apply_scale(current, desired, policy, seconds_since_last_down)</code> с <code>policy = {'up_step': 2, 'down_step': 1, 'down_window_s': 300}</code>: масштаб вверх — мгновенно, но не более <code>+up_step</code>; вниз — не более <code>−down_step</code> и только если <code>seconds_since_last_down ≥ down_window_s</code> — иначе держим. Равное → равное. Это урок упражнения 4 про анти-флаттер, записанный собственными полями API.",
+        },
+        starter: `def apply_scale(current, desired, policy, seconds_since_last_down):
+    """One HPA tick under spec.behavior: up fast & capped, down slow & gated."""
+    # TODO: up = min(desired, current + up_step)
+    # TODO: down = max(desired, current - down_step) only after the window
+    ...`,
+        tests: [
+          { name: "burst capped at +2", hidden: false, code: "p = {'up_step': 2, 'down_step': 1, 'down_window_s': 300}\neq(apply_scale(2, 6, p, 999), 4)" },
+          { name: "down moves one step per tick", hidden: false, code: "p = {'up_step': 2, 'down_step': 1, 'down_window_s': 300}\neq(apply_scale(6, 3, p, 999), 5)" },
+          { name: "down inside the window holds", hidden: false, code: "p = {'up_step': 2, 'down_step': 1, 'down_window_s': 300}\neq(apply_scale(6, 3, p, 299), 6)" },
+          { name: "equal stays equal", hidden: true, code: "p = {'up_step': 2, 'down_step': 1, 'down_window_s': 300}\neq(apply_scale(4, 4, p, 0), 4)" },
+          { name: "up never overshoots the desired", hidden: true, code: "p = {'up_step': 2, 'down_step': 1, 'down_window_s': 300}\neq(apply_scale(2, 3, p, 999), 3)" },
+        ],
+        solution: `def apply_scale(current, desired, policy, seconds_since_last_down):
+    if desired > current:
+        return min(desired, current + policy['up_step'])
+    if desired < current:
+        if seconds_since_last_down >= policy['down_window_s']:
+            return max(desired, current - policy['down_step'])
+        return current
+    return current`,
+        hints: [
+          { en: "Two directions, two rules; the window gates only scale-down.", ru: "Два направления, два правила; окно гейтит только масштаб вниз." },
+        ],
+        numpy: false,
+        timeoutMs: 4000,
+      },
+      {
+        id: "ex6",
+        title: { en: "Exercise 6 · Read the real autoscaler config", ru: "Упражнение 6 · Прочитай настоящий конфиг автоскейлера" },
+        brief: {
+          en: "Production stacks rarely scale on bare HPA: KEDA wraps it in a <code>ScaledObject</code> whose trigger names the metric and the target. The real-shaped artifact:<br /><pre>apiVersion: keda.sh/v1alpha1\nkind: ScaledObject\nmetadata:\n  name: llm-scaler\nspec:\n  minReplicaCount: 1\n  maxReplicaCount: 4\n  triggers:\n    - type: metrics-api\n      metadata:\n        targetQueueLength: \"2\"\n        metric: vllm_num_requests_waiting</pre>And the values table of the production-stack chart sets the same numbers for the HPA. Implement <code>read_autoscaler_config(cfg)</code> over the already-parsed structure: return <code>{'min_replicas', 'max_replicas', 'target_queue', 'metric'}</code> — normalizing the trigger's string numbers into ints. Reading configs correctly is the difference between «the scaler owns the fleet» and «I hope these were the right numbers».",
+          ru: "Продакшен-стеки редко скейлят на голом HPA: KEDA оборачивает его в <code>ScaledObject</code>, чей триггер называет метрику и цель. Настоящий по форме артефакт:<br /><pre>apiVersion: keda.sh/v1alpha1\nkind: ScaledObject\nmetadata:\n  name: llm-scaler\nspec:\n  minReplicaCount: 1\n  maxReplicaCount: 4\n  triggers:\n    - type: metrics-api\n      metadata:\n        targetQueueLength: \"2\"\n        metric: vllm_num_requests_waiting</pre>И таблица values продакшен-чарта задаёт те же числа для HPA. Реализуй <code>read_autoscaler_config(cfg)</code> над уже разобранной структурой: верни <code>{'min_replicas', 'max_replicas', 'target_queue', 'metric'}</code> — строковые числа триггера нормализуй в int. Правильно прочитанный конфиг — разница между «автоскейлер владеет флотом» и «надеюсь, это были те числа».",
+        },
+        starter: `def read_autoscaler_config(cfg):
+    """Normalize a ScaledObject into {min_replicas, max_replicas, target_queue, metric}."""
+    spec = cfg['spec']
+    trigger = spec['triggers'][0]['metadata']
+    # TODO: ints for min/max and target; pass the metric name through
+    ...`,
+        tests: [
+          { name: "the artifact above reads correctly", hidden: false, code: "cfg = {'spec': {'minReplicaCount': 1, 'maxReplicaCount': 4, 'triggers': [{'type': 'metrics-api', 'metadata': {'targetQueueLength': \"2\", 'metric': 'vllm_num_requests_waiting'}}]}}\nr = read_autoscaler_config(cfg)\neq(r, {'min_replicas': 1, 'max_replicas': 4, 'target_queue': 2, 'metric': 'vllm_num_requests_waiting'})" },
+          { name: "another stack, same shape", hidden: true, code: "cfg = {'spec': {'minReplicaCount': 2, 'maxReplicaCount': 9, 'triggers': [{'type': 'metrics-api', 'metadata': {'targetQueueLength': \"4\", 'metric': 'queue_depth'}}]}}\nr = read_autoscaler_config(cfg)\neq(r['min_replicas'], 2)\neq(r['max_replicas'], 9)\neq(r['target_queue'], 4)\neq(r['metric'], 'queue_depth')" },
+          { name: "string numbers become ints", hidden: true, code: "cfg = {'spec': {'minReplicaCount': \"1\", 'maxReplicaCount': \"4\", 'triggers': [{'metadata': {'targetQueueLength': \"2\", 'metric': 'm'}}]}}\nr = read_autoscaler_config(cfg)\neq((r['min_replicas'], r['max_replicas'], r['target_queue']), (1, 4, 2))" },
+        ],
+        solution: `def read_autoscaler_config(cfg):
+    spec = cfg['spec']
+    trigger = spec['triggers'][0]['metadata']
+    return {'min_replicas': int(spec['minReplicaCount']),
+            'max_replicas': int(spec['maxReplicaCount']),
+            'target_queue': int(trigger['targetQueueLength']),
+            'metric': trigger['metric']}`,
+        hints: [
+          { en: "The YAML quoted the numbers — normalize with int() so the arithmetic never compares a string to a number.", ru: "YAML взял числа в кавычки — нормализуй int(), чтобы арифметика никогда не сравнивала строку с числом." },
+        ],
+        numpy: false,
+        timeoutMs: 4000,
+      },
+      {
+        id: "ex7",
+        title: { en: "Exercise 7 · Wrap it into a class: HPASim", ru: "Упражнение 4 · Собери в класс: HPASim" },
         brief: {
           en: "The lab's final boss: the controller loop as a class. <code>HPASim(w_ms=60.0, b_ms=2.0, cap=30, target_queue=2.0, min_r=1, max_r=4, window=20)</code> — the T06 step model per pod (cap 30 sequences, working point 250 tok/s). <code>tick(arrivals)</code>: add arrivals to the queue; the metric is <code>queue / replicas</code>; recommend <code>ceil(replicas × metric / target)</code> clamped (no tolerance band here — Exercise 2's job); scale-down runs through the stabilization window (max of the last <code>window</code> recommendations), scale-up is immediate; then serve <code>min(queue, replicas × cap)</code>. The tick returns <code>{'replicas', 'served', 'queue', 'step_ms'}</code> with <code>step_ms = w_ms + b_ms × batch</code> and <code>batch = ceil(served / replicas)</code> capped at <code>cap</code> (0 if nothing served). <code>report()</code> returns <code>{'ticks', 'held_ticks', 'unserved_ticks', 'final_replicas', 'final_queue'}</code> where <code>held_ticks</code> counts scale-downs suppressed by the window and <code>unserved_ticks</code> counts ticks that ended with a non-empty queue.",
           ru: "Финальный босс лабы: цикл контроллера как класс. <code>HPASim(w_ms=60.0, b_ms=2.0, cap=30, target_queue=2.0, min_r=1, max_r=4, window=20)</code> — модель шага из T06 на под (кап 30 последовательностей, рабочая точка 250 ток/с). <code>tick(arrivals)</code>: добавь arrivals в очередь; метрика — <code>queue / replicas</code>; рекомендация — <code>ceil(replicas × metric / target)</code> с клампом (без полосы tolerance — её работа была в упражнении 2); скейл-даун идёт через окно стабилизации (максимум последних <code>window</code> рекомендаций), скейл-ап мгновенный; затем обслужи <code>min(queue, replicas × cap)</code>. Тик возвращает <code>{'replicas', 'served', 'queue', 'step_ms'}</code>, где <code>step_ms = w_ms + b_ms × batch</code>, а <code>batch = ceil(served / replicas)</code> с потолком <code>cap</code> (0, если ничего не обслужено). <code>report()</code> возвращает <code>{'ticks', 'held_ticks', 'unserved_ticks', 'final_replicas', 'final_queue'}</code>, где <code>held_ticks</code> считает скейл-дауны, удержанные окном, а <code>unserved_ticks</code> — тики, кончившиеся непустой очередью.",
@@ -543,8 +694,8 @@ class HPASim:
         timeoutMs: 4000,
       },
       {
-        id: "ex5",
-        title: { en: "Exercise 5 · Cold boot: the order fires now, the capacity comes later", ru: "Упражнение 5 · Холодный старт: заказ срабатывает сейчас, ёмкость приходит позже" },
+        id: "ex8",
+        title: { en: "Exercise 8 · Cold boot: the order fires now, the capacity comes later", ru: "Упражнение 5 · Холодный старт: заказ срабатывает сейчас, ёмкость приходит позже" },
         brief: {
           en: "The controller orders replicas instantly — a fresh pod still pays the weight load (~165 s, T09; a tick here is 15 s, so <code>boot_ticks=11</code>). Extend the frozen HPASim with two v2 knobs: <code>boot_ticks</code> (orders mature that many ticks later) and <code>metric</code> (<code>'queue_per_pod'</code> default, or <code>'concurrency'</code> = (queue + last served) / replicas). Scenario, declared: <code>target_queue=2, min_r=1, max_r=4, cap=30, window=3</code>, arrivals <code>[60, 60, 60, 60, 0×5, 60]</code>. Predict first: unserved ticks with <code>boot_ticks=0</code>, <code>=2</code>, <code>=11</code> — and what the <code>concurrency</code> metric does on a drained queue that <code>queue_per_pod</code> does not.",
           ru: "Контроллер заказывает реплики мгновенно — свежий под всё ещё платит загрузку весов (~165\u00a0с, T09; тик здесь 15\u00a0с, значит <code>boot_ticks=11</code>). Расширь замороженный HPASim двумя ручками v2: <code>boot_ticks</code> (заказы взрослеют через столько тиков) и <code>metric</code> (<code>'queue_per_pod'</code> дефолт, или <code>'concurrency'</code> = (очередь + обслужено на прошлом тике) / реплики). Сценарий заявлен: <code>target_queue=2, min_r=1, max_r=4, cap=30, window=3</code>, arrivals <code>[60, 60, 60, 60, 0×5, 60]</code>. Сначала предскажи: сколько тиков с непустой очередью при <code>boot_ticks=0</code>, <code>=2</code>, <code>=11</code> — и что метрика <code>concurrency</code> делает на опустевшей очереди такого, чего не делает <code>queue_per_pod</code>.",
@@ -690,6 +841,31 @@ class HPASim:
         ],
         numpy: false,
         timeoutMs: 6000,
+      },
+      {
+        id: "ex9",
+        title: { en: "Exercise 9 · The drain drill: pricing the 503 window", ru: "Упражнение 9 · Дрилл слива: цена окна 503" },
+        brief: {
+          en: "Node maintenance drains a pod mid-lesson: the fleet of 2×250 tok/s drops to 250 while the replacement pod pays the weight load — <code>boot_ticks</code> ticks of your HPASim clock (tick 15 s, T09 members). Implement <code>drain_degradation_seconds(tick_s, boot_ticks)</code> — how long the degraded capacity lasts, in seconds. Zero boot ticks means a warm pool: no degradation at all. This prices the incident you would write up in the milestone: «the drain was routine; the 503 window was 165 s».",
+          ru: "Обслуживание узла сливает под посреди занятия: флот 2×250 ток/с падает до 250, пока replacement-под платит загрузку весов — <code>boot_ticks</code> тиков твоих часов HPASim (тик 15 с, члены T09). Реализуй <code>drain_degradation_seconds(tick_s, boot_ticks)</code> — сколько секунд длится деградация. Ноль тиков загрузки — тёплый пул: деградации нет вообще. Это цена инцидента, который ты опишешь в милстоуне: «слив был рутинным; окно 503 — 165 с».",
+        },
+        starter: `def drain_degradation_seconds(tick_s, boot_ticks):
+    """Seconds of degraded capacity: boot_ticks HPA ticks of tick_s."""
+    # TODO: the T09 members, priced in HPA ticks
+    ...`,
+        tests: [
+          { name: "the course numbers: 11 ticks × 15 s", hidden: false, code: "eq(drain_degradation_seconds(15, 11), 165)" },
+          { name: "a warm pool: zero degradation", hidden: false, code: "eq(drain_degradation_seconds(15, 0), 0)" },
+          { name: "faster ticks shorten the window", hidden: true, code: "eq(drain_degradation_seconds(10, 11), 110)" },
+          { name: "slower ticks stretch it", hidden: true, code: "eq(drain_degradation_seconds(20, 11), 220)" },
+        ],
+        solution: `def drain_degradation_seconds(tick_s, boot_ticks):
+    return boot_ticks * tick_s`,
+        hints: [
+          { en: "165 s cold start / 15 s tick = the 11 boot ticks from Exercise 8; the window is ticks × tick_s.", ru: "165 с холодного старта / 15 с тик = 11 boot-тиков из упражнения 8; окно — тики × tick_s." },
+        ],
+        numpy: false,
+        timeoutMs: 4000,
       },
     ],
     challenge: {

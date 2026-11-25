@@ -21,10 +21,12 @@
       en: `<p>Kubernetes runs your fleet the way you already ran it in T09 — only declared. You state the <strong>desired state</strong> (how many pods, how much memory each, when a pod counts as ready), and controllers make reality match the declaration and keep it there. In compose you wrote <code>restart: on-failure</code> and restarted containers by hand; here a <strong>Deployment</strong> watches replicas for you, and a <strong>pod</strong> is one running engine together with its limits — exactly the container with a memory cap you raised in T09.</p>
 <p>For LLM engines the vocabulary has to be more precise than for web apps. A pod loads weights first (T09's named members: extract + weight loading + init + <code>/health</code>), so it is <strong>not ready</strong> until the load finishes — that is what the startup/readiness probe gates. The pod's memory is the T10 ledger (weights + KV + fixed). And updating an engine is not the same as updating a stateless service: while the new pod loads weights, the old ones carry the capacity — the lesson behind <code>maxUnavailable 0, maxSurge 1</code>.</p>
 <p>You have no real cluster, and none is needed: the lab drills the vocabulary and controller arithmetic on deterministic simulators in the sandbox. The numbers are this course's numbers: the pod ledger from T10, the 165 s cold start measured live by the T09-fleet run. The GPU Operator appears as vocabulary — what it installs (driver container, container toolkit, device plugin) and how one GPU is shared (time-slicing: logical replicas without memory isolation; MIG: hardware slices with isolation) — not as something you install here.</p>
+<p>Two mechanics worth naming precisely. <strong>Anatomy</strong>: every Kubernetes object is one YAML document — <code>apiVersion</code>, <code>kind</code>, <code>metadata</code>, <code>spec</code> (what you declare) and <code>status</code> (what the cluster observed). The pod spec you will build in Exercise 3 lives at <code>spec.template.spec.containers[0]</code> — that path is the whole vocabulary of this lab. <strong>Reconciliation</strong>: controllers are level-triggered loops — they read the declared spec, compare it with the observed state, apply one corrective step, and re-observe. Nobody «runs a command»; the loop converges, which is why a declared fleet heals after a node reboot without anyone typing anything.</p>
 <p>The lab habit: predict from the declared model, then let the tests check it — the model is printed in full, as always.</p>`,
       ru: `<p>Kubernetes управляет твоим флотом так же, как ты сам управлял им в T09 — только декларативно. Ты объявляешь <strong>желаемое состояние</strong> (сколько подов, сколько памяти каждому, когда под считается готовым), а контроллеры приводят реальность к объявлению и держат её там. В compose ты писал <code>restart: on-failure</code> и рестартовал контейнеры руками; здесь <strong>Deployment</strong> следит за репликами сам, а <strong>под</strong> — это один запущенный движок вместе со своими лимитами: ровно тот контейнер с потолком памяти, что ты поднимал в T09.</p>
 <p>Для LLM-движков словарь приходится проговаривать точнее, чем для веб-приложений. Под сначала грузит веса (именованные члены из T09: extract + загрузка весов + init + <code>/health</code>), поэтому он <strong>не готов</strong>, пока не кончилась загрузка, — это и гейтит startup/readiness-проба. Память пода — ведомость из T10 (веса + KV + фикс). И обновлять движок — не то же самое, что обновлять stateless-сервис: пока новый под грузит веса, старые держат ёмкость, — за этим стоит <code>maxUnavailable 0, maxSurge 1</code>.</p>
 <p>Настоящего кластера у тебя нет, и он не нужен: лаба тренирует словарь и арифметику контроллеров на детерминированных симуляторах в песочнице. Числа — курсовые: ведомость пода из T10, холодный старт 165 с из живого прогона T09-fleet. GPU Operator присутствует как словарь — что он ставит (контейнер драйвера, container toolkit, device plugin) и как делят один GPU (time-slicing: логические реплики без изоляции памяти; MIG: аппаратные слайсы с изоляцией), — но не как установка.</p>
+<p>Две механики стоит назвать точно. <strong>Анатомия</strong>: каждый объект Kubernetes — один YAML-документ — <code>apiVersion</code>, <code>kind</code>, <code>metadata</code>, <code>spec</code> (что ты объявляешь) и <code>status</code> (что кластер наблюдает). Спецификация пода, которую ты соберёшь в упражнении 3, живёт по пути <code>spec.template.spec.containers[0]</code> — этот путь и есть весь словарь лабы. <strong>Реконсиляция</strong>: контроллеры — level-triggered циклы: читают заявленный spec, сравнивают с наблюдаемым состоянием, делают один корректирующий шаг и снова наблюдают. Никто не «выполняет команду»; цикл сходится — поэтому заявленный флот self-heals после перезагрузки узла без единой команды человека.</p>
 <p>Привычка лабы: сначала предскажи по заявленной модели, потом дай тестам проверить, — модель напечатана целиком, как всегда.</p>`,
     },
     heroTag: { en: "pods, probes, helm revisions", ru: "поды, пробы, Helm-ревизии" },
@@ -138,6 +140,44 @@
           { cap: { en: "Surge first: pod 3s starts — but serves nothing until Ready.", ru: "Сначала surge: pod 3s стартует — до Ready не обслуживает." }, show: ["g-fleet", "g-surge"] },
           { cap: { en: "Swap: 3s turns Ready, then pod 0 dies — floor stays 3.", ru: "Подмена: 3s Ready, затем pod 0 умирает — граница держится на 3." }, show: ["g-fleet", "g-surge", "g-swap"] },
           { cap: { en: "maxUnavailable 2 digs the dip: app alive, rollout stuck.", ru: "maxUnavailable 2 роет яму: приложение живо, роллаут завис." }, show: ["g-swap", "g-bad"] },
+        ],
+      },
+      {
+        id: "lab11-reconcile-loop",
+        title: { en: "The reconciliation loop: declared → observed → declared", ru: "Петля реконсиляции: заявлено → наблюдается → снова заявлено" },
+        w: 760, h: 420,
+        svg: `<svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
+  <g id="g-spec">
+    <rect x="60" y="60" width="200" height="96" rx="10" fill="none" stroke="var(--lab-accent)" stroke-width="2"/>
+    <text x="76" y="88" font-size="14" fill="var(--lab-accent)" class="mono">spec (YAML)</text>
+    <text x="76" y="112" font-size="13" fill="var(--lab-ink)" class="mono" data-en="replicas: 3" data-ru="реплик: 3">replicas: 3</text>
+    <text x="76" y="136" font-size="13" fill="var(--lab-ink)" class="mono" data-en="requests == limits" data-ru="requests == limits">requests == limits</text>
+  </g>
+  <g id="g-ctrl">
+    <rect x="300" y="60" width="200" height="96" rx="10" fill="none" stroke="var(--lab-good)" stroke-width="2"/>
+    <text x="316" y="88" font-size="14" fill="var(--lab-good)" class="mono" data-en="controller loop" data-ru="цикл контроллера">controller loop</text>
+    <text x="316" y="112" font-size="13" fill="var(--lab-ink)" class="mono" data-en="diff spec ↔ status" data-ru="diff spec ↔ status">diff spec ↔ status</text>
+    <text x="316" y="136" font-size="13" fill="var(--lab-ink)" class="mono" data-en="one corrective step" data-ru="один корректирующий шаг">one corrective step</text>
+  </g>
+  <g id="g-pods2">
+    <rect x="540" y="60" width="170" height="96" rx="10" fill="none" stroke="var(--lab-ink)" stroke-width="2"/>
+    <text x="556" y="88" font-size="14" fill="var(--lab-ink)" class="mono" data-en="observed pods" data-ru="наблюдаемые поды">observed pods</text>
+    <text x="556" y="112" font-size="13" fill="var(--lab-ink)" class="mono" data-en="status.ready: 3/3" data-ru="status.ready: 3/3">status.ready: 3/3</text>
+    <text x="556" y="136" font-size="13" fill="var(--fig-warm)" class="mono" data-en="one crashed → 2/3" data-ru="один упал → 2/3">one crashed → 2/3</text>
+  </g>
+  <g id="g-loop">
+    <path d="M 160 156 C 160 250 470 250 625 156" fill="none" stroke="var(--lab-accent)" stroke-width="2" class="fig-flow"/>
+    <path d="M 625 156 L 625 200 C 625 300 400 300 160 300 C 100 300 60 260 60 156" fill="none" stroke="var(--lab-good)" stroke-width="2" class="fig-flow"/>
+    <text x="300" y="286" font-size="13" fill="var(--lab-good)" data-en="the loop re-observes after every step — level-triggered, no commands" data-ru="цикл снова наблюдает после каждого шага — level-triggered, без команд">the loop re-observes after every step — level-triggered, no commands</text>
+    <text x="60" y="352" font-size="13" fill="var(--lab-muted)" data-en="self-healing = the same loop: a crashed pod is just diff 2/3 → 3" data-ru="self-healing = та же петля: упавший под — это diff 2/3 → 3">self-healing = the same loop: a crashed pod is just diff 2/3 → 3</text>
+    <text x="60" y="380" font-size="13" fill="var(--lab-muted)" data-en="arrows: declare → reconcile → observe → (loop)" data-ru="стрелки: заявить → среконсилировать → наблюдать → (цикл)">arrows: declare → reconcile → observe → (loop)</text>
+  </g>
+</svg>`,
+        stages: [
+          { cap: { en: "You declare the spec once (YAML): 3 replicas, Guaranteed memory.", ru: "Ты один раз заявляешь spec (YAML): 3 реплики, память Guaranteed." }, show: ["g-spec"] },
+          { cap: { en: "The controller diffs spec ↔ status and takes one corrective step.", ru: "Контроллер сравнивает spec ↔ status и делает один корректирующий шаг." }, show: ["g-spec", "g-ctrl"] },
+          { cap: { en: "Observed state changes: pods Ready, status.ready 3/3 — a crash makes it 2/3.", ru: "Наблюдаемое состояние меняется: поды Ready, status.ready 3/3 — падение делает 2/3." }, show: ["g-ctrl", "g-pods2"] },
+          { cap: { en: "The loop re-observes and converges: self-healing is the same diff.", ru: "Цикл снова наблюдает и сходится: self-healing — тот же diff." }, show: ["g-loop"] },
         ],
       },
     ],
@@ -431,7 +471,64 @@
       },
       {
         id: "ex3",
-        title: { en: "Exercise 3 · Fix the bug: the rollout dips", ru: "Упражнение 3 · Почини баг: роллаут роет яму" },
+        title: { en: "Exercise 3 · Fix the real manifest", ru: "Упражнение 3 · Почини настоящий манифест" },
+        brief: {
+          en: "Below is a real-shaped Deployment for the T09 engine (condensed — the shape, fields and paths are genuine). <strong>Three defects from this lab are planted in it.</strong> Read it like an auditor first:<br /><pre>apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: llm-engine\nspec:\n  replicas: 3\n  strategy:\n    type: RollingUpdate\n    rollingUpdate:\n      maxUnavailable: 1      # ?\n      maxSurge: 1\n  template:\n    spec:\n      containers:\n        - name: engine\n          image: vllm/vllm-openai:v0.8.0\n          resources:\n            requests: { memory: \"9.5Gi\", gpu: 1 }\n            limits:   { memory: \"11.5Gi\", gpu: 1 }   # ?\n          readinessProbe:\n            httpGet: { path: /health, port: 8000 }\n            periodSeconds: 5\n          # ?</pre>Implement <code>fix_manifest(manifest)</code> over the same document already parsed into the faithful Python structure (same keys as the YAML paths). Return <code>(fixed, report)</code>: the corrected dict, and <code>report</code> — the <strong>sorted list</strong> of the three dotted paths you fixed. One path may be a path that <em>must appear</em> (adding a key counts as fixing it).",
+          ru: "Ниже — настоящий по форме Deployment движка из T09 (сокращённо — форма, поля и пути настоящие). <strong>В него засажены три дефекта из этой лабы.</strong> Сначала прочитай его как аудитор:<br /><pre>apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: llm-engine\nspec:\n  replicas: 3\n  strategy:\n    type: RollingUpdate\n    rollingUpdate:\n      maxUnavailable: 1      # ?\n      maxSurge: 1\n  template:\n    spec:\n      containers:\n        - name: engine\n          image: vllm/vllm-openai:v0.8.0\n          resources:\n            requests: { memory: \"9.5Gi\", gpu: 1 }\n            limits:   { memory: \"11.5Gi\", gpu: 1 }   # ?\n          readinessProbe:\n            httpGet: { path: /health, port: 8000 }\n            periodSeconds: 5\n          # ?</pre>Реализуй <code>fix_manifest(manifest)</code> над тем же документом, уже разобранным в верную структуру Python (ключи совпадают с путями YAML). Верни <code>(fixed, report)</code>: исправленный словарь и <code>report</code> — <strong>отсортированный список</strong> трёх точечных путей, которые ты починил. Один из путей — путь, который <em>должен появиться</em> (добавить ключ — тоже починка).",
+        },
+        starter: `manifest = {
+    'apiVersion': 'apps/v1', 'kind': 'Deployment', 'metadata': {'name': 'llm-engine'},
+    'spec': {
+        'replicas': 3,
+        'strategy': {'type': 'RollingUpdate',
+                     'rollingUpdate': {'maxUnavailable': 1, 'maxSurge': 1}},
+        'template': {'spec': {'containers': [
+            {'name': 'engine', 'image': 'vllm/vllm-openai:v0.8.0',
+             'resources': {'requests': {'memory': '9.5Gi', 'gpu': 1},
+                           'limits': {'memory': '11.5Gi', 'gpu': 1}},
+             'readinessProbe': {'httpGet': {'path': '/health', 'port': 8000},
+                                'periodSeconds': 5}},
+        ]}},
+    },
+}
+
+def fix_manifest(manifest):
+    """Fix the three planted defects; return (fixed, sorted list of dotted paths)."""
+    # TODO: (1) requests == limits  (2) startupProbe budget >= 165 s
+    #       (3) maxUnavailable 0 — the capacity floor
+    ...
+`,
+        tests: [
+          { name: "requests == limits restored (Guaranteed)", hidden: false, code: "r, rep = fix_manifest(manifest)\nc = r['spec']['template']['spec']['containers'][0]['resources']\neq(c['requests']['memory'], c['limits']['memory'])\neq(c['requests']['memory'], '11.5Gi')" },
+          { name: "startupProbe covers the 165 s cold start", hidden: false, code: "r, rep = fix_manifest(manifest)\nsp = r['spec']['template']['spec']['containers'][0]['startupProbe']\neq(sp['periodSeconds'] * sp['failureThreshold'] >= 165, True)" },
+          { name: "rollout keeps the capacity floor", hidden: false, code: "r, rep = fix_manifest(manifest)\nru = r['spec']['strategy']['rollingUpdate']\neq(ru['maxUnavailable'], 0)\neq(ru['maxSurge'], 1)" },
+          { name: "exactly the three declared paths", hidden: true, code: "r, rep = fix_manifest(manifest)\nexpect = sorted(['spec.strategy.rollingUpdate.maxUnavailable', 'spec.template.spec.containers[0].resources.requests.memory', 'spec.template.spec.containers[0].startupProbe'])\neq(sorted(rep), expect)" },
+          { name: "auditor, not tyrant: the rest untouched", hidden: true, code: "r, rep = fix_manifest(manifest)\neq(r['spec']['replicas'], 3)\neq(r['spec']['template']['spec']['containers'][0]['image'], 'vllm/vllm-openai:v0.8.0')" },
+        ],
+        solution: `def fix_manifest(manifest):
+    import copy
+    m = copy.deepcopy(manifest)
+    c = m['spec']['template']['spec']['containers'][0]
+    ru = m['spec']['strategy']['rollingUpdate']
+    fixed = []
+    c['resources']['requests']['memory'] = c['resources']['limits']['memory']
+    fixed.append('spec.template.spec.containers[0].resources.requests.memory')
+    c['startupProbe'] = {'httpGet': {'path': '/health', 'port': 8000},
+                         'periodSeconds': 5, 'failureThreshold': 40}
+    fixed.append('spec.template.spec.containers[0].startupProbe')
+    ru['maxUnavailable'] = 0
+    fixed.append('spec.strategy.rollingUpdate.maxUnavailable')
+    return m, sorted(fixed)`,
+        hints: [
+          { en: "The three dotted paths are the report; the sorted list is exactly the set you actually changed.", ru: "Три точечных пути — это report; отсортированный список — ровно то, что ты реально поменял." },
+          { en: "A startupProbe with period 5 s and failureThreshold 40 prices the T09 members at 200 s.", ru: "StartupProbe с периодом 5 с и failureThreshold 40 оценивает члены T09 в 200 с." },
+        ],
+        numpy: false,
+        timeoutMs: 4000,
+      },
+      {
+        id: "ex4",
+        title: { en: "Exercise 4 · Fix the bug: the rollout dips", ru: "Упражнение 3 · Почини баг: роллаут роет яму" },
         brief: {
           en: "This <code>rollout_floor(replicas, max_unavailable, max_surge)</code> claims the rollout's capacity floor is <code>replicas − maxUnavailable + maxSurge</code> — wrong on two sides. A surged pod serves <strong>nothing</strong> until it is Ready (weights, 165 s), so surge never raises the floor; and killing <code>maxUnavailable</code> old pods before any new one is Ready dips the floor to <code>replicas − maxUnavailable</code> — the OpenAI KubeCon lesson: an inference rollout is not a stateless rollout. Fix the formula, and the safe cadence falls out: <code>maxUnavailable 0, maxSurge 1</code> keeps the floor at <code>replicas</code>.",
           ru: "Эта <code>rollout_floor(replicas, max_unavailable, max_surge)</code> утверждает, что нижняя граница ёмкости роллаута — <code>replicas − maxUnavailable + maxSurge</code>, и ошибается с двух сторон. Surge-под не обслуживает <strong>ничего</strong>, пока не Ready (веса, 165 с), поэтому surge границу не поднимает; а убийство <code>maxUnavailable</code> старых подов до готовности хотя бы одного нового роняет границу до <code>replicas − maxUnavailable</code> — урок KubeCon-доклада OpenAI: роллаут инференса — не роллаут stateless. Почини формулу, и безопасный темп получится сам: <code>maxUnavailable 0, maxSurge 1</code> держит границу на <code>replicas</code>.",
@@ -457,11 +554,78 @@
         timeoutMs: 4000,
       },
       {
-        id: "ex4",
-        title: { en: "Exercise 4 · Wrap it into a class: ReleaseSim", ru: "Упражнение 4 · Собери в класс: ReleaseSim" },
+        id: "ex5",
+        title: { en: "Exercise 5 · Schedule the fleet (bin-packing)", ru: "Упражнение 5 · Размести флот (упаковка по узлам)" },
         brief: {
-          en: "The lab's final boss: a Helm release as a class. <code>ReleaseSim()</code> with <code>upgrade(values)</code> — appends a revision (numbered from 1) and returns its number; <code>history()</code> — the list of <code>{'revision': n, 'values': dict}</code>; <code>rollback(revision)</code> — appends a <strong>new</strong> revision whose values are a copy of that revision's (history is never rewritten — the Helm rule) and returns its number; an unknown revision raises <code>ValueError</code>. Copy the values dicts — a release history that aliases its snapshots is a corrupt ledger.",
-          ru: "Финальный босс лабы: Helm-релиз как класс. <code>ReleaseSim()</code> с <code>upgrade(values)</code> — добавляет ревизию (нумерация с 1) и возвращает её номер; <code>history()</code> — список <code>{'revision': n, 'values': dict}</code>; <code>rollback(revision)</code> — добавляет <strong>новую</strong> ревизию, значения которой — копия значений указанной (история никогда не переписывается — правило Helm), и возвращает её номер; неизвестная ревизия — <code>ValueError</code>. Копируй словари values — история релиза, ссылающаяся на свои же снимки, — это испорченный журнал.",
+          en: "The controller decided <em>how many</em>; the scheduler decides <em>where</em>. Implement <code>schedule(pods, nodes)</code> — first-fit in the given order: each engine pod takes the ledger memory (<code>mem_gib</code>) and exactly one GPU, and lands on the <strong>first node</strong> with both free. Deduct as you go. Return <code>{'placed': {pod_name: node_name}, 'unscheduled': [{'name': name, 'reason': reason}]}</code> with reasons <code>'Insufficient memory'</code> / <code>'Insufficient gpu'</code>. The classic failure is fragmentation: two half-empty nodes that together have plenty — and still cannot host one 11.5 GiB pod.",
+          ru: "Контроллер решил <em>сколько</em>; планировщик решает <em>где</em>. Реализуй <code>schedule(pods, nodes)</code> — first-fit в заданном порядке: каждому движковому поду нужна память по ведомости (<code>mem_gib</code>) и ровно один GPU, и он садится на <strong>первый узел</strong>, где свободны и то, и другое. Списывай на ходу. Верни <code>{'placed': {имя_пода: узел}, 'unscheduled': [{'name': имя, 'reason': причина}]}</code> с причинами <code>'Insufficient memory'</code> / <code>'Insufficient gpu'</code>. Классический отказ — фрагментация: два полупустых узла, у которых вместе всего много, — и которые всё равно не могут принять один под на 11.5 GiB.",
+        },
+        starter: `def schedule(pods, nodes):
+    """First-fit bin-packing: memory AND one gpu per pod, nodes in order."""
+    free = [{'name': n['name'], 'mem': n['mem_gib'], 'gpu': n['gpu']} for n in nodes]
+    placed, unscheduled = {}, []
+    # TODO: pods in order; first node with mem >= mem_gib and gpu >= 1;
+    #       deduct; otherwise record the honest reason
+    ...`,
+        tests: [
+          { name: "two pods pack onto one node", hidden: false, code: "r = schedule([{'name': 'a', 'mem_gib': 11.5, 'gpu': 1}, {'name': 'b', 'mem_gib': 9.0, 'gpu': 1}], [{'name': 'n1', 'mem_gib': 32, 'gpu': 2}])\neq(r['placed'], {'a': 'n1', 'b': 'n1'})\neq(r['unscheduled'], [])" },
+          { name: "gpu exhaustion moves the next pod to node 2", hidden: false, code: "r = schedule([{'name': 'a', 'mem_gib': 11.5, 'gpu': 1}, {'name': 'b', 'mem_gib': 11.5, 'gpu': 1}, {'name': 'c', 'mem_gib': 11.5, 'gpu': 1}], [{'name': 'n1', 'mem_gib': 32, 'gpu': 2}, {'name': 'n2', 'mem_gib': 16, 'gpu': 1}])\neq(r['placed'], {'a': 'n1', 'b': 'n1', 'c': 'n2'})" },
+          { name: "fragmentation is an honest scheduling failure", hidden: true, code: "r = schedule([{'name': 'big', 'mem_gib': 11.5, 'gpu': 1}], [{'name': 'n1', 'mem_gib': 10, 'gpu': 1}, {'name': 'n2', 'mem_gib': 10, 'gpu': 1}])\neq(r['placed'], {})\neq(r['unscheduled'], [{'name': 'big', 'reason': 'Insufficient memory'}])" },
+          { name: "an unscheduled pod spends nothing on later placements", hidden: true, code: "r = schedule([{'name': 'big', 'mem_gib': 40, 'gpu': 1}, {'name': 'small', 'mem_gib': 9, 'gpu': 1}], [{'name': 'n1', 'mem_gib': 16, 'gpu': 1}])\neq(r['placed'], {'small': 'n1'})" },
+        ],
+        solution: `def schedule(pods, nodes):
+    free = [{'name': n['name'], 'mem': n['mem_gib'], 'gpu': n['gpu']} for n in nodes]
+    placed, unscheduled = {}, []
+    for pod in pods:
+        for n in free:
+            if n['mem'] >= pod['mem_gib'] and n['gpu'] >= 1:
+                n['mem'] -= pod['mem_gib']; n['gpu'] -= 1
+                placed[pod['name']] = n['name']
+                break
+        else:
+            reason = 'Insufficient gpu'
+            if all(n['mem'] < pod['mem_gib'] for n in free):
+                reason = 'Insufficient memory'
+            unscheduled.append({'name': pod['name'], 'reason': reason})
+    return {'placed': placed, 'unscheduled': unscheduled}`,
+        hints: [
+          { en: "First-fit means: scan nodes in the given order, take the first with room — do not optimize.", ru: "First-fit значит: сканируй узлы в заданном порядке, бери первый, где есть место, — без оптимизации." },
+          { en: "A pod that did not fit must not spend memory or GPU on the nodes it was rejected from.", ru: "Не поместившийся под не должен списать память или GPU с узлов, которым он не подошёл." },
+        ],
+        numpy: false,
+        timeoutMs: 4000,
+      },
+      {
+        id: "ex6",
+        title: { en: "Exercise 6 · PDB: the drain budget", ru: "Упражнение 6 · PDB: бюджет слива узла" },
+        brief: {
+          en: "Node maintenance drains pods — a <strong>voluntary disruption</strong>. A <code>PodDisruptionBudget</code> with <code>minAvailable: N</code> tells the evictor the same floor arithmetic you already know from rollouts: at most <code>replicas − min_available</code> pods may be down at once. Implement <code>pdb_evictions(replicas, min_available)</code> — the number of simultaneous evictions the budget permits, floored at <code>0</code> (a budget stricter than the fleet simply blocks maintenance). This is the same capacity floor as Exercise 4, now pricing <em>node operations</em> instead of rollouts.",
+          ru: "Обслуживание узла сливает поды — это <strong>добровольное прерывание</strong>. <code>PodDisruptionBudget</code> с <code>minAvailable: N</code> говорит выселяющему ту же арифметику границы, что ты уже знаешь по роллаутам: одновременно могут быть внизу максимум <code>replicas − min_available</code> подов. Реализуй <code>pdb_evictions(replicas, min_available)</code> — сколько одновременных выселений бюджет разрешает, с полом в <code>0</code> (бюджет строже флота просто блокирует обслуживание). Это та же граница ёмкости, что в упражнении 4, — но оценивает она операции над узлами, а не роллауты.",
+        },
+        starter: `def pdb_evictions(replicas, min_available):
+    """Simultaneous evictions the disruption budget permits (>= 0)."""
+    # TODO: the same floor as the rollout, priced for node maintenance
+    ...`,
+        tests: [
+          { name: "one eviction allowed with a 2-of-3 budget", hidden: false, code: "eq(pdb_evictions(3, 2), 1)" },
+          { name: "a strict budget blocks maintenance", hidden: false, code: "eq(pdb_evictions(3, 3), 0)" },
+          { name: "bigger fleet, wider budget", hidden: true, code: "eq(pdb_evictions(5, 3), 2)" },
+          { name: "honest clamp: a budget above the fleet blocks, never negative", hidden: true, code: "eq(pdb_evictions(2, 3), 0)" },
+        ],
+        solution: `def pdb_evictions(replicas, min_available):
+    return max(0, replicas - min_available)`,
+        hints: [
+          { en: "The floor arithmetic is replicas − min_available; never return a negative count.", ru: "Арифметика границы — replicas − min_available; отрицательное число никогда не возвращай." },
+        ],
+        numpy: false,
+        timeoutMs: 4000,
+      },
+      {
+        id: "ex7",
+        title: { en: "Exercise 7 · Wrap it into a class: ReleaseSim", ru: "Упражнение 4 · Собери в класс: ReleaseSim" },
+        brief: {
+          en: "The lab's final boss: a Helm release as a class. <code>ReleaseSim()</code> with <code>upgrade(values)</code> — appends a revision (numbered from 1) and returns its number; <code>history()</code> — the list of <code>{'revision': n, 'values': dict}</code>; <code>rollback(revision)</code> — appends a <strong>new</strong> revision whose values are a copy of that revision's (history is never rewritten — the Helm rule) and returns its number; an unknown revision raises <code>ValueError</code>.  Copy the values dicts — a release history that aliases its snapshots is a corrupt ledger. For scale: the real <code>helm history llm-engine</code> prints exactly this shape — <code>REVISION · UPDATED · STATUS · CHART</code>, one row per revision, deployed rows only grow.",
+          ru: "Финальный босс лабы: Helm-релиз как класс. <code>ReleaseSim()</code> с <code>upgrade(values)</code> — добавляет ревизию (нумерация с 1) и возвращает её номер; <code>history()</code> — список <code>{'revision': n, 'values': dict}</code>; <code>rollback(revision)</code> — добавляет <strong>новую</strong> ревизию, значения которой — копия значений указанной (история никогда не переписывается — правило Helm), и возвращает её номер; неизвестная ревизия — <code>ValueError</code>.  Копируй словари values — история релиза, ссылающаяся на свои же снимки, — это испорченный журнал. Для масштаба: настоящий <code>helm history llm-engine</code> печатает ровно эту форму — <code>REVISION · UPDATED · STATUS · CHART</code>, строка на ревизию, deployed-строки только растут.",
         },
         starter: `class ReleaseSim:
     """Helm-style release: upgrade/history/rollback, revisions from 1."""
@@ -482,6 +646,7 @@
           { name: "three upgrades, three revisions", hidden: false, code: "rel = ReleaseSim()\neq(rel.upgrade({'memory_gib': 21.5}), 1)\neq(rel.upgrade({'memory_gib': 11.5}), 2)\neq(rel.upgrade({'memory_gib': 9.0}), 3)\neq(len(rel.history()), 3)" },
           { name: "rollback appends a new revision with old content", hidden: false, code: "rel = ReleaseSim()\nrel.upgrade({'memory_gib': 21.5})\nrel.upgrade({'memory_gib': 11.5})\neq(rel.rollback(1), 3)\nh = rel.history()\neq(h[-1]['revision'], 3)\neq(h[-1]['values'], {'memory_gib': 21.5})" },
           { name: "unknown revision raises ValueError", hidden: true, code: "rel = ReleaseSim()\nrel.upgrade({'memory_gib': 21.5})\nok = False\ntry:\n    rel.rollback(99)\nexcept ValueError:\n    ok = True\neq(ok, True)" },
+          { name: "rollback to the current revision still appends", hidden: false, code: "rel = ReleaseSim()\nrel.upgrade({'memory_gib': 21.5})\neq(rel.rollback(1), 2)\nh = rel.history()\neq(h[1]['revision'], 2)\neq(h[1]['values'], h[0]['values'])" },
           { name: "history does not alias snapshots", hidden: true, code: "rel = ReleaseSim()\nrel.upgrade({'memory_gib': 21.5})\nh = rel.history()\nh[0]['values']['memory_gib'] = 0.0\neq(rel.history()[0]['values']['memory_gib'], 21.5)" },
         ],
         solution: `import copy
