@@ -24,6 +24,18 @@
 <p>Колено ищут по заявленному правилу, а не на глаз: правило γ берёт <strong>последнюю волну, прибавившую не меньше 50% к предыдущей</strong> (учебное γ = 0.5). И у нагрузки две формы. <strong>Замкнутый цикл</strong> шлёт следующий запрос только после ответа на предыдущий, поэтому предлагаемый req/s = clients / latency — замедли сервис, и спрос упадёт сам (закон Литтла). <strong>Открытый цикл</strong> держит фиксированный темп прихода, и насыщение проявляется растущей очередью. Та же перегрузка — два разных рассказа.</p>`,
     },
     heroTag: { en: "step model, knee, loop shapes", ru: "модель шага, колено, формы нагрузки" },
+    glossary: [
+      [{ en: "throughput", ru: "throughput" }, { en: "tokens per second the service emits; this lab predicts it from a declared step model instead of an eye-fit curve.", ru: "токены в секунду, которые выдаёт сервис; лаба предсказывает их по заявленной модели шага, а не подгонкой кривой на глаз." }],
+      [{ en: "decode step", ru: "decode-шаг" }, { en: "one decode pass for the whole batch: step = W + b × batch milliseconds — W re-reads the weights once, each sequence adds b.", ru: "один decode-проход для всего батча: step = W + b × batch миллисекунд — W один раз перечитывает веса, каждая последовательность добавляет b." }],
+      [{ en: "batch", ru: "батч" }, { en: "the live sequences one step serves together; batching pays because the weight read is shared.", ru: "живые последовательности, которые один шаг обслуживает вместе; батчинг выгоден, потому что чтение весов общее." }],
+      [{ en: "max_num_seqs", ru: "max_num_seqs" }, { en: "the scheduler's cap on the working batch; clients beyond it buy a place in the queue, not tokens.", ru: "потолок scheduler на рабочий батч; клиенты сверх него покупают место в очереди, а не токены." }],
+      [{ en: "saturation knee", ru: "колено насыщения" }, { en: "the last wave that still gained at least 50 % over its predecessor (rule γ = 0.5) — found by rule, not by eye.", ru: "последняя волна, прибавившая не меньше 50 % к предыдущей (правило γ = 0.5), — ищется правилом, а не на глаз." }],
+      [{ en: "gain rule", ru: "правило прироста" }, { en: "the declared γ-rule that freezes which wave counts as the knee, so two engineers get the same number.", ru: "заявленное правило γ, замораживающее, какая волна считается коленом, — два инженера получают одно число." }],
+      [{ en: "roof", ru: "крыша" }, { en: "the throughput ceiling 1000 / b: as the batch grows, tokens per step rise but steps slow by the same factor.", ru: "потолок throughput 1000 / b: с ростом батча токенов за шаг становится больше, но шаги замедляются во столько же." }],
+      [{ en: "closed loop", ru: "замкнутый цикл" }, { en: "clients send the next request only after the previous one returns: offered req/s = clients / latency — slowing the server shrinks demand by itself (Little's law).", ru: "клиенты шлют следующий запрос только после ответа на предыдущий: предлагаемый req/s = clients / latency — замедли сервис, и спрос упадёт сам (закон Литтла)." }],
+      [{ en: "open loop", ru: "открытый цикл" }, { en: "a fixed arrival rate regardless of latency; past the cap the queue absorbs the overload and grows.", ru: "фиксированный темп прихода независимо от латентности; за потолком очередь принимает перегрузку на себя и растёт." }],
+      [{ en: "Little's law", ru: "закон Литтла" }, { en: "the closed-loop identity behind the lab's comparison: demand is clients divided by latency, so latency feeds back into load.", ru: "тождество замкнутого цикла за сравнением из лабы: спрос — это клиенты, делённые на латентность, поэтому латентность возвращается в нагрузку." }],
+    ],
     figures: [
       {
         id: "lab6-knee-rule",
@@ -134,6 +146,60 @@
           answer: 0,
           explain: { en: "One weight read serves the whole batch; the per-sequence cost is only b. That is why batching pays at all.", ru: "Одно чтение весов обслуживает весь батч; на\u00a0каждую последовательность приходится только b. Именно поэтому батчинг вообще выгоден." },
         },
+        // Вариативность №5: константы модели (W = 60 мс, b = 2 мс/seq) фиксированы,
+        // меняется batch: step = 60 + 2 × 24 = 108;  step = 60 + 2 × 15 = 90.
+        // Числа 24 / 108 / 15 / 90 в фигурах не встречаются; followUp переписан под входы.
+        variants: [
+          {
+            q: {
+              en: "Decode step for a batch of 20 under the teaching constants (W = 60 ms, b = 2 ms/seq), in ms?",
+              ru: "Decode-шаг для batch = 20 при учебных константах (W = 60 мс, b = 2 мс/seq), в мс?",
+            },
+            answer: 100, tol: 0.5,
+          },
+          {
+            q: {
+              en: "Decode step for a batch of 24 under the teaching constants (W = 60 ms, b = 2 ms/seq), in ms?",
+              ru: "Decode-шаг для batch = 24 при учебных константах (W = 60 мс, b = 2 мс/seq), в мс?",
+            },
+            answer: 108, tol: 0.5,
+            hint: {
+              en: "step = W + b × batch = 60 + 2 × 24.",
+              ru: "step = W + b × batch = 60 + 2 × 24.",
+            },
+            followUp: {
+              q: { en: "Why exactly 108 ms? Pick the true cause.", ru: "Почему именно 108 мс? Выбери верную причину." },
+              options: [
+                { en: "W is paid once per step; each of the 24 sequences adds its own b = 2 ms: 60 + 2 × 24", ru: "W платится один раз за шаг; каждая из 24 последовательностей добавляет свои b = 2 мс: 60 + 2 × 24" },
+                { en: "The step grows quadratically: every sequence multiplies by every other one", ru: "Шаг растёт квадратично: каждая последовательность умножается на каждую" },
+                { en: "W scales with the batch: weights are re-read for every client, 60 × 24", ru: "W масштабируется с батчем: веса перечитываются для каждого клиента, 60 × 24" },
+              ],
+              answer: 0,
+              explain: { en: "One weight read serves the whole batch; the per-sequence cost is only b. That is why batching pays at all.", ru: "Одно чтение весов обслуживает весь батч; на каждую последовательность приходится только b. Именно поэтому батчинг вообще выгоден." },
+            },
+          },
+          {
+            q: {
+              en: "Decode step for a batch of 15 under the teaching constants (W = 60 ms, b = 2 ms/seq), in ms?",
+              ru: "Decode-шаг для batch = 15 при учебных константах (W = 60 мс, b = 2 мс/seq), в мс?",
+            },
+            answer: 90, tol: 0.5,
+            hint: {
+              en: "step = W + b × batch = 60 + 2 × 15.",
+              ru: "step = W + b × batch = 60 + 2 × 15.",
+            },
+            followUp: {
+              q: { en: "Why exactly 90 ms? Pick the true cause.", ru: "Почему именно 90 мс? Выбери верную причину." },
+              options: [
+                { en: "W is paid once per step; each of the 15 sequences adds its own b = 2 ms: 60 + 2 × 15", ru: "W платится один раз за шаг; каждая из 15 последовательностей добавляет свои b = 2 мс: 60 + 2 × 15" },
+                { en: "The step grows quadratically: every sequence multiplies by every other one", ru: "Шаг растёт квадратично: каждая последовательность умножается на каждую" },
+                { en: "W scales with the batch: weights are re-read for every client, 60 × 15", ru: "W масштабируется с батчем: веса перечитываются для каждого клиента, 60 × 15" },
+              ],
+              answer: 0,
+              explain: { en: "One weight read serves the whole batch; the per-sequence cost is only b. That is why batching pays at all.", ru: "Одно чтение весов обслуживает весь батч; на каждую последовательность приходится только b. Именно поэтому батчинг вообще выгоден." },
+            },
+          },
+        ],
       },
       {
         id: "q2",
@@ -156,6 +222,60 @@
           answer: 0,
           explain: { en: "Every live sequence adds b to every step — that is the whole cost of batching. Ignoring b over-quotes throughput by ×1.33.", ru: "Каждая живая последовательность добавляет b к\u00a0каждому шагу — в\u00a0этом вся цена батчинга. Игнорирование b завышает throughput в\u00a01.33 раза." },
         },
+        // Вариативность №5: константы фиксированы, меняется batch; throughput = batch × 1000 / step:
+        //   batch 45: step 150 → 300;  batch 70: step 200 → 350.
+        // Ответы 300 / 350 прочь от фигурных 125 / 200 / 250; followUp переписан под входы.
+        variants: [
+          {
+            q: {
+              en: "Throughput at batch 10 under the same constants, in tok/s?",
+              ru: "Throughput при batch = 10 при тех же константах, в ток/с?",
+            },
+            answer: 125, tol: 0.5,
+          },
+          {
+            q: {
+              en: "Throughput at batch 45 under the same constants, in tok/s?",
+              ru: "Throughput при batch = 45 при тех же константах, в ток/с?",
+            },
+            answer: 300, tol: 0.5,
+            hint: {
+              en: "step = 60 + 2 × 45 = 150 ms; throughput = 45 × 1000 / 150.",
+              ru: "step = 60 + 2 × 45 = 150 мс; throughput = 45 × 1000 / 150.",
+            },
+            followUp: {
+              q: { en: "Why 300 tok/s and not 750 (45 × 1000 / 60)?", ru: "Почему 300 ток/с, а не 750 (45 × 1000 / 60)?" },
+              options: [
+                { en: "The step is 60 + 2 × 45 = 150 ms: 6.67 steps per second × 45 tokens = 300", ru: "Шаг равен 60 + 2 × 45 = 150 мс: 6.67 шага в секунду × 45 токенов = 300" },
+                { en: "b does not matter at large batches, so the step stays 60 ms", ru: "b не влияет при больших батчах, поэтому шаг остаётся 60 мс" },
+                { en: "The roof 1000 / b = 500 tok/s is already reached at batch 45", ru: "Крыша 1000 / b = 500 ток/с достигается уже при batch = 45" },
+              ],
+              answer: 0,
+              explain: { en: "Every live sequence adds b to every step — that is the whole cost of batching. Ignoring b over-quotes throughput by ×2.5 here.", ru: "Каждая живая последовательность добавляет b к каждому шагу — в этом вся цена батчинга. Игнорирование b завышает throughput здесь в 2.5 раза." },
+            },
+          },
+          {
+            q: {
+              en: "Throughput at batch 70 under the same constants, in tok/s?",
+              ru: "Throughput при batch = 70 при тех же константах, в ток/с?",
+            },
+            answer: 350, tol: 0.5,
+            hint: {
+              en: "step = 60 + 2 × 70 = 200 ms; throughput = 70 × 1000 / 200.",
+              ru: "step = 60 + 2 × 70 = 200 мс; throughput = 70 × 1000 / 200.",
+            },
+            followUp: {
+              q: { en: "Why 350 tok/s and not ≈ 1167 (70 × 1000 / 60)?", ru: "Почему 350 ток/с, а не ≈ 1167 (70 × 1000 / 60)?" },
+              options: [
+                { en: "The step is 60 + 2 × 70 = 200 ms: 5 steps per second × 70 tokens = 350", ru: "Шаг равен 60 + 2 × 70 = 200 мс: 5 шагов в секунду × 70 токенов = 350" },
+                { en: "b does not matter at large batches, so the step stays 60 ms", ru: "b не влияет при больших батчах, поэтому шаг остаётся 60 мс" },
+                { en: "The roof 1000 / b = 500 tok/s is already reached at batch 70", ru: "Крыша 1000 / b = 500 ток/с достигается уже при batch = 70" },
+              ],
+              answer: 0,
+              explain: { en: "Every live sequence adds b to every step — that is the whole cost of batching. Ignoring b over-quotes throughput by ×3.33 here.", ru: "Каждая живая последовательность добавляет b к каждому шагу — в этом вся цена батчинга. Игнорирование b завышает throughput здесь в 3.33 раза." },
+            },
+          },
+        ],
       },
       {
         id: "q3",
@@ -178,6 +298,59 @@
           answer: 0,
           explain: { en: "max_num_seqs caps the working set; beyond it, demand turns into queueing, not tokens — that is the knee mechanism.", ru: "max_num_seqs ограничивает рабочий набор; за\u00a0ним спрос превращается в\u00a0ожидание в\u00a0очереди, а\u00a0не в\u00a0токены — в\u00a0этом механизм колена." },
         },
+        // Вариативность №5: клиенты и потолок — входы (потолок 30 и ответ 250 живут в фигуре);
+        // eff = min(clients, cap):  min(90, 45) → 300;  min(140, 70) → 350.
+        variants: [
+          {
+            q: {
+              en: "128 clients arrive, max_num_seqs = 30, same constants. What throughput does the model predict, in tok/s?",
+              ru: "Пришли 128 клиентов, max_num_seqs = 30, те же константы. Какой throughput предсказывает модель, в ток/с?",
+            },
+            answer: 250, tol: 0.5,
+          },
+          {
+            q: {
+              en: "90 clients arrive, max_num_seqs = 45, same constants. What throughput does the model predict, in tok/s?",
+              ru: "Пришли 90 клиентов, max_num_seqs = 45, те же константы. Какой throughput предсказывает модель, в ток/с?",
+            },
+            answer: 300, tol: 0.5,
+            hint: {
+              en: "Effective batch = min(90, 45) = 45; step = 60 + 2 × 45 = 150 ms; 45 × 1000 / 150. The extra 45 clients only fill the queue.",
+              ru: "Эффективный batch = min(90, 45) = 45; step = 60 + 2 × 45 = 150 мс; 45 × 1000 / 150. Лишние 45 клиентов лишь заполняют очередь.",
+            },
+            followUp: {
+              q: { en: "Why does the model still say 300 tok/s with 90 clients?", ru: "Почему модель всё ещё говорит 300 ток/с при 90 клиентах?" },
+              options: [
+                { en: "The working batch is pinned at the cap 45; the extra 45 clients only fill the queue", ru: "Рабочий батч зажат потолком 45; лишние 45 клиентов лишь заполняют очередь" },
+                { en: "The model averages over all arrivals: batch 90 gives ≈ 375 tok/s, quoted down", ru: "Модель усредняет по всем пришедшим: batch = 90 даёт ≈ 375 ток/с, называется с округлением вниз" },
+                { en: "Clients beyond the cap are dropped, so the batch collapses to 10", ru: "Клиенты сверх потолка отбрасываются, и батч падает до 10" },
+              ],
+              answer: 0,
+              explain: { en: "max_num_seqs caps the working set; beyond it, demand turns into queueing, not tokens — that is the knee mechanism.", ru: "max_num_seqs ограничивает рабочий набор; за ним спрос превращается в ожидание в очереди, а не в токены — в этом механизм колена." },
+            },
+          },
+          {
+            q: {
+              en: "140 clients arrive, max_num_seqs = 70, same constants. What throughput does the model predict, in tok/s?",
+              ru: "Пришли 140 клиентов, max_num_seqs = 70, те же константы. Какой throughput предсказывает модель, в ток/с?",
+            },
+            answer: 350, tol: 0.5,
+            hint: {
+              en: "Effective batch = min(140, 70) = 70; step = 60 + 2 × 70 = 200 ms; 70 × 1000 / 200. The extra 70 clients only fill the queue.",
+              ru: "Эффективный batch = min(140, 70) = 70; step = 60 + 2 × 70 = 200 мс; 70 × 1000 / 200. Лишние 70 клиентов лишь заполняют очередь.",
+            },
+            followUp: {
+              q: { en: "Why does the model still say 350 tok/s with 140 clients?", ru: "Почему модель всё ещё говорит 350 ток/с при 140 клиентах?" },
+              options: [
+                { en: "The working batch is pinned at the cap 70; the extra 70 clients only fill the queue", ru: "Рабочий батч зажат потолком 70; лишние 70 клиентов лишь заполняют очередь" },
+                { en: "The model averages over all arrivals: batch 140 gives ≈ 412 tok/s, quoted down", ru: "Модель усредняет по всем пришедшим: batch = 140 даёт ≈ 412 ток/с, называется с округлением вниз" },
+                { en: "Clients beyond the cap are dropped, so the batch collapses to 10", ru: "Клиенты сверх потолка отбрасываются, и батч падает до 10" },
+              ],
+              answer: 0,
+              explain: { en: "max_num_seqs caps the working set; beyond it, demand turns into queueing, not tokens — that is the knee mechanism.", ru: "max_num_seqs ограничивает рабочий набор; за ним спрос превращается в ожидание в очереди, а не в токены — в этом механизм колена." },
+            },
+          },
+        ],
       },
     ],
     exercises: [

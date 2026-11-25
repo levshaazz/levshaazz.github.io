@@ -174,6 +174,45 @@
           answer: 0,
           explain: { en: "TP shards the WEIGHT matrices across GPUs inside one engine; the per-pod overhead is not a matrix and has no shard dimension. Requests == limits then pin this exact number as Guaranteed QoS.", ru: "TP режет МАТРИЦЫ ВЕСОВ между GPU внутри одного движка; overhead пода — не матрица, у него нет измерения шарда. Requests == limits затем закрепляют это число как Guaranteed QoS." },
         },
+        // Вариативность №5 (контракт: instructor/plans/quiz-variants-contract-20261125.ru.md).
+        // variants[0] — база, байт-в-байт. Фикс 1.5 ГБ у всех вариантов общий (followUp
+        // «фикс не делится» остаётся валидным), меняются веса/KV/TP-степень. Пересчёт по
+        // формуле лабы mem = (weights + kv) / p + fixed:
+        //   24, 6, p 2 → (24 + 6) / 2 + 1.5 = 16.5;   32, 8, p 8 → (32 + 8) / 8 + 1.5 = 6.5.
+        // tol 0.1 ≥ шаг 0.01 и < ближайших ловушек: «поделили и фикс» 15.75 (0.75) и 5.19 (1.31),
+        // «забыли фикс» 15.0 (1.5) и 5.0 (1.5). Ответы попарно различны: 11.5 / 16.5 / 6.5;
+        // в фигурах лабы живут 21.5 / 16+4+1.5 / 40 / 165 / 3 — чисел вариантов там нет.
+        variants: [
+          {
+            q: {
+              en: "A pod hosts the engine at TP degree 2 (T10 ledger: weights 16, KV 4, fixed 1.5 GB). How many GB go into requests (memory)?",
+              ru: "Под держит движок на TP-степени 2 (ведомость из T10: веса 16, KV 4, фикс 1.5 ГБ). Сколько ГБ писать в requests (память)?",
+            },
+            answer: 11.5, tol: 0.1,
+          },
+          {
+            q: {
+              en: "A pod hosts a bigger engine at TP degree 2 (ledger: weights 24, KV 6, fixed 1.5 GB). How many GB go into requests (memory)?",
+              ru: "Под держит движок покрупнее на TP-степени 2 (ведомость: веса 24, KV 6, фикс 1.5 ГБ). Сколько ГБ писать в requests (память)?",
+            },
+            answer: 16.5, tol: 0.1,
+            hint: {
+              en: "(24 + 6) / 2 + 1.5 — weights and KV divide, the fixed part does not.",
+              ru: "(24 + 6) / 2 + 1.5 — веса и KV делятся, фикс нет.",
+            },
+          },
+          {
+            q: {
+              en: "A pod hosts a wide engine at TP degree 8 (ledger: weights 32, KV 8, fixed 1.5 GB). How many GB go into requests (memory)?",
+              ru: "Под держит широкий движок на TP-степени 8 (ведомость: веса 32, KV 8, фикс 1.5 ГБ). Сколько ГБ писать в requests (память)?",
+            },
+            answer: 6.5, tol: 0.1,
+            hint: {
+              en: "(32 + 8) / 8 + 1.5 — weights and KV divide, the fixed part does not.",
+              ru: "(32 + 8) / 8 + 1.5 — веса и KV делятся, фикс нет.",
+            },
+          },
+        ],
       },
       {
         id: "q2",
@@ -196,6 +235,69 @@
           answer: 0,
           explain: { en: "The lab's own habit: a point sitting exactly on a bound breaks at the first held-out run (T07's margins lesson, replayed here). 200 = 5 × 40 gives ~20 % headroom over the median cold start.", ru: "Привычка самой лабы: точка ровно на границе ломается на первом же held-out (урок запасов из T07, повторенный здесь). 200 = 5 × 40 даёт ~20 % запаса над медианным холодным стартом." },
         },
+        // Вариативность №5: бюджет пробы меняется (200 → 180 / 240 с); период 5 с и холодный
+        // старт 165 с — курсовые константы (фигуры, grandfathered). Пересчёт f = budget / period:
+        //   180 / 5 = 36;   240 / 5 = 48.
+        // Ловушка «посчитал по холодному старту» 165 / 5 = 33 — дистанции 3 и 15 при tol 0.2.
+        // followUp переписан без чисел входа (базовый цитировал бюджет 200 с). Ответы 40 / 36 / 48
+        // попарно различны; 36 / 48 / 180 / 240 в фигурах не встречаются.
+        variants: [
+          {
+            q: {
+              en: "Cold start to /health is 165 s; the probe runs every 5 s. What failureThreshold gives a budget of exactly 200 s?",
+              ru: "Холодный старт до /health — 165 с; проба ходит каждые 5 с. Какой failureThreshold даст бюджет ровно 200 с?",
+            },
+            answer: 40, tol: 0.2,
+          },
+          {
+            q: {
+              en: "Cold start to /health is 165 s; the probe runs every 5 s. What failureThreshold gives a budget of exactly 180 s?",
+              ru: "Холодный старт до /health — 165 с; проба ходит каждые 5 с. Какой failureThreshold даст бюджет ровно 180 с?",
+            },
+            answer: 36, tol: 0.2,
+            hint: {
+              en: "budget = period × failureThreshold; solve 5 × f = 180.",
+              ru: "бюджет = период × failureThreshold; реши 5 × f = 180.",
+            },
+            followUp: {
+              q: { en: "Why leave headroom between the probe budget and the measured cold start at all?", ru: "Зачем вообще оставлять запас между бюджетом пробы и измеренным холодным стартом?" },
+              options: [
+                { en: "The measured value is a median of real runs: a budget exactly on the median kills half your pods — headroom is the difference between a probe and a coin flip", ru: "Измеренное значение — медиана реальных прогонов: бюджет ровно на медиане убивает половину подов — запас и есть разница между пробой и подбрасыванием монеты" },
+                { en: "Kubernetes requires the budget to be exactly equal to the cold start", ru: "Kubernetes требует, чтобы бюджет был ровно равен холодному старту" },
+                { en: "The headroom is spent on the /health TLS handshake", ru: "Запас уходит на TLS-handshake /health" },
+              ],
+              answer: 0,
+              explain: {
+                en: "The lab's own habit: a point sitting exactly on a bound breaks at the first held-out run (T07's margins lesson, replayed here). Whatever the exact numbers, the budget must clear the median cold start with visible headroom.",
+                ru: "Привычка самой лабы: точка ровно на границе ломается на первом же held-out (урок запасов из T07, повторенный здесь). Каковы бы ни были точные числа, бюджет обязан перекрывать медианный холодный старт с видимым запасом.",
+              },
+            },
+          },
+          {
+            q: {
+              en: "Cold start to /health is 165 s; the probe runs every 5 s. What failureThreshold gives a budget of exactly 240 s?",
+              ru: "Холодный старт до /health — 165 с; проба ходит каждые 5 с. Какой failureThreshold даст бюджет ровно 240 с?",
+            },
+            answer: 48, tol: 0.2,
+            hint: {
+              en: "budget = period × failureThreshold; solve 5 × f = 240.",
+              ru: "бюджет = период × failureThreshold; реши 5 × f = 240.",
+            },
+            followUp: {
+              q: { en: "Why leave headroom between the probe budget and the measured cold start at all?", ru: "Зачем вообще оставлять запас между бюджетом пробы и измеренным холодным стартом?" },
+              options: [
+                { en: "The measured value is a median of real runs: a budget exactly on the median kills half your pods — headroom is the difference between a probe and a coin flip", ru: "Измеренное значение — медиана реальных прогонов: бюджет ровно на медиане убивает половину подов — запас и есть разница между пробой и подбрасыванием монеты" },
+                { en: "Kubernetes requires the budget to be exactly equal to the cold start", ru: "Kubernetes требует, чтобы бюджет был ровно равен холодному старту" },
+                { en: "The headroom is spent on the /health TLS handshake", ru: "Запас уходит на TLS-handshake /health" },
+              ],
+              answer: 0,
+              explain: {
+                en: "The lab's own habit: a point sitting exactly on a bound breaks at the first held-out run (T07's margins lesson, replayed here). Whatever the exact numbers, the budget must clear the median cold start with visible headroom.",
+                ru: "Привычка самой лабы: точка ровно на границе ломается на первом же held-out (урок запасов из T07, повторенный здесь). Каковы бы ни были точные числа, бюджет обязан перекрывать медианный холодный старт с видимым запасом.",
+              },
+            },
+          },
+        ],
       },
       {
         id: "q3",
@@ -218,6 +320,60 @@
           answer: 0,
           explain: { en: "Surge buys TIME, not capacity: the new pod exists but carries no tokens while loading weights. That is why the safe cadence pairs maxUnavailable 0 (protect the floor) with maxSurge 1 (buy overlap) — neither knob alone does the job.", ru: "Surge покупает ВРЕМЯ, а не ёмкость: новый под существует, но не несёт токены, пока грузит веса. Поэтому безопасный темп — пара maxUnavailable 0 (защитить границу) + maxSurge 1 (купить перекрытие) — ни одна ручка сама не справляется." },
         },
+        // Вариативность №5: масштаб флота меняется (4 → 8 / 12 реплик), maxUnavailable 1 — вход базы.
+        // Пересчёт floor = replicas − maxUnavailable: 8 − 1 = 7;   12 − 1 = 11.
+        // Ловушка «surge поднимает границу» = replicas: дистанция 1 при tol 0.2 (запас 5×).
+        // База (ответ 3) живёт в фигурах — grandfathered; followUp переписан без «на 4» (число базы).
+        // Ответы 3 / 7 / 11 попарно различны; 7 / 8 / 11 / 12 в фигурах не встречаются.
+        variants: [
+          {
+            q: {
+              en: "A Deployment of 4 replicas rolls with maxUnavailable 1. What is the lowest serving capacity during the rollout?",
+              ru: "Deployment из 4 реплик катится с maxUnavailable 1. Какова нижняя граница обслуживающей ёмкости при роллауте?",
+            },
+            answer: 3, tol: 0.2,
+          },
+          {
+            q: {
+              en: "A Deployment of 8 replicas rolls with maxUnavailable 1. What is the lowest serving capacity during the rollout?",
+              ru: "Deployment из 8 реплик катится с maxUnavailable 1. Какова нижняя граница обслуживающей ёмкости при роллауте?",
+            },
+            answer: 7, tol: 0.2,
+            followUp: {
+              q: { en: "Why doesn't maxSurge 1 keep the floor at the full replica count?", ru: "Почему maxSurge 1 не держит границу на полном числе реплик?" },
+              options: [
+                { en: "A surged pod serves nothing until it is Ready — and readiness is gated on the weight load, so during the load the fleet serves replicas − maxUnavailable", ru: "Surge-под не обслуживает ничего до Ready — а готовность гейтится загрузкой весов, поэтому во время загрузки флот обслуживает replicas − maxUnavailable" },
+                { en: "Surge pods are counted as capacity as soon as they schedule", ru: "Surge-поды считаются ёмкостью сразу после планирования" },
+                { en: "maxSurge applies only to scale-down, not to rollouts", ru: "maxSurge применяется только к скейл-дауну, а не к роллаутам" },
+              ],
+              answer: 0,
+              explain: {
+                en: "Surge buys TIME, not capacity: the new pod exists but carries no tokens while loading weights. That is why the safe cadence pairs maxUnavailable 0 (protect the floor) with maxSurge 1 (buy overlap) — neither knob alone does the job.",
+                ru: "Surge покупает ВРЕМЯ, а не ёмкость: новый под существует, но не несёт токены, пока грузит веса. Поэтому безопасный темп — пара maxUnavailable 0 (защитить границу) + maxSurge 1 (купить перекрытие) — ни одна ручка сама не справляется.",
+              },
+            },
+          },
+          {
+            q: {
+              en: "A Deployment of 12 replicas rolls with maxUnavailable 1. What is the lowest serving capacity during the rollout?",
+              ru: "Deployment из 12 реплик катится с maxUnavailable 1. Какова нижняя граница обслуживающей ёмкости при роллауте?",
+            },
+            answer: 11, tol: 0.2,
+            followUp: {
+              q: { en: "Why doesn't maxSurge 1 keep the floor at the full replica count?", ru: "Почему maxSurge 1 не держит границу на полном числе реплик?" },
+              options: [
+                { en: "A surged pod serves nothing until it is Ready — and readiness is gated on the weight load, so during the load the fleet serves replicas − maxUnavailable", ru: "Surge-под не обслуживает ничего до Ready — а готовность гейтится загрузкой весов, поэтому во время загрузки флот обслуживает replicas − maxUnavailable" },
+                { en: "Surge pods are counted as capacity as soon as they schedule", ru: "Surge-поды считаются ёмкостью сразу после планирования" },
+                { en: "maxSurge applies only to scale-down, not to rollouts", ru: "maxSurge применяется только к скейл-дауну, а не к роллаутам" },
+              ],
+              answer: 0,
+              explain: {
+                en: "Surge buys TIME, not capacity: the new pod exists but carries no tokens while loading weights. That is why the safe cadence pairs maxUnavailable 0 (protect the floor) with maxSurge 1 (buy overlap) — neither knob alone does the job.",
+                ru: "Surge покупает ВРЕМЯ, а не ёмкость: новый под существует, но не несёт токены, пока грузит веса. Поэтому безопасный темп — пара maxUnavailable 0 (защитить границу) + maxSurge 1 (купить перекрытие) — ни одна ручка сама не справляется.",
+              },
+            },
+          },
+        ],
       },
     ],
     exercises: [

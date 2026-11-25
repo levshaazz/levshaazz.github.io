@@ -24,6 +24,18 @@
 <p>Привычка лабы: заморозить план сборки (порядок слоёв, инвалидация по правке, члены рестарта) до первой сборки; диагностировать по доказательствам, а не по ощущениям — код + лог + inspect; считать «упал → снова отвечает» суммой именованных членов: extract слоёв + загрузка весов + init сервера + первый <code>/health</code>. Минимизация размера — это скорость восстановления.</p>`,
     },
     heroTag: { en: "layers, exit codes, backoff", ru: "слои, exit-коды, backoff" },
+    glossary: [
+      [{ en: "image", ru: "образ" }, { en: "an ordered stack of layers — the artifact you build once and pull many times; its size is the sum of the layer bytes.", ru: "упорядоченная стопка слоёв — артефакт, который собирают один раз и тянут много раз; его размер — сумма байтов слоёв." }],
+      [{ en: "layer", ru: "слой" }, { en: "one diff of the image; editing a layer rebuilds it together with everything above it — the invalidation wave climbs.", ru: "один диф образа; правка слоя пересобирает его вместе со всем, что выше него, — волна инвалидации поднимается." }],
+      [{ en: "cache hit", ru: "попадание в кэш" }, { en: "the build cache reuses a layer only while neither it nor anything below it changed — that is why rarely-changing layers go low.", ru: "build-кэш переиспользует слой, только пока не изменились ни он сам, ни что-либо под ним, — поэтому редко меняющиеся слои кладут вниз." }],
+      [{ en: "signal death (exit ≥ 128)", ru: "смерть от сигнала (exit ≥ 128)" }, { en: "codes from 128 up are not application results: the runtime encodes 128 + signal, so 137 decodes to SIGKILL(9) and 143 to SIGTERM(15).", ru: "коды от 128 и выше — не результаты приложения: рантайм кодирует 128 + сигнал, поэтому 137 раскладывается в SIGKILL(9), а 143 — в SIGTERM(15)." }],
+      [{ en: "OOM-kill", ru: "OOM-kill" }, { en: "the kernel's memory-cgroup kill: the container touches pages beyond its <code>--memory</code> wall and gets SIGKILL — an incident, not an application crash.", ru: "убийство по memory-cgroup: контейнер трогает страницы за стеной <code>--memory</code> и получает SIGKILL — инцидент, а не падение приложения." }],
+      [{ en: "crash-loop backoff", ru: "backoff crash-loop" }, { en: "the restart schedule with growing delays, base × 2^k capped (docker 0.1 s → 60 s); Kubernetes calls the same loop CrashLoopBackOff.", ru: "расписание рестартов с растущими интервалами, base × 2^k с потолком (docker 0.1 с → 60 с); в Kubernetes тот же цикл зовут CrashLoopBackOff." }],
+      [{ en: "cold restart members", ru: "члены холодного рестарта" }, { en: "«crashed → answering again» is a sum of named members: layer extract + weight loading + server init + first /health.", ru: "«упал → снова отвечает» — сумма именованных членов: extract слоёв + загрузка весов + init сервера + первый /health." }],
+      [{ en: "warm restart", ru: "тёплый рестарт" }, { en: "layers are already local, so extract shrinks to ~0 — but the weights are paid every time; minimizing the image is recovery speed.", ru: "слои уже локальны, поэтому extract сжимается к ~0, — но за веса платят каждый раз; минимизация образа — это скорость восстановления." }],
+      [{ en: "bake", ru: "запекание весов" }, { en: "COPY the weights into the image: a heavy pull once, a light start every time — layers stack, they do not merge.", ru: "COPY весов в образ: тяжёлый pull один раз, лёгкий старт каждый раз — слои складываются стопкой, а не сливаются." }],
+      [{ en: "hash-chained journal", ru: "хэш-цепочка журнала" }, { en: "every entry hashes the previous one (sha256 over seq|ts|kind|payload|prev), so any tampering with history breaks the chain.", ru: "каждая запись считает хэш от предыдущей (sha256 от seq|ts|kind|payload|prev), поэтому любая подделка истории ломает цепочку." }],
+    ],
     figures: [
       {
         id: "lab9-layer-stack",
@@ -129,8 +141,8 @@
         },
         answer: 9, tol: 0.2, unit: { en: "signal number", ru: "номер сигнала" },
         hint: {
-          en: "128 + 9 = SIGKILL: the kernel killed the process — the application never printed this code itself.",
-          ru: "128 + 9 = SIGKILL: процесс убило ядро — приложение само этот код не печатало.",
+          en: "137 is past 128: codes that big are not printed by the application — the kernel killed the process.",
+          ru: "137 больше 128: такие коды приложение само не печатает — процесс убило ядро.",
         },
         followUp: {
           q: { en: "Why can't 137 be an application exit code?", ru: "Почему 137 не может быть кодом приложения?" },
@@ -142,6 +154,63 @@
           answer: 0,
           explain: { en: "The 128-offset convention is how the runtime layer tells «the kernel killed it» from «the program returned it». That is why diagnose_exit decodes the signal FIRST and only then reads application branches.", ru: "Соглашение о смещении 128 — способ слоя рантайма отличить «убило ядро» от «программа вернула сама». Именно поэтому diagnose_exit сначала декодирует сигнал и лишь потом читает ветки приложения." },
         },
+        // Вариативность №5: формула лабы sig = exit − 128, меняется вход-код выхода.
+        //   137 → 9 (база, SIGKILL), 143 → 15 (SIGTERM), 139 → 11 (SIGSEGV).
+        // 143 — константа модели лабы (мост 128 + 15); 139 и ответы 15 / 11 — числа
+        // фигур (1.18 / 0.491 / 1.67) не трогают. Ловушка off-by-one (exit − 127 или
+        // exit − 129) на расстоянии 1 ≫ tol 0.2 (запас 5×). followUp переписан: в базе
+        // он говорит «137» — это вход базы. Answers попарно различны.
+        variants: [
+          {
+            q: {
+              en: "The container exit code is 137. Which signal number does it encode (exit − 128)?",
+              ru: "Код выхода контейнера — 137. Какой номер сигнала он кодирует (exit − 128)?",
+            },
+            answer: 9, tol: 0.2,
+          },
+          {
+            q: {
+              en: "The container exit code is 143. Which signal number does it encode (exit − 128)?",
+              ru: "Код выхода контейнера — 143. Какой номер сигнала он кодирует (exit − 128)?",
+            },
+            answer: 15, tol: 0.2,
+            hint: {
+              en: "128 + the signal = 143: this one came from a graceful stop (SIGTERM), not from the application.",
+              ru: "128 + сигнал = 143: этот код пришёл от штатной остановки (SIGTERM), а не от приложения.",
+            },
+            followUp: {
+              q: { en: "Why can't 143 be an application exit code?", ru: "Почему 143 не может быть кодом приложения?" },
+              options: [
+                { en: "Exit codes ≥ 128 are reserved for signal deaths: the shell/docker encodes 128 + signal, and an application's own exit statuses live below 128", ru: "Коды выхода ≥ 128 зарезервированы за смертями от сигналов: shell/docker кодирует 128 + сигнал, а собственные статусы приложения живут ниже 128" },
+                { en: "Applications cannot print numbers above 100", ru: "Приложения не могут печатать числа выше 100" },
+                { en: "143 is reserved by POSIX for OOM kills only", ru: "143 зарезервирован POSIX специально под OOM-kill" },
+              ],
+              answer: 0,
+              explain: { en: "The 128-offset convention is how the runtime layer tells «the kernel killed it» from «the program returned it». That is why diagnose_exit decodes the signal FIRST and only then reads application branches.", ru: "Соглашение о смещении 128 — способ слоя рантайма отличить «убило ядро» от «программа вернула сама». Именно поэтому diagnose_exit сначала декодирует сигнал и лишь потом читает ветки приложения." },
+            },
+          },
+          {
+            q: {
+              en: "The container exit code is 139. Which signal number does it encode (exit − 128)?",
+              ru: "Код выхода контейнера — 139. Какой номер сигнала он кодирует (exit − 128)?",
+            },
+            answer: 11, tol: 0.2,
+            hint: {
+              en: "128 + the signal = 139: the kernel killed the process on a memory fault — the application never printed this code itself.",
+              ru: "128 + сигнал = 139: процесс убило ядро из-за сбоя доступа к памяти — приложение само этот код не печатало.",
+            },
+            followUp: {
+              q: { en: "Why can't 139 be an application exit code?", ru: "Почему 139 не может быть кодом приложения?" },
+              options: [
+                { en: "Exit codes ≥ 128 are reserved for signal deaths: the shell/docker encodes 128 + signal, and an application's own exit statuses live below 128", ru: "Коды выхода ≥ 128 зарезервированы за смертями от сигналов: shell/docker кодирует 128 + сигнал, а собственные статусы приложения живут ниже 128" },
+                { en: "Applications cannot print numbers above 100", ru: "Приложения не могут печатать числа выше 100" },
+                { en: "139 is reserved by POSIX for OOM kills only", ru: "139 зарезервирован POSIX специально под OOM-kill" },
+              ],
+              answer: 0,
+              explain: { en: "The 128-offset convention is how the runtime layer tells «the kernel killed it» from «the program returned it». That is why diagnose_exit decodes the signal FIRST and only then reads application branches.", ru: "Соглашение о смещении 128 — способ слоя рантайма отличить «убило ядро» от «программа вернула сама». Именно поэтому diagnose_exit сначала декодирует сигнал и лишь потом читает ветки приложения." },
+            },
+          },
+        ],
       },
       {
         id: "q2",
@@ -151,8 +220,8 @@
         },
         answer: 3.2, tol: 0.05, unit: { en: "s", ru: "с" },
         hint: {
-          en: "0.1 × 2^5: the intervals grow — 0.1, 0.2, 0.4, 0.8, 1.6, 3.2.",
-          ru: "0.1 × 2^5: интервалы растут — 0.1, 0.2, 0.4, 0.8, 1.6, 3.2.",
+          en: "0.1 × 2^(k−1): the intervals double — 0.1, 0.2, 0.4, 0.8, 1.6, … (k counts attempts from 1).",
+          ru: "0.1 × 2^(k−1): интервалы удваиваются — 0.1, 0.2, 0.4, 0.8, 1.6, … (k — номер попытки с 1).",
         },
         followUp: {
           q: { en: "Why is the exponent 5 and not 6 for the 6th restart?", ru: "Почему показатель 5, а не 6 для 6-го рестарта?" },
@@ -164,6 +233,63 @@
           answer: 0,
           explain: { en: "Count the sequence: 0.1, 0.2, 0.4, 0.8, 1.6, 3.2 — six values, exponents 0..5. Off-by-one here is the classic bug, which is why Exercise 1's tests trace the whole list, not one value.", ru: "Посчитай последовательность: 0.1, 0.2, 0.4, 0.8, 1.6, 3.2 — шесть значений, показатели 0..5. Off-by-one здесь — классический баг, поэтому тесты упражнения 1 трассируют весь список, а не одно значение." },
         },
+        // Вариативность №5: база backoff 0.1 с и cap 60 с — константы модели лабы,
+        // меняется номер рестарта: задержка = 0.1 × 2^(k−1):
+        //   6-й → 0.1 × 2^5 = 3.2 (база), 8-й → 0.1 × 2^7 = 12.8, 4-й → 0.1 × 2^3 = 0.8.
+        // Ловушка «показатель k вместо k−1» на расстоянии ≥ 0.8 ≫ tol 0.05 (запас 16×);
+        // cap не участвует (все ответы < 60). followUp переписан под свой номер
+        // (в базе «показатель 5, а не 6» — это вход базы). Answers попарно различны.
+        variants: [
+          {
+            q: {
+              en: "Docker restarts a crash-looping container with backoff starting at 0.1 s and doubling each time (cap 60 s). The delay before the 6th restart, in seconds?",
+              ru: "Docker перезапускает crash-loop контейнер с backoff от 0.1\u00a0с и\u00a0удвоением при каждом рестарте (cap 60\u00a0с). Задержка перед 6-м рестартом, в\u00a0секундах?",
+            },
+            answer: 3.2, tol: 0.05,
+          },
+          {
+            q: {
+              en: "Docker restarts a crash-looping container with backoff starting at 0.1 s and doubling each time (cap 60 s). The delay before the 8th restart, in seconds?",
+              ru: "Docker перезапускает crash-loop контейнер с backoff от 0.1\u00a0с и\u00a0удвоением при каждом рестарте (cap 60\u00a0с). Задержка перед 8-м рестартом, в\u00a0секундах?",
+            },
+            answer: 12.8, tol: 0.05,
+            hint: {
+              en: "0.1 × 2^7: the intervals grow — 0.1, 0.2, 0.4, 0.8, 1.6, 3.2, 6.4 — and one more doubling for the eighth.",
+              ru: "0.1 × 2^7: интервалы растут — 0.1, 0.2, 0.4, 0.8, 1.6, 3.2, 6.4 — и ещё одно удвоение для восьмого.",
+            },
+            followUp: {
+              q: { en: "Why is the exponent 7 and not 8 for the 8th restart?", ru: "Почему показатель 7, а не 8 для 8-го рестарта?" },
+              options: [
+                { en: "The schedule is 0-based: restart k waits base × 2^k, so restarts 0..7 are the first eight, and the 8th waits 0.1 × 2^7", ru: "Расписание нумеруется с нуля: рестарт k ждёт base × 2^k, поэтому первые восемь — это рестарты 0..7, и 8-й ждёт 0.1 × 2^7" },
+                { en: "The exponent is always restarts − 1 divided by 2", ru: "Показатель всегда равен (рестарты − 1) / 2" },
+                { en: "The first restart has no delay, so it is skipped in the count", ru: "У первого рестарта нет задержки, поэтому он пропускается в счёте" },
+              ],
+              answer: 0,
+              explain: { en: "Count the sequence: 0.1, 0.2, 0.4, 0.8, 1.6, 3.2, 6.4, 12.8 — eight values, exponents 0..7. Off-by-one here is the classic bug, which is why Exercise 1's tests trace the whole list, not one value.", ru: "Посчитай последовательность: 0.1, 0.2, 0.4, 0.8, 1.6, 3.2, 6.4, 12.8 — восемь значений, показатели 0..7. Off-by-one здесь — классический баг, поэтому тесты упражнения 1 трассируют весь список, а не одно значение." },
+            },
+          },
+          {
+            q: {
+              en: "Docker restarts a crash-looping container with backoff starting at 0.1 s and doubling each time (cap 60 s). The delay before the 4th restart, in seconds?",
+              ru: "Docker перезапускает crash-loop контейнер с backoff от 0.1\u00a0с и\u00a0удвоением при каждом рестарте (cap 60\u00a0с). Задержка перед 4-м рестартом, в\u00a0секундах?",
+            },
+            answer: 0.8, tol: 0.05,
+            hint: {
+              en: "0.1 × 2^3: the intervals grow — 0.1, 0.2, 0.4 — and one more doubling for the fourth.",
+              ru: "0.1 × 2^3: интервалы растут — 0.1, 0.2, 0.4 — и ещё одно удвоение для четвёртого.",
+            },
+            followUp: {
+              q: { en: "Why is the exponent 3 and not 4 for the 4th restart?", ru: "Почему показатель 3, а не 4 для 4-го рестарта?" },
+              options: [
+                { en: "The schedule is 0-based: restart k waits base × 2^k, so restarts 0..3 are the first four, and the 4th waits 0.1 × 2^3", ru: "Расписание нумеруется с нуля: рестарт k ждёт base × 2^k, поэтому первые четыре — это рестарты 0..3, и 4-й ждёт 0.1 × 2^3" },
+                { en: "The exponent is always restarts − 1 divided by 2", ru: "Показатель всегда равен (рестарты − 1) / 2" },
+                { en: "The first restart has no delay, so it is skipped in the count", ru: "У первого рестарта нет задержки, поэтому он пропускается в счёте" },
+              ],
+              answer: 0,
+              explain: { en: "Count the sequence: 0.1, 0.2, 0.4, 0.8 — four values, exponents 0..3. Off-by-one here is the classic bug, which is why Exercise 1's tests trace the whole list, not one value.", ru: "Посчитай последовательность: 0.1, 0.2, 0.4, 0.8 — четыре значения, показатели 0..3. Off-by-one здесь — классический баг, поэтому тесты упражнения 1 трассируют весь список, а не одно значение." },
+            },
+          },
+        ],
       },
       {
         id: "q3",
@@ -173,8 +299,8 @@
         },
         answer: 1.67, tol: 0.01, unit: { en: "GB", ru: "ГБ" },
         hint: {
-          en: "1.18 + 0.491 = 1.671. The bake price is a heavy pull and a light start.",
-          ru: "1.18 + 0.491 = 1.671. Цена bake — тяжёлый pull и лёгкий старт.",
+          en: "bake = base + weights: a heavy pull and a light start. Sum the two numbers.",
+          ru: "bake = база + веса: тяжёлый pull и лёгкий старт. Сложи два числа.",
         },
         followUp: {
           q: { en: "Why do the two sizes ADD instead of the weights hiding inside the base layer?", ru: "Почему размеры СКЛАДЫВАЮТСЯ, а не веса прячутся внутри базового слоя?" },
@@ -186,6 +312,65 @@
           answer: 0,
           explain: { en: "Union layers share files by layer, never shrink them: baking the weights trades pull time for start time, and the bill 1.67 GB is exactly why «minimizing the image is recovery speed».", ru: "Union-слои делят файлы по слоям и никогда не сжимают их: запекание весов меняет время pull на время старта, и счёт 1.67 ГБ — точная причина, почему «минимизация образа — это скорость восстановления»." },
         },
+        // Вариативность №5: ответ базы 1.67 живёт в фигуре, поэтому варианты меняют
+        // входы (размер базы / весов); 0.491 и 1.18 — константы модели, они легальны.
+        // bake = база + веса:
+        //   1.18 + 0.491 = 1.671 ≈ 1.67 (база), 0.92 + 0.491 = 1.411 ≈ 1.41,
+        //   1.18 + 0.75 = 1.93.
+        // Ловушки — числа фигур (1.67 / 1.18) на расстоянии ≥ 0.23 ≫ tol 0.01.
+        // followUp переписан: счёт в объяснении — свой у каждого варианта.
+        // Answers попарно различны.
+        variants: [
+          {
+            q: {
+              en: "Baking the 0.491 GB weights into the 1.18 GB base image: the resulting image size, in GB?",
+              ru: "Запечь веса 0.491\u00a0ГБ в\u00a0базовый образ 1.18\u00a0ГБ: размер получившегося образа в\u00a0ГБ?",
+            },
+            answer: 1.67, tol: 0.01,
+          },
+          {
+            q: {
+              en: "Baking the 0.491 GB weights into the 0.92 GB base image: the resulting image size, in GB?",
+              ru: "Запечь веса 0.491\u00a0ГБ в\u00a0базовый образ 0.92\u00a0ГБ: размер получившегося образа в\u00a0ГБ?",
+            },
+            answer: 1.41, tol: 0.01,
+            hint: {
+              en: "0.92 + 0.491: the bake price is a heavy pull and a light start.",
+              ru: "0.92 + 0.491: цена bake — тяжёлый pull и лёгкий старт.",
+            },
+            followUp: {
+              q: { en: "Why do the two sizes ADD instead of the weights hiding inside the base layer?", ru: "Почему размеры СКЛАДЫВАЮТСЯ, а не веса прячутся внутри базового слоя?" },
+              options: [
+                { en: "Layers stack, they do not merge: the weights COPY layer adds its own bytes on top of the base bytes — every layer's data lives in the image", ru: "Слои складываются стопкой, а не сливаются: слой с копией весов добавляет свои байты поверх байтов базы — данные каждого слоя живут в образе" },
+                { en: "Docker deduplicates identical bytes, and the weights are new bytes — so they add", ru: "Docker дедуплицирует одинаковые байты, а веса — новые байты, поэтому они складываются" },
+                { en: "The weights compress inside the layer, so the sum is approximate", ru: "Веса сжимаются внутри слоя, поэтому сумма приблизительна" },
+              ],
+              answer: 0,
+              explain: { en: "Union layers share files by layer, never shrink them: baking the weights trades pull time for start time, and the bill 1.41 GB is exactly why «minimizing the image is recovery speed».", ru: "Union-слои делят файлы по слоям и никогда не сжимают их: запекание весов меняет время pull на время старта, и счёт 1.41 ГБ — точная причина, почему «минимизация образа — это скорость восстановления»." },
+            },
+          },
+          {
+            q: {
+              en: "Baking the 0.75 GB weights into the 1.18 GB base image: the resulting image size, in GB?",
+              ru: "Запечь веса 0.75\u00a0ГБ в\u00a0базовый образ 1.18\u00a0ГБ: размер получившегося образа в\u00a0ГБ?",
+            },
+            answer: 1.93, tol: 0.01,
+            hint: {
+              en: "1.18 + 0.75: the bake price is a heavy pull and a light start.",
+              ru: "1.18 + 0.75: цена bake — тяжёлый pull и лёгкий старт.",
+            },
+            followUp: {
+              q: { en: "Why do the two sizes ADD instead of the weights hiding inside the base layer?", ru: "Почему размеры СКЛАДЫВАЮТСЯ, а не веса прячутся внутри базового слоя?" },
+              options: [
+                { en: "Layers stack, they do not merge: the weights COPY layer adds its own bytes on top of the base bytes — every layer's data lives in the image", ru: "Слои складываются стопкой, а не сливаются: слой с копией весов добавляет свои байты поверх байтов базы — данные каждого слоя живут в образе" },
+                { en: "Docker deduplicates identical bytes, and the weights are new bytes — so they add", ru: "Docker дедуплицирует одинаковые байты, а веса — новые байты, поэтому они складываются" },
+                { en: "The weights compress inside the layer, so the sum is approximate", ru: "Веса сжимаются внутри слоя, поэтому сумма приблизительна" },
+              ],
+              answer: 0,
+              explain: { en: "Union layers share files by layer, never shrink them: baking the weights trades pull time for start time, and the bill 1.93 GB is exactly why «minimizing the image is recovery speed».", ru: "Union-слои делят файлы по слоям и никогда не сжимают их: запекание весов меняет время pull на время старта, и счёт 1.93 ГБ — точная причина, почему «минимизация образа — это скорость восстановления»." },
+            },
+          },
+        ],
       },
     ],
     exercises: [

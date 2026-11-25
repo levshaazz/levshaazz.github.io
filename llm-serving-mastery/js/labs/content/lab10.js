@@ -24,6 +24,18 @@
 <p>Модель шага заявлена: <code>t(p) = C/p + B·(p−1)/p + beat·(p−1)</code>. Вычисления делятся на степень, байтовая доля all-reduce растёт к <code>B</code>, и каждый лишний GPU добавляет такты синхронизации — член, которого забывает чистый план. Привычка лабы: заморозить план (колено, минимальная подходящая степень) до свипа, доказать разрез числом и считать такт именованным членом, а не шумом.</p>`,
     },
     heroTag: { en: "column/row cuts, all-reduce, the knee", ru: "column/row-разрезы, all-reduce, колено" },
+    glossary: [
+      [{ en: "tensor parallelism (TP)", ru: "тензорный параллелизм (TP)" }, { en: "the answer when one GPU ends twice — the memory wall and the latency floor of sequential decode: cut the weight matrices across GPUs.", ru: "ответ на ситуацию, когда один GPU заканчивается дважды — стеной памяти и полом латентности последовательного decode: разрезать матрицы весов между GPU." }],
+      [{ en: "column-parallel (column cut)", ru: "column-parallel (column-разрез)" }, { en: "W split by output columns: every shard sees all of X and returns its own columns of Y — no joining inside the block, exchange 0 B.", ru: "W режется по выходным столбцам: каждый шард видит весь X и возвращает свои столбцы Y — стыковать внутри блока не надо, обмен 0 Б." }],
+      [{ en: "row-parallel (row cut)", ru: "row-parallel (row-разрез)" }, { en: "W split by rows (and X by columns on the same parts): each shard produces a partial sum of the full shape.", ru: "W режется по строкам (и X по столбцам на те же части): каждый шард даёт частичную сумму полной формы." }],
+      [{ en: "partial sum", ru: "частичная сумма" }, { en: "the row-parallel shard output: full shape, partial value — the pieces are summed, never concatenated.", ru: "выход шарда row-parallel: полная форма, частичное значение — куски суммируются, а не склеиваются." }],
+      [{ en: "all-reduce", ru: "all-reduce" }, { en: "the join for row-parallel partials: an exact elementwise sum — which is why split == full can be proven to 1e-9.", ru: "стыковка частичных сумм row-parallel: точная поэлементная сумма — поэтому разрез == целое можно доказать до 1e-9." }],
+      [{ en: "sync beat", ru: "такт синхронизации" }, { en: "the coordination price of every all-reduce: each extra GPU adds beat·(p − 1) — the member the clean plan forgets.", ru: "цена координации каждого all-reduce: каждый лишний GPU добавляет beat·(p − 1) — член, которого забывает чистый план." }],
+      [{ en: "TP knee", ru: "колено TP" }, { en: "the degree with the smallest t(p) = C/p + B·(p−1)/p + beat·(p−1); past it, more GPUs make the step slower — found by the knee_degree rule, not assumed.", ru: "степень с минимальным t(p) = C/p + B·(p−1)/p + beat·(p−1); за ней больше GPU — медленнее шаг; её находят правилом knee_degree, а не предполагают." }],
+      [{ en: "per-GPU ledger", ru: "per-GPU ведомость" }, { en: "(weights + KV) / p + fixed against the budget: the divisible part divides, the fixed 1.5 GB never does.", ru: "(веса + KV) / p + фикс против бюджета: делимая часть делится, фиксированные 1.5 ГБ — никогда." }],
+      [{ en: "sweep", ru: "свип" }, { en: "walking the TP degrees and recording t(p) for each — the measured curve the knee is read from (freeze the plan first, sweep after).", ru: "проход по степеням TP с записью t(p) для каждой — измеренная кривая, по которой читают колено (сначала заморозь план, потом свип)." }],
+      [{ en: "memory wall", ru: "стена памяти" }, { en: "where weights + KV stop fitting one GPU (8B fp16 ≈ 16 GB against a 15 GB budget) — quantization (T03) shrank the bytes, TP splits what is left.", ru: "предел, где веса + KV перестают помещаться на один GPU (8B fp16 ≈ 16 ГБ против бюджета 15 ГБ) — квантование (T03) сжало байты, TP делит то, что осталось." }],
+    ],
     figures: [
       {
         id: "lab10-tp-split",
@@ -205,6 +217,45 @@
           answer: 0,
           explain: { en: "The beat is the COST OF COORDINATION: p − 1 peers must be waited for at each all-reduce. One GPU coordinates with nobody — that is why t(1) = 800 exactly and every added GPU brings +25 ms on top of the byte share.", ru: "Такт — это ЦЕНА КООРДИНАЦИИ: на каждом all-reduce ждут p − 1 напарников. Один GPU ни с кем не координируется — поэтому t(1) = 800 ровно, а каждый добавленный GPU приносит +25 мс поверх байтовой доли." },
         },
+        // Вариативность №5: ручки модели — константы (C = 800, B = 120, beat = 25),
+        // меняется степень p. В фигурах живут t(4) = 365, t(8) = 380 и степени 1/2/4/8,
+        // поэтому варианты берут степени 3 и 5. t(p) = C/p + B·(p−1)/p + beat·(p−1):
+        //   p = 4 → 200 + 90 + 75 = 365 (база), p = 3 → 266.67 + 80 + 50 = 396.67 ≈ 397,
+        //   p = 5 → 160 + 96 + 100 = 356.
+        // Ловушки — соседние степени: t(4) = 365 на расстоянии ≥ 9, t(6) = 358.33 на
+        // расстоянии 2.33 ≈ 4.7× tol 0.5. followUp без чисел входа — наследуется.
+        // Answers попарно различны.
+        variants: [
+          {
+            q: {
+              en: "Declared step at tp = 4 with C = 800 ms, B = 120 ms, beat = 25 ms: what is t(4), in ms?",
+              ru: "Заявленный шаг при tp = 4\u00a0с C = 800\u00a0мс, B = 120\u00a0мс, beat = 25\u00a0мс: чему равно t(4), в\u00a0мс?",
+            },
+            answer: 365, tol: 0.5,
+          },
+          {
+            q: {
+              en: "Declared step at tp = 3 with C = 800 ms, B = 120 ms, beat = 25 ms: what is t(3), in ms?",
+              ru: "Заявленный шаг при tp = 3\u00a0с C = 800\u00a0мс, B = 120\u00a0мс, beat = 25\u00a0мс: чему равно t(3), в\u00a0мс?",
+            },
+            answer: 397, tol: 0.5,
+            hint: {
+              en: "800/3 + 120·2/3 + 25·2 = 266.67 + 80 + 50.",
+              ru: "800/3 + 120·2/3 + 25·2 = 266.67 + 80 + 50.",
+            },
+          },
+          {
+            q: {
+              en: "Declared step at tp = 5 with C = 800 ms, B = 120 ms, beat = 25 ms: what is t(5), in ms?",
+              ru: "Заявленный шаг при tp = 5\u00a0с C = 800\u00a0мс, B = 120\u00a0мс, beat = 25\u00a0мс: чему равно t(5), в\u00a0мс?",
+            },
+            answer: 356, tol: 0.5,
+            hint: {
+              en: "800/5 + 120·4/5 + 25·4 = 160 + 96 + 100.",
+              ru: "800/5 + 120·4/5 + 25·4 = 160 + 96 + 100.",
+            },
+          },
+        ],
       },
       {
         id: "q2",
@@ -227,6 +278,65 @@
           answer: 0,
           explain: { en: "The beat is linear in (p − 1) while the compute saving is 1/p: past the knee each addition buys less division and pays a full extra beat. That is why knee_degree() exists as a method — the optimum is found by rule, not assumed.", ru: "Такт линеен по (p − 1), а экономия вычислений — 1/p: за коленом каждая добавка покупает меньше деления и платит целый лишний такт. Поэтому knee_degree() существует как метод — оптимум находится правилом, а не предполагается." },
         },
+        // Вариативность №5: те же константы, степень за коленом (колено = 5 для курсовых
+        // ручек), где шаг уже медленнее t(4). t(p) = C/p + B·(p−1)/p + beat·(p−1):
+        //   p = 8 → 100 + 105 + 175 = 380 (база), p = 10 → 80 + 108 + 225 = 413,
+        //   p = 7 → 114.29 + 102.86 + 150 = 367.14 ≈ 367.
+        // Ловушка t(4) = 365 от ответа 367 на расстоянии 2.14 ≈ 4.3× tol 0.5; t(9) = 395.56
+        // от 413 — 17.44. followUp переписан: арифметика «4 → 8» в базе — это вход базы
+        // (4 → 10: −120 + 150 + 18 = +48 мс; 4 → 7: ≈ −86 + 75 + 13 = +2 мс).
+        // Answers попарно различны.
+        variants: [
+          {
+            q: {
+              en: "Same knobs at tp = 8: t(8), in ms? Compare with t(4) — this is where “add more GPUs” stops paying.",
+              ru: "Те же ручки при tp = 8: t(8), в\u00a0мс? Сравни с t(4) — именно здесь «бери больше GPU» перестаёт платить.",
+            },
+            answer: 380, tol: 0.5,
+          },
+          {
+            q: {
+              en: "Same knobs at tp = 10: t(10), in ms? Compare with t(4) — this is where “add more GPUs” stops paying.",
+              ru: "Те же ручки при tp = 10: t(10), в\u00a0мс? Сравни с t(4) — именно здесь «бери больше GPU» перестаёт платить.",
+            },
+            answer: 413, tol: 0.5,
+            hint: {
+              en: "800/10 + 120·9/10 + 25·9 = 80 + 108 + 225 — more than t(4): the beats ate the division.",
+              ru: "800/10 + 120·9/10 + 25·9 = 80 + 108 + 225 — больше, чем t(4): такты съели деление.",
+            },
+            followUp: {
+              q: { en: "Why exactly does adding GPUs past the knee make the step SLOWER here?", ru: "Почему добавление GPU за коленом делает шаг здесь МЕДЛЕННЕЕ?" },
+              options: [
+                { en: "Going 4 → 10 saves 120 ms of compute but adds 150 ms of beats and 18 ms of byte share: −120 + 168 = +48 ms net", ru: "Переход 4 → 10 экономит 120 мс вычислений, но добавляет 150 мс тактов и 18 мс байтовой доли: −120 + 168 = +48 мс чистыми" },
+                { en: "The extra GPUs cannot fit in one switch domain, so the model halves the bandwidth", ru: "Лишние GPU не влезают в один switch-домен, поэтому модель делит bandwidth пополам" },
+                { en: "The weights no longer fit at the larger degree, so swapping dominates", ru: "Веса уже не помещаются на большей степени, поэтому доминирует своппинг" },
+              ],
+              answer: 0,
+              explain: { en: "The beat is linear in (p − 1) while the compute saving is 1/p: past the knee each addition buys less division and pays a full extra beat. That is why knee_degree() exists as a method — the optimum is found by rule, not assumed.", ru: "Такт линеен по (p − 1), а экономия вычислений — 1/p: за коленом каждая добавка покупает меньше деления и платит целый лишний такт. Поэтому knee_degree() существует как метод — оптимум находится правилом, а не предполагается." },
+            },
+          },
+          {
+            q: {
+              en: "Same knobs at tp = 7: t(7), in ms? Compare with t(4) — this is where “add more GPUs” stops paying.",
+              ru: "Те же ручки при tp = 7: t(7), в\u00a0мс? Сравни с t(4) — именно здесь «бери больше GPU» перестаёт платить.",
+            },
+            answer: 367, tol: 0.5,
+            hint: {
+              en: "800/7 + 120·6/7 + 25·6 = 114.29 + 102.86 + 150 — more than t(4): the beats ate the division.",
+              ru: "800/7 + 120·6/7 + 25·6 = 114.29 + 102.86 + 150 — больше, чем t(4): такты съели деление.",
+            },
+            followUp: {
+              q: { en: "Why exactly does adding GPUs past the knee make the step SLOWER here?", ru: "Почему добавление GPU за коленом делает шаг здесь МЕДЛЕННЕЕ?" },
+              options: [
+                { en: "Going 4 → 7 saves ≈ 86 ms of compute but adds 75 ms of beats and ≈ 13 ms of byte share — net ≈ +2 ms", ru: "Переход 4 → 7 экономит ≈ 86 мс вычислений, но добавляет 75 мс тактов и ≈ 13 мс байтовой доли — чистыми ≈ +2 мс" },
+                { en: "The extra GPUs cannot fit in one switch domain, so the model halves the bandwidth", ru: "Лишние GPU не влезают в один switch-домен, поэтому модель делит bandwidth пополам" },
+                { en: "The weights no longer fit at the larger degree, so swapping dominates", ru: "Веса уже не помещаются на большей степени, поэтому доминирует своппинг" },
+              ],
+              answer: 0,
+              explain: { en: "The beat is linear in (p − 1) while the compute saving is 1/p: past the knee each addition buys less division and pays a full extra beat. That is why knee_degree() exists as a method — the optimum is found by rule, not assumed.", ru: "Такт линеен по (p − 1), а экономия вычислений — 1/p: за коленом каждая добавка покупает меньше деления и платит целый лишний такт. Поэтому knee_degree() существует как метод — оптимум находится правилом, а не предполагается." },
+            },
+          },
+        ],
       },
       {
         id: "q3",
@@ -236,8 +346,8 @@
         },
         answer: 2, tol: 0.2, unit: { en: "GPUs", ru: "GPU" },
         hint: {
-          en: "(16+4)/1 + 1.5 = 21.5 > 15; (16+4)/2 + 1.5 = 11.5 ≤ 15.",
-          ru: "(16+4)/1 + 1.5 = 21.5 > 15; (16+4)/2 + 1.5 = 11.5 ≤ 15.",
+          en: "fits: (weights + kv)/p + 1.5 ≤ 15 — walk the degrees in order and stop at the first that holds.",
+          ru: "fits: (веса + kv)/p + 1.5 ≤ 15 — перебирай степени по порядку и остановись на первой, где неравенство выполняется.",
         },
         followUp: {
           q: { en: "Why doesn't tp = 1 fit, and why is the answer exactly 2?", ru: "Почему tp = 1 не помещается, и почему ответ ровно 2?" },
@@ -249,6 +359,65 @@
           answer: 0,
           explain: { en: "The ledger's lesson: the fixed 1.5 GB (activations, CUDA context, buffers) NEVER divides — that is exactly why more GPUs eventually stop helping in the ledger too. p = 2 is the first degree where the divisible part fits with the fixed part attached.", ru: "Урок ведомости: фиксированные 1.5 ГБ (активации, CUDA-контекст, буферы) НЕ делятся никогда — ровно поэтому и в ведомости больше GPU рано или поздно перестаёт помогать. p = 2 — первая степень, где делимая часть помещается вместе с фиксированной." },
         },
+        // Вариативность №5: фикс 1.5 ГБ — константа ведомости, меняются веса / KV /
+        // бюджет: у вариантов свой минимум-степень, не совпадающий с числами фигур
+        // (2 / 4 / 8 / 16 / 1.5). Ловушка «соседняя степень» (± 1) на расстоянии
+        // 1 ≫ tol 0.2 (запас 5×). followUp переписан под входы варианта (в базе
+        // «почему ответ ровно 2» — это ответ базы). Answers попарно различны:
+        //   (16 + 4)/p + 1.5 ≤ 15 → p = 2 (база);
+        //   (30 + 6)/p + 1.5 ≤ 14 → p = 3 (p = 2: 19.5 > 14; p = 3: 13.5 ≤ 14);
+        //   (40 + 10)/p + 1.5 ≤ 13 → p = 5 (p = 4: 14 > 13; p = 5: 11.5 ≤ 13).
+        variants: [
+          {
+            q: {
+              en: "8B fp16 weights (16 GB) + KV (4 GB) divide by tp; 1.5 GB fixed per GPU does not; budget 15 GB. The minimal degree that fits?",
+              ru: "Веса 8B fp16 (16\u00a0ГБ) + KV (4\u00a0ГБ) делятся на tp; 1.5\u00a0ГБ фиксированных на GPU — нет; бюджет 15\u00a0ГБ. Минимальная подходящая степень?",
+            },
+            answer: 2, tol: 0.2,
+          },
+          {
+            q: {
+              en: "Weights 30 GB + KV 6 GB divide by tp; 1.5 GB fixed per GPU does not; budget 14 GB. The minimal degree that fits?",
+              ru: "Веса 30\u00a0ГБ + KV 6\u00a0ГБ делятся на tp; 1.5\u00a0ГБ фиксированных на GPU — нет; бюджет 14\u00a0ГБ. Минимальная подходящая степень?",
+            },
+            answer: 3, tol: 0.2,
+            hint: {
+              en: "The ledger: (weights + KV) / p + 1.5 against the fourteen GB budget; the divisible part weighs thirty-six GB, so p = 2 puts nineteen and a half on each GPU — over budget.",
+              ru: "Ведомость: (веса + KV) / p + 1.5 против бюджета в четырнадцать ГБ; делимая часть весит тридцать шесть ГБ, поэтому p = 2 кладёт девятнадцать с половиной на каждый GPU — за бюджетом.",
+            },
+            followUp: {
+              q: { en: "Why doesn't tp = 2 fit, and why is the answer exactly 3?", ru: "Почему tp = 2 не помещается, и почему ответ ровно 3?" },
+              options: [
+                { en: "At p = 2 the whole 36 GB of weights+KV halves to 18 + 1.5 = 19.5 GB — over the 14 GB budget; at p = 3 the divisible part splits three ways: 12 + 1.5 = 13.5 ≤ 14", ru: "При p = 2 все 36 ГБ весов+KV делятся пополам: 18 + 1.5 = 19.5 ГБ — за бюджетом 14 ГБ; при p = 3 делимая часть делится на три: 12 + 1.5 = 13.5 ≤ 14" },
+                { en: "Because TP degrees must be powers of two", ru: "Потому что степени TP должны быть степенями двойки" },
+                { en: "Because 1.5 × 2 = 3 GB of fixed memory must also divide", ru: "Потому что 1.5 × 2 = 3 ГБ фиксированной памяти тоже должны делиться" },
+              ],
+              answer: 0,
+              explain: { en: "The ledger's lesson: the fixed 1.5 GB (activations, CUDA context, buffers) NEVER divides — that is exactly why more GPUs eventually stop helping in the ledger too. p = 3 is the first degree where the divisible part fits with the fixed part attached.", ru: "Урок ведомости: фиксированные 1.5 ГБ (активации, CUDA-контекст, буферы) НЕ делятся никогда — ровно поэтому и в ведомости больше GPU рано или поздно перестаёт помогать. p = 3 — первая степень, где делимая часть помещается вместе с фиксированной." },
+            },
+          },
+          {
+            q: {
+              en: "Weights 40 GB + KV 10 GB divide by tp; 1.5 GB fixed per GPU does not; budget 13 GB. The minimal degree that fits?",
+              ru: "Веса 40\u00a0ГБ + KV 10\u00a0ГБ делятся на tp; 1.5\u00a0ГБ фиксированных на GPU — нет; бюджет 13\u00a0ГБ. Минимальная подходящая степень?",
+            },
+            answer: 5, tol: 0.2,
+            hint: {
+              en: "The ledger: (weights + KV) / p + one and a half against the thirteen GB budget; the divisible part weighs fifty GB, so p = 4 puts fourteen GB on each GPU — just over.",
+              ru: "Ведомость: (веса + KV) / p + полтора против бюджета в тринадцать ГБ; делимая часть весит пятьдесят ГБ, поэтому p = 4 кладёт четырнадцать ГБ на каждый GPU — чуть за бюджетом.",
+            },
+            followUp: {
+              q: { en: "Why doesn't tp = 4 fit, and why is the answer exactly 5?", ru: "Почему tp = 4 не помещается, и почему ответ ровно 5?" },
+              options: [
+                { en: "At p = 4 the divisible part is 50/4 + 1.5 = 14 GB — over the 13 GB budget; at p = 5 it splits five ways: 10 + 1.5 = 11.5 ≤ 13", ru: "При p = 4 делимая часть равна 50/4 + 1.5 = 14 ГБ — за бюджетом 13 ГБ; при p = 5 она делится на пять: 10 + 1.5 = 11.5 ≤ 13" },
+                { en: "Because TP degrees must be powers of two", ru: "Потому что степени TP должны быть степенями двойки" },
+                { en: "Because 1.5 × 2 = 3 GB of fixed memory must also divide", ru: "Потому что 1.5 × 2 = 3 ГБ фиксированной памяти тоже должны делиться" },
+              ],
+              answer: 0,
+              explain: { en: "The ledger's lesson: the fixed 1.5 GB (activations, CUDA context, buffers) NEVER divides — that is exactly why more GPUs eventually stop helping in the ledger too. p = 5 is the first degree where the divisible part fits with the fixed part attached.", ru: "Урок ведомости: фиксированные 1.5 ГБ (активации, CUDA-контекст, буферы) НЕ делятся никогда — ровно поэтому и в ведомости больше GPU рано или поздно перестаёт помогать. p = 5 — первая степень, где делимая часть помещается вместе с фиксированной." },
+            },
+          },
+        ],
       },
     ],
     exercises: [

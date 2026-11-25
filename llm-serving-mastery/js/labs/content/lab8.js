@@ -23,6 +23,18 @@
 <p>Привычка лабы: заморозить таблицу контракта (ситуация → механизм → ожидаемый код) ДО кода шлюза, потом дать дриллам и журналу её проверить. Все числа здесь — заявленный мок движка: <code>ttft</code> 0.15 с, 0.02 с за токен, 4 слота обслуживания + 4 места очереди, — арифметика, которую можно проверить руками, а не измерение vLLM.</p>`,
     },
     heroTag: { en: "429, envelope, error map", ru: "429, конверт допуска, карта ошибок" },
+    glossary: [
+      [{ en: "gateway", ru: "шлюз" }, { en: "a thin HTTP layer between clients and the engine: Topic 06's mechanisms (validation, admission, cancellation) turned into one contract.", ru: "тонкий HTTP-слой между клиентами и движком: механизмы Темы 06 (валидация, допуск, отмена), собранные в один контракт." }],
+      [{ en: "burst", ru: "бурст" }, { en: "many clients arriving at once; the burst drill measures how many the envelope admits before the honest refusals begin.", ru: "много клиентов, приходящих одновременно; дрилл бурста меряет, сколько конверт впускает до первых честных отказов." }],
+      [{ en: "rate limit (429)", ru: "лимит запросов" }, { en: "the honest refusal: 429 — too many requests, a decision to come back later, never a disguised success; Retry-After says when.", ru: "честный отказ: 429 — слишком много запросов, решение вернуться позже, а не замаскированный успех; Retry-After говорит, когда." }],
+      [{ en: "bounded queue", ru: "ограниченная очередь" }, { en: "a fixed number of waiting seats — honest waiting; an unbounded queue hides overload as latency, the anti-pattern T06 drilled.", ru: "фиксированное число мест ожидания — честное ожидание; безграничная очередь прячет перегрузку в латентности — тот антипаттерн, что гоняла T06." }],
+      [{ en: "admission envelope", ru: "конверт допуска" }, { en: "the closed form of a burst: admitted = min(arrivals, capacity + queue_slots); everyone past both gets an immediate 429.", ru: "замкнутая форма бурста: admitted = min(заявки, capacity + queue_slots); все, кто сверх обоих, получают немедленный 429." }],
+      [{ en: "service slot", ru: "слот обслуживания" }, { en: "one in-flight place that generates an answer; capacity is the number of slots — the same bounded concurrency you metered in T06.", ru: "одно место в полёте, где генерируется ответ; capacity — это число слотов, та же ограниченная конкурентность, которую мерили в T06." }],
+      [{ en: "queue seat", ru: "место очереди" }, { en: "a waiting place inside the system: a queued request is already admitted and will be served, so the seats are slots + queue.", ru: "место ожидания внутри системы: запрос в очереди уже допущен и будет обслужен, поэтому места — это слоты + очередь." }],
+      [{ en: "Little's law", ru: "закон Литтла" }, { en: "L = λ × W: the average number of requests in the system is the arrival rate times the time one request holds its seat.", ru: "L = λ × W: среднее число заявок в системе равно темпу прихода, умноженному на время, которое один запрос держит своё место." }],
+      [{ en: "saturation knee", ru: "колено насыщения" }, { en: "the T06 load where demand hits the seats; here λ* = seats / W — past it, extra arrivals are refused, not delayed.", ru: "нагрузка из T06, при которой спрос упирается в места; здесь λ* = места / W — за ней лишние заявки отбиваются, а не откладываются." }],
+      [{ en: "outcome → status map", ru: "карта «исход → статус»" }, { en: "the frozen contract: invalid 400, overloaded 429 + Retry-After, engine down 503, deadline 504, everything else 500 without internals.", ru: "замороженный контракт: невалидно 400, перегрузка 429 + Retry-After, движок лежит 503, дедлайн 504, остальное 500 без внутренностей." }],
+    ],
     figures: [
       {
         id: "lab8-error-map",
@@ -145,6 +157,43 @@
           answer: 0,
           explain: { en: "The envelope's point: a bounded queue is honest waiting; an unbounded queue hides overload as latency. That is why rejection starts exactly at capacity + queue_slots, not at capacity.", ru: "В этом смысл конверта: ограниченная очередь — честное ожидание; безграничная очередь прячет перегрузку в латентности. Поэтому отказ начинается ровно за capacity + queue_slots, а не за capacity." },
         },
+        // Вариативность №5 (contract: instructor/plans/quiz-variants-contract-20261125.ru.md).
+        // Меняется только вход «бурст»; места — константа заявленной модели (4 + 4 = 8).
+        // Отказ = бурст − места: 30 → 22 (база), 40 → 32, 35 → 27. Ближайшие ловушки —
+        // «только слоты» (бурст − 4) и «число допущенных» (8): расстояние ≥ 4 ≫ tol 0.5.
+        // followUp без чисел входа — наследуется. Answers попарно различны; числа
+        // фигур (24 / 16 / 8 / 17.0 / 0.47) не тронуты.
+        variants: [
+          {
+            q: {
+              en: "A burst of 30 clients hits a gateway with 4 service slots and 4 queue seats. How many honest 429 answers does the envelope predict?",
+              ru: "Бурст из 30 клиентов бьёт в\u00a0шлюз с 4 слотами обслуживания и 4 местами очереди. Сколько честных 429 предсказывает конверт?",
+            },
+            answer: 22, tol: 0.5,
+          },
+          {
+            q: {
+              en: "A burst of 40 clients hits a gateway with 4 service slots and 4 queue seats. How many honest 429 answers does the envelope predict?",
+              ru: "Бурст из 40 клиентов бьёт в\u00a0шлюз с 4 слотами обслуживания и 4 местами очереди. Сколько честных 429 предсказывает конверт?",
+            },
+            answer: 32, tol: 0.5,
+            hint: {
+              en: "Seats = capacity + queue = 8; everyone past them is refused: 40 − 8.",
+              ru: "Места = capacity + queue = 8; все, кто сверх, получают отказ: 40 − 8.",
+            },
+          },
+          {
+            q: {
+              en: "A burst of 35 clients hits a gateway with 4 service slots and 4 queue seats. How many honest 429 answers does the envelope predict?",
+              ru: "Бурст из 35 клиентов бьёт в\u00a0шлюз с 4 слотами обслуживания и 4 местами очереди. Сколько честных 429 предсказывает конверт?",
+            },
+            answer: 27, tol: 0.5,
+            hint: {
+              en: "Seats = capacity + queue = 8; everyone past them is refused: 35 − 8.",
+              ru: "Места = capacity + queue = 8; все, кто сверх, получают отказ: 35 − 8.",
+            },
+          },
+        ],
       },
       {
         id: "q2",
@@ -167,6 +216,43 @@
           answer: 0,
           explain: { en: "W = ttft + per_token × n: one prefill, n decode steps. This is the same two-phase split as T04's wall model — the mock just names its constants.", ru: "W = ttft + per_token × n: один prefill, n шагов decode. То же двухфазное разложение, что в wall-модели T04 — мок лишь называет свои константы." },
         },
+        // Вариативность №5: ручки мока — константы модели (ttft 0.15 с, 0.02 с за токен),
+        // меняется длина запроса. W = 0.15 + 0.02 × n:
+        //   96 → 2.07 (база), 120 → 0.15 + 2.40 = 2.55, 140 → 0.15 + 2.80 = 2.95.
+        // Ловушка «забыт ttft» (= 0.02 × n) на расстоянии 0.15 ≫ tol 0.01 (запас 15×).
+        // Числа модели/фигур (64 / 1.43 / 96 / 16) не тронуты. followUp без чисел
+        // входа — наследуется. Answers попарно различны.
+        variants: [
+          {
+            q: {
+              en: "With the declared mock handles (ttft 0.15 s, 0.02 s per token), how long does one full 96-token request take, in seconds?",
+              ru: "С заявленными ручками мока (<code>ttft</code> 0.15\u00a0с, 0.02\u00a0с за токен) — сколько длится полный запрос на 96 токенов, в\u00a0секундах?",
+            },
+            answer: 2.07, tol: 0.01,
+          },
+          {
+            q: {
+              en: "With the declared mock handles (ttft 0.15 s, 0.02 s per token), how long does one full 120-token request take, in seconds?",
+              ru: "С заявленными ручками мока (<code>ttft</code> 0.15\u00a0с, 0.02\u00a0с за токен) — сколько длится полный запрос на 120 токенов, в\u00a0секундах?",
+            },
+            answer: 2.55, tol: 0.01,
+            hint: {
+              en: "W = 0.15 + 0.02 × 120 = 0.15 + 2.40.",
+              ru: "W = 0.15 + 0.02 × 120 = 0.15 + 2.40.",
+            },
+          },
+          {
+            q: {
+              en: "With the declared mock handles (ttft 0.15 s, 0.02 s per token), how long does one full 140-token request take, in seconds?",
+              ru: "С заявленными ручками мока (<code>ttft</code> 0.15\u00a0с, 0.02\u00a0с за токен) — сколько длится полный запрос на 140 токенов, в\u00a0секундах?",
+            },
+            answer: 2.95, tol: 0.01,
+            hint: {
+              en: "W = 0.15 + 0.02 × 140 = 0.15 + 2.80.",
+              ru: "W = 0.15 + 0.02 × 140 = 0.15 + 2.80.",
+            },
+          },
+        ],
       },
       {
         id: "q3",
@@ -176,8 +262,8 @@
         },
         answer: 3.86, tol: 0.5, unit: { en: "req/s", ru: "req/s" },
         hint: {
-          en: "λ* = seats / W = 8 / 2.07 ≈ 3.86.",
-          ru: "λ* = места / W = 8 / 2.07 ≈ 3.86.",
+          en: "λ* = seats / W — take the seats from the question and the W from q2.",
+          ru: "λ* = места / W — места из условия, W — из q2.",
         },
         followUp: {
           q: { en: "Why do the queue seats appear in the knee λ* = seats / W?", ru: "Почему места очереди входят в колено λ* = seats / W?" },
@@ -189,6 +275,44 @@
           answer: 0,
           explain: { en: "A queued request is in the system (it will be served), so Little's law with L = seats admits λ up to seats/W before the envelope overflows. Past that knee, extra demand is refused immediately — 429, not delay.", ru: "Запрос в очереди находится в системе (он будет обслужен), поэтому закон Литтла при L = seats допускает λ до seats/W, прежде чем конверт переполнится. За коленом лишний спрос отбивается сразу — 429, а не задержка." },
         },
+        // Вариативность №5: места 8 — константа модели, меняется W; вариант объявляет
+        // свой W в тексте вопроса (квизы независимы). λ* = 8 / W, W = 0.15 + 0.02 × n:
+        //   96 → 8 / 2.07 = 3.865 ≈ 3.86 (база), 110 → 8 / 2.35 = 3.404 ≈ 3.40,
+        //   90 → 8 / 1.95 = 4.103 ≈ 4.10.
+        // Ловушки: ответ «самим W» (расстояние ≥ 1.05 ≈ 2.1× tol 0.5) и «capacity вместо
+        // мест» 4 / W (≥ 1.70). Числа фигур (17.0 / 0.47) не тронуты. followUp без чисел
+        // входа — наследуется. Answers попарно различны.
+        variants: [
+          {
+            q: {
+              en: "Queue knee λ* for the same 96-token requests (W from q2) with 8 in-system seats — in req/s?",
+              ru: "Колено очереди λ* для тех же запросов на 96 токенов (W из q2) при 8 местах в\u00a0системе — в req/s?",
+            },
+            answer: 3.86, tol: 0.5,
+          },
+          {
+            q: {
+              en: "Queue knee λ* for 110-token requests (W = 0.15 + 0.02 × 110 = 2.35 s) with 8 in-system seats — in req/s?",
+              ru: "Колено очереди λ* для запросов на 110 токенов (W = 0.15 + 0.02 × 110 = 2.35 с) при 8 местах в\u00a0системе — в req/s?",
+            },
+            answer: 3.4, tol: 0.5,
+            hint: {
+              en: "λ* = seats / W = 8 / 2.35.",
+              ru: "λ* = места / W = 8 / 2.35.",
+            },
+          },
+          {
+            q: {
+              en: "Queue knee λ* for 90-token requests (W = 0.15 + 0.02 × 90 = 1.95 s) with 8 in-system seats — in req/s?",
+              ru: "Колено очереди λ* для запросов на 90 токенов (W = 0.15 + 0.02 × 90 = 1.95 с) при 8 местах в\u00a0системе — в req/s?",
+            },
+            answer: 4.1, tol: 0.5,
+            hint: {
+              en: "λ* = seats / W = 8 / 1.95.",
+              ru: "λ* = места / W = 8 / 1.95.",
+            },
+          },
+        ],
       },
       {
         id: "q4",
@@ -198,8 +322,8 @@
         },
         answer: 4, tol: 0.5, unit: { en: "requests", ru: "запросов" },
         hint: {
-          en: "Each tick the interactive side keeps 4 − 2 = 2 slots; within the 2-tick SLA that is 2 × 2.",
-          ru: "В каждый тик интерактиву остаются 4 − 2 = 2\u00a0слота; за 2\u00a0тика SLA это 2 × 2.",
+          en: "Each tick the interactive side keeps 4 − 2 slots; multiply by the number of SLA ticks.",
+          ru: "В каждый тик интерактиву остаются 4 − 2 слота; умножь на число тиков SLA.",
         },
         followUp: {
           q: { en: "Why not hand the batch pool all 4 slots for the whole window?", ru: "Почему не отдать batch-пулу все 4\u00a0слота на всё окно?" },
@@ -211,6 +335,64 @@
           answer: 0,
           explain: { en: "The two-queue economy (capstone contract v2): M2 = served_inter − 2 × timed_out_inter + 0.5 × served_batch. Offline traffic is patient and cheap per job, but a timed-out interactive request costs four batch credits. Handing slots to batch is the policy's right — bounded by B_MAX and priced by the metric, never the whole envelope.", ru: "Экономика двух очередей (контракт капстоуна v2): M2 = served_inter − 2 × timed_out_inter + 0.5 × served_batch. Офлайн-трафик терпелив и дёшев за работу, но таймаут интерактива стоит четырёх batch-кредитов. Отдать слоты батчу — право политики, ограниченное потолком B_MAX и оплачиваемое метрикой, но никогда весь конверт." },
         },
+        // Вариативность №5: формула та же — интерактивные слоты × тики SLA
+        // ((всего − batch) × SLA); окно задано больше SLA. Входы крупнее базовых,
+        // чтобы ответ не совпал с малыми числами фигур (4 / 8):
+        //   (4 − 2) × 2 = 4 (база), (6 − 2) × 3 = 12, (7 − 2) × 3 = 15.
+        // Ловушка «всё окно вместо SLA» на расстоянии ≥ 8 ≫ tol 0.5; «batch × SLA»
+        // и «один тик» — ещё дальше. followUp переписан без числа слотов (в базе
+        // «all 4 slots» — это вход базы). Answers попарно различны.
+        variants: [
+          {
+            q: {
+              en: "The gateway runs a batch window of 3 ticks: 2 of its 4 slots go to the batch pool (offline inference), the rest serve interactive traffic. An interactive request must be served within 2 ticks (the SLA). How many interactive requests does the gateway serve during the first 2 ticks of the window?",
+              ru: "Шлюз держит batch-окно в 3\u00a0тика: 2 из 4\u00a0слотов уходят batch-пулу (офлайн-инференс), остальные обслуживают интерактив. Интерактивный запрос должен быть обслужен за 2\u00a0тика (SLA). Сколько интерактивных запросов шлюз обслужит за первые 2\u00a0тика окна?",
+            },
+            answer: 4, tol: 0.5,
+          },
+          {
+            q: {
+              en: "The gateway runs a batch window of 5 ticks: 2 of its 6 slots go to the batch pool (offline inference), the rest serve interactive traffic. An interactive request must be served within 3 ticks (the SLA). How many interactive requests does the gateway serve during the first 3 ticks of the window?",
+              ru: "Шлюз держит batch-окно в 5\u00a0тиков: 2 из 6\u00a0слотов уходят batch-пулу (офлайн-инференс), остальные обслуживают интерактив. Интерактивный запрос должен быть обслужен за 3\u00a0тика (SLA). Сколько интерактивных запросов шлюз обслужит за первые 3\u00a0тика окна?",
+            },
+            answer: 12, tol: 0.5,
+            hint: {
+              en: "Each tick the interactive side keeps 6 − 2 slots; within the 3-tick SLA that is (6 − 2) × 3.",
+              ru: "В каждый тик интерактиву остаются 6 − 2 слота; за 3\u00a0тика SLA это (6 − 2) × 3.",
+            },
+            followUp: {
+              q: { en: "Why not hand the batch pool every slot for the whole window?", ru: "Почему не отдать batch-пулу все слоты на всё окно?" },
+              options: [
+                { en: "An interactive SLA timeout costs ×2 in the metric, while a served batch job earns only 0.5 — starving interactive slots for batch always loses", ru: "Таймаут интерактивного SLA стоит в метрике ×2, а обслуженная batch-работа приносит только 0.5 — голодание интерактива ради батча всегда проигрывает" },
+                { en: "Batch jobs cannot be queued — each one permanently owns a dedicated slot", ru: "Batch-задания нельзя ставить в очередь — каждое навсегда занимает выделенный слот" },
+                { en: "The engine cannot mix interactive and batch requests in one slot pool", ru: "Движок не умеет смешивать интерактивные и batch-заявки в одном пуле слотов" },
+              ],
+              answer: 0,
+              explain: { en: "The two-queue economy (capstone contract v2): M2 = served_inter − 2 × timed_out_inter + 0.5 × served_batch. Offline traffic is patient and cheap per job, but a timed-out interactive request costs four batch credits. Handing slots to batch is the policy's right — bounded by B_MAX and priced by the metric, never the whole envelope.", ru: "Экономика двух очередей (контракт капстоуна v2): M2 = served_inter − 2 × timed_out_inter + 0.5 × served_batch. Офлайн-трафик терпелив и дёшев за работу, но таймаут интерактива стоит четырёх batch-кредитов. Отдать слоты батчу — право политики, ограниченное потолком B_MAX и оплачиваемое метрикой, но никогда весь конверт." },
+            },
+          },
+          {
+            q: {
+              en: "The gateway runs a batch window of 6 ticks: 2 of its 7 slots go to the batch pool (offline inference), the rest serve interactive traffic. An interactive request must be served within 3 ticks (the SLA). How many interactive requests does the gateway serve during the first 3 ticks of the window?",
+              ru: "Шлюз держит batch-окно в 6\u00a0тиков: 2 из 7\u00a0слотов уходят batch-пулу (офлайн-инференс), остальные обслуживают интерактив. Интерактивный запрос должен быть обслужен за 3\u00a0тика (SLA). Сколько интерактивных запросов шлюз обслужит за первые 3\u00a0тика окна?",
+            },
+            answer: 15, tol: 0.5,
+            hint: {
+              en: "Each tick the interactive side keeps 7 − 2 slots; within the 3-tick SLA that is (7 − 2) × 3.",
+              ru: "В каждый тик интерактиву остаются 7 − 2 слота; за 3\u00a0тика SLA это (7 − 2) × 3.",
+            },
+            followUp: {
+              q: { en: "Why not hand the batch pool every slot for the whole window?", ru: "Почему не отдать batch-пулу все слоты на всё окно?" },
+              options: [
+                { en: "An interactive SLA timeout costs ×2 in the metric, while a served batch job earns only 0.5 — starving interactive slots for batch always loses", ru: "Таймаут интерактивного SLA стоит в метрике ×2, а обслуженная batch-работа приносит только 0.5 — голодание интерактива ради батча всегда проигрывает" },
+                { en: "Batch jobs cannot be queued — each one permanently owns a dedicated slot", ru: "Batch-задания нельзя ставить в очередь — каждое навсегда занимает выделенный слот" },
+                { en: "The engine cannot mix interactive and batch requests in one slot pool", ru: "Движок не умеет смешивать интерактивные и batch-заявки в одном пуле слотов" },
+              ],
+              answer: 0,
+              explain: { en: "The two-queue economy (capstone contract v2): M2 = served_inter − 2 × timed_out_inter + 0.5 × served_batch. Offline traffic is patient and cheap per job, but a timed-out interactive request costs four batch credits. Handing slots to batch is the policy's right — bounded by B_MAX and priced by the metric, never the whole envelope.", ru: "Экономика двух очередей (контракт капстоуна v2): M2 = served_inter − 2 × timed_out_inter + 0.5 × served_batch. Офлайн-трафик терпелив и дёшев за работу, но таймаут интерактива стоит четырёх batch-кредитов. Отдать слоты батчу — право политики, ограниченное потолком B_MAX и оплачиваемое метрикой, но никогда весь конверт." },
+            },
+          },
+        ],
       },
     ],
     exercises: [

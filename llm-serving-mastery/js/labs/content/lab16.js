@@ -137,6 +137,45 @@
           answer: 0,
           explain: { en: "The draft window bounds the cycle: n proposals + 1 correction is everything one verify pass can pay for. More tokens per cycle require a longer draft — and a longer cycle, which q2 prices.", ru: "Окно draft ограничивает цикл: n предложений + 1 коррекция — вот всё, что может оплатить один verify-проход. Больше токенов за цикл требует более длинного draft — и более длинного цикла, что цену выставит q2." },
         },
+        // Вариативность №5 (contract: instructor/plans/quiz-variants-contract-20261125.ru.md).
+        // variants[0] = base byte-equal; every answer is recomputed from the
+        // lab's own declared formula E = (1 − p^(n+1)) / (1 − p), never invented:
+        //   p = 0.85, n = 3 → (1 − 0.85^4) / 0.15 = 3.186625 → 3.19
+        //   p = 0.9,  n = 5 → (1 − 0.9^6) / 0.1  = 4.68559  → 4.69
+        // tol 0.03: ≥ the 0.01 rounding step of the hint, < the nearest trap
+        // (exponent-n answer 2.57 / 4.10; ceiling 4 / 6). Answers pairwise
+        // distinct; none matches a figure number (3.05 / 1.69 / 0.43 live there).
+        variants: [
+          {
+            q: {
+              en: "Acceptance rate p = 0.75, the draft proposes n = 4 tokens per cycle. How many tokens does one cycle produce on average?",
+              ru: "Acceptance rate p = 0.75, draft предлагает n = 4 токена за цикл. Сколько токенов производит цикл в среднем?",
+            },
+            answer: 3.05, tol: 0.03,
+          },
+          {
+            q: {
+              en: "Acceptance rate p = 0.85, the draft proposes n = 3 tokens per cycle. How many tokens does one cycle produce on average?",
+              ru: "Acceptance rate p = 0.85, draft предлагает n = 3 токена за цикл. Сколько токенов производит цикл в среднем?",
+            },
+            answer: 3.19, tol: 0.03,
+            hint: {
+              en: "E = (1 − p^(n+1)) / (1 − p) = (1 − 0.85^4) / 0.15. A fully accepted cycle earns n + 1 = 4.",
+              ru: "E = (1 − p^(n+1)) / (1 − p) = (1 − 0.85^4) / 0.15. Полностью принятый цикл приносит n + 1 = 4.",
+            },
+          },
+          {
+            q: {
+              en: "Acceptance rate p = 0.9, the draft proposes n = 5 tokens per cycle. How many tokens does one cycle produce on average?",
+              ru: "Acceptance rate p = 0.9, draft предлагает n = 5 токенов за цикл. Сколько токенов производит цикл в среднем?",
+            },
+            answer: 4.69, tol: 0.03,
+            hint: {
+              en: "E = (1 − p^(n+1)) / (1 − p) = (1 − 0.9^6) / 0.1. A fully accepted cycle earns n + 1 = 6.",
+              ru: "E = (1 − p^(n+1)) / (1 − p) = (1 − 0.9^6) / 0.1. Полностью принятый цикл приносит n + 1 = 6.",
+            },
+          },
+        ],
       },
       {
         id: "q2",
@@ -159,6 +198,63 @@
           answer: 0,
           explain: { en: "The n-trade-off is real: the ★-challenge sweeps n for several p values and the peak moves. For the declared GPU handles the peak sits at n = 3, not at the ceiling.", ru: "Размен n настоящий: ★-челлендж прогоняет n при нескольких p, и пик движется. Для заявленных GPU-ручек пик сидит на n = 3, а не на потолке." },
         },
+        // Вариативность №5: GPU-ручки фиксированы (decode 20 / draft 4 / verify 20),
+        // меняются p и n. Пересчёт по speedup = E × decode_ms / (n × draft_ms + verify_ms):
+        //   p = 0.85, n = 3 → 3.186625 × 20 / 32 = 1.99164063 → 1.99 (цикл 12 + 20 = 32 мс)
+        //   p = 0.9,  n = 5 → 4.68559  × 20 / 40 = 2.342795  → 2.34 (цикл 20 + 20 = 40 мс)
+        // followUp-объяснение переписано: «пик сидит на n = 3» верен только для p = 0.75,
+        // у вариантов пик свой (n = 5 / n = 7). Answers попарно различны, чисел фигур нет.
+        variants: [
+          {
+            q: {
+              en: "Declared GPU handles: decode 20 ms, draft 4 ms, verify 20 ms, p = 0.75, n = 4. What speedup over plain decode does the formula promise?",
+              ru: "Заявленные GPU-ручки: decode 20 мс, draft 4 мс, verify 20 мс, p = 0.75, n = 4. Какое ускорение против простого декода обещает формула?",
+            },
+            answer: 1.69, tol: 0.05,
+          },
+          {
+            q: {
+              en: "Declared GPU handles: decode 20 ms, draft 4 ms, verify 20 ms, p = 0.85, n = 3. What speedup over plain decode does the formula promise?",
+              ru: "Заявленные GPU-ручки: decode 20 мс, draft 4 мс, verify 20 мс, p = 0.85, n = 3. Какое ускорение против простого декода обещает формула?",
+            },
+            answer: 1.99, tol: 0.05,
+            hint: {
+              en: "speedup = E × decode_ms / (n × draft_ms + verify_ms) = 3.19 × 20 / (12 + 20).",
+              ru: "speedup = E × decode_ms / (n × draft_ms + verify_ms) = 3.19 × 20 / (12 + 20).",
+            },
+            followUp: {
+              q: { en: "Why is a longer draft (bigger n) not automatically a bigger speedup?", ru: "Почему более длинный draft (больше n) — не автоматически большее ускорение?" },
+              options: [
+                { en: "The cycle cost grows linearly with n, while E grows slower and saturates at n + 1 — past the peak you drag dead draft weight", ru: "Цена цикла растёт линейно с n, а E растёт медленнее и насыщается на n + 1 — за пиком тащишь мёртвый груз draft-токенов" },
+                { en: "Because verify passes get more expensive per token as n grows, even on GPU", ru: "Потому что verify-проходы дорожают за токен с ростом n даже на GPU" },
+                { en: "Because p falls as n grows — the model gets tired of agreeing", ru: "Потому что p падает с ростом n — модель устаёт соглашаться" },
+              ],
+              answer: 0,
+              explain: { en: "The n-trade-off is real: the ★-challenge sweeps n for several p values and the peak moves with p. The winning draft length is found by sweeping, not by taking the longest window.", ru: "Размен n настоящий: ★-челлендж прогоняет n при нескольких p, и пик движется вместе с p. Выигрышную длину draft находят развёрткой, а не выбором самого длинного окна." },
+            },
+          },
+          {
+            q: {
+              en: "Declared GPU handles: decode 20 ms, draft 4 ms, verify 20 ms, p = 0.9, n = 5. What speedup over plain decode does the formula promise?",
+              ru: "Заявленные GPU-ручки: decode 20 мс, draft 4 мс, verify 20 мс, p = 0.9, n = 5. Какое ускорение против простого декода обещает формула?",
+            },
+            answer: 2.34, tol: 0.05,
+            hint: {
+              en: "speedup = E × decode_ms / (n × draft_ms + verify_ms) = 4.69 × 20 / (20 + 20).",
+              ru: "speedup = E × decode_ms / (n × draft_ms + verify_ms) = 4.69 × 20 / (20 + 20).",
+            },
+            followUp: {
+              q: { en: "Why is a longer draft (bigger n) not automatically a bigger speedup?", ru: "Почему более длинный draft (больше n) — не автоматически большее ускорение?" },
+              options: [
+                { en: "The cycle cost grows linearly with n, while E grows slower and saturates at n + 1 — past the peak you drag dead draft weight", ru: "Цена цикла растёт линейно с n, а E растёт медленнее и насыщается на n + 1 — за пиком тащишь мёртвый груз draft-токенов" },
+                { en: "Because verify passes get more expensive per token as n grows, even on GPU", ru: "Потому что verify-проходы дорожают за токен с ростом n даже на GPU" },
+                { en: "Because p falls as n grows — the model gets tired of agreeing", ru: "Потому что p падает с ростом n — модель устаёт соглашаться" },
+              ],
+              answer: 0,
+              explain: { en: "The n-trade-off is real: the ★-challenge sweeps n for several p values and the peak moves with p. The winning draft length is found by sweeping, not by taking the longest window.", ru: "Размен n настоящий: ★-челлендж прогоняет n при нескольких p, и пик движется вместе с p. Выигрышную длину draft находят развёрткой, а не выбором самого длинного окна." },
+            },
+          },
+        ],
       },
       {
         id: "q3",
@@ -181,6 +277,64 @@
           answer: 0,
           explain: { en: "The formula is not wrong — the handles are. The GPU wins because one forward prices the whole candidate tail; a CPU pays per token, and the measured A/B in the live section will say exactly that on your machine.", ru: "Формула не врёт — врут ручки. GPU выигрывает, потому что один проход оценивает весь кусок кандидатов; CPU платит за каждый токен, и живой A/B в секции ниже скажет ровно это на твоей машине." },
         },
+        // Вариативность №5: CPU-ручки фиксированы (decode 130 / draft 70 / verify 650),
+        // меняются p и n — вердикт «ниже 1» сохраняется у всех вариантов.
+        // Пересчёт по speedup = E × decode_ms / (n × draft_ms + verify_ms):
+        //   p = 0.85, n = 3 → 3.186625 × 130 / 860  = 0.48169913 → 0.48 (цикл 210 + 650 = 860 мс)
+        //   p = 0.9,  n = 5 → 4.68559  × 130 / 1000 = 0.60912670 → 0.61 (цикл 350 + 650 = 1000 мс)
+        // followUp-опция переписана без чисел: в базе «checking 5 tokens» — это n + 1 = 5
+        // только для базового n = 4. Answers попарно различны, чисел фигур нет.
+        variants: [
+          {
+            q: {
+              en: "Same p = 0.75, n = 4, but CPU handles: decode 130 ms, draft 70 ms, verify 650 ms. What does the formula return now?",
+              ru: "Те же p = 0.75, n = 4, но CPU-ручки: decode 130 мс, draft 70 мс, verify 650 мс. Что вернёт формула теперь?",
+            },
+            answer: 0.43, tol: 0.03,
+          },
+          {
+            q: {
+              en: "CPU handles: decode 130 ms, draft 70 ms, verify 650 ms, p = 0.85, n = 3. What does the formula return now?",
+              ru: "CPU-ручки: decode 130 мс, draft 70 мс, verify 650 мс, p = 0.85, n = 3. Что вернёт формула теперь?",
+            },
+            answer: 0.48, tol: 0.03,
+            hint: {
+              en: "Same formula, new handles: 3.19 × 130 / (210 + 650). Below 1 means the draft engine is a slowdown.",
+              ru: "Формула та же, ручки новые: 3.19 × 130 / (210 + 650). Ниже 1 — draft-движок замедляет.",
+            },
+            followUp: {
+              q: { en: "Which formula assumption do the CPU handles break?", ru: "Какое предположение формулы ломают CPU-ручки?" },
+              options: [
+                { en: "Verification in one batched pass: on a CPU checking the candidate tail costs like decoding it, so verify_ms grows with the chunk", ru: "Верификация одним батч-проходом: на CPU проверка куска кандидатов стоит как его декодирование, поэтому verify_ms растёт с куском" },
+                { en: "The acceptance probability p — CPU models agree less with their drafts", ru: "Вероятность принятия p — CPU-модели меньше соглашаются со своими draft" },
+                { en: "The per-cycle ceiling n + 1 — on a CPU a cycle can earn more tokens", ru: "Потолок цикла n + 1 — на CPU цикл может заработать больше токенов" },
+              ],
+              answer: 0,
+              explain: { en: "The formula is not wrong — the handles are. The GPU wins because one forward prices the whole candidate tail; a CPU pays per token, and the measured A/B in the live section will say exactly that on your machine.", ru: "Формула не врёт — врут ручки. GPU выигрывает, потому что один проход оценивает весь кусок кандидатов; CPU платит за каждый токен, и живой A/B в секции ниже скажет ровно это на твоей машине." },
+            },
+          },
+          {
+            q: {
+              en: "CPU handles: decode 130 ms, draft 70 ms, verify 650 ms, p = 0.9, n = 5. What does the formula return now?",
+              ru: "CPU-ручки: decode 130 мс, draft 70 мс, verify 650 мс, p = 0.9, n = 5. Что вернёт формула теперь?",
+            },
+            answer: 0.61, tol: 0.03,
+            hint: {
+              en: "Same formula, new handles: 4.69 × 130 / (350 + 650). Below 1 means the draft engine is a slowdown.",
+              ru: "Формула та же, ручки новые: 4.69 × 130 / (350 + 650). Ниже 1 — draft-движок замедляет.",
+            },
+            followUp: {
+              q: { en: "Which formula assumption do the CPU handles break?", ru: "Какое предположение формулы ломают CPU-ручки?" },
+              options: [
+                { en: "Verification in one batched pass: on a CPU checking the candidate tail costs like decoding it, so verify_ms grows with the chunk", ru: "Верификация одним батч-проходом: на CPU проверка куска кандидатов стоит как его декодирование, поэтому verify_ms растёт с куском" },
+                { en: "The acceptance probability p — CPU models agree less with their drafts", ru: "Вероятность принятия p — CPU-модели меньше соглашаются со своими draft" },
+                { en: "The per-cycle ceiling n + 1 — on a CPU a cycle can earn more tokens", ru: "Потолок цикла n + 1 — на CPU цикл может заработать больше токенов" },
+              ],
+              answer: 0,
+              explain: { en: "The formula is not wrong — the handles are. The GPU wins because one forward prices the whole candidate tail; a CPU pays per token, and the measured A/B in the live section will say exactly that on your machine.", ru: "Формула не врёт — врут ручки. GPU выигрывает, потому что один проход оценивает весь кусок кандидатов; CPU платит за каждый токен, и живой A/B в секции ниже скажет ровно это на твоей машине." },
+            },
+          },
+        ],
       },
     ],
     exercises: [

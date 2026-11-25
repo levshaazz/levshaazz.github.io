@@ -24,6 +24,18 @@
 <p>Стриминговый лог даёт измеренную сторону того же контракта: измеренный TTFT — момент прихода первого токена, а измеренная скорость — <code>(n − 1) / (t_last − t_first)</code>: промежутки, а не всё окно. Привычка лабы: сначала предскажи по заявленным константам, потом прочитай лог, потом объясни разницу. Читать лог — значит знать, чем он кончился: finish-причина и DONE говорят, завершился ли стрим на самом деле (вторая фигура продолжает эту мысль). Всё здесь считается на заявленных числах и синтетическом логе — это не HTTP-измерение.</p>`,
     },
     heroTag: { en: "TTFT, decode cadence", ru: "TTFT, каденс decode" },
+    glossary: [
+      [{ en: "prefill", ru: "prefill" }, { en: "the phase that reads the whole prompt and produces the first token; the client pays for it inside the TTFT.", ru: "фаза, читающая весь промпт и выдающая первый токен; клиент платит за неё внутри TTFT." }],
+      [{ en: "decode", ru: "decode" }, { en: "the phase that emits the remaining tokens roughly one per step at a near-constant rate.", ru: "фаза, выдающая оставшиеся токены примерно по одному за шаг, с почти постоянной скоростью." }],
+      [{ en: "TTFT", ru: "TTFT" }, { en: "time to first token: prefill plus one decode step; the first token is already paid for here — that is why the rate counts n − 1 gaps.", ru: "время до первого токена: prefill плюс один decode-шаг; первый токен уже оплачен здесь — поэтому скорость считает n − 1 промежутков." }],
+      [{ en: "wall time", ru: "wall-время" }, { en: "the client's end-to-end seconds for a response: nominal wall = TTFT + (n − 1) / decode.", ru: "сквозные секунды ответа у клиента: номинальное wall = TTFT + (n − 1) / decode." }],
+      [{ en: "gap", ru: "промежуток" }, { en: "the interval between two arriving tokens; decode owns only these, not the window before the first chunk.", ru: "интервал между приходом двух токенов; decode владеет только ими, а не окном до первого чанка." }],
+      [{ en: "decode rate", ru: "скорость decode" }, { en: "tokens per second of the decode phase: (n − 1) / (t_last − t_first) on a log; charging the full window would inflate it.", ru: "токены в секунду фазы decode: (n − 1) / (t_last − t_first) по логу; платёж за всё окно её завысил бы." }],
+      [{ en: "arrival log", ru: "лог прихода токенов" }, { en: "the streaming record a client sees: (time, token) pairs; the measured TTFT is the first arrival.", ru: "стриминговая запись, которую видит клиент: пары (время, токен); измеренный TTFT — приход первого." }],
+      [{ en: "chunk", ru: "чанк" }, { en: "one piece of the stream as it arrives; the first chunk carries the first token and starts the decode clock.", ru: "один кусок стрима по мере прихода; первый чанк несёт первый токен и запускает часы decode." }],
+      [{ en: "finish reason", ru: "finish-причина" }, { en: "why the stream ended: stop (the model finished), length (the max_tokens cap), error — read it together with DONE.", ru: "чем кончился стрим: stop (модель закончила), length (потолок max_tokens), error — читать вместе с DONE." }],
+      [{ en: "DONE", ru: "DONE" }, { en: "the stream's terminal marker; DONE alone proves nothing — a terminal error frame can also carry it.", ru: "терминальная отметка стрима; сам по себе DONE ничего не доказывает — его может нести и ошибочный финальный кадр." }],
+    ],
     figures: [
       {
         id: "lab4-stream-clock",
@@ -148,6 +160,61 @@
           answer: 0,
           explain: { en: "TTFT already contains prefill + one decode step. Charging 256 gaps pays the first token twice — the model breaks exactly on short answers, where the double-charge is the largest share.", ru: "TTFT уже содержит prefill и один decode-шаг. Плата за 256 промежутков дважды оплачивает первый токен — модель ломается ровно на коротких ответах, где двойной платёж и есть наибольшая доля." },
         },
+        // Вариативность №5: лаба чиста по фигурам, поэтому разведены сами ручки сервиса
+        // (TTFT, decode) и длина ответа; wall = TTFT + (n − 1) / decode:
+        //   0.24 + 199/25 = 8.2;  0.18 + 459/45 = 10.38.
+        // Ловушка «n вместо n − 1» дальше 2×tol: 1/25 = 0.04 и 1/45 ≈ 0.022 при tol 0.01.
+        variants: [
+          {
+            q: {
+              en: "Nominal wall time of a 256-token answer on the declared service (TTFT 180 ms, decode 55 tok/s), in seconds?",
+              ru: "Номинальное время 256-токенного ответа на заявленном сервисе (TTFT 180 мс, decode 55 tok/s), в секундах?",
+            },
+            answer: 4.8164, tol: 0.01,
+          },
+          {
+            q: {
+              en: "Nominal wall time of a 200-token answer on a service with TTFT 240 ms and decode 25 tok/s, in seconds?",
+              ru: "Номинальное время 200-токенного ответа на сервисе с TTFT 240 мс и decode 25 tok/s, в секундах?",
+            },
+            answer: 8.2, tol: 0.01,
+            hint: {
+              en: "wall = 0.24 + (200 − 1) / 25. The first of the 200 tokens is inside TTFT.",
+              ru: "wall = 0.24 + (200 − 1) / 25. Первый из 200 токенов уже внутри TTFT.",
+            },
+            followUp: {
+              q: { en: "Why 199 gaps and not 200?", ru: "Почему 199 промежутков, а не 200?" },
+              options: [
+                { en: "The first token arrives together with the TTFT: only the remaining 199 pay the decode cadence", ru: "Первый токен приходит вместе с TTFT: каденс decode оплачивают только оставшиеся 199" },
+                { en: "The engine drops every 200th token as padding", ru: "Движок отбрасывает каждый 200-й токен как паддинг" },
+                { en: "200 is the wall seconds, so the gaps are 200 − TTFT", ru: "200 — это секунды wall, поэтому промежутков 200 − TTFT" },
+              ],
+              answer: 0,
+              explain: { en: "TTFT already contains prefill + one decode step. Charging 200 gaps pays the first token twice — the model breaks exactly on short answers, where the double-charge is the largest share.", ru: "TTFT уже содержит prefill и один decode-шаг. Плата за 200 промежутков дважды оплачивает первый токен — модель ломается ровно на коротких ответах, где двойной платёж и есть наибольшая доля." },
+            },
+          },
+          {
+            q: {
+              en: "Nominal wall time of a 460-token answer on a service with TTFT 180 ms and decode 45 tok/s, in seconds?",
+              ru: "Номинальное время 460-токенного ответа на сервисе с TTFT 180 мс и decode 45 tok/s, в секундах?",
+            },
+            answer: 10.38, tol: 0.01,
+            hint: {
+              en: "wall = 0.18 + (460 − 1) / 45. The first of the 460 tokens is inside TTFT.",
+              ru: "wall = 0.18 + (460 − 1) / 45. Первый из 460 токенов уже внутри TTFT.",
+            },
+            followUp: {
+              q: { en: "Why 459 gaps and not 460?", ru: "Почему 459 промежутков, а не 460?" },
+              options: [
+                { en: "The first token arrives together with the TTFT: only the remaining 459 pay the decode cadence", ru: "Первый токен приходит вместе с TTFT: каденс decode оплачивают только оставшиеся 459" },
+                { en: "The engine drops every 460th token as padding", ru: "Движок отбрасывает каждый 460-й токен как паддинг" },
+                { en: "460 is the wall seconds, so the gaps are 460 − TTFT", ru: "460 — это секунды wall, поэтому промежутков 460 − TTFT" },
+              ],
+              answer: 0,
+              explain: { en: "TTFT already contains prefill + one decode step. Charging 460 gaps pays the first token twice — the model breaks exactly on short answers, where the double-charge is the largest share.", ru: "TTFT уже содержит prefill и один decode-шаг. Плата за 460 промежутков дважды оплачивает первый токен — модель ломается ровно на коротких ответах, где двойной платёж и есть наибольшая доля." },
+            },
+          },
+        ],
       },
       {
         id: "q2",
@@ -170,6 +237,40 @@
           answer: 0,
           explain: { en: "TTFT = prefill + the first decode step. With n = 1 there are n − 1 = 0 gaps after it: the formula collapses to TTFT, as the tests of Exercise 1 pin.", ru: "TTFT = prefill + первый decode-шаг. При n = 1 после него n − 1 = 0 промежутков: формула схлопывается в TTFT, что и закрепляют тесты упражнения 1." },
         },
+        // Вариативность №5: принудительная длина и ручки сервиса разведены:
+        //   0.24 + 39/25 = 1.8;  0.18 + 45/45 = 1.18.
+        // followUp (однотокенный ответ = TTFT) общий с базой — он без чисел входа.
+        variants: [
+          {
+            q: {
+              en: "Nominal wall time of a forced 24-token reply (like the notebook's forced-length trials), in seconds?",
+              ru: "Номинальное время принудительного 24-токенного ответа (как у форсированных прогонов в тетради), в секундах?",
+            },
+            answer: 0.5982, tol: 0.005,
+          },
+          {
+            q: {
+              en: "Nominal wall time of a forced 40-token reply on a service with TTFT 240 ms and decode 25 tok/s, in seconds?",
+              ru: "Номинальное время принудительного 40-токенного ответа на сервисе с TTFT 240 мс и decode 25 tok/s, в секундах?",
+            },
+            answer: 1.8, tol: 0.01,
+            hint: {
+              en: "0.24 + (40 − 1) / 25 = 0.24 + 39/25. Charging 40 gaps instead of 39 breaks the model.",
+              ru: "0.24 + (40 − 1) / 25 = 0.24 + 39/25. Посчитать 40 промежутков вместо 39 — сломать модель.",
+            },
+          },
+          {
+            q: {
+              en: "Nominal wall time of a forced 46-token reply on a service with TTFT 180 ms and decode 45 tok/s, in seconds?",
+              ru: "Номинальное время принудительного 46-токенного ответа на сервисе с TTFT 180 мс и decode 45 tok/s, в секундах?",
+            },
+            answer: 1.18, tol: 0.01,
+            hint: {
+              en: "0.18 + (46 − 1) / 45 = 0.18 + 45/45. Charging 46 gaps instead of 45 breaks the model.",
+              ru: "0.18 + (46 − 1) / 45 = 0.18 + 45/45. Посчитать 46 промежутков вместо 45 — сломать модель.",
+            },
+          },
+        ],
       },
       {
         id: "q3",
@@ -192,6 +293,60 @@
           answer: 0,
           explain: { en: "Charging decode the full window quietly moves 0.30 s of prefill into the decode rate: 10/2.30 = 4.3 instead of 10/2.0 = 5.0. The stream clock starts at the first chunk.", ru: "Платя decode всё окно, ты тихо переносишь 0.30 с prefill в скорость decode: 10/2.30 = 4.3 вместо 10/2.0 = 5.0. Часы стрима стартуют на первом чанке." },
         },
+        // Вариативность №5: окно стрима разведено с фигурных 0.30/2.30 (там живёт и ответ 5.0):
+        //   (25 − 1) / (5.50 − 0.50) = 4.8;  (31 − 1) / (8.80 − 0.80) = 3.75.
+        // followUp переписан: «полное окно» теперь 5.50 / 8.80 с.
+        variants: [
+          {
+            q: {
+              en: "A stream log: first token arrives at t = 0.30 s, the 11th token at t = 2.30 s. Measured decode rate, in tok/s?",
+              ru: "Лог стрима: первый токен пришёл при t = 0.30 с, 11-й токен при t = 2.30 с. Измеренная скорость decode, в tok/s?",
+            },
+            answer: 5, tol: 0.01,
+          },
+          {
+            q: {
+              en: "A stream log: first token arrives at t = 0.50 s, the 25th token at t = 5.50 s. Measured decode rate, in tok/s?",
+              ru: "Лог стрима: первый токен пришёл при t = 0.50 с, 25-й токен при t = 5.50 с. Измеренная скорость decode, в tok/s?",
+            },
+            answer: 4.8, tol: 0.01,
+            hint: {
+              en: "(25 − 1) gaps in (5.50 − 0.50) s. Dividing 25 by the window would charge TTFT to decode.",
+              ru: "(25 − 1) промежутков за (5.50 − 0.50) с. Делить 25 на всё окно — приписывать TTFT к decode.",
+            },
+            followUp: {
+              q: { en: "Why is the measured window (t_last − t_first) and not the full 5.50 s?", ru: "Почему измеренное окно — это (t_last − t_first), а не все 5.50 с?" },
+              options: [
+                { en: "The window before the first token is prefill, already reported as TTFT — decode owns only the gaps after it", ru: "Окно до первого токена — это prefill, уже отчитанный как TTFT; decode владеет только промежутками после него" },
+                { en: "The server clock starts at 5.50 s", ru: "Часы сервера стартуют в 5.50 с" },
+                { en: "The first token does not count as a token at all", ru: "Первый токен вообще не считается токеном" },
+              ],
+              answer: 0,
+              explain: { en: "Charging decode the full window quietly moves 0.50 s of prefill into the decode rate: 24/5.50 = 4.36 instead of 24/5.00 = 4.8. The stream clock starts at the first chunk.", ru: "Платя decode всё окно, ты тихо переносишь 0.50 с prefill в скорость decode: 24/5.50 = 4.36 вместо 24/5.00 = 4.8. Часы стрима стартуют на первом чанке." },
+            },
+          },
+          {
+            q: {
+              en: "A stream log: first token arrives at t = 0.80 s, the 31st token at t = 8.80 s. Measured decode rate, in tok/s?",
+              ru: "Лог стрима: первый токен пришёл при t = 0.80 с, 31-й токен при t = 8.80 с. Измеренная скорость decode, в tok/s?",
+            },
+            answer: 3.75, tol: 0.01,
+            hint: {
+              en: "(31 − 1) gaps in (8.80 − 0.80) s. Dividing 31 by the window would charge TTFT to decode.",
+              ru: "(31 − 1) промежутков за (8.80 − 0.80) с. Делить 31 на всё окно — приписывать TTFT к decode.",
+            },
+            followUp: {
+              q: { en: "Why is the measured window (t_last − t_first) and not the full 8.80 s?", ru: "Почему измеренное окно — это (t_last − t_first), а не все 8.80 с?" },
+              options: [
+                { en: "The window before the first token is prefill, already reported as TTFT — decode owns only the gaps after it", ru: "Окно до первого токена — это prefill, уже отчитанный как TTFT; decode владеет только промежутками после него" },
+                { en: "The server clock starts at 8.80 s", ru: "Часы сервера стартуют в 8.80 с" },
+                { en: "The first token does not count as a token at all", ru: "Первый токен вообще не считается токеном" },
+              ],
+              answer: 0,
+              explain: { en: "Charging decode the full window quietly moves 0.80 s of prefill into the decode rate: 30/8.80 ≈ 3.41 instead of 30/8.00 = 3.75. The stream clock starts at the first chunk.", ru: "Платя decode всё окно, ты тихо переносишь 0.80 с prefill в скорость decode: 30/8.80 ≈ 3.41 вместо 30/8.00 = 3.75. Часы стрима стартуют на первом чанке." },
+            },
+          },
+        ],
       },
     ],
     exercises: [

@@ -24,6 +24,18 @@
 <p>Рабочая точка среди допустимых — самая быстрая по throughput, а запасы — <code>thr − floor</code> и <code>SLO − p95</code> — показывают, насколько выбор хрупок: точка, сидящая ровно на SLO, сломается на первом же held-out. Здесь кусаются единицы: p95 приходит в миллисекундах, и сравнение его с порогом в других единицах искажает все решения в 1000 раз — медленный профиль проходит как «допустимый».</p>`,
     },
     heroTag: { en: "floor, SLO, freeze", ru: "floor, SLO, заморозка" },
+    glossary: [
+      [{ en: "SLO", ru: "SLO" }, { en: "the service-level objective: here a ceiling on p95 latency (ms) that a config must not cross.", ru: "целевое качество сервиса: здесь потолок латентности p95 (мс), который конфигурация не имеет права переступить." }],
+      [{ en: "latency", ru: "латентность" }, { en: "how long a request takes; this lab judges it by the p95 percentile, not the average.", ru: "сколько идёт запрос; лаба судит о нём по перцентилю p95, а не по среднему." }],
+      [{ en: "p95", ru: "p95" }, { en: "the 95th percentile of latency: 19 of 20 requests are faster than it; the tail is what users remember.", ru: "95-й перцентиль латентности: 19 запросов из 20 быстрее него; хвост — то, что запоминают пользователи." }],
+      [{ en: "floor", ru: "пол" }, { en: "the declared minimum throughput (tok/s); feasibility clears it — each bound guards its own metric.", ru: "заявленный минимум throughput (ток/с); допустимость его проходит — каждая граница охраняет свою метрику." }],
+      [{ en: "feasible", ru: "допустимость" }, { en: "the declared conjunction: thr ≥ floor AND p95 ≤ SLO, both bounds inclusive; one comparison is not feasibility.", ru: "заявленная конъюнкция: thr ≥ floor И p95 ≤ SLO, обе границы включительно; одно сравнение — ещё не допустимость." }],
+      [{ en: "sweep", ru: "свип" }, { en: "the bounded run over planned configs; failed rows stay in the table as evidence, not erased.", ru: "ограниченный прогон по запланированным конфигурациям; неудачные строки остаются в таблице как свидетельство, а не стираются." }],
+      [{ en: "OFAT", ru: "OFAT" }, { en: "one-factor-at-a-time: each branch moves a single knob off the baseline, so the effect is attributable.", ru: "по одному фактору за раз: каждая ветка сдвигает одну ручку от baseline, поэтому эффект можно приписать именно ей." }],
+      [{ en: "working point", ru: "рабочая точка" }, { en: "among feasible configs, the max-throughput one (first on ties) — the profile you freeze.", ru: "среди допустимых конфигураций — самая быстрая по throughput (при равенстве первая); профиль, который ты замораживаешь." }],
+      [{ en: "margin", ru: "запас" }, { en: "how far the choice sits from its bound: thr − floor and SLO − p95; zero margin means the first held-out run may break it.", ru: "насколько выбор далёк от своей границы: thr − floor и SLO − p95; нулевой запас значит, что первый же held-out может сломать точку." }],
+      [{ en: "freeze", ru: "заморозка" }, { en: "fixing the working point before held-out data; freezing nothing is a legitimate outcome when nothing is feasible.", ru: "фиксация рабочей точки до held-out; «замораживать нечего» — полноценный исход, когда допустимых нет." }],
+    ],
     figures: [
       {
         id: "lab7-pareto",
@@ -127,8 +139,8 @@
         },
         answer: 450, tol: 0.5, unit: { en: "tok/s", ru: "ток/с" },
         hint: {
-          en: "Margin = thr − floor = 1650 − 1200. It clears the SLO too: 450 ≤ 800, so the config is feasible.",
-          ru: "Запас = thr − floor = 1650 − 1200. SLO тоже выдержан: 450 ≤ 800, значит конфигурация допустима.",
+          en: "Margin = thr − floor = 1650 − 1200. It clears the SLO too (margin ≤ 800), so the config is feasible.",
+          ru: "Запас = thr − floor = 1650 − 1200. SLO тоже выдержан (запас ≤ 800), значит конфигурация допустима.",
         },
         followUp: {
           q: { en: "Why is the throughput margin thr − floor and not thr − SLO?", ru: "Почему запас по throughput — это thr − floor, а не thr − SLO?" },
@@ -140,6 +152,61 @@
           answer: 0,
           explain: { en: "The conjunction is two separate comparisons: thr ≥ floor (tok/s against tok/s) and p95 ≤ SLO (ms against ms). Each margin answers «how far from ITS bound» — 450 tok/s and 350 ms, never a mix.", ru: "Конъюнкция — два отдельных сравнения: thr ≥ floor (ток/с к ток/с) и p95 ≤ SLO (мс к мс). Каждый запас отвечает «как далеко от СВОЕЙ границы» — 450 ток/с и 350 мс, никогда не смесь." },
         },
+        // Вариативность №5: floor/SLO — константы лабы, конфигурация — вход;
+        // margin = thr − floor:  1700 − 1200 = 500;  1750 − 1200 = 550.
+        // Ответы 500 / 550 прочь от фигурных 450 / 350 (запасы базы); followUp-объяснение
+        // переписано под числа варианта.
+        variants: [
+          {
+            q: {
+              en: "Config «pair»: thr 1650 tok/s, p95 450 ms. Floor 1200 tok/s, SLO 800 ms. How many tok/s of throughput margin above the floor?",
+              ru: "Конфигурация «pair»: thr 1650 ток/с, p95 450 мс. Floor 1200 ток/с, SLO 800 мс. Каков запас по throughput над floor, в ток/с?",
+            },
+            answer: 450, tol: 0.5,
+          },
+          {
+            q: {
+              en: "Config «candidate»: thr 1700 tok/s, p95 430 ms. Floor 1200 tok/s, SLO 800 ms. How many tok/s of throughput margin above the floor?",
+              ru: "Конфигурация «candidate»: thr 1700 ток/с, p95 430 мс. Floor 1200 ток/с, SLO 800 мс. Каков запас по throughput над floor, в ток/с?",
+            },
+            answer: 500, tol: 0.5,
+            hint: {
+              en: "Margin = thr − floor = 1700 − 1200. It clears the SLO too: 430 ≤ 800, so the config is feasible.",
+              ru: "Запас = thr − floor = 1700 − 1200. SLO тоже выдержан: 430 ≤ 800, значит конфигурация допустима.",
+            },
+            followUp: {
+              q: { en: "Why is the throughput margin thr − floor and not thr − SLO?", ru: "Почему запас по throughput — это thr − floor, а не thr − SLO?" },
+              options: [
+                { en: "Each bound pairs with its own metric: the floor guards throughput, the SLO guards p95 — mixing them compares incompatible units", ru: "Каждая граница парна своей метрике: floor охраняет throughput, SLO охраняет p95 — смешивание сравнивает несовместимые единицы" },
+                { en: "SLO is always larger than floor, so thr − SLO is the honest margin", ru: "SLO всегда больше floor, поэтому thr − SLO — честный запас" },
+                { en: "Margins only exist after the freeze, so the formula changes then", ru: "Запасы существуют только после заморозки, поэтому формула тогда меняется" },
+              ],
+              answer: 0,
+              explain: { en: "The conjunction is two separate comparisons: thr ≥ floor (tok/s against tok/s) and p95 ≤ SLO (ms against ms). Each margin answers «how far from ITS bound» — 500 tok/s and 370 ms, never a mix.", ru: "Конъюнкция — два отдельных сравнения: thr ≥ floor (ток/с к ток/с) и p95 ≤ SLO (мс к мс). Каждый запас отвечает «как далеко от СВОЕЙ границы» — 500 ток/с и 370 мс, никогда не смесь." },
+            },
+          },
+          {
+            q: {
+              en: "Config «candidate-b»: thr 1750 tok/s, p95 520 ms. Floor 1200 tok/s, SLO 800 ms. How many tok/s of throughput margin above the floor?",
+              ru: "Конфигурация «candidate-b»: thr 1750 ток/с, p95 520 мс. Floor 1200 ток/с, SLO 800 мс. Каков запас по throughput над floor, в ток/с?",
+            },
+            answer: 550, tol: 0.5,
+            hint: {
+              en: "Margin = thr − floor = 1750 − 1200. It clears the SLO too: 520 ≤ 800, so the config is feasible.",
+              ru: "Запас = thr − floor = 1750 − 1200. SLO тоже выдержан: 520 ≤ 800, значит конфигурация допустима.",
+            },
+            followUp: {
+              q: { en: "Why is the throughput margin thr − floor and not thr − SLO?", ru: "Почему запас по throughput — это thr − floor, а не thr − SLO?" },
+              options: [
+                { en: "Each bound pairs with its own metric: the floor guards throughput, the SLO guards p95 — mixing them compares incompatible units", ru: "Каждая граница парна своей метрике: floor охраняет throughput, SLO охраняет p95 — смешивание сравнивает несовместимые единицы" },
+                { en: "SLO is always larger than floor, so thr − SLO is the honest margin", ru: "SLO всегда больше floor, поэтому thr − SLO — честный запас" },
+                { en: "Margins only exist after the freeze, so the formula changes then", ru: "Запасы существуют только после заморозки, поэтому формула тогда меняется" },
+              ],
+              answer: 0,
+              explain: { en: "The conjunction is two separate comparisons: thr ≥ floor (tok/s against tok/s) and p95 ≤ SLO (ms against ms). Each margin answers «how far from ITS bound» — 550 tok/s and 280 ms, never a mix.", ru: "Конъюнкция — два отдельных сравнения: thr ≥ floor (ток/с к ток/с) и p95 ≤ SLO (мс к мс). Каждый запас отвечает «как далеко от СВОЕЙ границы» — 550 ток/с и 280 мс, никогда не смесь." },
+            },
+          },
+        ],
       },
       {
         id: "q2",
@@ -162,6 +229,59 @@
           answer: 0,
           explain: { en: "Sign carries meaning: +350 ms is headroom, −350 ms is a violation already sitting in the sweep table. Flipping the order hides violations as «positive» numbers — the exact confusion the units bug of Exercise 3 exploits.", ru: "Знак несёт смысл: +350 мс — запас, −350 мс — уже сидящее в свип-таблице нарушение. Перевёрнутый порядок прячет нарушения за «положительными» числами — ровно та путаница, на которой играет баг с единицами из упражнения 3." },
         },
+        // Вариативность №5: margin = SLO − p95:  800 − 430 = 370;  800 − 520 = 280.
+        // Ответы 370 / 280 прочь от фигурных 350; followUp-объяснение — под числа варианта.
+        variants: [
+          {
+            q: {
+              en: "Same config (thr 1650, p95 450): how many ms of p95 headroom remain to the SLO 800 ms?",
+              ru: "Та же конфигурация (thr 1650, p95 450): сколько миллисекунд запаса по p95 остаётся до SLO 800 мс?",
+            },
+            answer: 350, tol: 0.5,
+          },
+          {
+            q: {
+              en: "Same config (thr 1700, p95 430): how many ms of p95 headroom remain to the SLO 800 ms?",
+              ru: "Та же конфигурация (thr 1700, p95 430): сколько миллисекунд запаса по p95 остаётся до SLO 800 мс?",
+            },
+            answer: 370, tol: 0.5,
+            hint: {
+              en: "Tail margin = SLO − p95 = 800 − 430. A negative value here would be an SLO violation you can read before the held-out run.",
+              ru: "Запас по хвосту = SLO − p95 = 800 − 430. Отрицательное значение здесь — нарушение SLO, которое видно ещё до held-out.",
+            },
+            followUp: {
+              q: { en: "Why do we read the p95 margin as SLO − p95 (not p95 − SLO)?", ru: "Почему запас по p95 читается как SLO − p95 (а не p95 − SLO)?" },
+              options: [
+                { en: "Margin = ceiling − measured, so a positive number means headroom; the flipped order would call every good config negative", ru: "Запас = потолок − измеренное, поэтому положительное число означает запас; перевёрнутый порядок назвал бы отрицательным каждую хорошую конфигурацию" },
+                { en: "p95 is subtracted first by convention in all monitoring systems", ru: "p95 вычитается первым по конвенции во всех системах мониторинга" },
+                { en: "The order matters only when the margin is exactly zero", ru: "Порядок имеет значение только при ровно нулевом запасе" },
+              ],
+              answer: 0,
+              explain: { en: "Sign carries meaning: +370 ms is headroom, −370 ms is a violation already sitting in the sweep table. Flipping the order hides violations as «positive» numbers — the exact confusion the units bug of Exercise 3 exploits.", ru: "Знак несёт смысл: +370 мс — запас, −370 мс — уже сидящее в свип-таблице нарушение. Перевёрнутый порядок прячет нарушения за «положительными» числами — ровно та путаница, на которой играет баг с единицами из упражнения 3." },
+            },
+          },
+          {
+            q: {
+              en: "Same config (thr 1750, p95 520): how many ms of p95 headroom remain to the SLO 800 ms?",
+              ru: "Та же конфигурация (thr 1750, p95 520): сколько миллисекунд запаса по p95 остаётся до SLO 800 мс?",
+            },
+            answer: 280, tol: 0.5,
+            hint: {
+              en: "Tail margin = SLO − p95 = 800 − 520. A negative value here would be an SLO violation you can read before the held-out run.",
+              ru: "Запас по хвосту = SLO − p95 = 800 − 520. Отрицательное значение здесь — нарушение SLO, которое видно ещё до held-out.",
+            },
+            followUp: {
+              q: { en: "Why do we read the p95 margin as SLO − p95 (not p95 − SLO)?", ru: "Почему запас по p95 читается как SLO − p95 (а не p95 − SLO)?" },
+              options: [
+                { en: "Margin = ceiling − measured, so a positive number means headroom; the flipped order would call every good config negative", ru: "Запас = потолок − измеренное, поэтому положительное число означает запас; перевёрнутый порядок назвал бы отрицательным каждую хорошую конфигурацию" },
+                { en: "p95 is subtracted first by convention in all monitoring systems", ru: "p95 вычитается первым по конвенции во всех системах мониторинга" },
+                { en: "The order matters only when the margin is exactly zero", ru: "Порядок имеет значение только при ровно нулевом запасе" },
+              ],
+              answer: 0,
+              explain: { en: "Sign carries meaning: +280 ms is headroom, −280 ms is a violation already sitting in the sweep table. Flipping the order hides violations as «positive» numbers — the exact confusion the units bug of Exercise 3 exploits.", ru: "Знак несёт смысл: +280 мс — запас, −280 мс — уже сидящее в свип-таблице нарушение. Перевёрнутый порядок прячет нарушения за «положительными» числами — ровно та путаница, на которой играет баг с единицами из упражнения 3." },
+            },
+          },
+        ],
       },
       {
         id: "q3",
@@ -171,8 +291,8 @@
         },
         answer: 5, tol: 0.1, unit: { en: "configs", ru: "конфигураций" },
         hint: {
-          en: "1 + 3 + 1 = 5 — the notebook freezes exactly this budget and forbids more.",
-          ru: "1 + 3 + 1 = 5 — тетрадь замораживает именно этот бюджет и больше не разрешает.",
+          en: "1 + 3 + 1 — the notebook freezes exactly this budget and forbids more.",
+          ru: "1 + 3 + 1 — тетрадь замораживает именно этот бюджет и больше не разрешает.",
         },
         followUp: {
           q: { en: "Why bound the plan at 5 configs instead of sweeping all combinations?", ru: "Почему план ограничен 5 конфигурациями, а не полным перебором?" },
@@ -184,6 +304,60 @@
           answer: 0,
           explain: { en: "An unconstrained sweep is where cherry-picking lives: with a frozen plan (baseline + OFAT + one pair) the numbers are comparable across sweeps and the failures stay visible. That discipline, not the count 5 itself, is what transfers to real tuning.", ru: "Безграничный свип — место жительства cherry-picking: замороженный план (baseline + OFAT + одна пара) делает числа сравнимыми между свипами, а неудачи — видимыми. Переносится на реальный тюнинг именно эта дисциплина, а не само число 5." },
         },
+        // Вариативность №5: состав плана — вход (у базы 3 ручки + пара → 5, малое целое);
+        // план = 1 + OFAT-ветки + пары:  1 + 4 + 1 = 6;  1 + 5 + 2 = 8.
+        // followUp переписан под число варианта.
+        variants: [
+          {
+            q: {
+              en: "The bounded plan of the notebook: default + one OFAT branch per varied knob (3 of them) + one confirmatory pair. How many configurations does the plan contain?",
+              ru: "Ограниченный план тетради: default + по одной OFAT-ветке на каждую варьируемую ручку (их 3) + одна подтверждающая пара. Сколько конфигураций в плане?",
+            },
+            answer: 5, tol: 0.1,
+          },
+          {
+            q: {
+              en: "A bounded plan: default + one OFAT branch per varied knob (4 of them) + one confirmatory pair. How many configurations does the plan contain?",
+              ru: "Ограниченный план: default + по одной OFAT-ветке на каждую варьируемую ручку (их 4) + одна подтверждающая пара. Сколько конфигураций в плане?",
+            },
+            answer: 6, tol: 0.1,
+            hint: {
+              en: "1 + 4 + 1 — add the three groups of the plan; the notebook freezes exactly this budget and forbids more.",
+              ru: "1 + 4 + 1 — сложи три группы плана; тетрадь замораживает именно этот бюджет и больше не разрешает.",
+            },
+            followUp: {
+              q: { en: "Why bound the plan at 6 configs instead of sweeping all combinations?", ru: "Почему план ограничен 6 конфигурациями, а не полным перебором?" },
+              options: [
+                { en: "Every config is a measured run: the frozen budget keeps the search honest, comparable and affordable — failed rows stay in the table, nothing is hidden", ru: "Каждая конфигурация — измеренный прогон: замороженный бюджет держит поиск честным, сравнимым и посильным — неудачные строки остаются в таблице, ничего не прячется" },
+                { en: "Six is a hardware limit of the GPU cluster", ru: "Шесть — аппаратный лимит GPU-кластера" },
+                { en: "The other combinations are mathematically guaranteed to be worse", ru: "Остальные комбинации математически гарантированно хуже" },
+              ],
+              answer: 0,
+              explain: { en: "An unconstrained sweep is where cherry-picking lives: with a frozen plan (baseline + OFAT + one pair) the numbers are comparable across sweeps and the failures stay visible. That discipline, not the count 6 itself, is what transfers to real tuning.", ru: "Безграничный свип — место жительства cherry-picking: замороженный план (baseline + OFAT + одна пара) делает числа сравнимыми между свипами, а неудачи — видимыми. Переносится на реальный тюнинг именно эта дисциплина, а не само число 6." },
+            },
+          },
+          {
+            q: {
+              en: "A bounded plan: default + one OFAT branch per varied knob (5 of them) + two confirmatory pairs. How many configurations does the plan contain?",
+              ru: "Ограниченный план: default + по одной OFAT-ветке на каждую варьируемую ручку (их 5) + две подтверждающие пары. Сколько конфигураций в плане?",
+            },
+            answer: 8, tol: 0.1,
+            hint: {
+              en: "1 + 5 + 2 — add the three groups of the plan; the notebook freezes exactly this budget and forbids more.",
+              ru: "1 + 5 + 2 — сложи три группы плана; тетрадь замораживает именно этот бюджет и больше не разрешает.",
+            },
+            followUp: {
+              q: { en: "Why bound the plan at 8 configs instead of sweeping all combinations?", ru: "Почему план ограничен 8 конфигурациями, а не полным перебором?" },
+              options: [
+                { en: "Every config is a measured run: the frozen budget keeps the search honest, comparable and affordable — failed rows stay in the table, nothing is hidden", ru: "Каждая конфигурация — измеренный прогон: замороженный бюджет держит поиск честным, сравнимым и посильным — неудачные строки остаются в таблице, ничего не прячется" },
+                { en: "Eight is a hardware limit of the GPU cluster", ru: "Восемь — аппаратный лимит GPU-кластера" },
+                { en: "The other combinations are mathematically guaranteed to be worse", ru: "Остальные комбинации математически гарантированно хуже" },
+              ],
+              answer: 0,
+              explain: { en: "An unconstrained sweep is where cherry-picking lives: with a frozen plan (baseline + OFAT + pairs) the numbers are comparable across sweeps and the failures stay visible. That discipline, not the count 8 itself, is what transfers to real tuning.", ru: "Безграничный свип — место жительства cherry-picking: замороженный план (baseline + OFAT + пары) делает числа сравнимыми между свипами, а неудачи — видимыми. Переносится на реальный тюнинг именно эта дисциплина, а не само число 8." },
+            },
+          },
+        ],
       },
     ],
     exercises: [

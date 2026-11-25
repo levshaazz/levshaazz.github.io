@@ -23,6 +23,18 @@
 <p>Привычка лабы: сначала объяви политику scale, прогони цикл квантования на крошечной строке, измерь знаковую ошибку (реконструкция − оригинал) и MSE, и только потом спорь про NF4 и реальный GPU. Ошибки неравноценны: какие коды реально сдвинут выход — решает вход, а не вес сам по себе (вторая фигура продолжает эту мысль). Каждое число здесь — детерминированная игрушечная арифметика, та же, что тетрадь трассирует вес за весом, а не измерение ядра.</p>`,
     },
     heroTag: { en: "scales, codes, error", ru: "scale, коды, ошибка" },
+    glossary: [
+      [{ en: "quantization", ru: "квантование" }, { en: "storing numbers (here: weights) as small integer codes instead of full floats — a declared round trip, not magic compression.", ru: "хранение чисел (здесь — весов) маленькими целыми кодами вместо полных float — заявленный цикл туда-обратно, а не волшебное сжатие." }],
+      [{ en: "scale", ru: "scale" }, { en: "one per row: the step of the code grid; reconstruction = scale × code, so the scale decides how big the error is.", ru: "один на строку: шаг сетки кодов; реконструкция = scale × code, поэтому именно scale решает, насколько велика ошибка." }],
+      [{ en: "absmax", ru: "absmax" }, { en: "the largest magnitude in the row (sign ignored); the declared policy divides it by 7 to place the scale.", ru: "самый большой модуль в строке (знак не важен); заявленная политика делит его на 7 и получает scale." }],
+      [{ en: "code", ru: "код" }, { en: "the small integer a weight becomes: code = clip(round(v / scale)) into [−8, 7].", ru: "маленькое целое, во которое превращается вес: code = clip(round(v / scale)) в сетке [−8, 7]." }],
+      [{ en: "rounding", ru: "округление" }, { en: "to the nearest grid point, ties to even (Python's round) — truncation would bias codes toward zero.", ru: "к ближайшей точке сетки, связи — к чётной (Python-овский round); усечение смещало бы коды к нулю." }],
+      [{ en: "clip", ru: "клип" }, { en: "cutting codes back into the grid before reconstructing; without it outliers «reconstruct» exactly and their error silently vanishes.", ru: "возвращение кодов в сетку перед реконструкцией; без него выбросы «реконструируются» точно, и их ошибка молча исчезает." }],
+      [{ en: "outlier", ru: "выброс" }, { en: "a weight far larger than the rest: it sets the scale and lands on the clip — the −0.50 error of the TOY row is its bill.", ru: "вес, намного крупнее остальных: он задаёт scale и упирается в клип — ошибка −0.50 у TOY-строки и есть его платёж." }],
+      [{ en: "reconstruction", ru: "реконструкция" }, { en: "the round trip's way back: scale × code; what the model actually multiplies with after quantization.", ru: "обратная дорога цикла: scale × code; то, с чем модель реально умножает после квантования." }],
+      [{ en: "signed error", ru: "знаковая ошибка" }, { en: "reconstruction − original; the course contract keeps this order so the sign says which way the weight moved.", ru: "реконструкция − оригинал; курс закрепляет именно такой порядок, чтобы знак говорил, куда сдвинулся вес." }],
+      [{ en: "MSE", ru: "MSE" }, { en: "mean of squared errors over the row; squaring makes every error positive, so clips and outliers cannot hide.", ru: "среднее квадратов ошибок по строке; квадрат делает каждую ошибку положительной, поэтому клипы и выбросы не спрятать." }],
+    ],
     figures: [
       {
         id: "lab3-round-trip",
@@ -156,6 +168,41 @@
           answer: 0,
           explain: { en: "The absmax policy maps the row's largest magnitude to the TOP POSITIVE code 7. Dividing by 8 is the signed-range trap; by 15 — the unsigned one. Either leaves the outlier clipped.", ru: "Политика absmax отображает максимальный модуль строки в СТАРШИЙ ПОЛОЖИТЕЛЬНЫЙ код 7. Деление на 8 — ловушка знакового диапазона, на 15 — беззнакового. В обоих случаях выброс уходит в клип." },
         },
+        // Вариативность №5: диапазон строки — вход варианта; scale = absmax / 7:
+        //   [−2.1, 0.8] → 2.1 / 7 = 0.3;  [−2.8, 0.6] → 2.8 / 7 = 0.4.
+        // Базовые входы (−1.4, 0.9) разведены с фигурных; ответы 0.3 и 0.4 в фигурах
+        // не встречаются; followUp (почему /7) общий с базой — он без чисел входа.
+        variants: [
+          {
+            q: {
+              en: "A weight row spans [−1.4, 0.9]. Under the absmax/7 policy, what is its scale?",
+              ru: "Строка весов лежит в диапазоне [−1.4, 0.9]. По политике absmax/7 каков её scale?",
+            },
+            answer: 0.2, tol: 0.005,
+          },
+          {
+            q: {
+              en: "A weight row spans [−2.1, 0.8]. Under the absmax/7 policy, what is its scale?",
+              ru: "Строка весов лежит в диапазоне [−2.1, 0.8]. По политике absmax/7 каков её scale?",
+            },
+            answer: 0.3, tol: 0.01,
+            hint: {
+              en: "absmax = 2.1 (magnitude, not the signed max). scale = 2.1 / 7.",
+              ru: "absmax = 2.1 (по модулю, а не максимум со знаком). scale = 2.1 / 7.",
+            },
+          },
+          {
+            q: {
+              en: "A weight row spans [−2.8, 0.6]. Under the absmax/7 policy, what is its scale?",
+              ru: "Строка весов лежит в диапазоне [−2.8, 0.6]. По политике absmax/7 каков её scale?",
+            },
+            answer: 0.4, tol: 0.01,
+            hint: {
+              en: "absmax = 2.8 (magnitude, not the signed max). scale = 2.8 / 7.",
+              ru: "absmax = 2.8 (по модулю, а не максимум со знаком). scale = 2.8 / 7.",
+            },
+          },
+        ],
       },
       {
         id: "q2",
@@ -165,8 +212,8 @@
         },
         answer: 2, tol: 0.01, unit: { en: "code", ru: "код" },
         hint: {
-          en: "0.37 / 0.2 = 1.85 → round to nearest → 2. No clipping needed here.",
-          ru: "0.37 / 0.2 = 1.85 → округление к ближайшему → 2. Клип тут не нужен.",
+          en: "0.37 / 0.2 = 1.85 → round to the nearest whole code. No clipping needed here.",
+          ru: "0.37 / 0.2 = 1.85 → округление к ближайшему целому коду. Клип тут не нужен.",
         },
         followUp: {
           q: { en: "Why 2 — and not 1 (truncation)?", ru: "Почему 2, а не 1 (усечение)?" },
@@ -178,6 +225,60 @@
           answer: 0,
           explain: { en: "Truncation biases codes toward zero and roughly doubles the error of the small weights. Ties-to-even matters only at exact .5 — 1.85 is not a tie.", ru: "Усечение смещает коды к нулю и примерно удваивает ошибку малых весов. Связи-к-чётному работают только ровно на 0.5 — 1.85 не связь." },
         },
+        // Вариативность №5: вес и scale — входы; код = clip(round(v / scale)); ответы — не малые
+        // целые (ловушка «совпасть с числом фигуры»): 1.68 / 0.3 = 5.6 → 6;  −1.68 / 0.3 = −5.6 → −6.
+        // Числа 0.3 / 1.68 / 6 / −6 в фигурах не живут (там 0.25 и TOY-строка); followUp переписан.
+        variants: [
+          {
+            q: {
+              en: "With scale 0.2, what integer code does the weight 0.37 get?",
+              ru: "При scale 0.2 какой целый код получит вес 0.37?",
+            },
+            answer: 2, tol: 0.01,
+          },
+          {
+            q: {
+              en: "With scale 0.3, what integer code does the weight 1.68 get?",
+              ru: "При scale 0.3 какой целый код получит вес 1.68?",
+            },
+            answer: 6, tol: 0.2,
+            hint: {
+              en: "Divide the weight by the scale and round to the NEAREST grid point — no clipping needed here.",
+              ru: "Раздели вес на scale и округли к БЛИЖАЙШЕЙ точке сетки — клип тут не нужен.",
+            },
+            followUp: {
+              q: { en: "Why 6 — and not 5 (truncation)?", ru: "Почему 6, а не 5 (усечение)?" },
+              options: [
+                { en: "Rounding goes to the NEAREST grid point: 5.6 sits 0.4 from 6 and 0.6 from 5", ru: "Округление идёт к БЛИЖАЙШЕЙ точке сетки: 5.6 стоит в 0.4 от 6 и в 0.6 от 5" },
+                { en: "Ties-to-even rounds 5.6 down because 5 is odd", ru: "Связи-к-чётному округляют 5.6 вниз, потому что 5 нечётная" },
+                { en: "The clip pulls every code below 6 up to 6", ru: "Клип подтягивает все коды ниже 6 вверх к шестёрке" },
+              ],
+              answer: 0,
+              explain: { en: "Truncation biases codes toward zero and roughly doubles the error of the small weights. Ties-to-even matters only at exact .5 — 5.6 is not a tie.", ru: "Усечение смещает коды к нулю и примерно удваивает ошибку малых весов. Связи-к-чётному работают только ровно на 0.5 — 5.6 не связь." },
+            },
+          },
+          {
+            q: {
+              en: "With scale 0.3, what integer code does the weight −1.68 get?",
+              ru: "При scale 0.3 какой целый код получит вес −1.68?",
+            },
+            answer: -6, tol: 0.2,
+            hint: {
+              en: "Divide the weight by the scale: the ratio is negative, so round to the nearest grid point on the negative side — no clipping needed here.",
+              ru: "Раздели вес на scale: отношение отрицательное, поэтому округляй к ближайшей точке сетки на отрицательной стороне — клип тут не нужен.",
+            },
+            followUp: {
+              q: { en: "Why −6 — and not −5 (truncation)?", ru: "Почему −6, а не −5 (усечение)?" },
+              options: [
+                { en: "Rounding goes to the NEAREST grid point: −5.6 sits 0.4 from −6 and 0.6 from −5", ru: "Округление идёт к БЛИЖАЙШЕЙ точке сетки: −5.6 стоит в 0.4 от −6 и в 0.6 от −5" },
+                { en: "Ties-to-even rounds −5.6 up because −5 is odd", ru: "Связи-к-чётному округляют −5.6 вверх, потому что −5 нечётная" },
+                { en: "The clip pulls every code above −6 down to −6", ru: "Клип сжимает все коды выше −6 вниз к −6" },
+              ],
+              answer: 0,
+              explain: { en: "Truncation toward zero biases negative codes upward and hides half of the reconstruction error. Ties-to-even matters only at exact .5 — −5.6 is not a tie.", ru: "Усечение к нулю смещает отрицательные коды вверх и прячет половину ошибки реконструкции. Связи-к-чётному работают только ровно на 0.5 — −5.6 не связь." },
+            },
+          },
+        ],
       },
       {
         id: "q3",
@@ -200,6 +301,61 @@
           answer: 0,
           explain: { en: "A sign convention is a contract, not a truth: this course (and the notebook trace) defines error = reconstructed − original. Some texts flip it — always check which one you are reading.", ru: "Знаковое соглашение — это контракт, а не истина: этот курс (и трассировка тетради) определяет ошибку = реконструкция − оригинал. В некоторых текстах знак перевёрнут — всегда проверяй, какой перед тобой." },
         },
+        // Вариативность №5: входы те же, что у q2 того же индекса; ошибка = scale × код − вес:
+        //   0.3 × 6 − 1.68 = 0.12;  0.3 × (−6) − (−1.68) = −0.12.
+        // Ответы 0.12 / −0.12 в фигурах не живут (там +0.08 / +0.02 / +0.01 / −0.50);
+        // followUp переписан под знак варианта.
+        variants: [
+          {
+            q: {
+              en: "For that same weight (0.37, scale 0.2): what is the signed reconstruction error, reconstructed − original?",
+              ru: "Для того же веса (0.37, scale 0.2): какова знаковая ошибка реконструкции, реконструкция − оригинал?",
+            },
+            answer: 0.03, tol: 0.005,
+          },
+          {
+            q: {
+              en: "For that same weight (1.68, scale 0.3): what is the signed reconstruction error, reconstructed − original?",
+              ru: "Для того же веса (1.68, scale 0.3): какова знаковая ошибка реконструкции, реконструкция − оригинал?",
+            },
+            answer: 0.12, tol: 0.01,
+            hint: {
+              en: "Code 6 reconstructs to 6 × 0.3 = 1.8; the signed error is 1.8 − 1.68.",
+              ru: "Код 6 реконструируется в 6 × 0.3 = 1.8; знаковая ошибка равна 1.8 − 1.68.",
+            },
+            followUp: {
+              q: { en: "Why is the sign +0.12 and not −0.12?", ru: "Почему знак +0.12, а не −0.12?" },
+              options: [
+                { en: "The course convention is error = reconstruction − original: 1.8 − 1.68 = +0.12", ru: "Соглашение курса: ошибка = реконструкция − оригинал: 1.8 − 1.68 = +0.12" },
+                { en: "Quantization always inflates weights, so the error must be positive", ru: "Квантование всегда раздувает веса, поэтому ошибка обязана быть положительной" },
+                { en: "The sign follows the code: code 6 is positive, so the error is positive", ru: "Знак наследуется от кода: код 6 положительный, значит и ошибка положительная" },
+              ],
+              answer: 0,
+              explain: { en: "A sign convention is a contract, not a truth: this course (and the notebook trace) defines error = reconstructed − original. Some texts flip it — always check which one you are reading.", ru: "Знаковое соглашение — это контракт, а не истина: этот курс (и трассировка тетради) определяет ошибку = реконструкция − оригинал. В некоторых текстах знак перевёрнут — всегда проверяй, какой перед тобой." },
+            },
+          },
+          {
+            q: {
+              en: "For that same weight (−1.68, scale 0.3): what is the signed reconstruction error, reconstructed − original?",
+              ru: "Для того же веса (−1.68, scale 0.3): какова знаковая ошибка реконструкции, реконструкция − оригинал?",
+            },
+            answer: -0.12, tol: 0.01,
+            hint: {
+              en: "Code −6 reconstructs to −6 × 0.3 = −1.8; the signed error is −1.8 − (−1.68).",
+              ru: "Код −6 реконструируется в −6 × 0.3 = −1.8; знаковая ошибка равна −1.8 − (−1.68).",
+            },
+            followUp: {
+              q: { en: "Why is the sign −0.12 and not +0.12?", ru: "Почему знак −0.12, а не +0.12?" },
+              options: [
+                { en: "The course convention is error = reconstruction − original: −1.8 − (−1.68) = −0.12", ru: "Соглашение курса: ошибка = реконструкция − оригинал: −1.8 − (−1.68) = −0.12" },
+                { en: "Quantization always inflates weights, so the error must be positive", ru: "Квантование всегда раздувает веса, поэтому ошибка обязана быть положительной" },
+                { en: "The sign follows the code: code −6 is negative, so the error is negative", ru: "Знак наследуется от кода: код −6 отрицательный, значит и ошибка отрицательная" },
+              ],
+              answer: 0,
+              explain: { en: "A sign convention is a contract, not a truth: this course (and the notebook trace) defines error = reconstructed − original. Some texts flip it — always check which one you are reading.", ru: "Знаковое соглашение — это контракт, а не истина: этот курс (и трассировка тетради) определяет ошибку = реконструкция − оригинал. В некоторых текстах знак перевёрнут — всегда проверяй, какой перед тобой." },
+            },
+          },
+        ],
       },
     ],
     exercises: [

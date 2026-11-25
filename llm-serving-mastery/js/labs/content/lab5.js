@@ -23,6 +23,18 @@
 <p>Непрерывный (continuous) батчинг подсаживает новый запрос в освободившийся слот на следующем тике: короткий запрос, завершившись раньше когорты, сразу открывает место следующему. В игрушке тетради (2 слота; A нужно 5 тиков, B и C — по 1; все пришли в тик 0) B завершается на границе тика 1, C стартует в тик 1 и завершается в тик 2, тогда как static-режим держал бы всю когорту до опустошения. Привычка лабы: сначала прочитай трассу руками, потом дай тестам проверить; тики — придуманные единицы, а не секунды GPU.</p>`,
     },
     heroTag: { en: "paging, batching, the knee", ru: "пейджинг, батчинг, колено" },
+    glossary: [
+      [{ en: "PagedAttention", ru: "PagedAttention" }, { en: "splitting each request's KV cache into physical blocks of B positions, so memory is reserved per block, not per request promise.", ru: "нарезка KV-кэша каждого запроса на физические блоки по B позиций: память резервируется по блокам, а не по обещаниям запроса." }],
+      [{ en: "block", ru: "блок" }, { en: "the physical unit of KV memory: a request retaining L positions occupies ceil(L / B) whole blocks.", ru: "физическая единица KV-памяти: запрос с L удержанными позициями занимает ceil(L / B) целых блоков." }],
+      [{ en: "block table", ru: "block table" }, { en: "the per-request list of its blocks; it is why requests never share blocks and tails never merge.", ru: "список блоков у каждого запроса свой; именно поэтому запросы не делят блоки, а хвосты не сливаются." }],
+      [{ en: "tail waste", ru: "хвостовые отходы" }, { en: "positions of the last block that are allocated but never used: blocks × B − L per request.", ru: "позиции последнего блока, которые выделены, но не используются: blocks × B − L на запрос." }],
+      [{ en: "slot", ru: "слот" }, { en: "one place in the running batch; in the toy a slot is busy exactly while its request still owes ticks.", ru: "одно место в работающем батче; в игрушке слот занят ровно пока его запрос должен тики." }],
+      [{ en: "tick", ru: "тик" }, { en: "the invented unit of decode work: one decode step per tick, prefill = 0; ticks are never GPU seconds.", ru: "придуманная единица decode-работы: один decode-шаг за тик, prefill = 0; тики — никогда секунды GPU." }],
+      [{ en: "continuous batching", ru: "непрерывный батчинг" }, { en: "refilling a freed slot at the next tick boundary, so a short request immediately opens a place for the next queued one.", ru: "подсадка нового запроса в освободившийся слот на следующей границе тиков: короткий запрос сразу открывает место следующему из очереди." }],
+      [{ en: "static batching", ru: "static-батчинг" }, { en: "holding the whole cohort until it empties; the freed slot idles instead of taking the next request — the lab's contrast case.", ru: "удержание всей когорты до её опустошения; освободившийся слот простаивает вместо того, чтобы взять следующий запрос, — контрастный случай лабы." }],
+      [{ en: "queue", ru: "очередь" }, { en: "requests waiting for a slot; in the base toy (2 slots, three unit requests) C waits exactly one boundary.", ru: "запросы, ждущие слот; в базовой игрушке (2 слота, три единичных запроса) C ждёт ровно одну границу." }],
+      [{ en: "FIFO", ru: "FIFO" }, { en: "first in, first out: the admission order the toy uses; disputes over a freed slot go to the earlier request.", ru: "первым пришёл — первым ушёл: порядок допуска в игрушке; спор за освободившийся слот выигрывает более ранний запрос." }],
+    ],
     figures: [
       {
         id: "lab5-pages",
@@ -159,8 +171,8 @@
         },
         answer: 2, tol: 0.2, unit: { en: "blocks", ru: "блока" },
         hint: {
-          en: "Round up: ceil(17 / 16) = 2 — only one of the second block's 16 positions is used.",
-          ru: "Округляй вверх: ceil(17 / 16) = 2 — второй блок занят лишь одной позицией из 16.",
+          en: "Round up: ceil(17 / 16) — only one of the second block's 16 positions is used.",
+          ru: "Округляй вверх: ceil(17 / 16) — второй блок занят лишь одной позицией из 16.",
         },
         followUp: {
           q: { en: "Why must the allocation round UP instead of just 17 / 16 ≈ 1.06?", ru: "Почему аллокация округляет ВВЕРХ, а не берёт 17 / 16 ≈ 1.06?" },
@@ -172,6 +184,60 @@
           answer: 0,
           explain: { en: "Blocks are allocated whole — that is what «paged» means. The 15 unused positions of the second block are the tail waste the whole lab accounts for.", ru: "Блоки выделяются целиком — именно это значит «paged». 15 неиспользуемых позиций второго блока — тот хвостовой waste, который считает вся лаба." },
         },
+        // Вариативность №5: длина запроса и блок разведены с фигурных (17 и 16 — база);
+        // blocks = ceil(L / B):  85/24 → ceil(3.54) = 4;  185/24 → ceil(7.71) = 8.
+        // tol 0.1: ловушка «ввести дробь» (3.54 / 7.71) на расстоянии 0.46 / 0.29 — больше 2×tol.
+        variants: [
+          {
+            q: {
+              en: "One request retains 17 positions, block size 16. How many physical blocks does it occupy?",
+              ru: "Один запрос удерживает 17 позиций, размер блока 16. Сколько физических блоков он занимает?",
+            },
+            answer: 2, tol: 0.2,
+          },
+          {
+            q: {
+              en: "One request retains 85 positions, block size 24. How many physical blocks does it occupy?",
+              ru: "Один запрос удерживает 85 позиций, размер блока 24. Сколько физических блоков он занимает?",
+            },
+            answer: 4, tol: 0.1,
+            hint: {
+              en: "Round UP with the ceiling: ceil(L / B) — the leftover positions still pay for one whole extra block.",
+              ru: "Округляй ВВЕРХ с потолком: ceil(L / B) — оставшиеся позиции всё равно оплачивают целый лишний блок.",
+            },
+            followUp: {
+              q: { en: "Why must the allocation round UP instead of just 85 / 24 ≈ 3.54?", ru: "Почему аллокация округляет ВВЕРХ, а не берёт 85 / 24 ≈ 3.54?" },
+              options: [
+                { en: "A block is a physical unit: the 13 leftover positions still need a whole fourth block, so the empty slots are paid in full", ru: "Блок — физическая единица: 13 оставшихся позиций всё равно требуют целый четвёртый блок, поэтому пустые слоты оплачиваются целиком" },
+                { en: "Fractions of blocks are stored in the metadata, so 3.54 is exact", ru: "Доли блоков хранятся в метаданных, поэтому 3.54 — точное значение" },
+                { en: "Rounding up compensates for fragmentation elsewhere in the pool", ru: "Округление вверх компенсирует фрагментацию в других местах пула" },
+              ],
+              answer: 0,
+              explain: { en: "Blocks are allocated whole — that is what «paged» means. The unused positions of the last block are the tail waste the whole lab accounts for.", ru: "Блоки выделяются целиком — именно это значит «paged». Неиспользуемые позиции последнего блока — тот хвостовой waste, который считает вся лаба." },
+            },
+          },
+          {
+            q: {
+              en: "One request retains 185 positions, block size 24. How many physical blocks does it occupy?",
+              ru: "Один запрос удерживает 185 позиций, размер блока 24. Сколько физических блоков он занимает?",
+            },
+            answer: 8, tol: 0.1,
+            hint: {
+              en: "Round UP with the ceiling: ceil(L / B) — never to the nearest.",
+              ru: "Округляй ВВЕРХ с потолком: ceil(L / B) — никогда не к ближайшему.",
+            },
+            followUp: {
+              q: { en: "Why must the allocation round UP instead of just 185 / 24 ≈ 7.71?", ru: "Почему аллокация округляет ВВЕРХ, а не берёт 185 / 24 ≈ 7.71?" },
+              options: [
+                { en: "A block is a physical unit: the 17 leftover positions still need a whole eighth block, so the empty slots are paid in full", ru: "Блок — физическая единица: 17 оставшихся позиций всё равно требуют целый восьмой блок, поэтому пустые слоты оплачиваются целиком" },
+                { en: "Fractions of blocks are stored in the metadata, so 7.71 is exact", ru: "Доли блоков хранятся в метаданных, поэтому 7.71 — точное значение" },
+                { en: "Rounding up compensates for fragmentation elsewhere in the pool", ru: "Округление вверх компенсирует фрагментацию в других местах пула" },
+              ],
+              answer: 0,
+              explain: { en: "Blocks are allocated whole — that is what «paged» means. The unused positions of the last block are the tail waste the whole lab accounts for.", ru: "Блоки выделяются целиком — именно это значит «paged». Неиспользуемые позиции последнего блока — тот хвостовой waste, который считает вся лаба." },
+            },
+          },
+        ],
       },
       {
         id: "q2",
@@ -181,8 +247,8 @@
         },
         answer: 31, tol: 0.2, unit: { en: "positions", ru: "позиция" },
         hint: {
-          en: "Blocks: 2 + 2 + 3 = 7, capacity 7 × 16 = 112; live 17 + 31 + 33 = 81; waste = 112 − 81 = 31. One ceil over the sum would give 6 blocks and hide the tails.",
-          ru: "Блоки: 2 + 2 + 3 = 7, ёмкость 7 × 16 = 112; живых 17 + 31 + 33 = 81; waste = 112 − 81 = 31. Один ceil по сумме дал бы 6 блоков и спрятал хвосты.",
+          en: "Blocks: 2 + 2 + 3 = 7, capacity 7 × 16 = 112; live 17 + 31 + 33 = 81; waste = 112 − 81. One ceil over the sum would give 6 blocks and hide the tails.",
+          ru: "Блоки: 2 + 2 + 3 = 7, ёмкость 7 × 16 = 112; живых 17 + 31 + 33 = 81; waste = 112 − 81. Один ceil по сумме дал бы 6 блоков и спрятал хвосты.",
         },
         followUp: {
           q: { en: "Why can't the three tails merge into one shared tail?", ru: "Почему три хвоста не могут слиться в один общий?" },
@@ -194,6 +260,61 @@
           answer: 0,
           explain: { en: "The one-pool figure promises ceil(81/16) = 6 blocks precisely by merging tails that cannot merge: 7 real block tables hold 112 slots. The 16-slot gap is the undercount every downstream waste figure inherits.", ru: "Фигура «один пул» обещает ceil(81/16) = 6 блоков ровно тем, что склеивает несклеиваемые хвосты: 7 реальных block tables держат 112 слотов. Разница в 16 слотов — то занижение, которое наследует вся дальнейшая арифметика waste." },
         },
+        // Вариативность №5: длины и блок — входы (31 базы живёт в фигуре хвостов);
+        // waste = Σ ceil(Lᵢ/B) × B − Σ Lᵢ:
+        //   [26, 26, 26] / 24 → 6 блоков, 144 − 78 = 66 (общий пул соврал бы 96 − 78 = 18);
+        //   [49, 51] / 24 → 6 блоков, 144 − 100 = 44 (общий пул соврал бы 120 − 100 = 20).
+        variants: [
+          {
+            q: {
+              en: "Three independent requests retain 17, 31 and 33 positions; block size 16. How many tail positions are allocated but never used, in total?",
+              ru: "Три независимых запроса удерживают 17, 31 и 33 позиции; размер блока 16. Сколько всего хвостовых позиций выделено, но не используется?",
+            },
+            answer: 31, tol: 0.2,
+          },
+          {
+            q: {
+              en: "Three independent requests retain 26, 26 and 26 positions; block size 24. How many tail positions are allocated but never used, in total?",
+              ru: "Три независимых запроса удерживают 26, 26 и 26 позиций; размер блока 24. Сколько всего хвостовых позиций выделено, но не используется?",
+            },
+            answer: 66, tol: 0.2,
+            hint: {
+              en: "Blocks: ceil each length: 2 + 2 + 2 = 6, capacity 6 × 24 = 144; live 78; waste = capacity − live. One ceil over the sum would merge tails that cannot merge.",
+              ru: "Блоки: ceil по каждой длине: 2 + 2 + 2 = 6, ёмкость 6 × 24 = 144; живых 78; waste = ёмкость − живые. Один ceil по сумме склеил бы несклеиваемые хвосты.",
+            },
+            followUp: {
+              q: { en: "Why can't the three tails merge into one shared tail?", ru: "Почему три хвоста не могут слиться в один общий?" },
+              options: [
+                { en: "Requests never share blocks: each block table is per-request, so every tail is reserved for its own request alone", ru: "Запросы никогда не делят блоки: block table у каждого свой, поэтому каждый хвост резервируется под свой запрос" },
+                { en: "The scheduler merges tails at the next tick boundary", ru: "Scheduler сливает хвосты на следующей границе тиков" },
+                { en: "Tails merge when the block size divides the total length", ru: "Хвосты сливаются, когда размер блока делит суммарную длину" },
+              ],
+              answer: 0,
+              explain: { en: "The one-pool shortcut promises ceil(78/24) = 4 blocks by merging tails that cannot merge: 6 real block tables hold 144 slots. The 48-slot gap is the undercount every downstream waste figure inherits.", ru: "Короткий путь «один пул» обещает ceil(78/24) = 4 блока ровно тем, что склеивает несклеиваемые хвосты: 6 реальных block tables держат 144 слота. Разница в 48 слотов — то занижение, которое наследует вся дальнейшая арифметика waste." },
+            },
+          },
+          {
+            q: {
+              en: "Two independent requests retain 49 and 51 positions; block size 24. How many tail positions are allocated but never used, in total?",
+              ru: "Два независимых запроса удерживают 49 и 51 позицию; размер блока 24. Сколько всего хвостовых позиций выделено, но не используется?",
+            },
+            answer: 44, tol: 0.2,
+            hint: {
+              en: "Blocks: 3 + 3 = 6, each block holds 24 slots; live 100; waste = capacity − live. One ceil over the sum would give 5 blocks and hide the tails.",
+              ru: "Блоки: 3 + 3 = 6, каждый блок держит 24 слота; живых 100; waste = ёмкость − живые. Один ceil по сумме дал бы 5 блоков и спрятал хвосты.",
+            },
+            followUp: {
+              q: { en: "Why can't the two tails merge into one shared tail?", ru: "Почему два хвоста не могут слиться в один общий?" },
+              options: [
+                { en: "Requests never share blocks: each block table is per-request, so every tail is reserved for its own request alone", ru: "Запросы никогда не делят блоки: block table у каждого свой, поэтому каждый хвост резервируется под свой запрос" },
+                { en: "The scheduler merges tails at the next tick boundary", ru: "Scheduler сливает хвосты на следующей границе тиков" },
+                { en: "Tails merge when the block size divides the total length", ru: "Хвосты сливаются, когда размер блока делит суммарную длину" },
+              ],
+              answer: 0,
+              explain: { en: "The one-pool shortcut promises ceil(100/24) = 5 blocks by merging tails that cannot merge: 6 real block tables hold 144 slots. The 24-slot gap is the undercount every downstream waste figure inherits.", ru: "Короткий путь «один пул» обещает ceil(100/24) = 5 блоков ровно тем, что склеивает несклеиваемые хвосты: 6 реальных block tables держат 144 слота. Разница в 24 слота — то занижение, которое наследует вся дальнейшая арифметика waste." },
+            },
+          },
+        ],
       },
       {
         id: "q3",
@@ -203,8 +324,8 @@
         },
         answer: 2, tol: 0.2, unit: { en: "tick", ru: "тика" },
         hint: {
-          en: "C is admitted at tick 1, works during [1, 2); completion is recorded at the next boundary: tick 2. Static mode would keep C waiting until the whole cohort empties.",
-          ru: "C подсаживается в тик 1, работает в [1, 2); завершение фиксируется на следующей границе: тик 2. Static-режим держал бы C до опустошения всей когорты.",
+          en: "C is admitted at tick 1, works during [1, 2); completion is recorded at the next boundary. Static mode would keep C waiting until the whole cohort empties.",
+          ru: "C подсаживается в тик 1, работает в [1, 2); завершение фиксируется на следующей границе. Static-режим держал бы C до опустошения всей когорты.",
         },
         followUp: {
           q: { en: "Why does C finish at tick 2 and not at tick 1, right when it is admitted?", ru: "Почему C завершается на тике 2, а не на тике 1 — сразу при подсадке?" },
@@ -216,6 +337,61 @@
           answer: 0,
           explain: { en: "A unit tick of work occupies exactly one interval: start at the boundary, finish at the next one. B's own work was [0, 1) — that is why B's slot freed only at boundary 1.", ru: "Единичный тик работы занимает ровно один интервал: старт на границе, финиш на следующей. Работа B была [0, 1) — поэтому его слот освободился только на границе 1." },
         },
+        // Вариативность №5: когорта и слоты разведены с фигурных (A·5, B·1, C·1, 2 слота);
+        // трасса по модели упражнения 4 (FIFO, старт на свободном слоте, финиш = старт + работа):
+        //   [9, 8, 4, 4, 4] на 4 слотах → C, D финишируют на 4, E: старт 4 → финиш 8;
+        //   [20, 12, 12, 12, 8] на 4 слотах → B, C, D на 12, E: старт 12 → финиш 20.
+        variants: [
+          {
+            q: {
+              en: "Decode-only toy, 2 slots, continuous batching: A needs 5 ticks, B and C need 1 each; A, B, C arrive at tick 0 in FIFO order. B works during [0, 1) and C takes its freed slot. At which tick boundary is C complete?",
+              ru: "Decode-only игрушка, 2 слота, continuous-батчинг: A нужно 5 тиков, B и C — по 1; A, B, C пришли в тик 0 в порядке FIFO. B работает в [0, 1), C занимает его освободившийся слот. На какой границе тиков C завершается?",
+            },
+            answer: 2, tol: 0.2,
+          },
+          {
+            q: {
+              en: "Decode-only toy, 4 slots, continuous batching: A needs 9 ticks, B needs 8, C, D and E need 4 each; all arrive at tick 0 in FIFO order. C and D finish at boundary 4 and E takes a freed slot. At which tick boundary is E complete?",
+              ru: "Decode-only игрушка, 4 слота, continuous-батчинг: A нужно 9 тиков, B — 8, C, D и E — по 4; все пришли в тик 0 в порядке FIFO. C и D завершаются на границе 4, и E занимает освободившийся слот. На какой границе тиков E завершается?",
+            },
+            answer: 8, tol: 0.2,
+            hint: {
+              en: "E is admitted at the boundary where C and D free their slots, then owes its own 4 ticks; completion is recorded at the NEXT boundary after start + work.",
+              ru: "E подсаживается на границе, где C и D освободили слоты, и должен свои 4 тика; завершение фиксируется на СЛЕДУЮЩЕЙ границе после старт + работа.",
+            },
+            followUp: {
+              q: { en: "Why does E finish at tick 8 and not at tick 4, right when it is admitted?", ru: "Почему E завершается на тике 8, а не на тике 4 — сразу при подсадке?" },
+              options: [
+                { en: "Admission and one decode step are different events: E is admitted at the boundary 4, works during [4, 8), and its completion is recorded at the next boundary", ru: "Подсадка и один decode-шаг — разные события: E подсаживается на границе 4, работает в [4, 8), и завершение фиксируется на следующей границе" },
+                { en: "E's request is queued twice before it starts", ru: "Запрос E дважды попадает в очередь до старта" },
+                { en: "Tick 4 is reserved for C's and D's output tokens", ru: "Тик 4 зарезервирован под выходные токены C и D" },
+              ],
+              answer: 0,
+              explain: { en: "A unit tick of work occupies exactly one interval: start at the boundary, finish at the next one. C and D freed their slots only at boundary 4 — that is when E could start.", ru: "Единичный тик работы занимает ровно один интервал: старт на границе, финиш на следующей. C и D освободили слоты только на границе 4 — тогда E и мог стартовать." },
+            },
+          },
+          {
+            q: {
+              en: "Decode-only toy, 4 slots, continuous batching: A needs 20 ticks, B, C and D need 12 each, E needs 8; all arrive at tick 0 in FIFO order. B, C and D finish at boundary 12 and E takes a freed slot. At which tick boundary is E complete?",
+              ru: "Decode-only игрушка, 4 слота, continuous-батчинг: A нужно 20 тиков, B, C и D — по 12, E — 8; все пришли в тик 0 в порядке FIFO. B, C и D завершаются на границе 12, и E занимает освободившийся слот. На какой границе тиков E завершается?",
+            },
+            answer: 20, tol: 0.2,
+            hint: {
+              en: "The first slot frees at boundary 12, E owes its own 8 ticks, and completion is recorded at the NEXT boundary after start + work.",
+              ru: "Первый слот освобождается на границе 12, E должен свои 8 тиков, а завершение фиксируется на СЛЕДУЮЩЕЙ границе после старт + работа.",
+            },
+            followUp: {
+              q: { en: "Why does E finish at tick 20 and not at tick 12, right when it is admitted?", ru: "Почему E завершается на тике 20, а не на тике 12 — сразу при подсадке?" },
+              options: [
+                { en: "Admission and one decode step are different events: E is admitted at the boundary 12, works during [12, 20), and its completion is recorded at the next boundary", ru: "Подсадка и один decode-шаг — разные события: E подсаживается на границе 12, работает в [12, 20), и завершение фиксируется на следующей границе" },
+                { en: "E's request is queued twice before it starts", ru: "Запрос E дважды попадает в очередь до старта" },
+                { en: "Tick 12 is reserved for B's and C's output tokens", ru: "Тик 12 зарезервирован под выходные токены B и C" },
+              ],
+              answer: 0,
+              explain: { en: "A unit tick of work occupies exactly one interval: start at the boundary, finish at the next one. B, C and D freed their slots only at boundary 12 — that is when E could start.", ru: "Единичный тик работы занимает ровно один интервал: старт на границе, финиш на следующей. B, C и D освободили слоты только на границе 12 — тогда E и мог стартовать." },
+            },
+          },
+        ],
       },
     ],
     exercises: [

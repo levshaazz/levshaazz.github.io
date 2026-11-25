@@ -22,8 +22,8 @@
     intro: {
       en: `<p>The Topic 13 lecture made one promise actionable: a latency statement without a percentile and a window is not a number but a mood. This lab drills the on-call half of that promise on a <strong>declared teaching journal</strong> modeled on the real layer-2 gateway journal: same fields (<code>{seq, ts, kind, payload, prev, hash}</code>), same hash chain your lab 09 code already walks.</p>
 <p>The declared service promise: <strong>SLO 99&nbsp;%</strong> — in any window, at most 1&nbsp;% of minutes may breach <em>p95 TTFT ≤ 2 s</em>. The error budget is the other 1&nbsp;%. The on-call policy is the lecture's alert table: <strong>burn ≥ 8.3&times; over a 10-minute window pages</strong>; otherwise <strong>burn ≥ 3&times; over a 60-minute window opens a ticket</strong>; edges are inclusive, and after a page the slow lane is suppressed for 60 minutes (one page, not seven). Everything else — the trace, the incident, the tampered entry — is declared arithmetic you can check by hand.</p>`,
-      ru: `<p>Лекция Темы 13 сделала одно обещание действенным: заявление о латентности без перцентиля и окна — не число, а настроение. Эта лаба тренирует дежурную половину обещания на <strong>декларированном учебном журнале</strong>, смоделированном по настоящему журналу шлюза слой-2: те же поля (<code>{seq, ts, kind, payload, prev, hash}</code>), та же хэш-цепочка, которую ваш код лабы 09 уже проходит.</p>
-<p>Декларированное обещание сервиса: <strong>SLO 99&nbsp;%</strong> — в любом окне не более 1&nbsp;% минут может нарушать <em>p95 TTFT ≤ 2 с</em>. Бюджет ошибки — остальные 1&nbsp;%. Политика дежурного — таблица алертов лекции: <strong>burn ≥ 8.3&times; на 10-минутном окне — пейдж</strong>; иначе <strong>burn ≥ 3&times; на 60-минутном окне — тикет</strong>; края включены, а после пейджа медленная дорожка подавлена на 60 минут (один пейдж, а не семь). Всё остальное — трейс, инцидент, правленая запись — декларированная арифметика, проверяемая руками.</p>`,
+      ru: `<p>Лекция Темы 13 сделала одно обещание действенным: заявление о латентности без перцентиля и окна — не число, а настроение. Эта лаба тренирует дежурную половину обещания на <strong>заявленном учебном журнале</strong>, смоделированном по настоящему журналу шлюза слой-2: те же поля (<code>{seq, ts, kind, payload, prev, hash}</code>), та же хэш-цепочка, которую ваш код лабы 09 уже проходит.</p>
+<p>Заявленное обещание сервиса: <strong>SLO 99&nbsp;%</strong> — в любом окне не более 1&nbsp;% минут может нарушать <em>p95 TTFT ≤ 2 с</em>. Бюджет ошибки — остальные 1&nbsp;%. Политика дежурного — таблица алертов лекции: <strong>burn ≥ 8.3&times; на 10-минутном окне — пейдж</strong>; иначе <strong>burn ≥ 3&times; на 60-минутном окне — тикет</strong>; края включены, а после пейджа медленная дорожка подавлена на 60 минут (один пейдж, а не семь). Всё остальное — трейс, инцидент, правленая запись — заявленная арифметика, проверяемая руками.</p>`,
     },
     heroTag: { en: "journal, burn rate, page vs ticket", ru: "журнал, burn rate, пейдж против тикета" },
     glossary: [
@@ -76,7 +76,7 @@
       },
       {
         id: "lab13-bands",
-        title: { en: "Burn rate zones: ok, ticket, page — the declared policy", ru: "Зоны burn rate: ok, тикет, пейдж — декларированная политика" },
+        title: { en: "Burn rate zones: ok, ticket, page — the declared policy", ru: "Зоны burn rate: ok, тикет, пейдж — заявленная политика" },
         w: 760, h: 420,
         svg: `<svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
   <g id="g-zones">
@@ -103,7 +103,7 @@
   </g>
 </svg>`,
         stages: [
-          { cap: { en: "The declared policy as zones: page on fast+severe, ticket on slow+mild, silence below 3×.", ru: "Декларированная политика зонами: пейдж за быстрое+тяжёлое, тикет за медленное+мягкое, тишина ниже 3×." }, show: ["g-zones"] },
+          { cap: { en: "The declared policy as zones: page on fast+severe, ticket on slow+mild, silence below 3×.", ru: "Заявленная политика зонами: пейдж за быстрое+тяжёлое, тикет за медленное+мягкое, тишина ниже 3×." }, show: ["g-zones"] },
           { cap: { en: "The quiz numbers as dots: 15× pages, 4× tickets, 1.2× is a calm evening.", ru: "Числа квизов точками: 15× пейджит, 4× тикетует, 1.2× — спокойный вечер." }, show: ["g-zones", "g-dots"] },
           { cap: { en: "Inclusive edges come from T12: a parked metric on the line must not toggle the policy.", ru: "Включённые края пришли из T12: метрика, вставшая на линию, не должна переключать политику." }, show: ["g-zones", "g-dots", "g-ribbon"] },
         ],
@@ -138,13 +138,13 @@
   </g>
   <g id="g-verdict">
     <rect x="55" y="372" width="650" height="36" rx="8" fill="var(--lab-accent)" opacity="0.14"/>
-    <text x="380" y="395" text-anchor="middle" font-size="14" fill="var(--lab-ink)" data-en="declared trace: pages [125, 126, 127], tickets [64..66], 138 ok buckets" data-ru="декларированный трейс: пейджи [125, 126, 127], тикеты [64..66], 138 ok">declared trace: pages [125, 126, 127], tickets [64..66], 138 ok buckets</text>
+    <text x="380" y="395" text-anchor="middle" font-size="14" fill="var(--lab-ink)" data-en="declared trace: pages [125, 126, 127], tickets [64..66], 138 ok buckets" data-ru="заявленный трейс: пейджи [125, 126, 127], тикеты [64..66], 138 ok">declared trace: pages [125, 126, 127], tickets [64..66], 138 ok buckets</text>
   </g>
 </svg>`,
         stages: [
           { cap: { en: "The day the capstone replays: quiet evening, noisy lunch, one blip, one breach.", ru: "Сутки, которые переигрывает капстоун: тихий вечер, шумный обед, одна вспышка, один breach." }, show: ["g-axes", "g-noise"] },
           { cap: { en: "The breach at 21:00 (deck numbers): 8.3 bad minutes in one bucket — fast burn 83×.", ru: "Breach в 21:00 (числа лекции): 8.3 плохой минуты в одной корзине — fast burn 83×." }, show: ["g-axes", "g-noise", "g-incident"] },
-          { cap: { en: "The JournalSim verdict on the declared trace — the capstone's hidden tests pin it.", ru: "Вердикт JournalSim на декларированном трейсе — скрытые тесты капстоуна его пинуют." }, show: ["g-axes", "g-noise", "g-incident", "g-verdict"] },
+          { cap: { en: "The JournalSim verdict on the declared trace — the capstone's hidden tests pin it.", ru: "Вердикт JournalSim на заявленном трейсе — скрытые тесты капстоуна его пинуют." }, show: ["g-axes", "g-noise", "g-incident", "g-verdict"] },
         ],
       },
     ],
@@ -172,6 +172,41 @@
           answer: 0,
           explain: { en: "The budget is time-shaped because the promise is time-shaped: p95 over a window. Minutes generalize to seconds and hours; incident counts do not compose.", ru: "Бюджет измеряется временем, потому что обещание про время: p95 на окно. Минуты обобщаются в секунды и часы; счётчик инцидентов не составляется." },
         },
+        // Вариативность №5: бюджет = дни × 24 × 60 × (1 − SLO).
+        //   90-дневный квартал, SLO 99 %: 129600 × 0.01 = 1296;   30-дневный месяц, SLO 99.9 %: 43200 × 0.001 = 43.2.
+        // Ловушки: привычный бюджет 1 % при 99.9 % даёт 432 (дистанция 388.8), сдвиг процента ×10 — 4.32 (38.88) при tol 0.5.
+        // База (432) — курсовое число SLO-арифметики; followUp без чисел входа — наследуется. Ответы 432 / 1296 / 43.2 различны.
+        variants: [
+          {
+            q: {
+              en: "The promise is SLO 99 % for a 30-day month. How many minutes of the month may breach it — the whole error budget, in minutes?",
+              ru: "Обещание — SLO 99 % на 30-дневный месяц. Сколько минут месяца могут нарушить его — весь бюджет ошибки, в минутах?",
+            },
+            answer: 432, tol: 0.5,
+          },
+          {
+            q: {
+              en: "The promise is SLO 99 % for a 90-day quarter. How many minutes of the quarter may breach it — the whole error budget, in minutes?",
+              ru: "Обещание — SLO 99 % на 90-дневный квартал. Сколько минут квартала могут нарушить его — весь бюджет ошибки, в минутах?",
+            },
+            answer: 1296, tol: 0.5,
+            hint: {
+              en: "90 · 24 · 60 minutes in a quarter; the budget is 1 % of them.",
+              ru: "90 · 24 · 60 минут в квартале; бюджет — 1 % от них.",
+            },
+          },
+          {
+            q: {
+              en: "The promise is SLO 99.9 % for a 30-day month. How many minutes of the month may breach it — the whole error budget, in minutes?",
+              ru: "Обещание — SLO 99.9 % на 30-дневный месяц. Сколько минут месяца могут нарушить его — весь бюджет ошибки, в минутах?",
+            },
+            answer: 43.2, tol: 0.5,
+            hint: {
+              en: "30 · 24 · 60 minutes in a month; the budget is 0.1 % of them.",
+              ru: "30 · 24 · 60 минут в месяце; бюджет — 0.1 % от них.",
+            },
+          },
+        ],
       },
       {
         id: "q2",
@@ -194,17 +229,78 @@
           answer: 0,
           explain: { en: "Burn rate is a speed: at 15× the budget lasts a fifteenth of the month — about two days. That is why 8.3× already pages: an evening at that pace eats a work-week of allowance.", ru: "Burn rate — скорость: на 15× бюджет живёт пятнадцатую часть месяца — около двух дней. Поэтому уже 8.3× пейджит: вечер на таком темпе съедает недельный запас бюджета." },
         },
+        // Вариативность №5: burn = (bad / window) / budget; окно 10 мин и бюджет 1 % (SLO 99 %) — константы базы.
+        //   (1.1 / 10) / 0.01 = 11;   (1.8 / 10) / 0.01 = 18.
+        // Ловушка «в голове 60-минутное окно» даёт 1.83 и 3 (дистанции 9.17 и 15) при tol 0.1.
+        // База (15×) в фигуре (точка «15x -> page») — grandfathered; followUp переписан без «15×». Ответы 15 / 11 / 18 различны.
+        variants: [
+          {
+            q: {
+              en: "A 10-minute fast window contains 1.5 breaching minutes. What is the burn rate (SLO 99 %)?",
+              ru: "10-минутное fast-окно содержит 1.5 нарушающей минуты. Чему равен burn rate (SLO 99 %)?",
+            },
+            answer: 15, tol: 0.1,
+          },
+          {
+            q: {
+              en: "A 10-minute fast window contains 1.1 breaching minutes. What is the burn rate (SLO 99 %)?",
+              ru: "10-минутное fast-окно содержит 1.1 нарушающей минуты. Чему равен burn rate (SLO 99 %)?",
+            },
+            answer: 11, tol: 0.1,
+            hint: {
+              en: "burn = (bad / window) / budget = (1.1 / 10) / 0.01.",
+              ru: "burn = (плохие / окно) / бюджет = (1.1 / 10) / 0.01.",
+            },
+            followUp: {
+              q: { en: "At this pace the month's budget burns in how long?", ru: "На таком темпе месячный бюджет сгорит за какое время?" },
+              options: [
+                { en: "One-over-burn of the month: 30 days / burn — days, not weeks", ru: "Обратная к burn доля месяца: 30 дней / burn — дни, а не недели" },
+                { en: "Exactly half a month, whatever the pace", ru: "Ровно полмесяца, каким бы ни был темп" },
+                { en: "It never burns out — tickets do not spend the budget", ru: "Он не сгорит никогда — тикеты бюджет не тратят" },
+              ],
+              answer: 0,
+              explain: {
+                en: "Burn rate is a speed: the budget lasts a one-over-burn share of the month — days at a fast pace. That is why 8.3× already pages: an evening at that pace eats weeks of allowance.",
+                ru: "Burn rate — скорость: бюджет живёт долю месяца, обратную burn, — на быстром темпе это дни. Поэтому уже 8.3× пейджит: вечер на таком темпе съедает недели запаса бюджета.",
+              },
+            },
+          },
+          {
+            q: {
+              en: "A 10-minute fast window contains 1.8 breaching minutes. What is the burn rate (SLO 99 %)?",
+              ru: "10-минутное fast-окно содержит 1.8 нарушающей минуты. Чему равен burn rate (SLO 99 %)?",
+            },
+            answer: 18, tol: 0.1,
+            hint: {
+              en: "burn = (bad / window) / budget = (1.8 / 10) / 0.01.",
+              ru: "burn = (плохие / окно) / бюджет = (1.8 / 10) / 0.01.",
+            },
+            followUp: {
+              q: { en: "At this pace the month's budget burns in how long?", ru: "На таком темпе месячный бюджет сгорит за какое время?" },
+              options: [
+                { en: "One-over-burn of the month: 30 days / burn — days, not weeks", ru: "Обратная к burn доля месяца: 30 дней / burn — дни, а не недели" },
+                { en: "Exactly half a month, whatever the pace", ru: "Ровно полмесяца, каким бы ни был темп" },
+                { en: "It never burns out — tickets do not spend the budget", ru: "Он не сгорит никогда — тикеты бюджет не тратят" },
+              ],
+              answer: 0,
+              explain: {
+                en: "Burn rate is a speed: the budget lasts a one-over-burn share of the month — days at a fast pace. That is why 8.3× already pages: an evening at that pace eats weeks of allowance.",
+                ru: "Burn rate — скорость: бюджет живёт долю месяца, обратную burn, — на быстром темпе это дни. Поэтому уже 8.3× пейджит: вечер на таком темпе съедает недели запаса бюджета.",
+              },
+            },
+          },
+        ],
       },
       {
         id: "q3",
         q: {
           en: "A 60-minute slow window contains 5.4 breaching minutes. Burn rate — and what does the declared policy do with it?",
-          ru: "60-минутное slow-окно содержит 5.4 нарушающей минуты. Burn rate — и что с ним делает декларированная политика?",
+          ru: "60-минутное slow-окно содержит 5.4 нарушающей минуты. Burn rate — и что с ним делает заявленная политика?",
         },
         answer: 9, tol: 0.1, unit: { en: "×", ru: "×" },
         hint: {
-          en: "burn = (5.4 / 60) / 0.01 = 9; then read the policy: fast first, then slow.",
-          ru: "burn = (5.4 / 60) / 0.01 = 9; дальше читай политику: сперва fast, потом slow.",
+          en: "burn = (5.4 / 60) / 0.01; then read the policy: fast first, then slow.",
+          ru: "burn = (5.4 / 60) / 0.01; дальше читай политику: сперва fast, потом slow.",
         },
         followUp: {
           q: { en: "Burn 9× on the slow lane: why does the policy still not page on this window alone?", ru: "Burn 9× на медленной дорожке: почему политика всё же не пейджит по одному этому окну?" },
@@ -216,6 +312,67 @@
           answer: 0,
           explain: { en: "The pairing is the resolution of alert fatigue vs silent failure: fast+severe pages, slow+mild tickets. One window never pages on the slow lane; a page needs the fast window's evidence.", ru: "Пара — развязка усталости от алертов и тихого отказа: быстро+тяжело пейджит, медленно+мягко тикетует. Одно окно на медленной дорожке не пейджит; пейджу нужны доказательства fast-окна." },
         },
+        // Вариативность №5: slow-окно меняется (60 → 120 / 240 мин), бюджет 1 % — константа базы.
+        //   (7.2 / 120) / 0.01 = 6;   (12 / 240) / 0.01 = 5.
+        // Ловушки: привычное 60-минутное окно даёт 12 и 20 (дистанции 6 и 15), без бюджета 0.06 / 0.05 — при tol 0.1.
+        // База (9×) чиста по фигурам; вход базы 60 мин — в фигуре (grandfathered); followUp переписан без «9×».
+        variants: [
+          {
+            q: {
+              en: "A 60-minute slow window contains 5.4 breaching minutes. Burn rate — and what does the declared policy do with it?",
+              ru: "60-минутное slow-окно содержит 5.4 нарушающей минуты. Burn rate — и что с ним делает заявленная политика?",
+            },
+            answer: 9, tol: 0.1,
+          },
+          {
+            q: {
+              en: "A 120-minute slow window contains 7.2 breaching minutes. Burn rate — and what does the declared policy do with it?",
+              ru: "120-минутное slow-окно содержит 7.2 нарушающей минуты. Burn rate — и что с ним делает заявленная политика?",
+            },
+            answer: 6, tol: 0.1,
+            hint: {
+              en: "burn = (7.2 / 120) / 0.01; then read the policy: fast first, then slow.",
+              ru: "burn = (7.2 / 120) / 0.01; дальше читай политику: сперва fast, потом slow.",
+            },
+            followUp: {
+              q: { en: "Burn well above the ticket line on the slow lane: why does the policy still not page on this window alone?", ru: "Burn заметно выше линии тикета на медленной дорожке: почему политика всё же не пейджит по одному этому окну?" },
+              options: [
+                { en: "The slow lane only tickets: an hour of mild erosion is readable in the morning, and paging on every slow window is how alert fatigue starts", ru: "Медленная дорожка только тикетует: час мягкой эрозии читается утром, а пейджи на каждое slow-окно — так начинается усталость от алертов" },
+                { en: "Because the slow lane's threshold is the higher one of the two", ru: "Потому что порог медленной дорожки — более высокий из двух" },
+                { en: "The slow lane does not exist in the policy", ru: "Медленной дорожки в политике нет" },
+              ],
+              answer: 0,
+              explain: {
+                en: "The pairing is the resolution of alert fatigue vs silent failure: fast+severe pages, slow+mild tickets. One window never pages on the slow lane; a page needs the fast window's evidence.",
+                ru: "Пара — развязка усталости от алертов и тихого отказа: быстро+тяжело пейджит, медленно+мягко тикетует. Одно окно на медленной дорожке не пейджит; пейджу нужны доказательства fast-окна.",
+              },
+            },
+          },
+          {
+            q: {
+              en: "A 240-minute slow window contains 12 breaching minutes. Burn rate — and what does the declared policy do with it?",
+              ru: "240-минутное slow-окно содержит 12 нарушающих минут. Burn rate — и что с ним делает заявленная политика?",
+            },
+            answer: 5, tol: 0.1,
+            hint: {
+              en: "burn = (12 / 240) / 0.01; then read the policy: fast first, then slow.",
+              ru: "burn = (12 / 240) / 0.01; дальше читай политику: сперва fast, потом slow.",
+            },
+            followUp: {
+              q: { en: "Burn well above the ticket line on the slow lane: why does the policy still not page on this window alone?", ru: "Burn заметно выше линии тикета на медленной дорожке: почему политика всё же не пейджит по одному этому окну?" },
+              options: [
+                { en: "The slow lane only tickets: an hour of mild erosion is readable in the morning, and paging on every slow window is how alert fatigue starts", ru: "Медленная дорожка только тикетует: час мягкой эрозии читается утром, а пейджи на каждое slow-окно — так начинается усталость от алертов" },
+                { en: "Because the slow lane's threshold is the higher one of the two", ru: "Потому что порог медленной дорожки — более высокий из двух" },
+                { en: "The slow lane does not exist in the policy", ru: "Медленной дорожки в политике нет" },
+              ],
+              answer: 0,
+              explain: {
+                en: "The pairing is the resolution of alert fatigue vs silent failure: fast+severe pages, slow+mild tickets. One window never pages on the slow lane; a page needs the fast window's evidence.",
+                ru: "Пара — развязка усталости от алертов и тихого отказа: быстро+тяжело пейджит, медленно+мягко тикетует. Одно окно на медленной дорожке не пейджит; пейджу нужны доказательства fast-окна.",
+              },
+            },
+          },
+        ],
       },
     ],
     exercises: [
@@ -431,7 +588,7 @@ assert abs(burn_rate(50, 100) - 50.0) < 1e-9, "half the window breaching is burn
         title: { en: "Exercise 4 · decide: page, ticket, ok — with inclusive edges", ru: "Упражнение 4 · decide: пейдж, тикет, ok — с включёнными краями" },
         brief: {
           en: "Implement <code>decide(fast_burn, slow_burn)</code> under the declared policy: <strong>fast ≥ 8.3 → 'page'</strong>; otherwise <strong>slow ≥ 3 → 'ticket'</strong>; otherwise <strong>'ok'</strong>. The edges are inclusive — the T12 thermostat lesson: a metric parked exactly on the line must not toggle the policy. Order matters: a window pair where both fire is a page (the fast lane speaks for the incident), not a ticket.",
-          ru: "Реализуй <code>decide(fast_burn, slow_burn)</code> по декларированной политике: <strong>fast ≥ 8.3 → 'page'</strong>; иначе <strong>slow ≥ 3 → 'ticket'</strong>; иначе <strong>'ok'</strong>. Края включены — урок термостата T12: метрика, вставшая ровно на линию, не должна переключать политику. Порядок важен: пара окон, где горят оба, — пейдж (fast говорит за инцидент), а не тикет.",
+          ru: "Реализуй <code>decide(fast_burn, slow_burn)</code> по заявленной политике: <strong>fast ≥ 8.3 → 'page'</strong>; иначе <strong>slow ≥ 3 → 'ticket'</strong>; иначе <strong>'ok'</strong>. Края включены — урок термостата T12: метрика, вставшая ровно на линию, не должна переключать политику. Порядок важен: пара окон, где горят оба, — пейдж (fast говорит за инцидент), а не тикет.",
         },
         starter: `FAST_TH = 8.3   # 10-minute window, declared in the lecture's alert table
 SLOW_TH = 3.0   # 60-minute window
@@ -470,7 +627,7 @@ def decide(fast_burn, slow_burn):
         title: { en: "Capstone · JournalSim: a day of on-call in one function", ru: "Капстоун · JournalSim: сутки дежурства в одной функции" },
         brief: {
           en: "Implement <code>journalsim(bad_minutes, fast_th=8.3, slow_th=3.0)</code>. <code>bad_minutes</code> is a list of 144 ten-minute buckets (24 h) — the declared trace from the figure: a noisy lunch, one blip, and the 21:00 breach. For each bucket <code>t</code>: <strong>fast burn</strong> = <code>burn_rate(bad_minutes[t], 10)</code>; <strong>slow burn</strong> = <code>burn_rate(sum(bad_minutes[t-5..t]), 60)</code>. Fire a page when the fast lane crosses <code>fast_th</code> (a page suppresses tickets for the next 6 buckets — one page, not a row of echoes); otherwise fire a ticket when the slow lane crosses <code>slow_th</code> (also suppressed inside the dedup window). Return a dict: <code>{&quot;pages&quot;: [...], &quot;tickets&quot;: [...], &quot;ok&quot;: count}</code> with bucket indices. The declared trace's verdict is printed on the figure — your function must reproduce it exactly.",
-          ru: "Реализуй <code>journalsim(bad_minutes, fast_th=8.3, slow_th=3.0)</code>. <code>bad_minutes</code> — список из 144 десяти минутных корзин (24 ч) — декларированный трейс с фигуры: шумный обед, одна вспышка и breach в 21:00. Для каждой корзины <code>t</code>: <strong>fast burn</strong> = <code>burn_rate(bad_minutes[t], 10)</code>; <strong>slow burn</strong> = <code>burn_rate(sum(bad_minutes[t-5..t]), 60)</code>. Пейдж — когда fast-дорожка пересекает <code>fast_th</code> (пейдж подавляет тикеты на следующие 6 корзин — один пейдж, а не ряд эхо); иначе тикет — когда slow-дорожка пересекает <code>slow_th</code> (тоже подавлен внутри окна дедупликации). Верни словарь: <code>{&quot;pages&quot;: [...], &quot;tickets&quot;: [...], &quot;ok&quot;: count}</code> с индексами корзин. Вердикт декларированного трейса напечатан на фигуре — твоя функция обязана воспроизвести его точно.",
+          ru: "Реализуй <code>journalsim(bad_minutes, fast_th=8.3, slow_th=3.0)</code>. <code>bad_minutes</code> — список из 144 десяти минутных корзин (24 ч) — заявленный трейс с фигуры: шумный обед, одна вспышка и breach в 21:00. Для каждой корзины <code>t</code>: <strong>fast burn</strong> = <code>burn_rate(bad_minutes[t], 10)</code>; <strong>slow burn</strong> = <code>burn_rate(sum(bad_minutes[t-5..t]), 60)</code>. Пейдж — когда fast-дорожка пересекает <code>fast_th</code> (пейдж подавляет тикеты на следующие 6 корзин — один пейдж, а не ряд эхо); иначе тикет — когда slow-дорожка пересекает <code>slow_th</code> (тоже подавлен внутри окна дедупликации). Верни словарь: <code>{&quot;pages&quot;: [...], &quot;tickets&quot;: [...], &quot;ok&quot;: count}</code> с индексами корзин. Вердикт заявленного трейса напечатан на фигуре — твоя функция обязана воспроизвести его точно.",
         },
         starter: `# Declared 24 h trace: 10-minute buckets of breaching minutes.
 # [0.0]*60            quiet night and morning
@@ -591,7 +748,7 @@ assert r2["pages"] == [126], "raising the fast line to 12 spares the shoulders: 
         title: { en: "Exercise 7 · The eval gate: promote or regress", ru: "Упражнение 7 · Eval-гейт: промо или регрессия" },
         brief: {
           en: "A deploy gate over a deterministic eval set: the button in the runtime section below runs <code>5</code> fixture prompts (<code>temperature 0</code>) through YOUR gateway and stores the pass/fail flags; they are injected into this exercise as <code>results</code> (offline — a declared fixture, practice material, never evidence). Implement <code>eval_gate(results)</code>: <code>'promote'</code> iff there is at least one result and ALL passed — a deterministic set is all-or-nothing. A shadow deployment runs the candidate without answering users; a canary (Exercise 6) limits the blast radius instead — the gate decides which one you may run.",
-          ru: "Гейт деплоя над детерминированным eval-набором: кнопка в секции рантайма ниже гоняет <code>5</code> фикстур-промптов (<code>temperature 0</code>) через твой шлюз и сохраняет флаги прошла/не прошла; они инжектируются в это упражнение как <code>results</code> (офлайн — декларированная фикстура, учебный материал, никогда не evidence). Реализуй <code>eval_gate(results)</code>: <code>'promote'</code> тогда и только тогда, когда есть хотя бы один результат и прошли ВСЕ — детерминированный набор «всё или ничего». Теневой деплой гоняет кандидата без ответов пользователям; canary (упражнение 6) ограничивает радиус удара — гейт решает, что тебе можно.",
+          ru: "Гейт деплоя над детерминированным eval-набором: кнопка в секции рантайма ниже гоняет <code>5</code> фикстур-промптов (<code>temperature 0</code>) через твой шлюз и сохраняет флаги прошла/не прошла; они инжектируются в это упражнение как <code>results</code> (офлайн — заявленная фикстура, учебный материал, никогда не evidence). Реализуй <code>eval_gate(results)</code>: <code>'promote'</code> тогда и только тогда, когда есть хотя бы один результат и прошли ВСЕ — детерминированный набор «всё или ничего». Теневой деплой гоняет кандидата без ответов пользователям; canary (упражнение 6) ограничивает радиус удара — гейт решает, что тебе можно.",
         },
         starter: `def eval_gate(results):
     """Deterministic deploy gate over eval results (list of bool).
@@ -634,7 +791,7 @@ eq(d['total'], 1)` },
       title: { en: "★ Tune the policy: one page, zero tickets, no silence", ru: "★ Настрой политику: один пейдж, ноль тикетов и не ослепи" },
       brief: {
         en: "The same declared day, one decision left open: the thresholds. Choose <code>fast_th</code> from {6, 8.3, 12} and <code>slow_th</code> from {2, 3, 5} so that on TRACE the run <strong>pages exactly once — at bucket 126, the breach itself</strong> — and <strong>opens zero tickets</strong> (the dedup window does its part; the thresholds must do theirs). Print one line: <code>fast=&lt;value&gt; slow=&lt;value&gt;</code>. The page recomputes your verdict with the declared model and rejects invented numbers; any other (fast, slow) pair either pages the shoulders, drowns in tickets, or goes silent on the lunch.",
-        ru: "Тот же декларированный день, одно решение открыто: пороги. Выбери <code>fast_th</code> из {6, 8.3, 12} и <code>slow_th</code> из {2, 3, 5} так, чтобы на TRACE прогон <strong>пейджил ровно один раз — по корзине 126, самому breach-у</strong> — и <strong>открывал ноль тикетов</strong> (окно дедупликации делает свою часть; пороги обязаны сделать свою). Напечатай одну строку: <code>fast=&lt;значение&gt; slow=&lt;значение&gt;</code>. Страница пересчитает твой вердикт по декларированной модели и отвергнет выдуманные числа; любая другая пара (fast, slow) либо пейджит плечи, либо тонет в тикетах, либо слепнет на обед.",
+        ru: "Тот же заявленный день, одно решение открыто: пороги. Выбери <code>fast_th</code> из {6, 8.3, 12} и <code>slow_th</code> из {2, 3, 5} так, чтобы на TRACE прогон <strong>пейджил ровно один раз — по корзине 126, самому breach-у</strong> — и <strong>открывал ноль тикетов</strong> (окно дедупликации делает свою часть; пороги обязаны сделать свою). Напечатай одну строку: <code>fast=&lt;значение&gt; slow=&lt;значение&gt;</code>. Страница пересчитает твой вердикт по заявленной модели и отвергнет выдуманные числа; любая другая пара (fast, slow) либо пейджит плечи, либо тонет в тикетах, либо слепнет на обед.",
       },
       goal: { en: "Print one line: fast=<from {6, 8.3, 12}> slow=<from {2, 3, 5}> — pages == [126] and tickets == [] on TRACE.", ru: "Напечатай одну строку: fast=<из {6, 8.3, 12}> slow=<из {2, 3, 5}> — pages == [126] и tickets == [] на TRACE." },
       mode: "run", numpy: false, timeoutMs: 5000,
@@ -663,7 +820,7 @@ assert len(TRACE) == 144
         if (!m) return { ok: false, note: { en: "Print one line: fast=<value> slow=<value>.", ru: "Напечатай одну строку: fast=<значение> slow=<значение>." } };
         const fast = Number(m[1]), slow = Number(m[2]);
         const gF = [6, 8.3, 12], gS = [2, 3, 5];
-        if (!gF.includes(fast) || !gS.includes(slow)) return { ok: false, note: { en: "Both values must come from the declared grids: fast in {6, 8.3, 12}, slow in {2, 3, 5}.", ru: "Оба значения — из декларированных сеток: fast из {6, 8.3, 12}, slow из {2, 3, 5}." } };
+        if (!gF.includes(fast) || !gS.includes(slow)) return { ok: false, note: { en: "Both values must come from the declared grids: fast in {6, 8.3, 12}, slow in {2, 3, 5}.", ru: "Оба значения — из заявленных сеток: fast из {6, 8.3, 12}, slow из {2, 3, 5}." } };
         const budget = 0.01;
         const burn = (bad, win) => (bad / win) / budget;
         const pages = [], tickets = [];
@@ -697,7 +854,7 @@ print("fast=12 slow=5")
       },
       brief: {
         en: "Everything above ran on a <strong>declared teaching journal</strong>. Connect the practice runtime (<code>docker compose up -d</code>, gateway at <code>127.0.0.1:8760</code>), make a couple of measurements — and the same three views become real: your journal accumulates experiment and burst entries in the identical hash-chain form, <code>GET /journal/verify</code> runs the gateway's own verifier, and your <code>verify_chain()</code> from Exercise 1 must agree with it. Machine-local and honest: the course cites your journal only as your own.",
-        ru: "Всё выше работало на <strong>декларированном учебном журнале</strong>. Подключи practice-рантайм (<code>docker compose up -d</code>, шлюз на <code>127.0.0.1:8760</code>), сделай пару измерений — и те же три взгляда станут настоящими: твой журнал копит записи experiment и burst в идентичной хэш-цепочке, <code>GET /journal/verify</code> гоняет собственный верификатор шлюза, а твоя <code>verify_chain()</code> из Упражнения 1 обязана с ним сойтись. Машинно-локально и честно: курс цитирует твой журнал только как твой собственный.",
+        ru: "Всё выше работало на <strong>заявленном учебном журнале</strong>. Подключи practice-рантайм (<code>docker compose up -d</code>, шлюз на <code>127.0.0.1:8760</code>), сделай пару измерений — и те же три взгляда станут настоящими: твой журнал копит записи experiment и burst в идентичной хэш-цепочке, <code>GET /journal/verify</code> гоняет собственный верификатор шлюза, а твоя <code>verify_chain()</code> из Упражнения 1 обязана с ним сойтись. Машинно-локально и честно: курс цитирует твой журнал только как твой собственный.",
       },
       experimentPrompt: {
         en: "Run two experiments and one burst, then press \u00abVerify chain\u00bb: the gateway's verdict and your own walk must agree.",
@@ -714,7 +871,7 @@ print("fast=12 slow=5")
       },
       footer: {
         en: "The live journal is yours and machine-local; the declared fixture above stays the grading surface. If the runtime is offline, this section says so honestly — nothing here pretends.",
-        ru: "Живой журнал — твой и машинно-локальный; декларированная фикстура выше остаётся оцениваемой поверхностью. Если рантайм офлайн, этот раздел говорит об этом честно — ничего здесь не притворяется.",
+        ru: "Живой журнал — твой и машинно-локальный; заявленная фикстура выше остаётся оцениваемой поверхностью. Если рантайм офлайн, этот раздел говорит об этом честно — ничего здесь не притворяется.",
       },
     },
     posttest: [
@@ -722,7 +879,7 @@ print("fast=12 slow=5")
         id: "p1",
         q: { en: "SLI vs SLO — which line is the discipline?", ru: "SLI против SLO — какая формулировка дисциплины верна?" },
         options: [
-          { en: "An SLI is the measured indicator (percentile and window included); an SLO is the promise you declare over it — before incidents", ru: "SLI — измеряемый показатель (с перцентилем и окном); SLO — обещание поверх него, декларированное до инцидентов" },
+          { en: "An SLI is the measured indicator (percentile and window included); an SLO is the promise you declare over it — before incidents", ru: "SLI — измеряемый показатель (с перцентилем и окном); SLO — обещание поверх него, заявленное до инцидентов" },
           { en: "An SLI is the promise; an SLO is the number the journal records", ru: "SLI — обещание; SLO — число из журнала" },
           { en: "They are synonyms for the dashboard's uptime row", ru: "Это синонимы для строки аптайма на дашборде" },
         ],
@@ -742,7 +899,7 @@ print("fast=12 slow=5")
       },
       {
         id: "p3",
-        q: { en: "Fast window burn 15×, slow window burn 4× — what does the declared policy do?", ru: "Fast-окно burn 15×, slow-окно burn 4× — что делает декларированная политика?" },
+        q: { en: "Fast window burn 15×, slow window burn 4× — what does the declared policy do?", ru: "Fast-окно burn 15×, slow-окно burn 4× — что делает заявленная политика?" },
         options: [
           { en: "Page: the fast lane crossed 8.3 — fast+severe speaks first, and the page suppresses the slow lane's echo", ru: "Пейдж: fast-дорожка перевалила 8.3 — быстро+тяжело говорит первым, и пейдж подавляет эхо slow-дорожки" },
           { en: "Ticket: the slow lane is the louder one", ru: "Тикет: slow-дорожка громче" },
@@ -766,7 +923,7 @@ print("fast=12 slow=5")
     ],
     footer: {
       en: "Declared teaching model of an on-call day: the trace, the journal fixture and the thresholds are declared arithmetic over the Topic 13 lecture numbers (SLO 99 %, budget 1 %, burn 8.3×, the 21:00 breach at p95 7.2 s) and the lab 08 drill (24 arrivals, 8 admitted, 16 × 429). The journal canonical form is the real layer-2 gateway's (runtime/gateway/app.py, lab 09); the live journal you can connect in the Layer-2 section is your own and machine-local.",
-      ru: "Декларированная учебная модель суток дежурного: трейс, фикстура журнала и пороги — декларированная арифметика поверх чисел лекции Темы 13 (SLO 99 %, бюджет 1 %, burn 8.3×, breach 21:00 с p95 7.2 с) и дрилла лабы 08 (24 входящих запроса, 8 допущено, 16 × 429). Каноническая форма журнала — настоящая, от шлюза слой-2 (runtime/gateway/app.py, лаба 09); живой журнал, который можно подключить в секции Layer-2, — твой собственный и машинно-локальный.",
+      ru: "Заявленная учебная модель суток дежурного: трейс, фикстура журнала и пороги — заявленная арифметика поверх чисел лекции Темы 13 (SLO 99 %, бюджет 1 %, burn 8.3×, breach 21:00 с p95 7.2 с) и дрилла лабы 08 (24 входящих запроса, 8 допущено, 16 × 429). Каноническая форма журнала — настоящая, от шлюза слой-2 (runtime/gateway/app.py, лаба 09); живой журнал, который можно подключить в секции Layer-2, — твой собственный и машинно-локальный.",
     },
   };
   /* The declared trace, also read by the challenge's page-side recompute. */

@@ -182,6 +182,65 @@
           answer: 0,
           explain: { en: "ex2's measured line grows with uncached tokens only — that measurement is what makes «cached ≠ uncached» a number, not a slogan. A planner that bills the whole prompt overbuys prefill capacity and drifts to prefill-heavy splits.", ru: "Измеренная линия ex2 растёт только по некэш-токенам — это измерение делает «cached ≠ uncached» числом, а не лозунгом. Планировщик, выставляющий счёт за весь промпт, перекупает prefill-ёмкость и дрейфует к сплитам с перебором prefill." },
         },
+        // Вариативность №5 (contract: instructor/plans/quiz-variants-contract-20261125.ru.md).
+        // variants[0] = base byte-equal; ответы пересчитаны по заявленной линии
+        // TTFT = 8 + 0.22 * n_uc (свободный член и наклон — константы линии, не меняются):
+        //   512 - 352 = 160 -> 8 + 35.20 = 43.2;   640 - 416 = 224 -> 8 + 49.28 = 57.3.
+        // Новые входы не совпадают с фигурными числами (256 живёт в KV-фигуре);
+        // ближайшая ловушка «забыть свободный член» отстоит на 8 мс — tol 0.5 даёт
+        // запас 16×. followUp пересчитан (ловушка целого промпта 120.64 / 148.8,
+        // некэш-токены 160 / 224); объяснение наследуется — оно без чисел.
+        variants: [
+          {
+            q: {
+              en: "A forked turn: prompt 384 tokens, 256 of them are KV hits. The lab's fitted prefill line is t = 8 + 0.22·n_uc (ms). Predict this turn's TTFT in ms.",
+              ru: "Форкнутый ход: промпт 384 токена, из них 256 — KV-попадания. Подогнанная линия prefill этой лабы: t = 8 + 0.22·n_uc (мс). Предскажи TTFT хода в мс.",
+            },
+            answer: 36.2, tol: 0.5,
+          },
+          {
+            q: {
+              en: "A forked turn: prompt 512 tokens, 352 of them are KV hits. The lab's fitted prefill line is t = 8 + 0.22·n_uc (ms). Predict this turn's TTFT in ms.",
+              ru: "Форкнутый ход: промпт 512 токенов, из них 352 — KV-попадания. Подогнанная линия prefill этой лабы: t = 8 + 0.22·n_uc (мс). Предскажи TTFT хода в мс.",
+            },
+            answer: 43.2, tol: 0.5,
+            hint: {
+              en: "TTFT = 8 + 0.22 × (512 − 352): only the uncached tokens are billed.",
+              ru: "TTFT = 8 + 0.22 × (512 − 352): счёт выставляется только по некэш-токенам.",
+            },
+            followUp: {
+              q: { en: "Why is the answer ≈43 ms and not 8 + 0.22 × 512 ≈ 121 ms?", ru: "Почему ответ ≈43 мс, а не 8 + 0.22 × 512 ≈ 121 мс?" },
+              options: [
+                { en: "A KV hit makes the cached tokens nearly free for prefill compute: only the 160 uncached tokens are billed — billing the whole prompt (t_c = t_uc) is exactly the planner's drift", ru: "KV-попадание делает кэш-токены почти бесплатными для prefill-вычислений: счёт идёт только по 160 некэш-токенам — выставлять весь промпт (t_c = t_uc) и есть дрейф планировщика" },
+                { en: "The cached tokens decode twice as fast, which cancels their prefill cost", ru: "Кэш-токены декодируются вдвое быстрее, что отменяет их prefill-цену" },
+                { en: "The fitted line only works for prompts longer than 300 tokens", ru: "Подогнанная линия работает только для промптов длиннее 300 токенов" },
+              ],
+              answer: 0,
+              explain: { en: "ex2's measured line grows with uncached tokens only — that measurement is what makes «cached ≠ uncached» a number, not a slogan. A planner that bills the whole prompt overbuys prefill capacity and drifts to prefill-heavy splits.", ru: "Измеренная линия ex2 растёт только по некэш-токенам — это измерение делает «cached ≠ uncached» числом, а не лозунгом. Планировщик, выставляющий счёт за весь промпт, перекупает prefill-ёмкость и дрейфует к сплитам с перебором prefill." },
+            },
+          },
+          {
+            q: {
+              en: "A forked turn: prompt 640 tokens, 416 of them are KV hits. The lab's fitted prefill line is t = 8 + 0.22·n_uc (ms). Predict this turn's TTFT in ms.",
+              ru: "Форкнутый ход: промпт 640 токенов, из них 416 — KV-попадания. Подогнанная линия prefill этой лабы: t = 8 + 0.22·n_uc (мс). Предскажи TTFT хода в мс.",
+            },
+            answer: 57.3, tol: 0.5,
+            hint: {
+              en: "TTFT = 8 + 0.22 × (640 − 416): only the uncached tokens are billed.",
+              ru: "TTFT = 8 + 0.22 × (640 − 416): счёт выставляется только по некэш-токенам.",
+            },
+            followUp: {
+              q: { en: "Why is the answer ≈57 ms and not 8 + 0.22 × 640 ≈ 149 ms?", ru: "Почему ответ ≈57 мс, а не 8 + 0.22 × 640 ≈ 149 мс?" },
+              options: [
+                { en: "A KV hit makes the cached tokens nearly free for prefill compute: only the 224 uncached tokens are billed — billing the whole prompt (t_c = t_uc) is exactly the planner's drift", ru: "KV-попадание делает кэш-токены почти бесплатными для prefill-вычислений: счёт идёт только по 224 некэш-токенам — выставлять весь промпт (t_c = t_uc) и есть дрейф планировщика" },
+                { en: "The cached tokens decode twice as fast, which cancels their prefill cost", ru: "Кэш-токены декодируются вдвое быстрее, что отменяет их prefill-цену" },
+                { en: "The fitted line only works for prompts longer than 300 tokens", ru: "Подогнанная линия работает только для промптов длиннее 300 токенов" },
+              ],
+              answer: 0,
+              explain: { en: "ex2's measured line grows with uncached tokens only — that measurement is what makes «cached ≠ uncached» a number, not a slogan. A planner that bills the whole prompt overbuys prefill capacity and drifts to prefill-heavy splits.", ru: "Измеренная линия ex2 растёт только по некэш-токенам — это измерение делает «cached ≠ uncached» числом, а не лозунгом. Планировщик, выставляющий счёт за весь промпт, перекупает prefill-ёмкость и дрейфует к сплитам с перебором prefill." },
+            },
+          },
+        ],
       },
       {
         id: "q2",
@@ -204,6 +263,65 @@
           answer: 0,
           explain: { en: "The bottleneck is what the window serves at: min(4500, 4400) = 4400 against min(3600, 5500) = 3600. Ranking splits by the sum of capacities is the exact trap ex3's hidden test rejects.", ru: "Окно обслуживается на скорости горлышка: min(4500, 4400) = 4400 против min(3600, 5500) = 3600. Ранжировать сплиты по сумме ёмкостей — ровно та ловушка, которую отвергает скрытый тест ex3." },
         },
+        // Вариативность №5: variants[0] = base byte-equal; ответы пересчитаны по
+        // Theta = min(p*mu_P, d*mu_D) (ex3); базовый ответ 4400 напечатан в фигуре,
+        // поэтому вместе с ним меняются ставки:
+        //   9 узлов, 5P4D, 800/1200 -> min(4000, 4800) = 4000 (5P4D остаётся лучшей);
+        //   8 узлов, 5P3D, 850/1250 -> min(4250, 3750) = 3750 (5P3D остаётся лучшей).
+        // Курсовые 900 / 1100 остаются только в базе (константы флота); ближайшие
+        // ловушки (соседний сплит, среднее ёмкостей) отстоят на 250+ — tol 0.5.
+        // followUp-суммы и min-ловушки пересчитаны; вопрос followUp называет свой сплит.
+        variants: [
+          {
+            q: {
+              en: "Pool: 9 nodes; a P node serves 900 tok/s of prefill, a D node 1100 tok/s of decode. What does the split 5P4D serve — Θ, in tok/s?",
+              ru: "Пул: 9 узлов; P-узел тянет 900 ток/с prefill, D-узел — 1100 ток/с decode. Что обслуживает сплит 5P4D — Θ, в ток/с?",
+            },
+            answer: 4400, tol: 0.5,
+          },
+          {
+            q: {
+              en: "Pool: 9 nodes; a P node serves 800 tok/s of prefill, a D node 1200 tok/s of decode. What does the split 5P4D serve — Θ, in tok/s?",
+              ru: "Пул: 9 узлов; P-узел тянет 800 ток/с prefill, D-узел — 1200 ток/с decode. Что обслуживает сплит 5P4D — Θ, в ток/с?",
+            },
+            answer: 4000, tol: 0.5,
+            hint: {
+              en: "Θ = min(Σμ_P, Σμ_D) = min(5 × 800, 4 × 1200).",
+              ru: "Θ = min(Σμ_P, Σμ_D) = min(5 × 800, 4 × 1200).",
+            },
+            followUp: {
+              q: { en: "Why is 4P5D — the split with the larger capacity sum (9200 vs 8800) — the wrong choice?", ru: "Почему 4P5D — сплит с большей суммой ёмкостей (9200 против 8800) — неверный выбор?" },
+              options: [
+                { en: "Θ is a min: 4P5D serves min(3200, 6000) = 3200 < 4000 — the bottleneck, not the total, is what the window actually gets", ru: "Θ — это min: 4P5D обслуживает min(3200, 6000) = 3200 < 4000 — окно получает скорость горлышка, а не сумму" },
+                { en: "The sum is the right criterion: 9200 > 8800, so 4P5D wins", ru: "Сумма — верный критерий: 9200 > 8800, значит 4P5D выигрывает" },
+                { en: "Both splits serve the same throughput", ru: "Оба сплита обслуживают одинаковый throughput" },
+              ],
+              answer: 0,
+              explain: { en: "The bottleneck is what the window serves at: min(4000, 4800) = 4000 against min(3200, 6000) = 3200. Ranking splits by the sum of capacities is the exact trap ex3's hidden test rejects.", ru: "Окно обслуживается на скорости горлышка: min(4000, 4800) = 4000 против min(3200, 6000) = 3200. Ранжировать сплиты по сумме ёмкостей — ровно та ловушка, которую отвергает скрытый тест ex3." },
+            },
+          },
+          {
+            q: {
+              en: "Pool: 8 nodes; a P node serves 850 tok/s of prefill, a D node 1250 tok/s of decode. What does the split 5P3D serve — Θ, in tok/s?",
+              ru: "Пул: 8 узлов; P-узел тянет 850 ток/с prefill, D-узел — 1250 ток/с decode. Что обслуживает сплит 5P3D — Θ, в ток/с?",
+            },
+            answer: 3750, tol: 0.5,
+            hint: {
+              en: "Θ = min(Σμ_P, Σμ_D) = min(5 × 850, 3 × 1250).",
+              ru: "Θ = min(Σμ_P, Σμ_D) = min(5 × 850, 3 × 1250).",
+            },
+            followUp: {
+              q: { en: "Why is 4P4D — the split with the larger capacity sum (8400 vs 8000) — the wrong choice?", ru: "Почему 4P4D — сплит с большей суммой ёмкостей (8400 против 8000) — неверный выбор?" },
+              options: [
+                { en: "Θ is a min: 4P4D serves min(3400, 5000) = 3400 < 3750 — the bottleneck, not the total, is what the window actually gets", ru: "Θ — это min: 4P4D обслуживает min(3400, 5000) = 3400 < 3750 — окно получает скорость горлышка, а не сумму" },
+                { en: "The sum is the right criterion: 8400 > 8000, so 4P4D wins", ru: "Сумма — верный критерий: 8400 > 8000, значит 4P4D выигрывает" },
+                { en: "Both splits serve the same throughput", ru: "Оба сплита обслуживают одинаковый throughput" },
+              ],
+              answer: 0,
+              explain: { en: "The bottleneck is what the window serves at: min(4250, 3750) = 3750 against min(3400, 5000) = 3400. Ranking splits by the sum of capacities is the exact trap ex3's hidden test rejects.", ru: "Окно обслуживается на скорости горлышка: min(4250, 3750) = 3750 против min(3400, 5000) = 3400. Ранжировать сплиты по сумме ёмкостей — ровно та ловушка, которую отвергает скрытый тест ex3." },
+            },
+          },
+        ],
       },
       {
         id: "q3",
@@ -213,8 +331,8 @@
         },
         answer: 129.1, tol: 0.15, unit: { en: "tok/s", ru: "ток/с" },
         hint: {
-          en: "SE = sample stdev / √count; stdev([600, 700, 500, 800]) ≈ 129.1, so SE ≈ 64.5.",
-          ru: "SE = выборочное СКО / √n; СКО([600, 700, 500, 800]) ≈ 129.1, значит SE ≈ 64.5.",
+          en: "SE = sample stdev / √count — the sample stdev of the four bursts, halved (√4 = 2).",
+          ru: "SE = выборочное СКО / √n — СКО по четырём бёрстам, пополам (√4 = 2).",
         },
         followUp: {
           q: { en: "The mean gain is 650 > 129.1 → flip. Now a sub-agent burst measures gains [40, 130, −60, 90] (mean 50, 2·SE ≈ 82). What does the planner do?", ru: "Средний выигрыш 650 > 129.1 → флипаем. Теперь бёрст саб-агентов даёт выигрыши [40, 130, −60, 90] (среднее 50, 2·SE ≈ 82). Что делает планировщик?" },
@@ -226,6 +344,66 @@
           answer: 0,
           explain: { en: "Hysteresis reads evidence, not the sign: a 50 tok/s gain with SE = 41 is indistinguishable from zero across the slices. The rule exists so a burst does not churn the fleet — and a restart-based flip pays the 165 s weight load (T09) for nothing.", ru: "Гистерезис читает доказательство, а не знак: выигрыш 50 ток/с при SE = 41 неотличим от нуля по слайсам. Правило существует, чтобы бёрст не чанкатил флот, — а флип рестартом платит 165 с загрузки весов (T09) впустую." },
         },
+        // Вариативность №5: variants[0] = base byte-equal; ответы пересчитаны по порогу
+        // гистерезиса ex4: threshold = 2*SE, SE = выборочное СКО / sqrt(n) (n = 4, поэтому
+        // 2*SE = выборочное СКО точно):
+        //   [250, 350, 200, 400] -> среднее 300, SE 45.6435 -> 91.3;
+        //   [320, 480, 260, 540] -> среднее 400, SE 65.8281 -> 131.7.
+        // Бёрст [40, 130, -60, 90] — курсовая константа из фигуры, не меняется;
+        // ближайшая ловушка (СКО по n вместо n - 1) отстоит на 12+ — tol 0.15.
+        // Среднее и порог followUp пересчитаны; 165 с и (50 / 82) бёрста в текстах
+        // вариантов нет — студент считает их сам через should_switch из ex4.
+        variants: [
+          {
+            q: {
+              en: "A planned re-split's window slices show gains [600, 700, 500, 800] tok/s. The hysteresis rule flips only when the mean gain beats 2·SE. What is the threshold, in tok/s (1 decimal)?",
+              ru: "Слайсы окна запланированного пересплита дают выигрыши [600, 700, 500, 800] ток/с. Правило гистерезиса флипает только когда средний выигрыш бьёт 2·SE. Чему равен порог, в ток/с (1 знак)?",
+            },
+            answer: 129.1, tol: 0.15,
+          },
+          {
+            q: {
+              en: "A planned re-split's window slices show gains [250, 350, 200, 400] tok/s. The hysteresis rule flips only when the mean gain beats 2·SE. What is the threshold, in tok/s (1 decimal)?",
+              ru: "Слайсы окна запланированного пересплита дают выигрыши [250, 350, 200, 400] ток/с. Правило гистерезиса флипает только когда средний выигрыш бьёт 2·SE. Чему равен порог, в ток/с (1 знак)?",
+            },
+            answer: 91.3, tol: 0.15,
+            hint: {
+              en: "Mean = (250 + 350 + 200 + 400) / 4 = 300. Then SE = sample stdev / √4; the threshold doubles the SE.",
+              ru: "Среднее = (250 + 350 + 200 + 400) / 4 = 300. Дальше SE = выборочное СКО / √4; порог удваивает SE.",
+            },
+            followUp: {
+              q: { en: "The mean gain is 300 > 91.3 → flip. Now a sub-agent burst measures gains [40, 130, −60, 90]. What does the planner do?", ru: "Средний выигрыш 300 > 91.3 → флипаем. Теперь бёрст саб-агентов даёт выигрыши [40, 130, −60, 90]. Что делает планировщик?" },
+              options: [
+                { en: "Holds: the burst's mean gain sits below 2·SE — noise, not a regime; flipping for nothing churns roles and, on a restart-based flip, pays the weight load again (T09)", ru: "Держит: средний выигрыш бёрста ниже 2·SE — шум, а не режим; флип впустую чанкатирует роли, а при флипе рестартом снова платит загрузку весов (T09)" },
+                { en: "Flips: any positive mean gain is a regime change", ru: "Флипает: любой положительный средний выигрыш — смена режима" },
+                { en: "Flips only if the in-place flip is cheap enough", ru: "Флипает только если перевключение на месте достаточно дёшево" },
+              ],
+              answer: 0,
+              explain: { en: "Hysteresis reads evidence, not the sign: the burst's mean sits within one SE of zero across the slices. The rule exists so a burst does not churn the fleet — and a restart-based flip pays the T09 weight load for nothing.", ru: "Гистерезис читает доказательство, а не знак: среднее бёрста неотличимо от нуля по слайсам окна. Правило существует, чтобы бёрст не чанкатил флот, — а флип рестартом платит за это загрузкой весов T09 впустую." },
+            },
+          },
+          {
+            q: {
+              en: "A planned re-split's window slices show gains [320, 480, 260, 540] tok/s. The hysteresis rule flips only when the mean gain beats 2·SE. What is the threshold, in tok/s (1 decimal)?",
+              ru: "Слайсы окна запланированного пересплита дают выигрыши [320, 480, 260, 540] ток/с. Правило гистерезиса флипает только когда средний выигрыш бьёт 2·SE. Чему равен порог, в ток/с (1 знак)?",
+            },
+            answer: 131.7, tol: 0.15,
+            hint: {
+              en: "Mean = (320 + 480 + 260 + 540) / 4 = 400. Then SE = sample stdev / √4; the threshold doubles the SE.",
+              ru: "Среднее = (320 + 480 + 260 + 540) / 4 = 400. Дальше SE = выборочное СКО / √4; порог удваивает SE.",
+            },
+            followUp: {
+              q: { en: "The mean gain is 400 > 131.7 → flip. Now a sub-agent burst measures gains [40, 130, −60, 90]. What does the planner do?", ru: "Средний выигрыш 400 > 131.7 → флипаем. Теперь бёрст саб-агентов даёт выигрыши [40, 130, −60, 90]. Что делает планировщик?" },
+              options: [
+                { en: "Holds: the burst's mean gain sits below 2·SE — noise, not a regime; flipping for nothing churns roles and, on a restart-based flip, pays the weight load again (T09)", ru: "Держит: средний выигрыш бёрста ниже 2·SE — шум, а не режим; флип впустую чанкатирует роли, а при флипе рестартом снова платит загрузку весов (T09)" },
+                { en: "Flips: any positive mean gain is a regime change", ru: "Флипает: любой положительный средний выигрыш — смена режима" },
+                { en: "Flips only if the in-place flip is cheap enough", ru: "Флипает только если перевключение на месте достаточно дёшево" },
+              ],
+              answer: 0,
+              explain: { en: "Hysteresis reads evidence, not the sign: the burst's mean sits within one SE of zero across the slices. The rule exists so a burst does not churn the fleet — and a restart-based flip pays the T09 weight load for nothing.", ru: "Гистерезис читает доказательство, а не знак: среднее бёрста неотличимо от нуля по слайсам окна. Правило существует, чтобы бёрст не чанкатил флот, — а флип рестартом платит за это загрузкой весов T09 впустую." },
+            },
+          },
+        ],
       },
     ],
     exercises: [

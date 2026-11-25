@@ -23,6 +23,18 @@
 <p>Второй бюджет — KV-кэш: каждый живой токен платит <strong>2 × layers × kv_heads × head_dim × bytes</strong> (двойка — это K и V). Этот платёж — не память весов, и он растёт с каждым клиентом и каждым токеном контекста. Привычка лабы: сначала выписать арифметику, дать тестам её проверить, и только потом спорить про реальный GPU.</p>`,
     },
     heroTag: { en: "roofline, KV budget", ru: "крыши, KV-бюджет" },
+    glossary: [
+      [{ en: "bottleneck", ru: "узкое место" }, { en: "the single limit that decides the step time — every other part waits on it; the roofline picture names which one binds right now.", ru: "единственный предел, который определяет время шага, — всё остальное ждёт его; картинка roofline как раз называет, какая граница связывает прямо сейчас." }],
+      [{ en: "roofline", ru: "roofline" }, { en: "a two-ceiling picture of a machine: attainable = min(compute, intensity × bandwidth) — like a speed limit that switches mid-road.", ru: "картина машины с двумя потолками: attainable = min(compute, intensity × bandwidth) — как ограничение скорости, которое меняется посреди дороги." }],
+      [{ en: "compute roof", ru: "крыша вычислений" }, { en: "the processor's ceiling in operations per second (TFLOP/s): no schedule computes faster, however much reuse you add.", ru: "потолок процессора в операциях в секунду (TFLOP/s): быстрее считать нельзя, сколько бы повторного использования данных ни добавлять." }],
+      [{ en: "bandwidth", ru: "пропускная способность памяти" }, { en: "how many bytes per second the memory can stream to the compute units (GB/s) — the other roof of a decode step.", ru: "сколько байтов в секунду память может подавать вычислительным блокам (GB/s) — вторая крыша decode-шага." }],
+      [{ en: "arithmetic intensity", ru: "арифметическая интенсивность" }, { en: "FLOP per byte moved from memory; a school-ratio style number: work divided by hauling.", ru: "FLOP на байт перемещённых из памяти данных; по-школьному — отношение: работа, делённая на перевозку." }],
+      [{ en: "ridge", ru: "хребет" }, { en: "the intensity where the two roofs meet: left of it you are bandwidth-bound, right of it compute-bound, and more reuse stops helping.", ru: "интенсивность, где крыши встречаются: левее ты упираешься в память, правее — в вычисления, и повторное использование перестаёт помогать." }],
+      [{ en: "decode", ru: "decode" }, { en: "the generation phase that emits tokens step by step, one forward pass per token; the phase this lab's roofs bound.", ru: "фаза генерации, выдающая токены шаг за шагом, по одному forward-проходу на токен; именно её ограничивают крыши этой лабы." }],
+      [{ en: "KV cache", ru: "KV-кэш" }, { en: "per-token state (tensors K and V) that must stay in memory while the sequence is alive; it grows with every client and every context token.", ru: "состояние на токен (тензоры K и V), которое обязано жить в памяти, пока жива последовательность; растёт с каждым клиентом и каждым токеном контекста." }],
+      [{ en: "KV payload per token", ru: "KV-платёж за токен" }, { en: "the exact size of that state: 2 × layers × kv_heads × head_dim × bytes — the 2 is K and V.", ru: "точный размер этого состояния: 2 × layers × kv_heads × head_dim × bytes, где двойка — это K и V." }],
+      [{ en: "pool", ru: "пул" }, { en: "a fixed memory reserve set aside for the KV cache; how many live tokens fit is the pool size divided by the per-token bill.", ru: "фиксированный запас памяти, выделенный под KV-кэш; сколько живых токенов помещается — размер пула, делённый на платёж за токен." }],
+    ],
     figures: [
       {
         id: "lab2-roofline",
@@ -135,6 +147,55 @@
           answer: 0,
           explain: { en: "At the ridge both roofs are equal: intensity × bandwidth = compute. Solve for intensity — the units do the work: (10¹² FLOP/s)/(10⁹ B/s) = 10³ FLOP/B.", ru: "На хребте обе крыши равны: intensity × bandwidth = compute. Вырази intensity — работу делают единицы: (10¹² FLOP/с)/(10⁹ Б/с) = 10³ FLOP/Б." },
         },
+        // Вариативность №5 (contract: instructor/plans/quiz-variants-contract-20261125.ru.md).
+        // variants[0] = base byte-equal; ответы пересчитаны по ridge = compute / bandwidth × 1000:
+        //   90 / 450 × 1000 = 200;  75 / 250 × 1000 = 300.
+        // База (100) напечатана в фигуре roofline, поэтому новые ответы уведены от всех
+        // фигурных чисел (100 / 600 / 60 / 20 / 12 / 150); followUp переписан под входы.
+        // Подсказка у вариантов наследуется: базовая формула без чисел.
+        variants: [
+          {
+            q: {
+              en: "What is the ridge arithmetic intensity for 60 TFLOP/s and 600 GB/s, in FLOP/byte?",
+              ru: "Какова интенсивность хребта для 60 TFLOP/s и 600 GB/s, во FLOP/Б?",
+            },
+            answer: 100, tol: 0.5,
+          },
+          {
+            q: {
+              en: "What is the ridge arithmetic intensity for 90 TFLOP/s and 450 GB/s, in FLOP/byte?",
+              ru: "Какова интенсивность хребта для 90 TFLOP/s и 450 GB/s, во FLOP/Б?",
+            },
+            answer: 200, tol: 0.5,
+            followUp: {
+              q: { en: "Why exactly 200 FLOP/B? Pick the true cause.", ru: "Почему именно 200 FLOP/Б? Выбери верную причину." },
+              options: [
+                { en: "The units cancel: TFLOP/s ÷ GB/s leaves 10³ FLOP/B, and 90/450 = 0.2 × 10³ = 200", ru: "Единицы сокращаются: TFLOP/s ÷ GB/s оставляет 10³ FLOP/Б, а 90/450 = 0.2 × 10³ = 200" },
+                { en: "The ridge is bandwidth ÷ compute = 450/90 = 5", ru: "Хребет — это bandwidth ÷ compute = 450/90 = 5" },
+                { en: "The ridge is always 1000 for fp16 GPUs", ru: "Хребет всегда 1000 для fp16-GPU" },
+              ],
+              answer: 0,
+              explain: { en: "At the ridge both roofs are equal: intensity × bandwidth = compute. Solve for intensity — the units do the work: (9 × 10¹³ FLOP/s)/(4.5 × 10¹¹ B/s) = 2 × 10² FLOP/B.", ru: "На хребте обе крыши равны: intensity × bandwidth = compute. Вырази intensity — работу делают единицы: (9 × 10¹³ FLOP/с)/(4.5 × 10¹¹ Б/с) = 2 × 10² FLOP/Б." },
+            },
+          },
+          {
+            q: {
+              en: "What is the ridge arithmetic intensity for 75 TFLOP/s and 250 GB/s, in FLOP/byte?",
+              ru: "Какова интенсивность хребта для 75 TFLOP/s и 250 GB/s, во FLOP/Б?",
+            },
+            answer: 300, tol: 0.5,
+            followUp: {
+              q: { en: "Why exactly 300 FLOP/B? Pick the true cause.", ru: "Почему именно 300 FLOP/Б? Выбери верную причину." },
+              options: [
+                { en: "The units cancel: TFLOP/s ÷ GB/s leaves 10³ FLOP/B, and 75/250 = 0.3 × 10³ = 300", ru: "Единицы сокращаются: TFLOP/s ÷ GB/s оставляет 10³ FLOP/Б, а 75/250 = 0.3 × 10³ = 300" },
+                { en: "The ridge is bandwidth ÷ compute = 250/75 ≈ 3.3", ru: "Хребет — это bandwidth ÷ compute = 250/75 ≈ 3.3" },
+                { en: "The ridge is always 1000 for fp16 GPUs", ru: "Хребет всегда 1000 для fp16-GPU" },
+              ],
+              answer: 0,
+              explain: { en: "At the ridge both roofs are equal: intensity × bandwidth = compute. Solve for intensity — the units do the work: (7.5 × 10¹³ FLOP/s)/(2.5 × 10¹¹ B/s) = 3 × 10² FLOP/B.", ru: "На хребте обе крыши равны: intensity × bandwidth = compute. Вырази intensity — работу делают единицы: (7.5 × 10¹³ FLOP/с)/(2.5 × 10¹¹ Б/с) = 3 × 10² FLOP/Б." },
+            },
+          },
+        ],
       },
       {
         id: "q2",
@@ -157,6 +218,60 @@
           answer: 0,
           explain: { en: "Left of the ridge, intensity × bandwidth < compute: the weights stream limits you. The compute roof only binds right of the ridge.", ru: "Левее хребта intensity × bandwidth < compute: ограничивает поток весов. Крыша вычислений связывает только правее хребта." },
         },
+        // Вариативность №5: машина фиксирована (60 TFLOP/s, 600 GB/s — константы модели),
+        // меняется интенсивность: attainable = min(60, I × 600 / 1000):  I = 45 → 27;  I = 65 → 39.
+        // Оба левее хребта (100); ответы 27 и 39 прочь от фигурных «20 → 12»; followUp переписан.
+        variants: [
+          {
+            q: {
+              en: "Attainable performance at intensity 20 FLOP/B on that machine, in TFLOP/s?",
+              ru: "Достижимая производительность при интенсивности 20 FLOP/Б на этой машине, в TFLOP/s?",
+            },
+            answer: 12, tol: 0.5,
+          },
+          {
+            q: {
+              en: "Attainable performance at intensity 45 FLOP/B on that machine, in TFLOP/s?",
+              ru: "Достижимая производительность при интенсивности 45 FLOP/Б на этой машине, в TFLOP/s?",
+            },
+            answer: 27, tol: 0.5,
+            hint: {
+              en: "45 FLOP/B is left of the ridge: the bandwidth roof bounds you — intensity × bandwidth, converted from GFLOP/s to TFLOP/s.",
+              ru: "45 FLOP/Б левее хребта: ограничивает крыша памяти — интенсивность × пропускная способность, с переводом GFLOP/s в TFLOP/s.",
+            },
+            followUp: {
+              q: { en: "Why 27 and not the compute roof 60?", ru: "Почему 27, а не крыша вычислений 60?" },
+              options: [
+                { en: "Left of the ridge the data movement is the bottleneck: 45 × 600 GB/s = 27 000 GFLOP/s = 27 TFLOP/s", ru: "Левее хребта узкое место — перемещение данных: 45 × 600 GB/s = 27 000 GFLOP/s = 27 TFLOP/s" },
+                { en: "The min() always picks the smaller number, which is always the compute roof", ru: "min() всегда берёт меньшее число, а это всегда крыша вычислений" },
+                { en: "Decode wastes 80 % of the compute on overhead", ru: "Decode тратит 80 % вычислений на накладные расходы" },
+              ],
+              answer: 0,
+              explain: { en: "Left of the ridge, intensity × bandwidth < compute: the weights stream limits you. The compute roof only binds right of the ridge.", ru: "Левее хребта intensity × bandwidth < compute: ограничивает поток весов. Крыша вычислений связывает только правее хребта." },
+            },
+          },
+          {
+            q: {
+              en: "Attainable performance at intensity 65 FLOP/B on that machine, in TFLOP/s?",
+              ru: "Достижимая производительность при интенсивности 65 FLOP/Б на этой машине, в TFLOP/s?",
+            },
+            answer: 39, tol: 0.5,
+            hint: {
+              en: "65 FLOP/B is left of the ridge: the bandwidth roof bounds you — intensity × bandwidth, converted from GFLOP/s to TFLOP/s.",
+              ru: "65 FLOP/Б левее хребта: ограничивает крыша памяти — интенсивность × пропускная способность, с переводом GFLOP/s в TFLOP/s.",
+            },
+            followUp: {
+              q: { en: "Why 39 and not the compute roof 60?", ru: "Почему 39, а не крыша вычислений 60?" },
+              options: [
+                { en: "Left of the ridge the data movement is the bottleneck: 65 × 600 GB/s = 39 000 GFLOP/s = 39 TFLOP/s", ru: "Левее хребта узкое место — перемещение данных: 65 × 600 GB/s = 39 000 GFLOP/s = 39 TFLOP/s" },
+                { en: "The min() always picks the smaller number, which is always the compute roof", ru: "min() всегда берёт меньшее число, а это всегда крыша вычислений" },
+                { en: "Decode wastes 80 % of the compute on overhead", ru: "Decode тратит 80 % вычислений на накладные расходы" },
+              ],
+              answer: 0,
+              explain: { en: "Left of the ridge, intensity × bandwidth < compute: the weights stream limits you. The compute roof only binds right of the ridge.", ru: "Левее хребта intensity × bandwidth < compute: ограничивает поток весов. Крыша вычислений связывает только правее хребта." },
+            },
+          },
+        ],
       },
       {
         id: "q3",
@@ -166,8 +281,8 @@
         },
         answer: 36, tol: 0.2, unit: { en: "KiB", ru: "КиБ" },
         hint: {
-          en: "2 × 36 × 2 × 128 × 2 bytes = 36 864 B; divide by 1024.",
-          ru: "2 × 36 × 2 × 128 × 2 байта = 36 864 Б; раздели на 1024.",
+          en: "2 × 36 × 2 × 128 × 2 bytes; convert to KiB by dividing by 1024.",
+          ru: "2 × 36 × 2 × 128 × 2 байта; переведи в КиБ делением на 1024.",
         },
         followUp: {
           q: { en: "Why does the leading 2 matter so much here?", ru: "Почему ведущая двойка здесь так важна?" },
@@ -179,6 +294,62 @@
           answer: 0,
           explain: { en: "2 × 36 × 2 × 128 × 2 B = 36 864 B. Drop the first 2 and every pool estimate halves: 87 381 tokens instead of 174 762 — the classic understatement.", ru: "2 × 36 × 2 × 128 × 2 Б = 36 864 Б. Убери первую двойку — и каждая оценка пула делится пополам: 87 381 токен вместо 174 762. Классическое занижение." },
         },
+        // Вариативность №5: форма KV меняется целиком; ответ пересчитан по
+        // 2 × layers × kv_heads × head_dim × bytes / 1024:
+        //   32 / 8 / 64 / fp16 → 65 536 Б = 64 КиБ;  24 / 8 / 64 / fp8 → 24 576 Б = 24 КиБ.
+        // База (36) живёт в фигуре, 64 и 24 там не встречаются; followUp-объяснение
+        // переписано без чисел базы (36 864 / 87 381 — только у базы).
+        variants: [
+          {
+            q: {
+              en: "KV payload per token for 36 layers, 2 KV heads, head_dim 128, fp16 (2 bytes), in KiB?",
+              ru: "KV-платёж за токен при 36 слоях, 2 KV-головах, head_dim 128, fp16 (2 байта), в КиБ?",
+            },
+            answer: 36, tol: 0.2,
+          },
+          {
+            q: {
+              en: "KV payload per token for 32 layers, 8 KV heads, head_dim 64, fp16 (2 bytes), in KiB?",
+              ru: "KV-платёж за токен при 32 слоях, 8 KV-головах, head_dim 64, fp16 (2 байта), в КиБ?",
+            },
+            answer: 64, tol: 0.2,
+            hint: {
+              en: "Five factors: 2 × layers × kv_heads × head_dim × bytes — then convert bytes to KiB before you answer.",
+              ru: "Пять множителей: 2 × layers × kv_heads × head_dim × bytes — и переведи байты в КиБ, прежде чем отвечать.",
+            },
+            followUp: {
+              q: { en: "Why does the leading 2 matter so much here?", ru: "Почему ведущая двойка здесь так важна?" },
+              options: [
+                { en: "It is K and V: every token stores two state tensors, so forgetting it understates the bill exactly ×2", ru: "Это K и V: каждый токен хранит два тензора состояния, поэтому забыть её — занизить платёж ровно вдвое" },
+                { en: "It is the fp16 two-byte size — counted twice for safety", ru: "Это двухбайтность fp16 — посчитанная дважды для надёжности" },
+                { en: "It is the number of KV caches kept per GPU", ru: "Это число KV-кэшей, держащихся на GPU" },
+              ],
+              answer: 0,
+              explain: { en: "2 × layers × kv_heads × head_dim × bytes is the whole bill: drop the first 2 and every pool estimate halves — the classic understatement.", ru: "2 × layers × kv_heads × head_dim × bytes — весь платёж: убери первую двойку, и каждая оценка пула делится пополам. Классическое занижение." },
+            },
+          },
+          {
+            q: {
+              en: "KV payload per token for 24 layers, 8 KV heads, head_dim 64, fp8 (1 byte), in KiB?",
+              ru: "KV-платёж за токен при 24 слоях, 8 KV-головах, head_dim 64, fp8 (1 байт), в КиБ?",
+            },
+            answer: 24, tol: 0.2,
+            hint: {
+              en: "Five factors: 2 × layers × kv_heads × head_dim × bytes — and with fp8 the last factor is 1. KiB is binary, not decimal.",
+              ru: "Пять множителей: 2 × layers × kv_heads × head_dim × bytes — и с fp8 последний множитель равен 1. КиБ — двоичный, не десятичный.",
+            },
+            followUp: {
+              q: { en: "Why does the leading 2 matter so much here?", ru: "Почему ведущая двойка здесь так важна?" },
+              options: [
+                { en: "It is K and V: every token stores two state tensors, so forgetting it understates the bill exactly ×2", ru: "Это K и V: каждый токен хранит два тензора состояния, поэтому забыть её — занизить платёж ровно вдвое" },
+                { en: "It is the fp16 two-byte size — counted twice for safety", ru: "Это двухбайтность fp16 — посчитанная дважды для надёжности" },
+                { en: "It is the number of KV caches kept per GPU", ru: "Это число KV-кэшей, держащихся на GPU" },
+              ],
+              answer: 0,
+              explain: { en: "2 × layers × kv_heads × head_dim × bytes is the whole bill: drop the first 2 and every pool estimate halves — the classic understatement.", ru: "2 × layers × kv_heads × head_dim × bytes — весь платёж: убери первую двойку, и каждая оценка пула делится пополам. Классическое занижение." },
+            },
+          },
+        ],
       },
     ],
     exercises: [

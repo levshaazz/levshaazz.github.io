@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-lang="en" data-langs="en" data-theme="light">
+<html lang="en" data-lang="en" data-langs="ru,en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -146,9 +146,9 @@
             <div data-logo-slot></div>
           </div>
           <div class="title-body">
-            <div class="eyebrow"><span lang="en">Lecture 0 · Welcome</span></div>
-            <h1><span lang="en">The Kitchen<br />at Rush Hour</span></h1>
-            <p class="subtitle"><span lang="en">LLM Serving Mastery: vLLM, Multi-GPU, and Production Deployment — course overview, the leaderboard, and why a naive pipeline dies at 64 clients.</span></p>
+            <div class="eyebrow"><span lang="en">Lecture 0 · Welcome</span><span lang="ru">Лекция 0 · Добро пожаловать</span></div>
+            <h1><span lang="en">The Kitchen<br />at Rush Hour</span><span lang="ru">Кухня<br />в час пик</span></h1>
+            <p class="subtitle" lang="en">LLM Serving Mastery: vLLM, Multi-GPU, and Production Deployment — course overview, the leaderboard, and why a naive pipeline dies at 64 clients.</p><p class="subtitle" lang="ru">LLM Serving Mastery: vLLM, Multi-GPU и продакшен-деплой — обзор курса, лидерборд и почему наивный пайплайн умирает на 64 клиентах.</p>
           </div>
           <div class="title-footer">
             <div>
@@ -169,11 +169,11 @@
 
 <section class="slide" data-type="art-hero" data-screen-label="02 Rush hour">
           <div class="art-hero">
-            <div class="art-hero__kicker"><span lang="en">The setting</span></div>
+            <div class="art-hero__kicker"><span lang="en">The setting</span><span lang="ru">Завязка</span></div>
             <figure class="art-hero__fig">
               <img src="assets/img/L0/L0-01-rush-hour.webp?v=1" alt="Serega, the head cook, at one stove while the ticket rail overflows with orders and hungry guests lean through the hatch" />
             </figure>
-            <p class="art-hero__cap"><span lang="en">This term the course is a restaurant kitchen. The model is the cook, the GPU is the stove, every request is an order — and the orders never arrive one at a time.</span></p>
+            <p class="art-hero__cap"><span lang="en">This term the course is a restaurant kitchen. The model is the cook, the GPU is the stove, every request is an order — and the orders never arrive one at a time.</span><span lang="ru">Весь семестр курс — это ресторанная кухня. Модель — повар, GPU — плита, каждый запрос — заказ, и заказы никогда не приходят по одному.</span></p>
           </div>
           <aside class="slide-notes">One breath to set the metaphor. Serega runs the kitchen all term. Any time the lecture gets abstract, ask: what would this mean in the kitchen?</aside>
         </section>
@@ -181,50 +181,50 @@
         <!-- ============================================ AGENDA ============================================ -->
         <section class="slide" data-type="agenda" data-screen-label="03 Agenda">
           <div class="slide-header">
-            <h2><span lang="en">Today's menu</span></h2>
-            <span class="slide-kicker"><span lang="en">Agenda</span></span>
+            <h2><span lang="en">Today's menu</span><span lang="ru">Меню на сегодня</span></h2>
+            <span class="slide-kicker"><span lang="en">Agenda</span><span lang="ru">План</span></span>
           </div>
           <div class="agenda-grid">
             <a class="toc-item" href="#/4">
               <span class="toc-num">01</span>
               <span class="toc-text">
-                <span class="toc-title"><span lang="en">Who I am</span></span>
-                <span class="toc-sub"><span lang="en">your instructor and your guide</span></span>
+                <span class="toc-title"><span lang="en">Who I am</span><span lang="ru">Кто я</span></span>
+                <span class="toc-sub"><span lang="en">your instructor and your guide</span><span lang="ru">ваш преподаватель и ваш гид</span></span>
               </span>
             </a>
             <a class="toc-item" href="#/7">
               <span class="toc-num">02</span>
               <span class="toc-text">
-                <span class="toc-title"><span lang="en">Why serving is hard</span></span>
-                <span class="toc-sub"><span lang="en">64 guests, one stove — and a live demo</span></span>
+                <span class="toc-title"><span lang="en">Why serving is hard</span><span lang="ru">Почему сервинг — это трудно</span></span>
+                <span class="toc-sub"><span lang="en">64 guests, one stove — and a live demo</span><span lang="ru">64 гостя, одна плита — и живое демо</span></span>
               </span>
             </a>
             <a class="toc-item" href="#/20">
               <span class="toc-num">03</span>
               <span class="toc-text">
-                <span class="toc-title"><span lang="en">What this course is</span></span>
-                <span class="toc-sub"><span lang="en">outcomes and the 16 topics</span></span>
+                <span class="toc-title"><span lang="en">What this course is</span><span lang="ru">Что это за курс</span></span>
+                <span class="toc-sub"><span lang="en">outcomes and the 16 topics</span><span lang="ru">результаты и 16 тем</span></span>
               </span>
             </a>
             <a class="toc-item" href="#/25">
               <span class="toc-num">04</span>
               <span class="toc-text">
-                <span class="toc-title"><span lang="en">The leaderboard</span></span>
-                <span class="toc-sub"><span lang="en">10 rounds, one judge GPU, one contract</span></span>
+                <span class="toc-title"><span lang="en">The leaderboard</span><span lang="ru">Лидерборд</span></span>
+                <span class="toc-sub"><span lang="en">10 rounds, one judge GPU, one contract</span><span lang="ru">10 раундов, одна судейская GPU, один контракт</span></span>
               </span>
             </a>
             <a class="toc-item" href="#/34">
               <span class="toc-num">05</span>
               <span class="toc-text">
-                <span class="toc-title"><span lang="en">Grading</span></span>
-                <span class="toc-sub"><span lang="en">exam, leaderboard, defense, policy</span></span>
+                <span class="toc-title"><span lang="en">Grading</span><span lang="ru">Оценивание</span></span>
+                <span class="toc-sub"><span lang="en">exam, leaderboard, defense, policy</span><span lang="ru">экзамен, лидерборд, защита, политика</span></span>
               </span>
             </a>
             <a class="toc-item" href="#/37">
               <span class="toc-num">06</span>
               <span class="toc-text">
-                <span class="toc-title"><span lang="en">How to succeed</span></span>
-                <span class="toc-sub"><span lang="en">prerequisites, tools, habits</span></span>
+                <span class="toc-title"><span lang="en">How to succeed</span><span lang="ru">Как преуспеть</span></span>
+                <span class="toc-sub"><span lang="en">prerequisites, tools, habits</span><span lang="ru">пререквизиты, инструменты, привычки</span></span>
               </span>
             </a>
           </div>
@@ -234,9 +234,9 @@
         <!-- ============================================ DIVIDER — Part 01 ============================================ -->
         <section class="slide" data-type="divider" data-screen-label="04 Divider P01">
           <div class="divider-content">
-            <div class="divider-num"><span lang="en">Part 01</span></div>
-            <h1><span lang="en">Who I am</span></h1>
-            <p class="divider-sub"><span lang="en">Your instructor — and the guide who runs the kitchen.</span></p>
+            <div class="divider-num"><span lang="en">Part 01</span><span lang="ru">Часть 01</span></div>
+            <h1><span lang="en">Who I am</span><span lang="ru">Кто я</span></h1>
+            <p class="divider-sub"><span lang="en">Your instructor — and the guide who runs the kitchen.</span><span lang="ru">Ваш преподаватель — и гид, который держит кухню.</span></p>
           </div>
           <img src="assets/img/_char/serega-whoami.png?v=1" alt="" aria-hidden="true"
                style="position:absolute; right:48px; bottom:44px; width:170px; height:auto;
@@ -248,8 +248,8 @@
         <!-- ============================================ INSTRUCTOR ============================================ -->
         <section class="slide" data-type="two-col" data-screen-label="05 Instructor">
           <div class="slide-header">
-            <h2><span lang="en">Your instructor</span></h2>
-            <span class="slide-kicker"><span lang="en">Bio</span></span>
+            <h2><span lang="en">Your instructor</span><span lang="ru">Ваш преподаватель</span></h2>
+            <span class="slide-kicker"><span lang="en">Bio</span><span lang="ru">О себе</span></span>
           </div>
           <div class="twocol">
             <div class="twocol-col">
@@ -259,19 +259,19 @@
                   <ul class="obj-list">
                     <li class="obj-item">
                       <span class="obj-check" aria-hidden="true">·</span>
-                      <span class="obj-text"><strong>Education:</strong> MSc in Robotics &amp; Computer Vision, Innopolis University (2021)</span>
+                      <span class="obj-text"><span lang="en"><strong>Education:</strong> MSc in Robotics &amp; Computer Vision, Innopolis University (2021)</span><span lang="ru"><strong>Образование:</strong> магистратура, робототехника и компьютерное зрение, Иннополис (2021)</span></span>
                     </li>
                     <li class="obj-item">
                       <span class="obj-check" aria-hidden="true">·</span>
-                      <span class="obj-text"><strong>Now:</strong> PhD student — Deep Learning &amp; Brain–Computer Interfaces</span>
+                      <span class="obj-text"><span lang="en"><strong>Now:</strong> PhD student — Deep Learning &amp; Brain–Computer Interfaces</span><span lang="ru"><strong>Сейчас:</strong> аспирант — Deep Learning и интерфейсы мозг–компьютер</span></span>
                     </li>
                     <li class="obj-item">
                       <span class="obj-check" aria-hidden="true">·</span>
-                      <span class="obj-text"><strong>Industry:</strong> Lead Developer, MWS RnD · earlier — Machine Learning for Banking</span>
+                      <span class="obj-text"><span lang="en"><strong>Industry:</strong> Lead Developer, MWS RnD · earlier — Machine Learning for Banking</span><span lang="ru"><strong>Индустрия:</strong> ведущий разработчик, MWS RnD · ранее — ML для банков</span></span>
                     </li>
                     <li class="obj-item">
                       <span class="obj-check" aria-hidden="true">·</span>
-                      <span class="obj-text"><strong>Teaching:</strong> Probability &amp; Statistics, Digital Signal Processing, Machine Learning, Deep Learning — Innopolis University, SPbU, HSE</span>
+                      <span class="obj-text"><span lang="en"><strong>Teaching:</strong> Probability &amp; Statistics, Digital Signal Processing, Machine Learning, Deep Learning — Innopolis University, SPbU, HSE</span><span lang="ru"><strong>Преподавание:</strong> теория вероятностей, ЦОС, машинное и глубокое обучение — Иннополис, СПбГУ, ВШЭ</span></span>
                     </li>
                   </ul>
                 </div>
@@ -290,11 +290,11 @@
         <!-- ============================================ ART-HERO · Meet Serega ============================================ -->
         <section class="slide" data-type="art-hero" data-screen-label="06 Meet Serega">
           <div class="art-hero">
-            <div class="art-hero__kicker"><span lang="en">Your guide</span></div>
+            <div class="art-hero__kicker"><span lang="en">Your guide</span><span lang="ru">Ваш гид</span></div>
             <figure class="art-hero__fig">
               <img src="assets/img/_char/serega-charsheet.png?v=1" alt="Serega character sheet: the same stick-figure guide in six poses" />
             </figure>
-            <p class="art-hero__cap"><span lang="en">Meet <strong>Serega</strong> — your doodle guide. This term he is the head cook: same green cap, plus an apron. He shows up whenever an idea needs a picture.</span></p>
+            <p class="art-hero__cap"><span lang="en">Meet <strong>Serega</strong> — your doodle guide. This term he is the head cook: same green cap, plus an apron. He shows up whenever an idea needs a picture.</span><span lang="ru">Знакомьтесь: <strong>Серега</strong> — ваш рисованный гид. Весь семестр он шеф-повар: та же зеленая шапочка плюс фартук. Появляется всегда, когда идее нужна картинка.</span></p>
           </div>
           <aside class="slide-notes">Introduce the mascot, distinct from the human instructor. Serega is the recurring guide; in this course he runs a kitchen. Keep it light.</aside>
         </section>
@@ -302,9 +302,9 @@
         <!-- ============================================ DIVIDER — Part 02 ============================================ -->
         <section class="slide" data-type="divider" data-screen-label="07 Divider P02">
           <div class="divider-content">
-            <div class="divider-num"><span lang="en">Part 02</span></div>
-            <h1><span lang="en">Why serving<br />is hard</span></h1>
-            <p class="divider-sub"><span lang="en">64 guests walk in at once. What happens to a model that was only ever asked one question at a time?</span></p>
+            <div class="divider-num"><span lang="en">Part 02</span><span lang="ru">Часть 02</span></div>
+            <h1><span lang="en">Why serving<br />is hard</span><span lang="ru">Почему сервинг<br />— это трудно</span></h1>
+            <p class="divider-sub"><span lang="en">64 guests walk in at once. What happens to a model that was only ever asked one question at a time?</span><span lang="ru">64 гостя входят разом. Что будет с моделью, которой раньше задавали только по одному вопросу за раз?</span></p>
           </div>
           <aside class="slide-notes">The hook section: a back-of-the-envelope argument, then a live demo that checks it.</aside>
         </section>
@@ -313,8 +313,8 @@
         <section class="slide" data-type="quote" data-screen-label="08 Premise">
           <div>
             <div class="quote-mark">"</div>
-            <blockquote><span lang="en">Training cooks the dish once.<br />Serving cooks it for everyone, every night —<br />and the guests all arrive at seven.</span></blockquote>
-            <div class="quote-attr"><span lang="en">the premise of this course</span></div>
+            <blockquote><span lang="en">Training cooks the dish once.<br />Serving cooks it for everyone, every night —<br />and the guests all arrive at seven.</span><span lang="ru">Обучение готовит блюдо один раз.<br />Сервинг готовит его для всех, каждый вечер —<br />и все гости приходят к семи.</span></blockquote>
+            <div class="quote-attr"><span lang="en">the premise of this course</span><span lang="ru">постулат этого курса</span></div>
             <div class="viz-frame fig-fit" style="--fig-max:36cqh; --fig-w:72%; --fig-mt:var(--sp-3);">
               <img src="assets/img/L0/L0-04-trail.webp?v=1" alt="Serega hopping along stepping stones: one stove, vLLM, multi-GPU, Kubernetes" />
             </div>
@@ -325,11 +325,11 @@
         <!-- ============================================ ART-HERO · the naive kitchen ============================================ -->
         <section class="slide" data-type="art-hero" data-screen-label="09 The naive kitchen">
           <div class="art-hero">
-            <div class="art-hero__kicker"><span lang="en">The naive kitchen</span></div>
+            <div class="art-hero__kicker"><span lang="en">The naive kitchen</span><span lang="ru">Наивная кухня</span></div>
             <figure class="art-hero__fig">
               <img src="assets/img/L0/L0-02-one-pan.webp?v=1" alt="Serega cooking one order in one pan while a queue of 64 guests snakes out of the door" />
             </figure>
-            <p class="art-hero__cap"><span lang="en"><code>transformers.pipeline</code> behind a web server is this kitchen: every order is cooked perfectly — <em>one at a time</em>.</span></p>
+            <p class="art-hero__cap"><span lang="en"><code>transformers.pipeline</code> behind a web server is this kitchen: every order is cooked perfectly — <em>one at a time</em>.</span><span lang="ru"><code>transformers.pipeline</code> за веб-сервером — вот эта кухня: каждый заказ готовится идеально — <em>по одному за раз</em>.</span></p>
           </div>
           <aside class="slide-notes">This is how most first deployments look: wrap pipeline() in FastAPI, put a lock around generate(), ship. It works beautifully for one user. Next slide: what the 64th guest experiences.</aside>
         </section>
@@ -337,40 +337,40 @@
         <!-- ============================================ WALKTHROUGH · the queue ============================================ -->
         <section class="slide" data-type="walkthrough" data-max-step="4" data-current-step="0" data-screen-label="10 The queue">
           <div class="slide-header">
-            <h2><span lang="en">When the k-th guest gets the answer</span></h2>
-            <span class="slide-kicker"><span lang="en">Back-of-the-envelope · step with →</span></span>
+            <h2><span lang="en">When the k-th guest gets the answer</span><span lang="ru">Когда k-й гость получает ответ</span></h2>
+            <span class="slide-kicker"><span lang="en">Back-of-the-envelope · step with →</span><span lang="ru">Прикидка на салфетке · шаги по стрелке →</span></span>
           </div>
-          <p class="small muted mt-2"><span lang="en">Assume one answer = 256 output tokens, and the naive server generates 40 tokens/s for a single request → <span class="term">6.4 s</span> per order. Orders are served strictly one after another.</span></p>
+          <p class="small muted mt-2"><span lang="en">Assume one answer = 256 output tokens, and the naive server generates 40 tokens/s for a single request → <span class="term">6.4 s</span> per order. Orders are served strictly one after another.</span><span lang="ru">Пусть один ответ = 256 выходных токенов, а наивный сервер генерирует 40 tokens/s на один запрос → <span class="term">6.4 s</span> на заказ. Заказы готовятся строго по одному.</span></p>
           <div class="walk-flow">
             <div class="walk-step" data-step="1" data-color="green">
               <div class="walk-num">01</div>
               <div class="walk-content">
-                <div class="walk-label"><span lang="en">1 client</span></div>
-                <div class="walk-detail"><span lang="en">Nobody waits. Looks production-ready.</span></div>
+                <div class="walk-label"><span lang="en">1 client</span><span lang="ru">1 клиент</span></div>
+                <div class="walk-detail"><span lang="en">Nobody waits. Looks production-ready.</span><span lang="ru">Никто не ждет. Выглядит как продакшен.</span></div>
               </div>
               <div class="walk-state">6.4 s</div>
             </div>
             <div class="walk-step" data-step="2" data-color="accent">
               <div class="walk-num">02</div>
               <div class="walk-content">
-                <div class="walk-label"><span lang="en">8 clients</span></div>
-                <div class="walk-detail"><span lang="en">Seven orders are cooked before it, then its own: \(8 \times 6.4\) s.</span></div>
+                <div class="walk-label"><span lang="en">8 clients</span><span lang="ru">8 клиентов</span></div>
+                <div class="walk-detail"><span lang="en">Seven orders are cooked before it, then its own: \(8 \times 6.4\) s.</span><span lang="ru">Семь заказов готовятся раньше его, затем его собственный: \(8 \times 6.4\) s.</span></div>
               </div>
               <div class="walk-state">51 s</div>
             </div>
             <div class="walk-step" data-step="3" data-color="amber">
               <div class="walk-num">03</div>
               <div class="walk-content">
-                <div class="walk-label"><span lang="en">32 clients</span></div>
-                <div class="walk-detail"><span lang="en">\(32 \times 6.4\) s. Most HTTP clients and load balancers time out around here.</span></div>
+                <div class="walk-label"><span lang="en">32 clients</span><span lang="ru">32 клиента</span></div>
+                <div class="walk-detail"><span lang="en">\(32 \times 6.4\) s. Most HTTP clients and load balancers time out around here.</span><span lang="ru">\(32 \times 6.4\) s. Большинство HTTP-клиентов и балансировщиков отваливаются по таймауту где-то здесь.</span></div>
               </div>
               <div class="walk-state">3.4 min</div>
             </div>
             <div class="walk-step" data-step="4" data-color="red" data-final="true">
               <div class="walk-num">04</div>
               <div class="walk-content">
-                <div class="walk-label"><span lang="en">64 clients</span></div>
-                <div class="walk-detail"><span lang="en">\(64 \times 6.4\) s. The compute units were under-utilized while each decode step repeatedly streamed model weights from memory — the next two slides show why.</span></div>
+                <div class="walk-label"><span lang="en">64 clients</span><span lang="ru">64 клиента</span></div>
+                <div class="walk-detail"><span lang="en">\(64 \times 6.4\) s. The compute units were under-utilized while each decode step repeatedly streamed model weights from memory — the next two slides show why.</span><span lang="ru">\(64 \times 6.4\) s. Вычислительные блоки простаивали, пока каждый шаг decode снова и снова читал веса модели из памяти — следующие два слайда показывают почему.</span></div>
               </div>
               <div class="walk-state">6.8 min</div>
             </div>
@@ -382,8 +382,8 @@
 
 <section class="slide" data-type="formula" data-screen-label="11 Decode is memory-bound">
           <div class="slide-header" style="border:none; padding-bottom:0;">
-            <h2><span lang="en">Why one order at a time wastes the stove</span></h2>
-            <span class="slide-kicker"><span lang="en">Every decode step reads all the weights</span></span>
+            <h2><span lang="en">Why one order at a time wastes the stove</span><span lang="ru">Почему по одному заказу за раз плита простаивает</span></h2>
+            <span class="slide-kicker"><span lang="en">Every decode step reads all the weights</span><span lang="ru">Каждый шаг decode читает все веса</span></span>
           </div>
           <div class="formula-stage">
             $$ t_{\text{step}} \;\gtrsim\; \frac{\text{bytes of weights}}{\text{memory bandwidth}} \;=\; \frac{8\ \text{GB}}{896\ \text{GB/s}} \;\approx\; 9\ \text{ms} $$
@@ -391,15 +391,15 @@
           <div class="formula-caption">
             <div class="var-block">
               <div class="var-symbol">B = 1</div>
-              <div class="var-desc"><span lang="en">One token per step for one request →<br /><strong>≤ ~110 tokens/s</strong>, no matter how fast the math units are.</span></div>
+              <div class="var-desc"><span lang="en">One token per step for one request →<br /><strong>≤ ~110 tokens/s</strong>, no matter how fast the math units are.</span><span lang="ru">Один токен за шаг на один запрос →<br /><strong>≤ ~110 tokens/s</strong>, какими бы быстрыми ни были вычислительные блоки.</span></div>
             </div>
             <div class="var-block">
               <div class="var-symbol">B = 64</div>
-              <div class="var-desc"><span lang="en">The <em>same</em> weight read serves 64 requests →<br />ceiling <strong>~64× higher</strong>, until compute or memory runs out.</span></div>
+              <div class="var-desc"><span lang="en">The <em>same</em> weight read serves 64 requests →<br />ceiling <strong>~64× higher</strong>, until compute or memory runs out.</span><span lang="ru">То <em>же</em> чтение весов обслуживает 64 запроса →<br />потолок <strong>~64× выше</strong>, пока не исчерпаются вычисления или память.</span></div>
             </div>
             <div class="var-block">
               <div class="var-symbol">⇒</div>
-              <div class="var-desc"><span lang="en">Batching is <strong>cheap in weight traffic</strong> during decode.<br />Compute, KV traffic and scheduling still grow.</span></div>
+              <div class="var-desc"><span lang="en">Batching is <strong>cheap in weight traffic</strong> during decode.<br />Compute, KV traffic and scheduling still grow.</span><span lang="ru">Батчинг при decode <strong>дешев по трафику весов</strong>.<br />Вычисления, трафик KV и планирование все равно растут.</span></div>
             </div>
           </div>
           <aside class="slide-notes">Example: a 4B-parameter model in BF16 = 8 GB of weights; the judge GPU (RTX 5070 Ti) has about 896 GB/s of memory bandwidth. To produce one token, the GPU has to stream every weight from memory once: ≈ 9 ms. So a single request is capped near 110 tokens/s — the arithmetic units sit mostly idle, waiting for memory. If 64 requests decode in the same step, the weight traffic can be amortized across the batch. That does not make batching free: matrix compute, KV-cache reads and writes, scheduling work and memory capacity all grow, and the workload eventually becomes compute-bound or runs out of KV cache. This is a lower bound on step time and an upper bound on speed — real numbers are lower. Topic 2 does this properly (roofline, arithmetic intensity).</aside>
@@ -409,14 +409,14 @@
 
 <section class="slide" data-type="misconception" data-screen-label="12 Misconception — buy a bigger GPU">
           <div class="slide-header">
-            <h2><span lang="en">Common misconception</span></h2>
-            <span class="slide-kicker"><span lang="en">Bust the myth</span></span>
+            <h2><span lang="en">Common misconception</span><span lang="ru">Частое заблуждение</span></h2>
+            <span class="slide-kicker"><span lang="en">Bust the myth</span><span lang="ru">Разбить миф</span></span>
           </div>
           <div class="misc-card">
-            <div class="misc-label"><span lang="en">What people think</span></div>
-            <p class="misc-statement"><span lang="en">&ldquo;Our LLM is slow under load. We need a faster GPU.&rdquo;</span></p>
-            <button class="misc-reveal-btn" type="button"><span lang="en">Reveal truth</span></button>
-            <div class="misc-truth"><span lang="en">Under load, a serial server is limited by <strong>scheduling and memory</strong>, not by FLOPs. A GPU with twice the memory bandwidth halves the 6.8-minute wait to 3.4 minutes. Serving all 64 orders <em>together</em> — continuous batching, a well-managed KV cache — turns minutes into seconds <strong>on the same GPU</strong>. That is the whole course in one sentence.</span></div>
+            <div class="misc-label"><span lang="en">What people think</span><span lang="ru">Как принято думать</span></div>
+            <p class="misc-statement"><span lang="en">&ldquo;Our LLM is slow under load. We need a faster GPU.&rdquo;</span><span lang="ru">«Наш LLM медленный под нагрузкой. Нужен более быстрый GPU.»</span></p>
+            <button class="misc-reveal-btn" type="button"><span lang="en">Reveal truth</span><span lang="ru">Показать правду</span></button>
+            <div class="misc-truth"><span lang="en">Under load, a serial server is limited by <strong>scheduling and memory</strong>, not by FLOPs. A GPU with twice the memory bandwidth halves the 6.8-minute wait to 3.4 minutes. Serving all 64 orders <em>together</em> — continuous batching, a well-managed KV cache — turns minutes into seconds <strong>on the same GPU</strong>. That is the whole course in one sentence.</span><span lang="ru">Под нагрузкой серийный сервер ограничен <strong>планированием и памятью</strong>, а не FLOPs. GPU с двойной пропускной способностью памяти срежет ожидание в 6.8 минуты до 3.4 минуты. Сервинг всех 64 заказов <em>вместе</em> — continuous batching, ухоженный KV-кэш — превращает минуты в секунды <strong>на той же GPU</strong>. Это весь курс в одном предложении.</span></div>
           </div>
           <aside class="slide-notes">Get the misconception out loud first — ask who would buy the bigger GPU. Then reveal. The rest of the course is the set of software moves that make the same hardware serve an order of magnitude more people.</aside>
         </section>
@@ -424,8 +424,8 @@
         <!-- ============================================ TWO-COL · counter space ============================================ -->
         <section class="slide" data-type="formula" data-screen-label="13 The KV cache per token">
           <div class="slide-header" style="border:none; padding-bottom:0;">
-            <h2><span lang="en">The catch: counter space</span></h2>
-            <span class="slide-kicker"><span lang="en">Every live order keeps its KV cache in VRAM</span></span>
+            <h2><span lang="en">The catch: counter space</span><span lang="ru">Подвох: место на стойке</span></h2>
+            <span class="slide-kicker"><span lang="en">Every live order keeps its KV cache in VRAM</span><span lang="ru">Каждый живой заказ держит свой KV-кэш в VRAM</span></span>
           </div>
           <div class="formula-stage">
             $$ \text{KV per token} \;=\; 2 \times L \times H_{kv} \times d_h \times \text{bytes} $$
@@ -433,15 +433,15 @@
           <div class="formula-caption">
             <div class="var-block">
               <div class="var-symbol">2</div>
-              <div class="var-desc"><span lang="en">a <strong>key</strong> and a <strong>value</strong><br />vector per head</span></div>
+              <div class="var-desc"><span lang="en">a <strong>key</strong> and a <strong>value</strong><br />vector per head</span><span lang="ru">вектор <strong>key</strong> и <strong>value</strong><br />на каждую голову</span></div>
             </div>
             <div class="var-block">
               <div class="var-symbol">\(L \cdot H_{kv} \cdot d_h\)</div>
-              <div class="var-desc"><span lang="en">layers × KV heads × head size:<br />\(36 \times 8 \times 128\) for a 4B-class model</span></div>
+              <div class="var-desc"><span lang="en">layers × KV heads × head size:<br />\(36 \times 8 \times 128\) for a 4B-class model</span><span lang="ru">слои × KV-головы × размер головы:<br />\(36 \times 8 \times 128\) для модели класса 4B</span></div>
             </div>
             <div class="var-block">
               <div class="var-symbol">= 144 KiB</div>
-              <div class="var-desc"><span lang="en">per token in FP16 (2 bytes) —<br />kept for <strong>every token of every live request</strong></span></div>
+              <div class="var-desc"><span lang="en">per token in FP16 (2 bytes) —<br />kept for <strong>every token of every live request</strong></span><span lang="ru">на токен в FP16 (2 bytes) —<br />хранится для <strong>каждого токена каждого живого запроса</strong></span></div>
             </div>
           </div>
           <aside class="slide-notes">The arithmetic: 2 (K and V) × 36 layers × 8 KV heads × 128 head dimension × 2 bytes = 147 456 bytes ≈ 144 KiB per token. A representative 4B-class configuration; your model's config.json gives its own L, H_kv and d_h. The KV cache grows with every prompt token and every generated token, for every request that is in flight. Next slide: what that means inside 16 GB.</aside>
@@ -450,18 +450,18 @@
         <!-- ============================================ TWO-COL · the VRAM budget ============================================ -->
 <section class="slide" data-type="two-col" data-screen-label="13b 16 GB, budgeted">
           <div class="slide-header">
-            <h2><span lang="en">16 GB of VRAM, budgeted</span></h2>
-            <span class="slide-kicker"><span lang="en">Batching amortizes weight traffic — but consumes compute and memory</span></span>
+            <h2><span lang="en">16 GB of VRAM, budgeted</span><span lang="ru">16 GB VRAM по бюджету</span></h2>
+            <span class="slide-kicker"><span lang="en">Batching amortizes weight traffic — but consumes compute and memory</span><span lang="ru">Батчинг амортизирует трафик весов — но тратит вычисления и память</span></span>
           </div>
           <div class="twocol">
             <div class="twocol-col">
               <table class="cmp-table">
                 <tbody>
-                  <tr><td><span lang="en">Weights, 4B in BF16</span></td><td><strong>8 GB</strong></td></tr>
-                  <tr><td><span lang="en">Runtime, activations</span></td><td><strong>~2 GB</strong></td></tr>
-                  <tr><td><span lang="en">Left for the KV cache</span></td><td><strong>~6 GB</strong></td></tr>
-                  <tr><td><span lang="en">÷ 144 KiB per token</span></td><td><strong>≈ 40 000 tokens</strong></td></tr>
-                  <tr><td class="cell-bad"><span lang="en">÷ 64 guests</span></td><td class="cell-bad"><strong>≈ 630 tokens each</strong></td></tr>
+                  <tr><td><span lang="en">Weights, 4B in BF16</span><span lang="ru">Веса, 4B в BF16</span></td><td><strong>8 GB</strong></td></tr>
+                  <tr><td><span lang="en">Runtime, activations</span><span lang="ru">Рантайм, активации</span></td><td><strong>~2 GB</strong></td></tr>
+                  <tr><td><span lang="en">Left for the KV cache</span><span lang="ru">Остается на KV-кэш</span></td><td><strong>~6 GB</strong></td></tr>
+                  <tr><td><span lang="en">÷ 144 KiB per token</span><span lang="ru">÷ 144 KiB на токен</span></td><td><strong>≈ 40 000 tokens</strong></td></tr>
+                  <tr><td class="cell-bad"><span lang="en">÷ 64 guests</span><span lang="ru">÷ 64 гостя</span></td><td class="cell-bad"><strong><span lang="en">≈ 630 tokens each</span><span lang="ru">≈ 630 tokens на каждого</span></strong></td></tr>
                 </tbody>
               </table>
             </div>
@@ -469,15 +469,15 @@
               <div class="callout" data-kind="warn">
                 <div class="callout-icon">!</div>
                 <div class="callout-body">
-                  <strong><span lang="en">630 tokens is prompt + answer</span></strong>
-                  <p><span lang="en">The leaderboard load is 64 × (512 + 256) ≈ 49 000 tokens. This setup does not fit it — the scheduler makes guests wait or evicts someone.</span></p>
+                  <strong><span lang="en">630 tokens is prompt + answer</span><span lang="ru">630 tokens — это промпт + ответ</span></strong>
+                  <p><span lang="en">The leaderboard load is 64 × (512 + 256) ≈ 49 000 tokens. This setup does not fit it — the scheduler makes guests wait or evicts someone.</span><span lang="ru">Нагрузка лидерборда: 64 × (512 + 256) ≈ 49 000 tokens. Это не влезает — планировщик заставляет гостей ждать или выселяет кого-то.</span></p>
                 </div>
               </div>
               <div class="callout" data-kind="info" style="margin-top:var(--sp-3)">
                 <div class="callout-icon">i</div>
                 <div class="callout-body">
-                  <strong><span lang="en">Every lever buys counter space</span></strong>
-                  <p><span lang="en">Quantized weights and KV cache, PagedAttention's no-waste allocation, prefix caching — topics 3, 5 and 7.</span></p>
+                  <strong><span lang="en">Every lever buys counter space</span><span lang="ru">Каждый рычаг покупает место на стойке</span></strong>
+                  <p><span lang="en">Quantized weights and KV cache, PagedAttention's no-waste allocation, prefix caching — topics 3, 5 and 7.</span><span lang="ru">Квантованные веса и KV-кэш, аллокация без отходов в PagedAttention, prefix caching — темы 3, 5 и 7.</span></p>
                 </div>
               </div>
             </div>
@@ -488,11 +488,11 @@
         <!-- ============================================ ART-HERO · the big wok ============================================ -->
 <section class="slide" data-type="art-hero" data-screen-label="14 The big wok">
           <div class="art-hero">
-            <div class="art-hero__kicker"><span lang="en">The fix, in one picture</span></div>
+            <div class="art-hero__kicker"><span lang="en">The fix, in one picture</span><span lang="ru">Лекарство — одной картинкой</span></div>
             <figure class="art-hero__fig">
               <img src="assets/img/L0/L0-03-big-wok.webp?v=1" alt="Serega tossing one big wok: new orders slide in on the left while finished plates slide out on the right" />
             </figure>
-            <p class="art-hero__cap"><span lang="en"><strong>Continuous batching:</strong> one wok, many orders. A new order joins at the next toss; a finished plate leaves at the next toss. Nobody waits for the whole table.</span></p>
+            <p class="art-hero__cap"><span lang="en"><strong>Continuous batching:</strong> one wok, many orders. A new order joins at the next toss; a finished plate leaves at the next toss. Nobody waits for the whole table.</span><span lang="ru"><strong>Continuous batching:</strong> один вок, много заказов. Новый заказ подлетает на следующем броске; готовая тарелка уходит на следующем. Никто не ждет, пока закончится весь стол.</span></p>
           </div>
           <aside class="slide-notes">Preview of topics 4–7. Static batching waits until a batch is full and until its longest answer is done. Continuous (iteration-level) batching re-forms the batch at every decode step: requests enter and leave the running batch individually (Orca, OSDI 2022; vLLM). PagedAttention (vLLM, SOSP 2023) is the counter split into small fixed trays, so no guest reserves space they never use. We do not explain them today — we just watch the effect.</aside>
         </section>
@@ -500,29 +500,29 @@
         <!-- ============================================ TABLE · the four numbers ============================================ -->
         <section class="slide" data-type="table" data-screen-label="15 The four numbers">
           <div class="slide-header">
-            <h2><span lang="en">The four numbers we will measure all term</span></h2>
-            <span class="slide-kicker"><span lang="en">Same numbers in the demo, the labs and the leaderboard</span></span>
+            <h2><span lang="en">The four numbers we will measure all term</span><span lang="ru">Четыре числа, которые мы меряем весь семестр</span></h2>
+            <span class="slide-kicker"><span lang="en">Same numbers in the demo, the labs and the leaderboard</span><span lang="ru">Те же числа в демо, лабах и лидерборде</span></span>
           </div>
           <table class="cmp-table">
             <thead>
               <tr>
-                <th><span lang="en">Metric</span></th>
-                <th><span lang="en">In the kitchen</span></th>
-                <th><span lang="en">Definition</span></th>
+                <th><span lang="en">Metric</span><span lang="ru">Метрика</span></th>
+                <th><span lang="en">In the kitchen</span><span lang="ru">На кухне</span></th>
+                <th><span lang="en">Definition</span><span lang="ru">Определение</span></th>
               </tr>
             </thead>
             <tbody>
-              <tr><td><strong>TTFT</strong></td><td><span lang="en">time to the first bite</span></td><td><span lang="en">time to first token: from sending the request to receiving the first streamed token</span></td></tr>
-              <tr><td><strong>TPOT</strong></td><td><span lang="en">pace between courses</span></td><td><span lang="en">decode duration divided by post-first-token gaps; related to, but not identical with, an individual inter-token latency</span></td></tr>
-              <tr><td><strong><span lang="en">Throughput</span></strong></td><td><span lang="en">plates per hour</span></td><td><span lang="en">output tokens per second, summed over all concurrent requests</span></td></tr>
-              <tr><td><strong>p95</strong></td><td><span lang="en">the slow tail</span></td><td><span lang="en">the value 95% of successful requests beat; always report failures beside it</span></td></tr>
+              <tr><td><strong>TTFT</strong></td><td><span lang="en">time to the first bite</span><span lang="ru">время до первого кусочка</span></td><td><span lang="en">time to first token: from sending the request to receiving the first streamed token</span><span lang="ru">время до первого токена: от отправки запроса до прихода первого токена стрима</span></td></tr>
+              <tr><td><strong>TPOT</strong></td><td><span lang="en">pace between courses</span><span lang="ru">темп между блюдами</span></td><td><span lang="en">decode duration divided by post-first-token gaps; related to, but not identical with, an individual inter-token latency</span><span lang="ru">время decode, деленное на промежутки после первого токена; связано с межтокенной латентностью, но не совпадает с ней</span></td></tr>
+              <tr><td><strong><span lang="en">Throughput</span><span lang="ru">Throughput</span></strong></td><td><span lang="en">plates per hour</span><span lang="ru">тарелки в час</span></td><td><span lang="en">output tokens per second, summed over all concurrent requests</span><span lang="ru">выходные токены в секунду, в сумме по всем конкурентным запросам</span></td></tr>
+              <tr><td><strong>p95</strong></td><td><span lang="en">the slow tail</span><span lang="ru">медленный хвост</span></td><td><span lang="en">the value 95% of successful requests beat; always report failures beside it</span><span lang="ru">значение, которое побили 95% успешных запросов; рядом всегда сообщайте и отказы</span></td></tr>
             </tbody>
           </table>
           <div class="callout" data-kind="info">
             <div class="callout-icon">i</div>
             <div class="callout-body">
-              <strong><span lang="en">The trade-off you will live in</span></strong>
-              <p><span lang="en">Bigger batches raise throughput and usually hurt TTFT and TPOT. Every configuration choice in this course is a point on that curve.</span></p>
+              <strong><span lang="en">The trade-off you will live in</span><span lang="ru">Трейд-офф, в котором вы будете жить</span></strong>
+              <p><span lang="en">Bigger batches raise throughput and usually hurt TTFT and TPOT. Every configuration choice in this course is a point on that curve.</span><span lang="ru">Больше батчи поднимают throughput и обычно бьют по TTFT и TPOT. Каждый выбор конфигурации в курсе — точка на этой кривой.</span></p>
             </div>
           </div>
           <aside class="slide-notes">Define these now so the demo reads naturally. Plus two non-negotiables we always report: failed requests (timeouts, OOM) and quality — a fast server that answers wrong is not a server.</aside>
@@ -531,14 +531,14 @@
         <!-- ============================================ PAUSE · predict ============================================ -->
 <section class="slide" data-type="pause" data-pause-seconds="45" data-screen-label="16 Predict">
           <div class="pause-phrase">
-            <span lang="en">Predict before we run it:</span>
+            <span lang="en">Predict before we run it:</span><span lang="ru">Предскажите, прежде чем запустим:</span>
             <br>
-            <span lang="en">at 64 clients on the same T4, how many times more tokens/s will vLLM deliver than the naive pipeline? Write a number down.</span>
+            <span lang="en">at 64 clients on the same T4, how many times more tokens/s will vLLM deliver than the naive pipeline? Write a number down.</span><span lang="ru">на 64 клиентах на той же T4 — во сколько раз больше tokens/s vLLM даст против наивного пайплайна? Запишите число.</span>
           </div>
           <div class="pause-timer">00:45</div>
           <div class="pause-controls">
-            <button type="button" data-pause-act="start"><span lang="en">Start / stop</span></button>
-            <button type="button" data-pause-act="skip"><span lang="en">Skip</span></button>
+            <button type="button" data-pause-act="start"><span lang="en">Start / stop</span><span lang="ru">Старт / стоп</span></button>
+            <button type="button" data-pause-act="skip"><span lang="en">Skip</span><span lang="ru">Пропустить</span></button>
           </div>
           <aside class="slide-notes">Deliberate silence. A written prediction turns the demo from a show into an experiment. Collect a few guesses out loud before running.</aside>
         </section>
@@ -546,19 +546,19 @@
         <!-- ============================================ TWO-COL · live demo ============================================ -->
         <section class="slide" data-type="two-col" data-screen-label="17 Live demo">
           <div class="slide-header">
-            <h2><span lang="en">Live demo: pipeline vs vLLM</span></h2>
-            <span class="slide-kicker"><span lang="en">Colab · T4 · same model, same GPU, two servers</span></span>
+            <h2><span lang="en">Live demo: pipeline vs vLLM</span><span lang="ru">Демо: pipeline vs vLLM</span></h2>
+            <span class="slide-kicker"><span lang="en">Colab · T4 · same model, same GPU, two servers</span><span lang="ru">Colab · T4 · та же модель и GPU, два сервера</span></span>
           </div>
           <div class="twocol">
             <div class="twocol-col">
               <table class="cmp-table">
                 <thead>
                   <tr>
-                    <th><span lang="en">Clients</span></th>
-                    <th><span lang="en">pipeline tok/s</span></th>
-                    <th><span lang="en">vLLM tok/s</span></th>
-                    <th><span lang="en">pipeline p95 TTFT</span></th>
-                    <th><span lang="en">vLLM p95 TTFT</span></th>
+                    <th><span lang="en">Clients</span><span lang="ru">Клиенты</span></th>
+                    <th><span lang="en">pipeline tok/s</span><span lang="ru">pipeline tok/s</span></th>
+                    <th><span lang="en">vLLM tok/s</span><span lang="ru">vLLM tok/s</span></th>
+                    <th><span lang="en">pipeline p95 TTFT</span><span lang="ru">pipeline p95 TTFT</span></th>
+                    <th><span lang="en">vLLM p95 TTFT</span><span lang="ru">vLLM p95 TTFT</span></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -568,13 +568,13 @@
                   <tr><td>64</td><td>18.7</td><td>1519.3</td><td>53.251 s</td><td>0.523 s</td></tr>
                 </tbody>
               </table>
-              <p class="small muted mt-3"><span lang="en">Published T4 rehearsal: median successful-output tok/s across three waves; p95 TTFT of successful requests only. At 64 clients, failures were 154/192 vs 0/192. <a href="../seminars/runs/2026-09-20-topic-00-metric-contract-v2/README.md">Method, ranges and raw records</a>. Your live run may differ.</span></p>
+              <p class="small muted mt-3"><span lang="en">Published T4 rehearsal: median successful-output tok/s across three waves; p95 TTFT of successful requests only. At 64 clients, failures were 154/192 vs 0/192. <a href="../seminars/runs/2026-09-20-topic-00-metric-contract-v2/README.md">Method, ranges and raw records</a>. Your live run may differ.</span><span lang="ru">Публикация T4: медиана tok/s успешных, три волны; p95 TTFT успешных. Отказы на 64: 154/192 против 0/192. <a href="../seminars/runs/2026-09-20-topic-00-metric-contract-v2/README.md">Метод и записи</a>.</span></p>
             </div>
             <div class="twocol-col">
               <div class="qr-block">
                 <div class="qr-canvas" data-qr="https://colab.research.google.com/github/levshaazz/llm-serving-mastery-submission-example/blob/main/seminars/00-live-demo-pipeline-vs-vllm.ipynb"></div>
                 <div class="qr-caption">
-                  <span lang="en">Run it yourself</span>
+                  <span lang="en">Run it yourself</span><span lang="ru">Запустите сами</span>
                   <span class="qr-url">seminars/00-live-demo-pipeline-vs-vllm.ipynb</span>
                 </div>
               </div>
@@ -582,11 +582,11 @@
                  target="_blank" rel="noopener"
                  style="display:inline-block; margin-top:var(--sp-3); padding:12px 24px; border-radius:10px;
                         background:var(--accent); color:#fff; font-weight:600; font-size:24px; text-decoration:none;
-                        pointer-events:auto;"><span lang="en">▶ Open in Colab</span></a>
+                        pointer-events:auto;"><span lang="en">▶ Open in Colab</span><span lang="ru">▶ Открыть в Colab</span></a>
               <ul class="obj-list mt-3">
-                <li class="obj-item"><span class="obj-check" aria-hidden="true">1</span><span class="obj-text"><span lang="en">Naive server: <code>pipeline</code> + one lock</span></span></li>
-                <li class="obj-item"><span class="obj-check" aria-hidden="true">2</span><span class="obj-text"><span lang="en">vLLM OpenAI-compatible server</span></span></li>
-                <li class="obj-item"><span class="obj-check" aria-hidden="true">3</span><span class="obj-text"><span lang="en">One asyncio load client for both</span></span></li>
+                <li class="obj-item"><span class="obj-check" aria-hidden="true">1</span><span class="obj-text"><span lang="en">Naive server: <code>pipeline</code> + one lock</span><span lang="ru">Наивный сервер: <code>pipeline</code> + лок</span></span></li>
+                <li class="obj-item"><span class="obj-check" aria-hidden="true">2</span><span class="obj-text"><span lang="en">vLLM OpenAI-compatible server</span><span lang="ru">OpenAI-совместимый сервер vLLM</span></span></li>
+                <li class="obj-item"><span class="obj-check" aria-hidden="true">3</span><span class="obj-text"><span lang="en">One asyncio load client for both</span><span lang="ru">Один asyncio-клиент на оба</span></span></li>
               </ul>
             </div>
           </div>
@@ -596,31 +596,31 @@
         <!-- ============================================ TABLE · kitchen dictionary ============================================ -->
 <section class="slide" data-type="two-col" data-screen-label="18 Kitchen dictionary">
           <div class="slide-header">
-            <h2><span lang="en">The kitchen dictionary</span></h2>
-            <span class="slide-kicker"><span lang="en">The metaphor, pinned down once</span></span>
+            <h2><span lang="en">The kitchen dictionary</span><span lang="ru">Кухонный словарь</span></h2>
+            <span class="slide-kicker"><span lang="en">The metaphor, pinned down once</span><span lang="ru">Метафора, зафиксированная раз и навсегда</span></span>
           </div>
           <div class="twocol">
             <div class="twocol-col">
               <table class="cmp-table">
-                <thead><tr><th><span lang="en">Kitchen</span></th><th><span lang="en">Serving · topic</span></th></tr></thead>
+                <thead><tr><th><span lang="en">Kitchen</span><span lang="ru">Кухня</span></th><th><span lang="en">Serving · topic</span><span lang="ru">Сервинг · тема</span></th></tr></thead>
                 <tbody>
-                  <tr><td><span lang="en">the cook · the stove</span></td><td><span lang="en">model weights · the GPU</span> <span class="muted">· 1–2</span></td></tr>
-                  <tr><td><span lang="en">prepping ingredients · cooking course by course</span></td><td><span lang="en">prefill · decode, one token per step</span> <span class="muted">· 2</span></td></tr>
-                  <tr><td><span lang="en">counter space</span></td><td><span lang="en">KV cache in VRAM</span> <span class="muted">· 2, 5</span></td></tr>
-                  <tr><td><span lang="en">smaller pans</span></td><td><span lang="en">quantization</span> <span class="muted">· 3</span></td></tr>
-                  <tr><td><span lang="en">one big wok · counter split into trays</span></td><td><span lang="en">continuous batching · PagedAttention</span> <span class="muted">· 5</span></td></tr>
+                  <tr><td><span lang="en">the cook · the stove</span><span lang="ru">повар · плита</span></td><td><span lang="en">model weights · the GPU</span><span lang="ru">веса модели · GPU</span> <span class="muted">· 1–2</span></td></tr>
+                  <tr><td><span lang="en">prepping ingredients · cooking course by course</span><span lang="ru">заготовка ингредиентов · готовка блюдо за блюдом</span></td><td><span lang="en">prefill · decode, one token per step</span><span lang="ru">prefill · decode, один токен за шаг</span> <span class="muted">· 2</span></td></tr>
+                  <tr><td><span lang="en">counter space</span><span lang="ru">место на стойке</span></td><td><span lang="en">KV cache in VRAM</span><span lang="ru">KV-кэш в VRAM</span> <span class="muted">· 2, 5</span></td></tr>
+                  <tr><td><span lang="en">smaller pans</span><span lang="ru">кастрюли поменьше</span></td><td><span lang="en">quantization</span><span lang="ru">квантование</span> <span class="muted">· 3</span></td></tr>
+                  <tr><td><span lang="en">one big wok · counter split into trays</span><span lang="ru">один большой вок · стойка нарезана на лотки</span></td><td><span lang="en">continuous batching · PagedAttention</span><span lang="ru">continuous batching · PagedAttention</span> <span class="muted">· 5</span></td></tr>
                 </tbody>
               </table>
             </div>
             <div class="twocol-col">
               <table class="cmp-table">
-                <thead><tr><th><span lang="en">Kitchen</span></th><th><span lang="en">Serving · topic</span></th></tr></thead>
+                <thead><tr><th><span lang="en">Kitchen</span><span lang="ru">Кухня</span></th><th><span lang="en">Serving · topic</span><span lang="ru">Сервинг · тема</span></th></tr></thead>
                 <tbody>
-                  <tr><td><span lang="en">reusing a base sauce</span></td><td><span lang="en">prefix caching</span> <span class="muted">· 7</span></td></tr>
-                  <tr><td><span lang="en">the pass · the takeaway box</span></td><td><span lang="en">the API layer · the Docker image</span> <span class="muted">· 8–9</span></td></tr>
-                  <tr><td><span lang="en">several cooks on one dish</span></td><td><span lang="en">tensor parallelism</span> <span class="muted">· 10</span></td></tr>
-                  <tr><td><span lang="en">opening another kitchen</span></td><td><span lang="en">replicas + autoscaling (HPA)</span> <span class="muted">· 11–12</span></td></tr>
-                  <tr><td><span lang="en">the ticket board</span></td><td><span lang="en">observability</span> <span class="muted">· 13</span></td></tr>
+                  <tr><td><span lang="en">reusing a base sauce</span><span lang="ru">повторное использование соуса-основы</span></td><td><span lang="en">prefix caching</span><span lang="ru">кэш префиксов</span> <span class="muted">· 7</span></td></tr>
+                  <tr><td><span lang="en">the pass · the takeaway box</span><span lang="ru">окно выдачи · коробочка навынос</span></td><td><span lang="en">the API layer · the Docker image</span><span lang="ru">API-слой · Docker-образ</span> <span class="muted">· 8–9</span></td></tr>
+                  <tr><td><span lang="en">several cooks on one dish</span><span lang="ru">несколько поваров над одним блюдом</span></td><td><span lang="en">tensor parallelism</span><span lang="ru">тензорная параллельность</span> <span class="muted">· 10</span></td></tr>
+                  <tr><td><span lang="en">opening another kitchen</span><span lang="ru">открытие еще одной кухни</span></td><td><span lang="en">replicas + autoscaling (HPA)</span><span lang="ru">реплики + автоскейлинг (HPA)</span> <span class="muted">· 11–12</span></td></tr>
+                  <tr><td><span lang="en">the ticket board</span><span lang="ru">доска заказов</span></td><td><span lang="en">observability</span><span lang="ru">наблюдаемость</span> <span class="muted">· 13</span></td></tr>
                 </tbody>
               </table>
             </div>
@@ -631,9 +631,9 @@
         <!-- ============================================ DIVIDER — Part 03 ============================================ -->
         <section class="slide" data-type="divider" data-screen-label="19 Divider P03">
           <div class="divider-content">
-            <div class="divider-num"><span lang="en">Part 03</span></div>
-            <h1><span lang="en">What this<br />course is</span></h1>
-            <p class="divider-sub"><span lang="en">From one stove to a chain of kitchens — 16 topics: lectures, and a hands-on seminar wherever the hardware allows.</span></p>
+            <div class="divider-num"><span lang="en">Part 03</span><span lang="ru">Часть 03</span></div>
+            <h1><span lang="en">What this<br />course is</span><span lang="ru">Что это<br />за курс</span></h1>
+            <p class="divider-sub"><span lang="en">From one stove to a chain of kitchens — 16 topics: lectures, and a hands-on seminar wherever the hardware allows.</span><span lang="ru">От одной плиты до цепочки кухонь — 16 тем: лекции и практический семинар там, где позволяет железо.</span></p>
           </div>
           <aside class="slide-notes">Section break into outcomes and topics.</aside>
         </section>
@@ -641,16 +641,16 @@
         <!-- ============================================ OBJECTIVES ============================================ -->
         <section class="slide" data-type="objectives" data-screen-label="20 Objectives">
           <div class="slide-header">
-            <h2><span lang="en">What you will be able to do</span></h2>
-            <span class="slide-kicker"><span lang="en">Outcomes</span></span>
+            <h2><span lang="en">What you will be able to do</span><span lang="ru">Что вы сможете делать</span></h2>
+            <span class="slide-kicker"><span lang="en">Outcomes</span><span lang="ru">Результаты</span></span>
           </div>
           <ul class="obj-list">
-            <li class="obj-item"><span class="obj-check" aria-hidden="true">✓</span><span class="obj-text"><span lang="en">Explain where inference time and memory go — prefill vs decode, the KV cache, bandwidth — and predict the bottleneck before measuring it.</span></span></li>
-            <li class="obj-item"><span class="obj-check" aria-hidden="true">✓</span><span class="obj-text"><span lang="en">Quantize a model and defend the speed / memory / quality trade-off with numbers.</span></span></li>
-            <li class="obj-item"><span class="obj-check" aria-hidden="true">✓</span><span class="obj-text"><span lang="en">Serve a model through vLLM's OpenAI-compatible API and tune it for a given concurrency profile.</span></span></li>
-            <li class="obj-item"><span class="obj-check" aria-hidden="true">✓</span><span class="obj-text"><span lang="en">Benchmark a serving stack honestly: throughput, TTFT, TPOT, p95 and failures, from 1 to 128+ clients.</span></span></li>
-            <li class="obj-item"><span class="obj-check" aria-hidden="true">✓</span><span class="obj-text"><span lang="en">Package, deploy and scale it: Docker, tensor parallelism, Kubernetes with GPU Operator and HPA.</span></span></li>
-            <li class="obj-item"><span class="obj-check" aria-hidden="true">✓</span><span class="obj-text"><span lang="en">Operate it: metrics, dashboards, alerts, and cost per million tokens.</span></span></li>
+            <li class="obj-item"><span class="obj-check" aria-hidden="true">✓</span><span class="obj-text"><span lang="en">Explain where inference time and memory go — prefill vs decode, the KV cache, bandwidth — and predict the bottleneck before measuring it.</span><span lang="ru">Объяснить, куда уходят время и память инференса — prefill против decode, KV-кэш, bandwidth — и предсказать узкое место до измерения.</span></span></li>
+            <li class="obj-item"><span class="obj-check" aria-hidden="true">✓</span><span class="obj-text"><span lang="en">Quantize a model and defend the speed / memory / quality trade-off with numbers.</span><span lang="ru">Квантовать модель и защитить числами трейд-офф скорость / память / качество.</span></span></li>
+            <li class="obj-item"><span class="obj-check" aria-hidden="true">✓</span><span class="obj-text"><span lang="en">Serve a model through vLLM's OpenAI-compatible API and tune it for a given concurrency profile.</span><span lang="ru">Поднять сервинг модели через OpenAI-совместимый API vLLM и настроить его под заданный профиль конкурентности.</span></span></li>
+            <li class="obj-item"><span class="obj-check" aria-hidden="true">✓</span><span class="obj-text"><span lang="en">Benchmark a serving stack honestly: throughput, TTFT, TPOT, p95 and failures, from 1 to 128+ clients.</span><span lang="ru">Бенчмаркать serving-стек честно: throughput, TTFT, TPOT, p95 и отказы — от 1 до 128+ клиентов.</span></span></li>
+            <li class="obj-item"><span class="obj-check" aria-hidden="true">✓</span><span class="obj-text"><span lang="en">Package, deploy and scale it: Docker, tensor parallelism, Kubernetes with GPU Operator and HPA.</span><span lang="ru">Упаковать, задеплоить и масштабировать: Docker, тензорная параллельность, Kubernetes с GPU Operator и HPA.</span></span></li>
+            <li class="obj-item"><span class="obj-check" aria-hidden="true">✓</span><span class="obj-text"><span lang="en">Operate it: metrics, dashboards, alerts, and cost per million tokens.</span><span lang="ru">Эксплуатировать: метрики, дашборды, алерты и цена за миллион токенов.</span></span></li>
           </ul>
           <aside class="slide-notes">Course-level outcomes — measurable skills, not topics. The leaderboard exercises the first four every week; the exam covers all six.</aside>
         </section>
@@ -658,48 +658,48 @@
         <!-- ============================================ ARCH · the course map ============================================ -->
         <section class="slide" data-type="two-col" data-screen-label="21 Course map">
           <div class="slide-header">
-            <h2><span lang="en">The course map</span></h2>
-            <span class="slide-kicker"><span lang="en">Seven blocks, one kitchen growing up</span></span>
+            <h2><span lang="en">The course map</span><span lang="ru">Карта курса</span></h2>
+            <span class="slide-kicker"><span lang="en">Seven blocks, one kitchen growing up</span><span lang="ru">Семь блоков, одна взрослеющая кухня</span></span>
           </div>
           <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:var(--sp-3); align-items:start;">
             <div class="def-card" style="margin:0">
-              <span class="def-tag"><span lang="en">Topics 1–2</span></span>
-              <div class="def-term"><span lang="en">Foundations</span></div>
-              <div class="def-body"><p><span lang="en">learn the stove</span></p></div>
+              <span class="def-tag"><span lang="en">Topics 1–2</span><span lang="ru">Темы 1–2</span></span>
+              <div class="def-term"><span lang="en">Foundations</span><span lang="ru">Фундамент</span></div>
+              <div class="def-body"><p><span lang="en">learn the stove</span><span lang="ru">осваиваем плиту</span></p></div>
             </div>
             <div class="def-card" style="margin:0">
-              <span class="def-tag"><span lang="en">Topics 3</span></span>
-              <div class="def-term"><span lang="en">Optimization</span></div>
-              <div class="def-body"><p><span lang="en">smaller pans</span></p></div>
+              <span class="def-tag"><span lang="en">Topics 3</span><span lang="ru">Тема 3</span></span>
+              <div class="def-term"><span lang="en">Optimization</span><span lang="ru">Оптимизация</span></div>
+              <div class="def-body"><p><span lang="en">smaller pans</span><span lang="ru">кастрюли поменьше</span></p></div>
             </div>
             <div class="def-card" style="margin:0">
-              <span class="def-tag"><span lang="en">Topics 4–5</span></span>
-              <div class="def-term"><span lang="en">vLLM Core</span></div>
-              <div class="def-body"><p><span lang="en">the big wok</span></p></div>
+              <span class="def-tag"><span lang="en">Topics 4–5</span><span lang="ru">Темы 4–5</span></span>
+              <div class="def-term"><span lang="en">vLLM Core</span><span lang="ru">Ядро vLLM</span></div>
+              <div class="def-body"><p><span lang="en">the big wok</span><span lang="ru">большой вок</span></p></div>
             </div>
             <div class="def-card" style="margin:0">
-              <span class="def-tag"><span lang="en">Topics 6–7</span></span>
-              <div class="def-term"><span lang="en">High Concurrency</span></div>
-              <div class="def-body"><p><span lang="en">rush hour</span></p></div>
+              <span class="def-tag"><span lang="en">Topics 6–7</span><span lang="ru">Темы 6–7</span></span>
+              <div class="def-term"><span lang="en">High Concurrency</span><span lang="ru">Высокая конкурентность</span></div>
+              <div class="def-body"><p><span lang="en">rush hour</span><span lang="ru">час пик</span></p></div>
             </div>
             <div class="def-card" style="margin:0">
-              <span class="def-tag"><span lang="en">Topics 8–9</span></span>
-              <div class="def-term"><span lang="en">Production API</span></div>
-              <div class="def-body"><p><span lang="en">the pass</span></p></div>
+              <span class="def-tag"><span lang="en">Topics 8–9</span><span lang="ru">Темы 8–9</span></span>
+              <div class="def-term"><span lang="en">Production API</span><span lang="ru">Продакшен-API</span></div>
+              <div class="def-body"><p><span lang="en">the pass</span><span lang="ru">окно выдачи</span></p></div>
             </div>
             <div class="def-card" style="margin:0">
-              <span class="def-tag"><span lang="en">Topics 10–12</span></span>
-              <div class="def-term"><span lang="en">Infrastructure</span></div>
-              <div class="def-body"><p><span lang="en">more kitchens</span></p></div>
+              <span class="def-tag"><span lang="en">Topics 10–12</span><span lang="ru">Темы 10–12</span></span>
+              <div class="def-term"><span lang="en">Infrastructure</span><span lang="ru">Инфраструктура</span></div>
+              <div class="def-body"><p><span lang="en">more kitchens</span><span lang="ru">больше кухонь</span></p></div>
             </div>
             <div class="def-card" style="margin:0">
-              <span class="def-tag"><span lang="en">Topics 13–15</span></span>
-              <div class="def-term"><span lang="en">LLMOps</span></div>
-              <div class="def-body"><p><span lang="en">run the restaurant</span></p></div>
+              <span class="def-tag"><span lang="en">Topics 13–15</span><span lang="ru">Темы 13–15</span></span>
+              <div class="def-term"><span lang="en">LLMOps</span><span lang="ru">LLMOps</span></div>
+              <div class="def-body"><p><span lang="en">run the restaurant</span><span lang="ru">управляем рестораном</span></p></div>
             </div>
             <div class="callout" data-kind="info" style="margin:0">
               <div class="callout-icon">i</div>
-              <div class="callout-body"><p><span lang="en">Topics, not weeks: the pace adapts to the group, the order does not.</span></p></div>
+              <div class="callout-body"><p><span lang="en">Topics, not weeks: the pace adapts to the group, the order does not.</span><span lang="ru">Темы, а не недели: темп подстраивается под группу, порядок — нет.</span></p></div>
             </div>
           </div>
           <aside class="slide-notes">Seven blocks. The first five happen on one GPU and feed the leaderboard directly. The infrastructure block includes hands-on multi-GPU and Kubernetes labs when we reach topics 10–12; access instructions and the exact lab environment will be announced before that block. These topics remain on the exam even though the single-GPU leaderboard does not measure them. LLMOps closes the course.</aside>
@@ -709,22 +709,22 @@
 
 <section class="slide" data-type="table" data-screen-label="22 Topics 1-8">
           <div class="slide-header">
-            <h2><span lang="en">Topics 1–8 · one GPU, many guests</span></h2>
-            <span class="slide-kicker"><span lang="en">Lecture + seminar each</span></span>
+            <h2><span lang="en">Topics 1–8 · one GPU, many guests</span><span lang="ru">Темы 1–8 · одна GPU, много гостей</span></h2>
+            <span class="slide-kicker"><span lang="en">Lecture + seminar each</span><span lang="ru">Лекция + семинар на каждую</span></span>
           </div>
           <table class="cmp-table">
             <thead>
-              <tr><th>#</th><th><span lang="en">Lecture</span></th><th><span lang="en">Seminar</span></th></tr>
+              <tr><th>#</th><th><span lang="en">Lecture</span><span lang="ru">Лекция</span></th><th><span lang="en">Seminar</span><span lang="ru">Семинар</span></th></tr>
             </thead>
             <tbody>
-              <tr><td>1</td><td><span lang="en">Modern LLM inference systems &amp; production challenges</span></td><td><span lang="en">Environment; models via <code>transformers.pipeline</code></span></td></tr>
-              <tr><td>2</td><td><span lang="en">Bottlenecks: KV cache, memory hierarchy, autoregression</span></td><td><span lang="en">GPU profiling, first benchmarks</span></td></tr>
-              <tr><td>3</td><td><span lang="en">Quantization for production</span></td><td><span lang="en">Quantize and compare trade-offs</span></td></tr>
-              <tr><td>4</td><td><span lang="en">vLLM architecture &amp; OpenAI-compatible serving</span></td><td><span lang="en">vLLM + OpenAI SDK</span></td></tr>
-              <tr><td>5</td><td><span lang="en">PagedAttention &amp; continuous batching</span></td><td><span lang="en">vLLM vs pipeline, moderate load</span></td></tr>
-              <tr><td>6</td><td><span lang="en">High concurrency: one instance, 50–200+ clients</span></td><td><span lang="en">Concurrency 8 / 32 / 64 / 128 lab</span></td></tr>
-              <tr><td>7</td><td><span lang="en">Tuning vLLM for concurrency levels</span></td><td><span lang="en">Systematic parameter search</span></td></tr>
-              <tr><td>8</td><td><span lang="en">Production APIs: FastAPI + vLLM</span></td><td><span lang="en">Streaming, validation, guardrails</span></td></tr>
+              <tr><td>1</td><td><span lang="en">Modern LLM inference systems &amp; production challenges</span><span lang="ru">Современные системы LLM-инференса и продакшен-вызовы</span></td><td><span lang="en">Environment; models via <code>transformers.pipeline</code></span><span lang="ru">Окружение; модели через <code>transformers.pipeline</code></span></td></tr>
+              <tr><td>2</td><td><span lang="en">Bottlenecks: KV cache, memory hierarchy, autoregression</span><span lang="ru">Узкие места: KV-кэш, иерархия памяти, авторегрессия</span></td><td><span lang="en">GPU profiling, first benchmarks</span><span lang="ru">Профилирование GPU, первые бенчмарки</span></td></tr>
+              <tr><td>3</td><td><span lang="en">Quantization for production</span><span lang="ru">Квантование для продакшена</span></td><td><span lang="en">Quantize and compare trade-offs</span><span lang="ru">Квантуем и сравниваем трейд-оффы</span></td></tr>
+              <tr><td>4</td><td><span lang="en">vLLM architecture &amp; OpenAI-compatible serving</span><span lang="ru">Архитектура vLLM и OpenAI-совместимый сервинг</span></td><td><span lang="en">vLLM + OpenAI SDK</span><span lang="ru">vLLM + OpenAI SDK</span></td></tr>
+              <tr><td>5</td><td><span lang="en">PagedAttention &amp; continuous batching</span><span lang="ru">PagedAttention и continuous batching</span></td><td><span lang="en">vLLM vs pipeline, moderate load</span><span lang="ru">vLLM против pipeline, умеренная нагрузка</span></td></tr>
+              <tr><td>6</td><td><span lang="en">High concurrency: one instance, 50–200+ clients</span><span lang="ru">Высокая конкурентность: один инстанс, 50–200+ клиентов</span></td><td><span lang="en">Concurrency 8 / 32 / 64 / 128 lab</span><span lang="ru">Лаба конкурентности 8 / 32 / 64 / 128</span></td></tr>
+              <tr><td>7</td><td><span lang="en">Tuning vLLM for concurrency levels</span><span lang="ru">Тюнинг vLLM под уровни конкурентности</span></td><td><span lang="en">Systematic parameter search</span><span lang="ru">Систематический поиск параметров</span></td></tr>
+              <tr><td>8</td><td><span lang="en">Production APIs: FastAPI + vLLM</span><span lang="ru">Продакшен-API: FastAPI + vLLM</span></td><td><span lang="en">Streaming, validation, guardrails</span><span lang="ru">Стриминг, валидация, guardrails</span></td></tr>
             </tbody>
           </table>
           <aside class="slide-notes">These eight topics are exactly the toolbox for the leaderboard: every one of them is a lever you can pull on the judge GPU the same week.</aside>
@@ -733,22 +733,22 @@
         <!-- ============================================ TABLE · topics 9–15 ============================================ -->
         <section class="slide" data-type="table" data-screen-label="23 Topics 9-16">
           <div class="slide-header">
-            <h2><span lang="en">Topics 9–16 · more stoves, more kitchens</span></h2>
-            <span class="slide-kicker"><span lang="en">Topics 10–12: hands-on infrastructure block</span></span>
+            <h2><span lang="en">Topics 9–16 · more stoves, more kitchens</span><span lang="ru">Темы 9–16 · больше плит, больше кухонь</span></h2>
+            <span class="slide-kicker"><span lang="en">Topics 10–12: hands-on infrastructure block</span><span lang="ru">Темы 10–12: практический инфраструктурный блок</span></span>
           </div>
           <table class="cmp-table">
             <thead>
-              <tr><th>#</th><th><span lang="en">Lecture</span></th><th><span lang="en">Seminar</span></th></tr>
+              <tr><th>#</th><th><span lang="en">Lecture</span><span lang="ru">Лекция</span></th><th><span lang="en">Seminar</span><span lang="ru">Семинар</span></th></tr>
             </thead>
             <tbody>
-              <tr><td>9</td><td><span lang="en">Docker for LLM inference</span></td><td><span lang="en">A lean vLLM image, GPU containers</span></td></tr>
-              <tr><td>10</td><td><span lang="en">Multi-GPU inference: tensor parallelism</span></td><td><span lang="en">Hands-on 2- and 4-GPU comparison</span></td></tr>
-              <tr><td>11</td><td><span lang="en">Kubernetes for LLM serving: GPU Operator &amp; Helm</span></td><td><span lang="en">Hands-on GPU workload + Helm release</span></td></tr>
-              <tr><td>12</td><td><span lang="en">Advanced Kubernetes: single-pod concurrency &amp; HPA</span></td><td><span lang="en">Hands-on autoscaling + failure drill</span></td></tr>
-              <tr><td>13</td><td><span lang="en">LLMOps: observability, monitoring, cost</span></td><td><span lang="en">Prometheus + Grafana for vLLM</span></td></tr>
-              <tr><td>14</td><td><span lang="en">Fine-tuning in the serving pipeline</span></td><td><span lang="en">LoRA adapters in vLLM</span></td></tr>
-              <tr><td>15</td><td><span lang="en">Agentic workloads &amp; PD disaggregation</span></td><td><span lang="en">Agent trace replay + PD-split planner</span></td></tr>
-              <tr><td>16</td><td><span lang="en">Best practices, cost optimization, trends</span></td><td><span lang="en">Project defenses, final review</span></td></tr>
+              <tr><td>9</td><td><span lang="en">Docker for LLM inference</span><span lang="ru">Docker для LLM-инференса</span></td><td><span lang="en">A lean vLLM image, GPU containers</span><span lang="ru">Худой vLLM-образ, GPU-контейнеры</span></td></tr>
+              <tr><td>10</td><td><span lang="en">Multi-GPU inference: tensor parallelism</span><span lang="ru">Мульти-GPU-инференс: тензорная параллельность</span></td><td><span lang="en">Hands-on 2- and 4-GPU comparison</span><span lang="ru">Сравнение 2 и 4 GPU на практике</span></td></tr>
+              <tr><td>11</td><td><span lang="en">Kubernetes for LLM serving: GPU Operator &amp; Helm</span><span lang="ru">Kubernetes для LLM-сервинга: GPU Operator и Helm</span></td><td><span lang="en">Hands-on GPU workload + Helm release</span><span lang="ru">GPU-ворклоад + Helm-релиз</span></td></tr>
+              <tr><td>12</td><td><span lang="en">Advanced Kubernetes: single-pod concurrency &amp; HPA</span><span lang="ru">Продвинутый Kubernetes: конкурентность пода и HPA</span></td><td><span lang="en">Hands-on autoscaling + failure drill</span><span lang="ru">Автоскейлинг + дрилл отказа</span></td></tr>
+              <tr><td>13</td><td><span lang="en">LLMOps: observability, monitoring, cost</span><span lang="ru">LLMOps: наблюдаемость, мониторинг, стоимость</span></td><td><span lang="en">Prometheus + Grafana for vLLM</span><span lang="ru">Prometheus + Grafana для vLLM</span></td></tr>
+              <tr><td>14</td><td><span lang="en">Fine-tuning in the serving pipeline</span><span lang="ru">Fine-tuning в serving-пайплайне</span></td><td><span lang="en">LoRA adapters in vLLM</span><span lang="ru">LoRA-адаптеры в vLLM</span></td></tr>
+              <tr><td>15</td><td><span lang="en">Agentic workloads &amp; PD disaggregation</span><span lang="ru">Агентные нагрузки и PD-дезагрегация</span></td><td><span lang="en">Agent trace replay + PD-split planner</span><span lang="ru">Реплей агентных трейсов + PD-split</span></td></tr>
+              <tr><td>16</td><td><span lang="en">Best practices, cost optimization, trends</span><span lang="ru">Лучшие практики, стоимость, тренды</span></td><td><span lang="en">Project defenses, final review</span><span lang="ru">Защиты проектов, финал</span></td></tr>
             </tbody>
           </table>
           <aside class="slide-notes">The second half scales out. Topics 10–12 include hands-on multi-GPU and Kubernetes work; the access model and concrete infrastructure will be finalized before this block. They are covered on the exam but not on the single-GPU leaderboard. We keep all 16 topics: when contact time is tight, the detailed study plan moves the overflow into required guided self-study instead of deleting it. The last session is the defense.</aside>
@@ -757,9 +757,9 @@
         <!-- ============================================ DIVIDER — Part 04 ============================================ -->
 <section class="slide" data-type="divider" data-screen-label="24 Divider P04">
           <div class="divider-content">
-            <div class="divider-num"><span lang="en">Part 04</span></div>
-            <h1><span lang="en">The leaderboard</span></h1>
-            <p class="divider-sub"><span lang="en">Ten rounds. One judge GPU. Your repository from day one.</span></p>
+            <div class="divider-num"><span lang="en">Part 04</span><span lang="ru">Часть 04</span></div>
+            <h1><span lang="en">The leaderboard</span><span lang="ru">Лидерборд</span></h1>
+            <p class="divider-sub"><span lang="en">Ten rounds. One judge GPU. Your repository from day one.</span><span lang="ru">Десять раундов. Одна судейская GPU. Ваш репозиторий с первого дня.</span></p>
           </div>
           <aside class="slide-notes">The heart of the course: half of your grade is earned week by week, in public.</aside>
         </section>
@@ -767,11 +767,11 @@
         <!-- ============================================ ART-HERO · the cook-off ============================================ -->
         <section class="slide" data-type="art-hero" data-screen-label="25 The cook-off">
           <div class="art-hero">
-            <div class="art-hero__kicker"><span lang="en">A weekly cook-off</span></div>
+            <div class="art-hero__kicker"><span lang="en">A weekly cook-off</span><span lang="ru">Еженедельный кулинарный поединок</span></div>
             <figure class="art-hero__fig">
               <img src="assets/img/L0/L0-05-scoreboard.webp?v=1" alt="Three student cooks racing at three stoves while Serega judges with a stopwatch in front of a scoreboard" />
             </figure>
-            <p class="art-hero__cap"><span lang="en">From this week you keep your own inference repository. Each round I check out your code, run it on the same GPU as everyone else, and measure speed and quality. The board is public. Rounds close on Thursdays at 23:59 Moscow time.</span></p>
+            <p class="art-hero__cap"><span lang="en">From this week you keep your own inference repository. Each round I check out your code, run it on the same GPU as everyone else, and measure speed and quality. The board is public. Rounds close on Thursdays at 23:59 Moscow time.</span><span lang="ru">С этой недели у вас свой репозиторий инференса. Каждый раунд я чекаю ваш код, запускаю на той же GPU, что у всех, и меряю скорость и качество. Таблица публична. Раунды закрываются по четвергам в 23:59 по Москве.</span></p>
           </div>
           <aside class="slide-notes">Ten rounds over the project period. Same hardware, same prompts, same measurement for everybody — the only variable is your engineering.</aside>
         </section>
@@ -779,55 +779,55 @@
         <!-- ============================================ ARCH · a round ============================================ -->
         <section class="slide" data-type="walkthrough" data-max-step="6" data-current-step="0" data-screen-label="26 How a round works">
           <div class="slide-header">
-            <h2><span lang="en">How a round works</span></h2>
-            <span class="slide-kicker"><span lang="en">Measured automatically · reviewed before publication · step with →</span></span>
+            <h2><span lang="en">How a round works</span><span lang="ru">Как устроен раунд</span></h2>
+            <span class="slide-kicker"><span lang="en">Measured automatically · reviewed before publication · step with →</span><span lang="ru">Меряется автоматически · проверяется до публикации · шаги по стрелке →</span></span>
           </div>
           <div class="walk-flow">
             <div class="walk-step" data-step="1" data-color="violet">
               <div class="walk-num">01</div>
               <div class="walk-content">
-                <div class="walk-label"><span lang="en">Friday 00:00 MSK — snapshot</span></div>
-                <div class="walk-detail"><span lang="en">The judge records the commit your <code>round-NN</code> tag points to. Moving it after capture changes nothing.</span></div>
+                <div class="walk-label"><span lang="en">Friday 00:00 MSK — snapshot</span><span lang="ru">Пятница 00:00 MSK — снапшот</span></div>
+                <div class="walk-detail"><span lang="en">The judge records the commit your <code>round-NN</code> tag points to. Moving it after capture changes nothing.</span><span lang="ru">Судья фиксирует коммит, на который указывает ваш тег <code>round-NN</code>. Сдвинуть его после захвата — ничего не меняет.</span></div>
               </div>
               <div class="walk-state">Fri 00:00</div>
             </div>
             <div class="walk-step" data-step="2" data-color="accent">
               <div class="walk-num">02</div>
               <div class="walk-content">
-                <div class="walk-label"><span lang="en">Clean checkout</span></div>
-                <div class="walk-detail"><span lang="en">Exactly that commit, on the judge: 1 × RTX 5070 Ti, nothing left from other runs.</span></div>
+                <div class="walk-label"><span lang="en">Clean checkout</span><span lang="ru">Чистый чекаут</span></div>
+                <div class="walk-detail"><span lang="en">Exactly that commit, on the judge: 1 × RTX 5070 Ti, nothing left from other runs.</span><span lang="ru">Ровно тот коммит, на судье: 1 × RTX 5070 Ti, ничего от чужих прогонов.</span></div>
               </div>
               <div class="walk-state">clean</div>
             </div>
             <div class="walk-step" data-step="3" data-color="cyan">
               <div class="walk-num">03</div>
               <div class="walk-content">
-                <div class="walk-label"><span lang="en">Start</span></div>
-                <div class="walk-detail"><span lang="en"><code>serve.sh</code> (or your Dockerfile) must list <code>submission</code> on <code>/v1/models</code> within one shared 45 min startup budget.</span></div>
+                <div class="walk-label"><span lang="en">Start</span><span lang="ru">Старт</span></div>
+                <div class="walk-detail"><span lang="en"><code>serve.sh</code> (or your Dockerfile) must list <code>submission</code> on <code>/v1/models</code> within one shared 45 min startup budget.</span><span lang="ru"><code>serve.sh</code> (или ваш Dockerfile) должен показать <code>submission</code> на <code>/v1/models</code> в общем стартовом бюджете 45 min.</span></div>
               </div>
               <div class="walk-state">≤ 45 min</div>
             </div>
             <div class="walk-step" data-step="4" data-color="amber">
               <div class="walk-num">04</div>
               <div class="walk-content">
-                <div class="walk-label"><span lang="en">Quality gate</span></div>
-                <div class="walk-detail"><span lang="en">lm-eval against your endpoint: GSM8K, IFEval, MMLU-Pro subsets.</span></div>
+                <div class="walk-label"><span lang="en">Quality gate</span><span lang="ru">Гейт качества</span></div>
+                <div class="walk-detail"><span lang="en">lm-eval against your endpoint: GSM8K, IFEval, MMLU-Pro subsets.</span><span lang="ru">lm-eval против вашего эндпоинта: подмножества GSM8K, IFEval, MMLU-Pro.</span></div>
               </div>
               <div class="walk-state">≥ 90% ref</div>
             </div>
             <div class="walk-step" data-step="5" data-color="red">
               <div class="walk-num">05</div>
               <div class="walk-content">
-                <div class="walk-label"><span lang="en">Speed</span></div>
-                <div class="walk-detail"><span lang="en">GuideLLM at 32 and 64 concurrent clients, 512-token prompts → 256-token answers.</span></div>
+                <div class="walk-label"><span lang="en">Speed</span><span lang="ru">Скорость</span></div>
+                <div class="walk-detail"><span lang="en">GuideLLM at 32 and 64 concurrent clients, 512-token prompts → 256-token answers.</span><span lang="ru">GuideLLM на 32 и 64 конкурентных клиентах, промпты по 512-token → ответы по 256-token.</span></div>
               </div>
               <div class="walk-state">S · p95 TTFT</div>
             </div>
             <div class="walk-step" data-step="6" data-color="green" data-final="true">
               <div class="walk-num">06</div>
               <div class="walk-content">
-                <div class="walk-label"><span lang="en">Board</span></div>
-                <div class="walk-detail"><span lang="en">After review, mark, rank and Overdrive are published with sanitized results and logs.</span></div>
+                <div class="walk-label"><span lang="en">Board</span><span lang="ru">Таблица</span></div>
+                <div class="walk-detail"><span lang="en">After review, mark, rank and Overdrive are published with sanitized results and logs.</span><span lang="ru">После проверки публикуются оценка, ранг и Overdrive с обезличенными результатами и логами.</span></div>
               </div>
               <div class="walk-state">public</div>
             </div>
@@ -839,8 +839,8 @@
 
 <section class="slide" data-type="two-col" data-screen-label="27 The contract">
           <div class="slide-header">
-            <h2><span lang="en">The submission contract</span></h2>
-            <span class="slide-kicker"><span lang="en">If I cannot run it from a clean machine, it does not count</span></span>
+            <h2><span lang="en">The submission contract</span><span lang="ru">Контракт сабмишена</span></h2>
+            <span class="slide-kicker"><span lang="en">If I cannot run it from a clean machine, it does not count</span><span lang="ru">Если я не могу запустить это с чистой машины — не считается</span></span>
           </div>
           <div class="twocol">
             <div class="twocol-col">
@@ -855,8 +855,8 @@ JOURNAL.md        # one entry per round
 Dockerfile        # optional: used if present</code></pre>
               </div>
               <ul class="obj-list mt-3">
-                <li class="obj-item"><span class="obj-check" aria-hidden="true">·</span><span class="obj-text"><span lang="en"><strong>Model:</strong> any open-weight model, with a declared immutable revision, that serves 64 × (512 + 256) tokens at once in 16 GB.</span></span></li>
-                <li class="obj-item"><span class="obj-check" aria-hidden="true">·</span><span class="obj-text"><span lang="en"><strong>Stack:</strong> anything — vLLM, SGLang, llama.cpp, TensorRT-LLM, your own kernels.</span></span></li>
+                <li class="obj-item"><span class="obj-check" aria-hidden="true">·</span><span class="obj-text"><span lang="en"><strong>Model:</strong> any open-weight model, with a declared immutable revision, that serves 64 × (512 + 256) tokens at once in 16 GB.</span><span lang="ru"><strong>Модель:</strong> любая open-weight модель с заявленной неизменной ревизией, которая держит 64 × (512 + 256) tokens разом в 16 GB.</span></span></li>
+                <li class="obj-item"><span class="obj-check" aria-hidden="true">·</span><span class="obj-text"><span lang="en"><strong>Stack:</strong> anything — vLLM, SGLang, llama.cpp, TensorRT-LLM, your own kernels.</span><span lang="ru"><strong>Стек:</strong> что угодно — vLLM, SGLang, llama.cpp, TensorRT-LLM, свои кернелы.</span></span></li>
               </ul>
             </div>
             <div class="twocol-col">
@@ -872,7 +872,7 @@ exec /runtime/.venv/bin/vllm serve \
   --dtype half --max-model-len 4096 \
   --gpu-memory-utilization 0.90</code></pre>
               </div>
-              <p class="small muted mt-3"><span lang="en">Fixed: port <code>8000</code>, model name <code>submission</code>, streaming <code>/v1/chat/completions</code> with <code>max_tokens</code>, <code>ignore_eos</code> and 4096-token requests. Make a private copy of the <a href="https://github.com/levshaazz/llm-serving-mastery-submission-example">public example</a>; see <a href="../en/start/">Start here</a>.</span></p>
+              <p class="small muted mt-3"><span lang="en">Fixed: port <code>8000</code>, model name <code>submission</code>, streaming <code>/v1/chat/completions</code> with <code>max_tokens</code>, <code>ignore_eos</code> and 4096-token requests. Make a private copy of the <a href="https://github.com/levshaazz/llm-serving-mastery-submission-example">public example</a>; see <a href="../en/start/">Start here</a>.</span><span lang="ru">Зафиксировано: порт <code>8000</code>, имя модели <code>submission</code>, стриминг <code>/v1/chat/completions</code> с <code>max_tokens</code>, <code>ignore_eos</code> и запросами по 4096-token. Сделайте приватную копию <a href="https://github.com/levshaazz/llm-serving-mastery-submission-example">публичного примера</a>; см. <a href="../en/start/">Start here</a>.</span></p>
             </div>
           </div>
           <aside class="slide-notes">The contract is strict on purpose: I must be able to literally clone your repository and run it. prepare.sh gets network access before any secret seed or prompts exist; it installs the locked environment and fetches the declared immutable model revision into the persistent verified model cache; each run receives an isolated serving environment. The measured serve.sh then starts on an internal Docker network with no egress. A Dockerfile is the alternative, but it must bake in everything needed offline. The model and stack may change between rounds. The reference is Qwen2.5-3B-Instruct on plain vLLM, FP16: a starting point, not a recommendation. Hidden probes check each response separately, so a high average cannot hide early stopping.</aside>
@@ -881,26 +881,26 @@ exec /runtime/.venv/bin/vllm serve \
         <!-- ============================================ TABLE · dev box vs judge ============================================ -->
 <section class="slide" data-type="table" data-screen-label="28 Dev box vs judge">
           <div class="slide-header">
-            <h2><span lang="en">Your dev box is not the judge</span></h2>
-            <span class="slide-kicker"><span lang="en">Colab T4 vs RTX 5070 Ti</span></span>
+            <h2><span lang="en">Your dev box is not the judge</span><span lang="ru">Ваша dev-машина — не судья</span></h2>
+            <span class="slide-kicker"><span lang="en">Colab T4 vs RTX 5070 Ti</span><span lang="ru">Colab T4 против RTX 5070 Ti</span></span>
           </div>
           <table class="cmp-table">
             <thead>
-              <tr><th></th><th><span lang="en">Colab T4 (you)</span></th><th><span lang="en">RTX 5070 Ti (judge)</span></th></tr>
+              <tr><th></th><th><span lang="en">Colab T4 (you)</span><span lang="ru">Colab T4 (вы)</span></th><th><span lang="en">RTX 5070 Ti (judge)</span><span lang="ru">RTX 5070 Ti (судья)</span></th></tr>
             </thead>
             <tbody>
-              <tr><td><span lang="en">Architecture</span></td><td>Turing · <code>sm_75</code></td><td>Blackwell · <code>sm_120</code></td></tr>
+              <tr><td><span lang="en">Architecture</span><span lang="ru">Архитектура</span></td><td>Turing · <code>sm_75</code></td><td>Blackwell · <code>sm_120</code></td></tr>
               <tr><td>VRAM</td><td>16 GB GDDR6</td><td>16 GB GDDR7</td></tr>
-              <tr><td><span lang="en">Memory bandwidth</span></td><td>320 GB/s</td><td class="cell-good">896 GB/s</td></tr>
-              <tr><td>BF16 · FlashAttention-2</td><td class="cell-bad"><span lang="en">no</span></td><td class="cell-good"><span lang="en">yes</span></td></tr>
-              <tr><td><span lang="en">FP8 / FP4 tensor cores</span></td><td class="cell-bad"><span lang="en">no</span></td><td class="cell-good"><span lang="en">yes</span></td></tr>
+              <tr><td><span lang="en">Memory bandwidth</span><span lang="ru">Пропускная способность памяти</span></td><td>320 GB/s</td><td class="cell-good">896 GB/s</td></tr>
+              <tr><td>BF16 · FlashAttention-2</td><td class="cell-bad"><span lang="en">no</span><span lang="ru">нет</span></td><td class="cell-good"><span lang="en">yes</span><span lang="ru">да</span></td></tr>
+              <tr><td><span lang="en">FP8 / FP4 tensor cores</span><span lang="ru">FP8 / FP4 тензорные ядра</span></td><td class="cell-bad"><span lang="en">no</span><span lang="ru">нет</span></td><td class="cell-good"><span lang="en">yes</span><span lang="ru">да</span></td></tr>
             </tbody>
           </table>
           <div class="callout" data-kind="warn">
             <div class="callout-icon">!</div>
             <div class="callout-body">
-              <strong><span lang="en">What this means for you</span></strong>
-              <p><span lang="en">Find a suitable CUDA GPU for development; Colab availability is not guaranteed. FP8 / NVFP4 need compatible hardware. Tuesday startup diagnostics arrive in your private readiness Issue; only judge measurements determine your score.</span></p>
+              <strong><span lang="en">What this means for you</span><span lang="ru">Что это значит для вас</span></strong>
+              <p><span lang="en">Find a suitable CUDA GPU for development; Colab availability is not guaranteed. FP8 / NVFP4 need compatible hardware. Tuesday startup diagnostics arrive in your private readiness Issue; only judge measurements determine your score.</span><span lang="ru">Найдите подходящую CUDA GPU для разработки; доступность Colab не гарантирована. FP8 / NVFP4 требуют совместимого железа. Вторничная стартовая диагностика приходит в ваш приватный readiness Issue; балл определяют только измерения судьи.</span></p>
             </div>
           </div>
           <aside class="slide-notes">An optimization that wins on the T4 may not transfer, and vice versa: the judge has ~2.8× the memory bandwidth, and supports data types the T4 does not have at all. That is realistic — production hardware is rarely your laptop. Write down in your journal which results came from Colab and which from the judge.</aside>
@@ -910,21 +910,21 @@ exec /runtime/.venv/bin/vllm serve \
 
 <section class="slide" data-type="table" data-screen-label="29 Scoring a round">
           <div class="slide-header">
-            <h2><span lang="en">How a round is scored</span></h2>
-            <span class="slide-kicker"><span lang="en">Gates first, then one number: S</span></span>
+            <h2><span lang="en">How a round is scored</span><span lang="ru">Как оценивается раунд</span></h2>
+            <span class="slide-kicker"><span lang="en">Gates first, then one number: S</span><span lang="ru">Сначала гейты, потом одно число: S</span></span>
           </div>
           <table class="cmp-table">
             <thead>
-              <tr><th><span lang="en">Step</span></th><th><span lang="en">Rule</span></th></tr>
+              <tr><th><span lang="en">Step</span><span lang="ru">Шаг</span></th><th><span lang="en">Rule</span><span lang="ru">Правило</span></th></tr>
             </thead>
             <tbody>
-              <tr><td><span lang="en">Snapshot</span></td><td><span lang="en">Thursday 23:59 MSK deadline; Friday 00:00 tag snapshot. No <code>round-NN</code> tag → 0.</span></td></tr>
-              <tr><td><span lang="en">Contract</span></td><td><span lang="en">Server lists <code>submission</code> within one shared 45 min startup budget; a streamed smoke answer works.</span></td></tr>
-              <tr><td><span lang="en">Quality gate</span></td><td><span lang="en">GSM8K, IFEval, MMLU-Pro subsets (lm-eval): each ≥ 90% of the reference.</span></td></tr>
-              <tr><td><span lang="en">Latency & honesty gates</span></td><td><span lang="en">p95 TTFT among successful requests at 64 clients ≤ the round's SLO; errors ≤ 1%; every hidden length probe ≥ 95% of 256 tokens.</span></td></tr>
-              <tr><td><span lang="en">Same model</span></td><td><span lang="en">Mean hidden at-rest/load pair similarity ≥ published floor; per-request length and output-diversity checks also pass.</span></td></tr>
-              <tr><td><span lang="en">Speed</span></td><td><span lang="en">\(S = \sqrt{\text{tok/s}_{32} \cdot \text{tok/s}_{64}}\)</span></td></tr>
-              <tr><td><span lang="en">Mark 0–5</span></td><td><span lang="en">\(5 \times \min(1,\ S / S_{\text{bar}})\); any failed gate → 0. <strong>Round = 4%</strong>: points = mark × 0.8.</span></td></tr>
+              <tr><td><span lang="en">Snapshot</span><span lang="ru">Снапшот</span></td><td><span lang="en">Thursday 23:59 MSK deadline; Friday 00:00 tag snapshot. No <code>round-NN</code> tag → 0.</span><span lang="ru">Дедлайн — четверг 23:59 MSK; снапшот тега в пятницу 00:00. Нет тега <code>round-NN</code> → 0.</span></td></tr>
+              <tr><td><span lang="en">Contract</span><span lang="ru">Контракт</span></td><td><span lang="en">Server lists <code>submission</code> within one shared 45 min startup budget; a streamed smoke answer works.</span><span lang="ru">Сервер показывает <code>submission</code> в общем стартовом бюджете 45 min; стриминговый smoke-ответ работает.</span></td></tr>
+              <tr><td><span lang="en">Quality gate</span><span lang="ru">Гейт качества</span></td><td><span lang="en">GSM8K, IFEval, MMLU-Pro subsets (lm-eval): each ≥ 90% of the reference.</span><span lang="ru">Подмножества GSM8K, IFEval, MMLU-Pro (lm-eval): каждое ≥ 90% от референса.</span></td></tr>
+              <tr><td><span lang="en">Latency & honesty gates</span><span lang="ru">Гейты латентности и честности</span></td><td><span lang="en">p95 TTFT among successful requests at 64 clients ≤ the round's SLO; errors ≤ 1%; every hidden length probe ≥ 95% of 256 tokens.</span><span lang="ru">p95 TTFT по успешным запросам на 64 клиентах ≤ SLO раунда; ошибок ≤ 1%; каждый скрытый length-пробинг ≥ 95% от 256 tokens.</span></td></tr>
+              <tr><td><span lang="en">Same model</span><span lang="ru">Та же модель</span></td><td><span lang="en">Mean hidden at-rest/load pair similarity ≥ published floor; per-request length and output-diversity checks also pass.</span><span lang="ru">Средняя схожесть скрытых пар at-rest/load ≥ опубликованного пола; проверки длины и разнообразия выхода по запросам тоже проходят.</span></td></tr>
+              <tr><td><span lang="en">Speed</span><span lang="ru">Скорость</span></td><td><span lang="en">\(S = \sqrt{\text{tok/s}_{32} \cdot \text{tok/s}_{64}}\)</span><span lang="ru">\(S = \sqrt{\text{tok/s}_{32} \cdot \text{tok/s}_{64}}\)</span></td></tr>
+              <tr><td><span lang="en">Mark 0–5</span><span lang="ru">Оценка 0–5</span></td><td><span lang="en">\(5 \times \min(1,\ S / S_{\text{bar}})\); any failed gate → 0. <strong>Round = 4%</strong>: points = mark × 0.8.</span><span lang="ru">\(5 \times \min(1,\ S / S_{\text{bar}})\); любой упавший гейт → 0. <strong>Раунд = 4%</strong>: баллы = оценка × 0.8.</span></td></tr>
             </tbody>
           </table>
           <aside class="slide-notes">Top to bottom, every round. The snapshot makes the deadline real. A server that does not start, or that got fast by getting dumb, scores zero — quality, latency, errors and layered hidden probes are independent gates. Length is checked per hidden response, not by the GuideLLM mean; same-model similarity uses the arithmetic mean of hidden at-rest/load pairs against the published floor (0.8 in Round 01), so one divergent valid continuation need not fail the gate. Diverse prompts must not collapse to one canned output. These are practical anti-gaming checks, not cryptographic proof, so raw artifacts and provenance are retained for audit. Among valid submissions only S matters: the geometric mean of throughput at 32 and 64 clients. The mark is proportional: half the bar = 2.5 of 5. Each round is worth 4% of the course grade (mark × 0.8); ten rounds = 40%.</aside>
@@ -933,18 +933,18 @@ exec /runtime/.venv/bin/vllm serve \
         <!-- ============================================ TWO-COL · the defense ============================================ -->
 <section class="slide" data-type="two-col" data-screen-label="29b Round 1 bars">
           <div class="slide-header">
-            <h2><span lang="en">Round 1 calibration — verified</span></h2>
-            <span class="slide-kicker"><span lang="en">Config v5 · RTX 5070 Ti · 30 September 2026</span></span>
+            <h2><span lang="en">Round 1 calibration — verified</span><span lang="ru">Калибровка раунда 1 — проверена</span></h2>
+            <span class="slide-kicker"><span lang="en">Config v5 · RTX 5070 Ti · 30 September 2026</span><span lang="ru">Config v5 · RTX 5070 Ti · 30 сентября 2026</span></span>
           </div>
           <div class="twocol">
             <div class="twocol-col">
               <table class="cmp-table">
-                <thead><tr><th><span lang="en">Bar</span></th><th><span lang="en">Round 1</span></th></tr></thead>
+                <thead><tr><th><span lang="en">Bar</span><span lang="ru">Бар</span></th><th><span lang="en">Round 1</span><span lang="ru">Раунд 1</span></th></tr></thead>
                 <tbody>
                   <tr><td>GSM8K</td><td>≥ 53.10%</td></tr>
                   <tr><td>IFEval</td><td>≥ 53.55%</td></tr>
                   <tr><td>MMLU-Pro</td><td>≥ 41.79%</td></tr>
-                  <tr><td><span lang="en">p95 TTFT at 64 clients</span></td><td>≤ 0.8 s</td></tr>
+                  <tr><td><span lang="en">p95 TTFT at 64 clients</span><span lang="ru">p95 TTFT на 64 клиентах</span></td><td>≤ 0.8 s</td></tr>
                   <tr><td class="cell-good">\(S_{\text{bar}}\)</td><td class="cell-good"><strong>2505.2 tok/s</strong></td></tr>
                 </tbody>
               </table>
@@ -953,15 +953,15 @@ exec /runtime/.venv/bin/vllm serve \
               <div class="callout" data-kind="info">
                 <div class="callout-icon">i</div>
                 <div class="callout-body">
-                  <strong><span lang="en">Measured on the judge GPU</span></strong>
-                  <p><span lang="en">The reference preserves model revision, judge/config hashes, quality scores, raw run artifacts and GPU identity. Published bars come from this config-v5 run.</span></p>
+                  <strong><span lang="en">Measured on the judge GPU</span><span lang="ru">Измерено на судейской GPU</span></strong>
+                  <p><span lang="en">The reference preserves model revision, judge/config hashes, quality scores, raw run artifacts and GPU identity. Published bars come from this config-v5 run.</span><span lang="ru">Референс сохраняет ревизию модели, хэши judge/config, оценки качества, сырые артефакты прогона и личность GPU. Опубликованные бары — из этого прогона config-v5.</span></p>
                 </div>
               </div>
               <div class="callout" data-kind="warn" style="margin-top:var(--sp-3)">
                 <div class="callout-icon">!</div>
                 <div class="callout-body">
-                  <strong><span lang="en">The judge owns the seed</span></strong>
-                  <p><span lang="en">The instructor evaluates every Round 1 submission with the same protected seed. Students do not obtain it or put it in their repository.</span></p>
+                  <strong><span lang="en">The judge owns the seed</span><span lang="ru">Сид принадлежит судье</span></strong>
+                  <p><span lang="en">The instructor evaluates every Round 1 submission with the same protected seed. Students do not obtain it or put it in their repository.</span><span lang="ru">Преподаватель оценивает каждый сабмишен раунда 1 одним и тем же защищенным сидом. Студенты его не получают и не кладут в репозиторий.</span></p>
                 </div>
               </div>
             </div>
@@ -973,39 +973,39 @@ exec /runtime/.venv/bin/vllm serve \
 
 <section class="slide" data-type="walkthrough" data-max-step="4" data-current-step="0" data-screen-label="29c How to skip the final exam">
           <div class="slide-header">
-            <h2><span lang="en">How to skip the final exam</span></h2>
-            <span class="slide-kicker"><span lang="en">Overdrive · step with →</span></span>
+            <h2><span lang="en">How to skip the final exam</span><span lang="ru">Как освободиться от финального экзамена</span></h2>
+            <span class="slide-kicker"><span lang="en">Overdrive · step with →</span><span lang="ru">Overdrive · шаги по стрелке →</span></span>
           </div>
           <div class="walk-flow">
             <div class="walk-step" data-step="1" data-color="accent">
               <div class="walk-num">01</div>
               <div class="walk-content">
-                <div class="walk-label"><span lang="en">Clear the bar</span></div>
-                <div class="walk-detail"><span lang="en">Only a round with mark 5 / 5 can earn Overdrive.</span></div>
+                <div class="walk-label"><span lang="en">Clear the bar</span><span lang="ru">Взять бар</span></div>
+                <div class="walk-detail"><span lang="en">Only a round with mark 5 / 5 can earn Overdrive.</span><span lang="ru">Только раунд с оценкой 5 / 5 может принести Overdrive.</span></div>
               </div>
               <div class="walk-state">mark 5</div>
             </div>
             <div class="walk-step" data-step="2" data-color="cyan">
               <div class="walk-num">02</div>
               <div class="walk-content">
-                <div class="walk-label"><span lang="en">Finish near the top</span></div>
-                <div class="walk-detail"><span lang="en">Among those who cleared it: top 10% by \(S\) get <strong>+2</strong>, the next 10% get <strong>+1</strong>.</span></div>
+                <div class="walk-label"><span lang="en">Finish near the top</span><span lang="ru">Финишировать у вершины</span></div>
+                <div class="walk-detail"><span lang="en">Among those who cleared it: top 10% by \(S\) get <strong>+2</strong>, the next 10% get <strong>+1</strong>.</span><span lang="ru">Среди взявших бар: топ 10% по \(S\) получают <strong>+2</strong>, следующие 10% — <strong>+1</strong>.</span></div>
               </div>
               <div class="walk-state">+2 / +1</div>
             </div>
             <div class="walk-step" data-step="3" data-color="amber">
               <div class="walk-num">03</div>
               <div class="walk-content">
-                <div class="walk-label"><span lang="en">Collect 10 by round 10</span></div>
-                <div class="walk-detail"><span lang="en">For example: five top-10% finishes, or four top-10% and two next-10%.</span></div>
+                <div class="walk-label"><span lang="en">Collect 10 by round 10</span><span lang="ru">Собрать 10 к раунду 10</span></div>
+                <div class="walk-detail"><span lang="en">For example: five top-10% finishes, or four top-10% and two next-10%.</span><span lang="ru">Например: пять финишей в топ-10%, или четыре в топ-10% и два в следующих 10%.</span></div>
               </div>
               <div class="walk-state">Σ ≥ 10</div>
             </div>
             <div class="walk-step" data-step="4" data-color="green" data-final="true">
               <div class="walk-num">04</div>
               <div class="walk-content">
-                <div class="walk-label"><span lang="en">Exam waived</span></div>
-                <div class="walk-detail"><span lang="en">Credited at 40 / 50. The leaderboard still counts its 40%; the defense is still mandatory.</span></div>
+                <div class="walk-label"><span lang="en">Exam waived</span><span lang="ru">Экзамен зачтен</span></div>
+                <div class="walk-detail"><span lang="en">Credited at 40 / 50. The leaderboard still counts its 40%; the defense is still mandatory.</span><span lang="ru">Зачтен как 40 / 50. Лидерборд все еще дает свои 40%; защита все еще обязательна.</span></div>
               </div>
               <div class="walk-state">40 / 50</div>
             </div>
@@ -1016,8 +1016,8 @@ exec /runtime/.venv/bin/vllm serve \
         <!-- ============================================ -->
         <section class="slide" data-type="two-col" data-screen-label="30 The defense">
           <div class="slide-header">
-            <h2><span lang="en">The defense: tell the story of your kitchen</span></h2>
-            <span class="slide-kicker"><span lang="en">Mandatory · 10%</span></span>
+            <h2><span lang="en">The defense: tell the story of your kitchen</span><span lang="ru">Защита: история вашей кухни</span></h2>
+            <span class="slide-kicker"><span lang="en">Mandatory · 10%</span><span lang="ru">Обязательна · 10%</span></span>
           </div>
           <div class="twocol">
             <div class="twocol-col">
@@ -1032,9 +1032,9 @@ Judge:  c=64 tok/s  +30 %,  p95 TTFT −0.7 s
 Kept:   yes. Next: FP8 KV cache.</code></pre>
               </div>
               <ul class="obj-list mt-3">
-                <li class="obj-item"><span class="obj-check" aria-hidden="true">·</span><span class="obj-text"><span lang="en">Every change: hypothesis → measurement → decision.</span></span></li>
-                <li class="obj-item"><span class="obj-check" aria-hidden="true">·</span><span class="obj-text"><span lang="en">Failed experiments count — they are half the story.</span></span></li>
-                <li class="obj-item"><span class="obj-check" aria-hidden="true">·</span><span class="obj-text"><span lang="en">Explain <em>why</em> it worked, not only that it did.</span></span></li>
+                <li class="obj-item"><span class="obj-check" aria-hidden="true">·</span><span class="obj-text"><span lang="en">Every change: hypothesis → measurement → decision.</span><span lang="ru">Каждое изменение: гипотеза → измерение → решение.</span></span></li>
+                <li class="obj-item"><span class="obj-check" aria-hidden="true">·</span><span class="obj-text"><span lang="en">Failed experiments count — they are half the story.</span><span lang="ru">Неудачные эксперименты — тоже история.</span></span></li>
+                <li class="obj-item"><span class="obj-check" aria-hidden="true">·</span><span class="obj-text"><span lang="en">Explain <em>why</em> it worked, not only that it did.</span><span lang="ru">Объяснить <em>почему</em> сработало, не только факт.</span></span></li>
               </ul>
             </div>
             <div class="twocol-col">
@@ -1050,9 +1050,9 @@ Kept:   yes. Next: FP8 KV cache.</code></pre>
         
 <section class="slide" data-type="divider" data-screen-label="31 Divider P05">
           <div class="divider-content">
-            <div class="divider-num"><span lang="en">Part 05</span></div>
-            <h1><span lang="en">Grading</span></h1>
-            <p class="divider-sub"><span lang="en">Half earned week by week, half at the exam — unless you earn your way out of it.</span></p>
+            <div class="divider-num"><span lang="en">Part 05</span><span lang="ru">Часть 05</span></div>
+            <h1><span lang="en">Grading</span><span lang="ru">Оценивание</span></h1>
+            <p class="divider-sub"><span lang="en">Half earned week by week, half at the exam — unless you earn your way out of it.</span><span lang="ru">Половина зарабатывается неделю за неделей, половина на экзамене — если не заслужите освобождение.</span></p>
           </div>
           <aside class="slide-notes">Section break into weights, scale and policy.</aside>
         </section>
@@ -1060,18 +1060,18 @@ Kept:   yes. Next: FP8 KV cache.</code></pre>
         <!-- ============================================ TABLE · weights ============================================ -->
         <section class="slide" data-type="table" data-screen-label="32 Weights">
           <div class="slide-header">
-            <h2><span lang="en">Graded components</span></h2>
-            <span class="slide-kicker"><span lang="en">100 points</span></span>
+            <h2><span lang="en">Graded components</span><span lang="ru">Оцениваемые компоненты</span></h2>
+            <span class="slide-kicker"><span lang="en">100 points</span><span lang="ru">100 баллов</span></span>
           </div>
           <table class="cmp-table">
             <thead>
-              <tr><th><span lang="en">Component</span></th><th><span lang="en">Weight</span></th><th><span lang="en">How</span></th></tr>
+              <tr><th><span lang="en">Component</span><span lang="ru">Компонент</span></th><th><span lang="en">Weight</span><span lang="ru">Вес</span></th><th><span lang="en">How</span><span lang="ru">Как</span></th></tr>
             </thead>
             <tbody>
-              <tr><td><span lang="en">Final exam</span></td><td>50%</td><td><span lang="en">All 16 topics, including multi-GPU and Kubernetes. Waived with Overdrive ≥ 10.</span></td></tr>
-              <tr><td><span lang="en">Leaderboard</span></td><td>40%</td><td><span lang="en">10 rounds × 4%. A round = mark (0–5) × 0.8.</span></td></tr>
-              <tr><td><span lang="en">Project defense</span></td><td>10%</td><td><span lang="en">Mandatory. The engineering story behind your leaderboard results.</span></td></tr>
-              <tr><td class="cell-good"><span lang="en">Total</span></td><td class="cell-good">100%</td><td></td></tr>
+              <tr><td><span lang="en">Final exam</span><span lang="ru">Финальный экзамен</span></td><td>50%</td><td><span lang="en">All 16 topics, including multi-GPU and Kubernetes. Waived with Overdrive ≥ 10.</span><span lang="ru">Все 16 тем, включая мульти-GPU и Kubernetes. Освобождение при Overdrive ≥ 10.</span></td></tr>
+              <tr><td><span lang="en">Leaderboard</span><span lang="ru">Лидерборд</span></td><td>40%</td><td><span lang="en">10 rounds × 4%. A round = mark (0–5) × 0.8.</span><span lang="ru">10 раундов × 4%. Раунд = оценка (0–5) × 0.8.</span></td></tr>
+              <tr><td><span lang="en">Project defense</span><span lang="ru">Защита проекта</span></td><td>10%</td><td><span lang="en">Mandatory. The engineering story behind your leaderboard results.</span><span lang="ru">Обязательна. Инженерная история за вашими результатами лидерборда.</span></td></tr>
+              <tr><td class="cell-good"><span lang="en">Total</span><span lang="ru">Итого</span></td><td class="cell-good">100%</td><td></td></tr>
             </tbody>
           </table>
           <aside class="slide-notes">Half of the grade is the exam, half is earned in the project track: 40 from the weekly leaderboard, 10 from the defense. Each leaderboard round is 4% (mark × 0.8). The leaderboard is designed so that anybody who clears each round's bar gets full marks — you compete against the bar for the 40%, and against each other only for Overdrive.</aside>
@@ -1080,12 +1080,12 @@ Kept:   yes. Next: FP8 KV cache.</code></pre>
         <!-- ============================================ TABLE · grade scale ============================================ -->
         <section class="slide" data-type="table" data-screen-label="33 Grade scale">
           <div class="slide-header">
-            <h2><span lang="en">Grade scale and policy</span></h2>
-            <span class="slide-kicker"><span lang="en">Final score → letter</span></span>
+            <h2><span lang="en">Grade scale and policy</span><span lang="ru">Шкала оценок и политика</span></h2>
+            <span class="slide-kicker"><span lang="en">Final score → letter</span><span lang="ru">Итоговый балл → буква</span></span>
           </div>
           <table class="cmp-table">
             <thead>
-              <tr><th><span lang="en">Grade</span></th><th><span lang="en">Score range</span></th></tr>
+              <tr><th><span lang="en">Grade</span><span lang="ru">Оценка</span></th><th><span lang="en">Score range</span><span lang="ru">Диапазон баллов</span></th></tr>
             </thead>
             <tbody>
               <tr><td class="cell-good">A</td><td>\([90, 100]\)</td></tr>
@@ -1097,8 +1097,8 @@ Kept:   yes. Next: FP8 KV cache.</code></pre>
           <div class="callout" data-kind="warn">
             <div class="callout-icon">!</div>
             <div class="callout-body">
-              <strong><span lang="en">Policy</span></strong>
-              <p><span lang="en"><strong>Cheating: zero tolerance. No late submissions</strong> — a missed round deadline is a 0 for that round. <strong>Gaming the benchmark</strong> (caching eval answers, special-casing the prompt set, degrading output to win speed) disqualifies the round.</span></p>
+              <strong><span lang="en">Policy</span><span lang="ru">Политика</span></strong>
+              <p><span lang="en"><strong>Cheating: zero tolerance. No late submissions</strong> — a missed round deadline is a 0 for that round. <strong>Gaming the benchmark</strong> (caching eval answers, special-casing the prompt set, degrading output to win speed) disqualifies the round.</span><span lang="ru"><strong>Списывание: нулевая терпимость. Просрочек нет</strong> — пропущенный дедлайн раунда — это 0 за раунд. <strong>Подгонка под бенчмарк</strong> (кэширование eval-ответов, спец-кейсы под промпт-сет, ухудшение выхода ради скорости) дисквалифицирует раунд.</span></p>
             </div>
           </div>
           <aside class="slide-notes">The scale is standard. The leaderboard adds one rule of its own: you optimize the server, not the benchmark. The speed prompts are hidden and may rotate; anything that only works because you know the test is disqualified.</aside>
@@ -1107,9 +1107,9 @@ Kept:   yes. Next: FP8 KV cache.</code></pre>
         <!-- ============================================ DIVIDER — Part 06 ============================================ -->
         <section class="slide" data-type="divider" data-screen-label="34 Divider P06">
           <div class="divider-content">
-            <div class="divider-num"><span lang="en">Part 06</span></div>
-            <h1><span lang="en">How to succeed</span></h1>
-            <p class="divider-sub"><span lang="en">What to bring, and the habits that win the leaderboard.</span></p>
+            <div class="divider-num"><span lang="en">Part 06</span><span lang="ru">Часть 06</span></div>
+            <h1><span lang="en">How to succeed</span><span lang="ru">Как преуспеть</span></h1>
+            <p class="divider-sub"><span lang="en">What to bring, and the habits that win the leaderboard.</span><span lang="ru">Что взять с собой и привычки, которые выигрывают лидерборд.</span></p>
           </div>
           <aside class="slide-notes">Section break into expectations and prerequisites.</aside>
         </section>
@@ -1117,34 +1117,34 @@ Kept:   yes. Next: FP8 KV cache.</code></pre>
         <!-- ============================================ TWO-COL · how to succeed ============================================ -->
         <section class="slide" data-type="two-col" data-screen-label="35 How to succeed">
           <div class="slide-header">
-            <h2><span lang="en">How to succeed</span></h2>
-            <span class="slide-kicker"><span lang="en">Prerequisites · habits</span></span>
+            <h2><span lang="en">How to succeed</span><span lang="ru">Как преуспеть</span></h2>
+            <span class="slide-kicker"><span lang="en">Prerequisites · habits</span><span lang="ru">Пререквизиты · привычки</span></span>
           </div>
           <div class="twocol">
             <div class="twocol-col">
-              <h3><span lang="en">Bring</span></h3>
+              <h3><span lang="en">Bring</span><span lang="ru">Взять</span></h3>
               <ul class="obj-list">
-                <li class="obj-item"><span class="obj-check" aria-hidden="true">·</span><span class="obj-text"><span lang="en">Python, confidently; asyncio basics help.</span></span></li>
-                <li class="obj-item"><span class="obj-check" aria-hidden="true">·</span><span class="obj-text"><span lang="en">Linux command line and git; <code>uv</code> is shown in seminar 1.</span></span></li>
-                <li class="obj-item"><span class="obj-check" aria-hidden="true">·</span><span class="obj-text"><span lang="en">Deep-learning basics: tokens, a transformer forward pass, PyTorch at the reading level.</span></span></li>
-                <li class="obj-item"><span class="obj-check" aria-hidden="true">·</span><span class="obj-text"><span lang="en">HTTP / REST basics: requests, JSON, streaming.</span></span></li>
-                <li class="obj-item"><span class="obj-check" aria-hidden="true">·</span><span class="obj-text"><span lang="en">Accounts: GitHub, Hugging Face, Google (Colab).</span></span></li>
+                <li class="obj-item"><span class="obj-check" aria-hidden="true">·</span><span class="obj-text"><span lang="en">Python, confidently; asyncio basics help.</span><span lang="ru">Python, уверенно; asyncio — плюс.</span></span></li>
+                <li class="obj-item"><span class="obj-check" aria-hidden="true">·</span><span class="obj-text"><span lang="en">Linux command line and git; <code>uv</code> is shown in seminar 1.</span><span lang="ru">Командная строка Linux и git; <code>uv</code> — в семинаре 1.</span></span></li>
+                <li class="obj-item"><span class="obj-check" aria-hidden="true">·</span><span class="obj-text"><span lang="en">Deep-learning basics: tokens, a transformer forward pass, PyTorch at the reading level.</span><span lang="ru">Основы DL: токены, forward pass, PyTorch на уровне чтения.</span></span></li>
+                <li class="obj-item"><span class="obj-check" aria-hidden="true">·</span><span class="obj-text"><span lang="en">HTTP / REST basics: requests, JSON, streaming.</span><span lang="ru">Основы HTTP / REST: запросы, JSON, стриминг.</span></span></li>
+                <li class="obj-item"><span class="obj-check" aria-hidden="true">·</span><span class="obj-text"><span lang="en">Accounts: GitHub, Hugging Face, Google (Colab).</span><span lang="ru">Аккаунты: GitHub, Hugging Face, Google (Colab).</span></span></li>
               </ul>
-              <p class="small muted mt-3"><span lang="en">No Docker or Kubernetes experience needed — that is what topics 9–12 are for.</span></p>
+              <p class="small muted mt-3"><span lang="en">No Docker or Kubernetes experience needed — that is what topics 9–12 are for.</span><span lang="ru">Docker/Kubernetes не нужны заранее — для этого темы 9–12.</span></p>
             </div>
             <div class="twocol-col">
-              <h3><span lang="en">Habits that win</span></h3>
+              <h3><span lang="en">Habits that win</span><span lang="ru">Привычки победителей</span></h3>
               <ul class="obj-list">
-                <li class="obj-item"><span class="obj-check" aria-hidden="true">✓</span><span class="obj-text"><span lang="en">Create your repository <strong>this week</strong> and submit round 1 early — a boring server that starts beats a clever one that does not.</span></span></li>
-                <li class="obj-item"><span class="obj-check" aria-hidden="true">✓</span><span class="obj-text"><span lang="en">Change <strong>one thing</strong> per experiment; predict, then measure.</span></span></li>
-                <li class="obj-item"><span class="obj-check" aria-hidden="true">✓</span><span class="obj-text"><span lang="en">Write the journal entry the day you run the experiment.</span></span></li>
-                <li class="obj-item"><span class="obj-check" aria-hidden="true">✓</span><span class="obj-text"><span lang="en">Read your private readiness Issue.</span></span></li>
+                <li class="obj-item"><span class="obj-check" aria-hidden="true">✓</span><span class="obj-text"><span lang="en">Create your repository <strong>this week</strong> and submit round 1 early — a boring server that starts beats a clever one that does not.</span><span lang="ru">Создайте репозиторий <strong>на этой неделе</strong> и сдайте раунд 1 заранее — старт важнее изящества.</span></span></li>
+                <li class="obj-item"><span class="obj-check" aria-hidden="true">✓</span><span class="obj-text"><span lang="en">Change <strong>one thing</strong> per experiment; predict, then measure.</span><span lang="ru"><strong>Одно</strong> изменение за эксперимент: предсказание, потом измерение.</span></span></li>
+                <li class="obj-item"><span class="obj-check" aria-hidden="true">✓</span><span class="obj-text"><span lang="en">Write the journal entry the day you run the experiment.</span><span lang="ru">Запись в журнал — в день эксперимента.</span></span></li>
+                <li class="obj-item"><span class="obj-check" aria-hidden="true">✓</span><span class="obj-text"><span lang="en">Read your private readiness Issue.</span><span lang="ru">Читайте приватный readiness Issue.</span></span></li>
               </ul>
               <div class="callout" data-kind="info">
                 <div class="callout-icon">i</div>
                 <div class="callout-body">
-                  <strong><span lang="en">Workload</span></strong>
-                  <p><span lang="en">Baseline 10–14 h/week · advanced 16–20. Overflow → required guided self-study.</span></p>
+                  <strong><span lang="en">Workload</span><span lang="ru">Нагрузка</span></strong>
+                  <p><span lang="en">Baseline 10–14 h/week · advanced 16–20. Overflow → required guided self-study.</span><span lang="ru">База 10–14 h/week · продвинутый 16–20. Излишек → обязательная самоподготовка с поддержкой.</span></p>
                 </div>
               </div>
             </div>
@@ -1155,8 +1155,8 @@ Kept:   yes. Next: FP8 KV cache.</code></pre>
         <!-- ============================================ REFERENCES ============================================ -->
 <section class="slide" data-type="refs" data-screen-label="36 References">
           <div class="slide-header">
-            <h2><span lang="en">Read next</span></h2>
-            <span class="slide-kicker"><span lang="en">The papers behind today's pictures</span></span>
+            <h2><span lang="en">Read next</span><span lang="ru">Читать дальше</span></h2>
+            <span class="slide-kicker"><span lang="en">The papers behind today's pictures</span><span lang="ru">Статьи за сегодняшними картинками</span></span>
           </div>
           <ol class="ref-list">
             <li>
@@ -1206,26 +1206,26 @@ Kept:   yes. Next: FP8 KV cache.</code></pre>
         <!-- ============================================ FINAL ============================================ -->
         <section class="slide" data-type="final" data-screen-label="37 Final">
           <div class="final-body">
-            <h1><span lang="en">Kitchen's open.</span></h1>
-            <p class="final-sub"><span lang="en">Slides, the demo notebook, the leaderboard and its rules — via the QR code or the link below.</span></p>
+            <h1><span lang="en">Kitchen's open.</span><span lang="ru">Кухня открыта.</span></h1>
+            <p class="final-sub"><span lang="en">Slides, the demo notebook, the leaderboard and its rules — via the QR code or the link below.</span><span lang="ru">Слайды, демо-ноутбук, лидерборд и его правила — по QR-коду или ссылке ниже.</span></p>
             <div class="contact-grid">
               <div class="contact-item">
-                <div class="contact-label">Rounds close</div>
-                <div class="contact-value">Thursdays, 23:59 MSK</div>
+                <div class="contact-label"><span lang="en">Rounds close</span><span lang="ru">Раунды закрываются</span></div>
+                <div class="contact-value"><span lang="en">Thursdays, 23:59 MSK</span><span lang="ru">По четвергам, 23:59 MSK</span></div>
               </div>
               <div class="contact-item">
-                <div class="contact-label">Start here</div>
-                <div class="contact-value">Public student example</div>
+                <div class="contact-label"><span lang="en">Start here</span><span lang="ru">С чего начать</span></div>
+                <div class="contact-value"><span lang="en">Public student example</span><span lang="ru">Публичный студенческий пример</span></div>
               </div>
               <div class="contact-item">
-                <div class="contact-label">Student example</div>
+                <div class="contact-label"><span lang="en">Student example</span><span lang="ru">Студенческий пример</span></div>
                 <div class="contact-value">github.com/levshaazz/llm-serving-mastery-submission-example</div>
               </div>
             </div>
             <div class="qr-block">
               <div class="qr-canvas" data-qr="https://levshaazz.github.io/llm-serving-mastery/"></div>
               <div class="qr-caption">
-                <span lang="en">Course site</span>
+                <span lang="en">Course site</span><span lang="ru">Сайт курса</span>
                 <span class="qr-url">levshaazz.github.io/llm-serving-mastery</span>
               </div>
             </div>
@@ -1240,7 +1240,7 @@ Kept:   yes. Next: FP8 KV cache.</code></pre>
 <section class="slide" data-type="quote" data-screen-label="38 Closing quote">
           <div>
             <div class="quote-mark">"</div>
-            <blockquote><span lang="en">Mise-en-place is the religion of all good line cooks.</span></blockquote>
+            <blockquote><span lang="en">Mise-en-place is the religion of all good line cooks.</span><span lang="ru">Mise-en-place — религия всех хороших линейных поваров.</span></blockquote>
             <div class="quote-attr">Anthony Bourdain, <em>Kitchen Confidential</em></div>
             <div class="viz-frame fig-fit" style="--fig-max:34cqh; --fig-w:54%; --fig-mt:var(--sp-3);">
               <img src="assets/img/L0/L0-07-sendoff.webp?v=1" alt="Serega throwing open the kitchen doors onto a full dining room, ladle raised" />

@@ -188,6 +188,41 @@
           answer: 0,
           explain: { en: "The formula's order is ceil FIRST, clamp SECOND — under-provisioning is forbidden, but so is unbounded spend. This lab's own tolerance and windows soften noise; the clamp is the last line against a bad metric.", ru: "Порядок формулы — сначала ceil, потом кламп — запрещает нехватку реплик, но и безграничные траты тоже. Tolerance и окна смягчают шум; кламп — последняя линия обороны от плохой метрики." },
         },
+        // Вариативность №5: формула HPA desired = clamp(ceil(replicas × metric / target), [min, max]).
+        //   7 × 9 / 2 → ceil(31.5) = 32 → кламп по max 8 → 8;   9 × 13 / 3 → ceil(39) = 39 → кламп по max 12 → 12.
+        // Ловушки: без клампа 32 / 39 (дистанции 24 / 27), перепутанная формула 2 / 3 (дистанции 6 / 9) при tol 0.2.
+        // База (ответ 10) в фигурах — grandfathered; новые числа 7 / 9 / 8 / 13 / 3 / 12 в фигурах не встречаются.
+        variants: [
+          {
+            q: {
+              en: "3 replicas, queue depth 8 per pod, target 2, maxReplicas 10. How many replicas after this HPA tick?",
+              ru: "3 реплики, глубина очереди 8 на под, цель 2, maxReplicas 10. Сколько реплик будет после этого тика HPA?",
+            },
+            answer: 10, tol: 0.2,
+          },
+          {
+            q: {
+              en: "7 replicas, queue depth 9 per pod, target 2, maxReplicas 8. How many replicas after this HPA tick?",
+              ru: "7 реплик, глубина очереди 9 на под, цель 2, maxReplicas 8. Сколько реплик будет после этого тика HPA?",
+            },
+            answer: 8, tol: 0.2,
+            hint: {
+              en: "ceil(7 × 9 / 2) = 32, then clamp into [min, max].",
+              ru: "ceil(7 × 9 / 2) = 32, затем кламп в [min, max].",
+            },
+          },
+          {
+            q: {
+              en: "9 replicas, queue depth 13 per pod, target 3, maxReplicas 12. How many replicas after this HPA tick?",
+              ru: "9 реплик, глубина очереди 13 на под, цель 3, maxReplicas 12. Сколько реплик будет после этого тика HPA?",
+            },
+            answer: 12, tol: 0.2,
+            hint: {
+              en: "ceil(9 × 13 / 3) = 39, then clamp into [min, max].",
+              ru: "ceil(9 × 13 / 3) = 39, затем кламп в [min, max].",
+            },
+          },
+        ],
       },
       {
         id: "q2",
@@ -210,6 +245,37 @@
           answer: 0,
           explain: { en: "Every corner case of the band is a flapping decision: exclude the edge and a metric oscillating around 1.1× target scales up and down every tick. Inclusive edges make «hold» the default for anything not clearly off.", ru: "Каждый краевой случай полосы — решение о флаттере: исключи край, и метрика, осциллирующая вокруг 1.1× цели, скейлит вверх-вниз каждый тик. Включительные края делают «держать» поведением по умолчанию для всего, что не выбилось явно." },
         },
+        // Вариативность №5: полоса tolerance включительна, |ratio − 1| ≤ 0.1 → hold, иначе ceil(replicas × ratio).
+        //   7 реплик, 2.2 / 2 = 1.1 — ровно край → hold → 7;   13 × 2.5 / 2 = 16.25 → ceil = 17 (ratio 1.25 вне полосы).
+        // Ловушки: 8 («полоса исключающа», дистанция 1); 16.25 без ceil (0.75) и 16 усечение (1) при tol 0.2.
+        // База (ответ 4) в фигурах — grandfathered; 7 / 13 / 2.5 / 17 в фигурах не встречаются.
+        variants: [
+          {
+            q: {
+              en: "4 replicas, metric 2.2, target 2, tolerance 0.1. What does the HPA set this tick?",
+              ru: "4 реплики, метрика 2.2, цель 2, tolerance 0.1. Что HPA выставит этим тиком?",
+            },
+            answer: 4, tol: 0.2,
+          },
+          {
+            q: {
+              en: "7 replicas, metric 2.2, target 2, tolerance 0.1. What does the HPA set this tick?",
+              ru: "7 реплик, метрика 2.2, цель 2, tolerance 0.1. Что HPA выставит этим тиком?",
+            },
+            answer: 7, tol: 0.2,
+          },
+          {
+            q: {
+              en: "13 replicas, metric 2.5, target 2, tolerance 0.1. What does the HPA set this tick?",
+              ru: "13 реплик, метрика 2.5, цель 2, tolerance 0.1. Что HPA выставит этим тиком?",
+            },
+            answer: 17, tol: 0.2,
+            hint: {
+              en: "2.5 / 2 = 1.25 — outside the band (the edge is 1.1), so the formula runs: ceil(13 × 2.5 / 2).",
+              ru: "2.5 / 2 = 1.25 — вне полосы (край — 1.1), работает формула: ceil(13 × 2.5 / 2).",
+            },
+          },
+        ],
       },
       {
         id: "q3",
@@ -232,6 +298,41 @@
           answer: 0,
           explain: { en: "With the LLM cold start (~165 s) a wrong scale-down is expensive to undo: the window max turns a saw-shaped metric into a held fleet (Exercise 3's held_ticks). Latest-wins is what the buggy starter did.", ru: "При холодном старте LLM (~165 с) ошибочный скейл-даун дорого откатывать: максимум окна превращает пилообразную метрику в удержанный флот (held_ticks из упражнения 3). «Последняя выигрывает» — то, что делал багованный стартер." },
         },
+        // Вариативность №5: окно стабилизации меняется (300 → 600 / 360 с), тик 15 с — дефолт k8s.
+        // Пересчёт ticks = window / tick: 600 / 15 = 40;   360 / 15 = 24.
+        // Ловушка off-by-one 41 / 39 и 25 / 23 — дистанция 1 при tol 0.2 (запас 5×).
+        // База (ответ 20) в фигуре («20 ticks of 15 s») — grandfathered; 600 / 360 / 40 / 24 там не встречаются.
+        variants: [
+          {
+            q: {
+              en: "The scale-down stabilization window is 300 s and the sync tick is 15 s. How many ticks does a recommendation stay inside the window?",
+              ru: "Окно стабилизации скейл-дауна — 300 с, тик синхронизации — 15 с. Сколько тиков рекомендация живёт внутри окна?",
+            },
+            answer: 20, tol: 0.2,
+          },
+          {
+            q: {
+              en: "The scale-down stabilization window is 600 s and the sync tick is 15 s. How many ticks does a recommendation stay inside the window?",
+              ru: "Окно стабилизации скейл-дауна — 600 с, тик синхронизации — 15 с. Сколько тиков рекомендация живёт внутри окна?",
+            },
+            answer: 40, tol: 0.2,
+            hint: {
+              en: "600 / 15 — and the window takes the max of everything it still holds.",
+              ru: "600 / 15 — и окно берёт максимум всего, что ещё держит.",
+            },
+          },
+          {
+            q: {
+              en: "The scale-down stabilization window is 360 s and the sync tick is 15 s. How many ticks does a recommendation stay inside the window?",
+              ru: "Окно стабилизации скейл-дауна — 360 с, тик синхронизации — 15 с. Сколько тиков рекомендация живёт внутри окна?",
+            },
+            answer: 24, tol: 0.2,
+            hint: {
+              en: "360 / 15 — and the window takes the max of everything it still holds.",
+              ru: "360 / 15 — и окно берёт максимум всего, что ещё держит.",
+            },
+          },
+        ],
       },
     ],
     exercises: [

@@ -38,6 +38,124 @@
     return MODEL.prefill_base_ms + MODEL.prefill_per_tok_ms * promptTokens;
   }
 
+  // --------------------------------------------- quiz variants (№5, 2026-11-25)
+  // Программная параметризация (contract: instructor/plans/quiz-variants-
+  // contract-20261125.ru.md): вариант — это СЦЕНАРИЙ (токены промпта и ответа),
+  // а ответы квизов считает тот же код заявленной модели, которым цена
+  // симуляцию песочницы (prefillMs + MODEL.step_ms, номинал — до джиттера:
+  // подсказки квизов просят номинал). Вопрос и ответ не могут разойтись,
+  // потому что выходят из одного расчёта. variants[0] — база: сценарий 96/64
+  // с байт-равными строками страницы; LSMVariants.pick детерминированно
+  // выдаёт каждому браузеру один сценарий (seed в localStorage).
+  var QUIZ_SCENARIOS = [
+    { promptTokens: 96, outTokens: 64 },  // база — референсный сценарий страницы
+    { promptTokens: 128, outTokens: 32 },
+    { promptTokens: 64, outTokens: 48 },
+  ];
+
+  function round2(x) { return Math.round(x * 100) / 100; }
+
+  function ruTokens(n) {
+    var m10 = n % 10, m100 = n % 100;
+    if (m10 === 1 && m100 !== 11) return "токен";
+    if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return "токена";
+    return "токенов";
+  }
+
+  // Номинальные ответы всех трёх квизов для сценария — тот же путь модели,
+  // что в simulate(), но без джиттера (квиз спрашивает номинал из модели).
+  function scenarioNumbers(s) {
+    var ttftMs = prefillMs(s.promptTokens) + MODEL.step_ms;
+    return {
+      ttftMs: ttftMs,
+      q1: round2(MODEL.download_s + MODEL.init_s + MODEL.warmup_s + ttftMs / 1000),
+      q2: Math.round(ttftMs),
+      q3: round2(ttftMs / 1000 + (s.outTokens - 1) * MODEL.step_ms / 1000),
+    };
+  }
+
+  function buildQuizVariants() {
+    var coldSInt = Math.round(MODEL.download_s + MODEL.init_s + MODEL.warmup_s);
+    var FQ2 = { // followUp q2: текст и опции без чисел сценария — общие для всех вариантов
+      q: { en: "Why is TTFT prefill plus exactly ONE step?", ru: "Почему TTFT — это prefill плюс ровно ОДИН шаг?" },
+      options: [
+        { en: "The first streamed token is produced by that first step: it arrives together with the step, and only the remaining tokens follow one per step", ru: "Первый стриминговый токен производит тот самый первый шаг: он приходит вместе с ним, и только остальные идут по одному за шаг" },
+        { en: "The engine runs two steps in parallel during prefill", ru: "Движок исполняет два шага параллельно во время prefill" },
+        { en: "The " + MODEL.step_ms + " ms step is charged twice for safety margin", ru: "Шаг " + MODEL.step_ms + " мс берётся дважды как запас" },
+      ],
+      answer: 0,
+    };
+    var q1 = [], q2 = [], q3 = [];
+    QUIZ_SCENARIOS.forEach(function (s, i) {
+      var num = scenarioNumbers(s);
+      var ttftS = (num.ttftMs / 1000).toFixed(2);
+      var totalS = num.q1.toFixed(2);
+      var ruPrompt = "промпт " + s.promptTokens + " " + ruTokens(s.promptTokens);
+      var ruBoth = ruPrompt + ", " + s.outTokens + " выходных " + ruTokens(s.outTokens);
+      var enBoth = "prompt " + s.promptTokens + " tokens, " + s.outTokens + " output tokens";
+      if (i === 0) {
+        // база: строки байт-в-байт из 1.astro (гейт сверяет), числа из расчёта
+        q1.push({
+          q: { en: "Cold start: how many seconds until the first token of the reference scenario?", ru: "Холодный старт: сколько секунд до первого токена референсного сценария?" },
+          answer: num.q1, tol: 0.5,
+        });
+        q2.push({
+          q: { en: "Warm start: how many milliseconds until the first token (TTFT)?", ru: "Тёплый старт: сколько миллисекунд до первого токена (TTFT)?" },
+          answer: num.q2, tol: 10,
+        });
+        q3.push({
+          q: { en: "Warm start: how many seconds until the last of the " + s.outTokens + " tokens arrives?", ru: "Тёплый старт: через сколько секунд придёт последний из " + s.outTokens + " токенов?" },
+          answer: num.q3, tol: 0.12,
+        });
+        return;
+      }
+      q1.push({
+        q: { en: "Cold start, scenario: " + enBoth + ". How many seconds until the first token?", ru: "Холодный старт, сценарий: " + ruBoth + ". Сколько секунд до первого токена?" },
+        answer: num.q1, tol: 0.5,
+        followUp: {
+          q: { en: "Why " + totalS + " s and not " + ttftS + " s?", ru: "Почему " + totalS + " с, а не " + ttftS + " с?" },
+          options: [
+            { en: "The cold path pays download + init + warm-up = " + coldSInt + " s exactly once, then the serving path adds the same ~" + ttftS + " s as warm", ru: "Холодный путь платит download + init + прогрев = " + coldSInt + " с ровно один раз, а затем обычный путь добавляет те же ~" + ttftS + " с, что и тёплый" },
+            { en: "Every cold token costs one extra second of download", ru: "Каждый холодный токен стоит лишнюю секунду скачивания" },
+            { en: coldSInt + " s is a second warm-up that repeats on every request", ru: coldSInt + " с — это повторный прогрев, который плачет при каждом запросе" },
+          ],
+          answer: 0,
+          explain: { en: "The three cold members are paid once, before the first token; after them the serving path is identical to warm. That is why the lifecycle figure shows them as separate one-off bars.", ru: "Три холодных члена платятся один раз до первого токена; после них путь сервинга идентичен тёплому. Поэтому на фигуре жизненного цикла они показаны отдельными разовыми полосами." },
+        },
+      });
+      q2.push({
+        q: { en: "Warm start, scenario: prompt " + s.promptTokens + " tokens. How many milliseconds until the first token (TTFT)?", ru: "Тёплый старт, сценарий: " + ruPrompt + ". Сколько миллисекунд до первого токена (TTFT)?" },
+        answer: num.q2, tol: 10,
+        hint: {
+          en: "Prefill for " + s.promptTokens + " tokens costs 40 + " + s.promptTokens + " × 0.625 ms; one decode step follows. Answer with the nominal number from the model — a sandbox measurement differs by up to ±10% jitter on purpose.",
+          ru: "Prefill для " + s.promptTokens + " токенов стоит 40 + " + s.promptTokens + " × 0.625 мс; следом один decode-шаг. В ответе — номинальное число из модели: измерение в песочнице намеренно уйдёт из-за джиттера ±10%.",
+        },
+        followUp: {
+          q: FQ2.q, options: FQ2.options, answer: FQ2.answer,
+          explain: {
+            en: "TTFT = prefill + first decode step (" + prefillMs(s.promptTokens) + " + " + MODEL.step_ms + " = " + num.ttftMs + " ms nominal). The same mechanism as T04: a " + s.outTokens + "-token answer therefore pays " + (s.outTokens - 1) + " step gaps, not " + s.outTokens + ".",
+            ru: "TTFT = prefill + первый decode-шаг (" + prefillMs(s.promptTokens) + " + " + MODEL.step_ms + " = " + num.ttftMs + " мс номинально). Тот же механизм, что в T04: ответ из " + s.outTokens + " токенов поэтому платит " + (s.outTokens - 1) + " шаговых промежутков, а не " + s.outTokens + ".",
+          },
+        },
+      });
+      q3.push({
+        q: { en: "Warm start, scenario: " + enBoth + ". How many seconds until the last of the " + s.outTokens + " tokens arrives?", ru: "Тёплый старт, сценарий: " + ruBoth + ". Через сколько секунд придёт последний из " + s.outTokens + " токенов?" },
+        answer: num.q3, tol: 0.12,
+        hint: {
+          en: "The first token arrives at TTFT; the other " + (s.outTokens - 1) + " follow one step each.",
+          ru: "Первый токен приходит в момент TTFT; остальные " + (s.outTokens - 1) + " — по одному на каждый шаг.",
+        },
+      });
+    });
+    return { q1: q1, q2: q2, q3: q3 };
+  }
+
+  // Материализованные варианты (числа уже посчитаны) — их читает initQuiz и
+  // гейт quiz-variants в scripts/check-content.mjs; LAB1_SCENARIOS — сырой
+  // вход для независимого пересчёта ответов гейтом.
+  window.LAB1_SCENARIOS = QUIZ_SCENARIOS;
+  window.LAB1_VARIANTS = buildQuizVariants();
+
   // Simulate one streaming request. Deterministic: identical inputs → identical run.
   function simulate(req, cold) {
     var rng = mulberry32(MODEL.seed + estimateTokens(promptOf(req)) * 7 + (req.max_tokens || 0));
@@ -255,14 +373,31 @@
   }
 
   // ---------------------------------------------------------------- quizzes
-  function initQuiz(id, answer, tol, unit) {
+  // variants (optional, Вариативность №5): массив вариантов из window.LAB1_VARIANTS;
+  // ответ/толеранс/текст квиза берутся из детерминированного варианта этого
+  // браузера (LSMVariants.pick, тот же движок, что в labs-render.js). Без
+  // variants или без LSMVariants — ровно прежнее поведение.
+  function initQuiz(id, answer, tol, unit, variants) {
     var root = document.querySelector('[data-lab-quiz="' + id + '"]');
     if (!root) return;
+    var ru = document.documentElement.dataset.lang === "ru";
+    var trField = function (f) { return (typeof f === "string") ? f : (f[ru ? "ru" : "en"] || f.en || ""); };
     var input = root.querySelector("input");
     var btn = root.querySelector("button");
     var verdict = root.querySelector(".lab-verdict");
     var hintBtn = root.querySelector("[data-lab-hint-btn]");
     var hint = root.querySelector(".lab-hint");
+    var fu = (window.LAB1_FU && window.LAB1_FU[id]) || null;
+    if (variants && variants.length >= 2 && window.LSMVariants) {
+      var vIdx = window.LSMVariants.pick("1", id, variants.length);
+      var v = variants[vIdx] || {};
+      if (v.q) root.querySelector("h3").textContent = trField(v.q);
+      if (v.hint && hint) hint.textContent = trField(v.hint);
+      if (v.answer !== undefined) answer = v.answer;
+      if (v.tol !== undefined) tol = v.tol;
+      // followUp опционален в варианте: нет своего — берётся базовый
+      if (v.followUp !== undefined) fu = v.followUp || null;
+    }
     if (hintBtn) hintBtn.addEventListener("click", function () {
       hint.dataset.open = hint.dataset.open === "1" ? "0" : "1";
     });
@@ -272,9 +407,9 @@
       if (!isFinite(v)) { verdict.dataset.state = "fail"; verdict.textContent = T.v_num; return; }
       if (Math.abs(v - answer) <= tol) {
         verdict.dataset.state = "pass"; verdict.textContent = T.v_pass + " (≈ " + answer + " " + unit + ")";
-        if (window.LAB1_FU && window.LAB1_FU[id]) {
+        if (fu) {
           // число верное, но чекпойнт закрывается только после верной причины
-          if (!fuOpened) { fuOpened = true; renderFollowUpLab1(root, window.LAB1_FU[id], id, false); }
+          if (!fuOpened) { fuOpened = true; renderFollowUpLab1(root, fu, id, false); }
         } else {
           markDone(id);
         }
@@ -285,13 +420,14 @@
     }
     btn.addEventListener("click", check);
     input.addEventListener("keydown", function (e) { if (e.key === "Enter") check(); });
-    // L1a-6: решённый квиз после reload показывает решённый вид
+    // L1a-6: решённый квиз после reload показывает решённый вид — с ответом
+    // ВЫБРАННОГО варианта (answer уже переопределён выше)
     if (loadProgress()[id]) {
       input.value = String(answer);
       verdict.dataset.state = "pass";
       verdict.textContent = T.v_pass + " (≈ " + answer + " " + unit + ")";
-      if (window.LAB1_FU && window.LAB1_FU[id]) {
-        fuOpened = true; renderFollowUpLab1(root, window.LAB1_FU[id], id, true);
+      if (fu) {
+        fuOpened = true; renderFollowUpLab1(root, fu, id, true);
       }
     }
   }
@@ -636,9 +772,10 @@ print(wall_s)   # 2.4425 s - fits with 0.56 s to spare
     // painting them earlier left them grey after reload with progress at 9/9
     renderProgress();
     initLifecycle();
-    initQuiz("q1", 16.16, 0.5, "s");
-    initQuiz("q2", 160, 10, "ms");
-    initQuiz("q3", 3.94, 0.12, "s");
+    var quizVariants = window.LAB1_VARIANTS || {};
+    initQuiz("q1", 16.16, 0.5, "s", quizVariants.q1);
+    initQuiz("q2", 160, 10, "ms", quizVariants.q2);
+    initQuiz("q3", 3.94, 0.12, "s", quizVariants.q3);
     initEx1(); initEx2(); initEx3();
     initChallengeLab1();
   });

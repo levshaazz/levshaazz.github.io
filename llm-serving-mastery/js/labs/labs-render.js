@@ -297,7 +297,15 @@
   }
 
   // ---------------------------------------------------------------- quizzes
-  function renderQuiz(root, q, quizIndex) {
+  function renderQuiz(root, quiz, quizIndex) {
+    // Вариативность №5 (contract: instructor/plans/quiz-variants-contract-20261125.ru.md):
+    // a quiz may declare variants:[{q, answer, tol, hint?, followUp?}]; the
+    // effective numbers come from this browser's deterministic variant
+    // (labs-variants.js). unit/id/followUp-not-declared inherit from the base;
+    // without variants the base quiz object itself is used — zero drift.
+    const q = (quiz.variants && window.LSMVariants)
+      ? window.LSMVariants.variantOf(labId, quiz)
+      : quiz;
     IDS.push(q.id);
     const card = el("div", "lab-card lab-quiz lab-exercise");
     card.dataset.labQuiz = q.id;
