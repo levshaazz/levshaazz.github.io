@@ -465,7 +465,7 @@ def desired_from_metrics(text, target_per_pod, current, min_r, max_r):
           { name: "the exposition above: 6 waiting, target 2 → 3 replicas", hidden: false, code: "t = open('/dev/null').read() if False else '''# HELP vllm:num_requests_waiting Number of requests waiting in the queue.\n# TYPE vllm:num_requests_waiting gauge\nvllm:num_requests_waiting{model=\"qwen\",pod=\"llm-0\"} 5\nvllm:num_requests_waiting{model=\"qwen\",pod=\"llm-1\"} 1\n# HELP vllm:gpu_cache_usage_perc KV-cache usage [0..1]\nvllm:gpu_cache_usage_perc{pod=\"llm-0\"} 0.62'''\neq(desired_from_metrics(t, 2, 2, 1, 10), 3)" },
           { name: "empty queue → clamp to min", hidden: false, code: "t = 'vllm:num_requests_waiting{pod=\"llm-0\"} 0'\neq(desired_from_metrics(t, 2, 2, 1, 10), 1)" },
           { name: "surge past max is clamped", hidden: true, code: "t = 'vllm:num_requests_waiting{pod=\"llm-0\"} 40'\neq(desired_from_metrics(t, 2, 2, 1, 10), 10)" },
-          { name: "other metrics and comments never count", hidden: true, code: "t = '# HELP vllm:num_requests_waiting decoy\n# TYPE vllm:num_requests_waiting gauge\nvllm:gpu_cache_usage_perc{pod=\"x\"} 40\nvllm:num_requests_waiting{pod=\"llm-0\"} 4'\neq(desired_from_metrics(t, 2, 2, 1, 10), 2)" },
+          { name: "other metrics and comments never count", hidden: true, code: "t = '''# HELP vllm:num_requests_waiting decoy\n# TYPE vllm:num_requests_waiting gauge\nvllm:gpu_cache_usage_perc{pod=\"x\"} 40\nvllm:num_requests_waiting{pod=\"llm-0\"} 4'''\neq(desired_from_metrics(t, 2, 2, 1, 10), 2)" },
         ],
         solution: `import math
 
