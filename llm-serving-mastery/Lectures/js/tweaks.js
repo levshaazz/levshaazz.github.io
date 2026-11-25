@@ -385,7 +385,7 @@
       apply(kk);
       if (overflow() <= 0) { fit = kk; break; }
     }
-    if (fit == null) return; // nothing in range fits; keep the authored size
+    if (fit == null) { apply(1); return; } // nothing in range fits: restore the AUTHORED size — the stage scale keeps it proportional, and a few px of overflow hide in the toolbar reserve. (Leaving the last rung's inline would stick the floor forever.)
     for (var k2 = fit + 0.01; k2 <= fit + 0.049; k2 += 0.01) {
       apply(k2);
       if (overflow() > 0) { apply(k2 - 0.01); return; }
