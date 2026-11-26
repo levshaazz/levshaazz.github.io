@@ -26,6 +26,52 @@
     return node;
   }
 
+  // Russian pluralization for counters that grow at runtime (audit L1b-3:
+  // the chip said «51 записей» — 1/11/21 must read «запись», 2–4 «записи»).
+  function ruPlural(n, one, few, many) {
+    const m10 = n % 10, m100 = n % 100;
+    if (m10 === 1 && m100 !== 11) return one;
+    if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return few;
+    return many;
+  }
+  function entriesWordN(n) {
+    return lang() === "ru"
+      ? ruPlural(n, "запись", "записи", "записей")
+      : (tr(T().entriesWord) || "entries");
+  }
+
+  // The «verify the journal with your own code» button reads the exercise
+  // that declares verify_chain (audit F-P2-10 / L1c-1): the old lookup
+  // hard-coded the checkpoint id "rt1", which exists only in lab 09 — in
+  // lab 13 the button was dead. The content module may pin the exercise
+  // with runtime.studentExerciseId; otherwise find it by its code, in the
+  // declared order of content.exercises.
+  function studentVerifyExercise() {
+    const spec = content().runtime || {};
+    const exercises = content().exercises || [];
+    if (spec.studentExerciseId) {
+      const pinned = exercises.find((e) => e.id === spec.studentExerciseId);
+      if (pinned) return pinned;
+    }
+    return exercises.find((e) =>
+      tr(e.starter).indexOf("def verify_chain") >= 0 ||
+      String(e.solution || "").indexOf("def verify_chain") >= 0) || null;
+  }
+  // 1-based position of that exercise, for the «first implement … in
+  // exercise N» message (the shipped template hard-codes lab 09's number)
+  function verifyExerciseNum(ex) {
+    const i = (content().exercises || []).indexOf(ex);
+    return i >= 0 ? i + 1 : null;
+  }
+  function verifyStudentFirstMsg(num) {
+    const tpl = tr(T().verifyStudentFirst) || "";
+    if (num == null) return tpl;
+    if (tpl.indexOf("{n}") >= 0) return tpl.replace("{n}", String(num));
+    return lang() === "ru"
+      ? "сначала реализуй verify_chain в упражнении " + num + " — кнопка прогонит твой код на живом журнале"
+      : "implement verify_chain in Exercise " + num + " first — the button runs YOUR code on the live journal";
+  }
+
   async function fetchJson(path, opts) {
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), (opts && opts.timeoutMs) || 2500);
@@ -197,7 +243,7 @@
             (spOk ? "● " : "○ ") + tr(spOk ? T().draftOk : T().draftNotReady)));
         }
         if (h.status === "ok") {
-          renderChip(chipHost, "on", tr(T().connected) + " — " + (h.journal_entries || 0) + " " + tr(T().entriesWord));
+          renderChip(chipHost, "on", tr(T().connected) + " — " + (h.journal_entries || 0) + " " + entriesWordN(h.journal_entries || 0));
           return true;
         }
         renderChip(chipHost, "wait", tr(T().warming));
@@ -294,7 +340,8 @@
         const locked = [...document.querySelectorAll("[data-lab-run]")].some((b) => b.disabled);
         if (locked) { log(tr(T().gateBusy), "err"); return; }
         if (!(await probe())) { log(tr(T().needRuntime), "err"); return; }
-        const cardEl = document.querySelector('[data-lab-checkpoint="rt1"]');
+        const rtEx = studentVerifyExercise();
+        const cardEl = rtEx ? document.querySelector('[data-lab-checkpoint="' + rtEx.id + '"]') : null;
         const wrap = cardEl && cardEl.querySelector(".CodeMirror");
         let code = wrap && wrap.CodeMirror ? wrap.CodeMirror.getValue() : (cardEl && cardEl.querySelector("textarea") ? cardEl.querySelector("textarea").value : "");
         const MARK = "import json as _rtjson";
@@ -302,7 +349,7 @@
           const sep = code.indexOf("\n\n");
           code = sep >= 0 ? code.slice(sep + 2) : "";
         }
-        if (!code.includes("def verify_chain")) { log(tr(T().verifyStudentFirst), "err"); return; }
+        if (!code.includes("def verify_chain")) { log(verifyStudentFirstMsg(verifyExerciseNum(rtEx)), "err"); return; }
         try {
           const raw = await fetchJournalRaw();
           const gw = await fetchJson("/journal/verify");
@@ -315,7 +362,7 @@
           const okStudent = /STUDENT_VERDICT\s*\(?\s*True/.test(joined);
           const verdictText = joined.slice(joined.indexOf("STUDENT_VERDICT")).replace("STUDENT_VERDICT", "").trim() || (okStudent ? "(True, …)" : "нет вывода");
           log(tr(T().studentVerdict) + " " + verdictText, okStudent ? "chunk" : "err");
-          log(tr(T().gatewayVerdict) + " ok=" + gw.ok + ", " + gw.entries + " " + tr(T().entriesWord), gw.ok ? "ok" : "err");
+          log(tr(T().gatewayVerdict) + " ok=" + gw.ok + ", " + gw.entries + " " + entriesWordN(gw.entries), gw.ok ? "ok" : "err");
           log(gw.ok === okStudent ? tr(T().matchOk) : tr(T().matchMismatch), gw.ok === okStudent ? "ok" : "err");
           await probe();
         } catch (e) {

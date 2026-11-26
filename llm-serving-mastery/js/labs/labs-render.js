@@ -15,6 +15,24 @@
   const KEY = "lsm.lab" + labId;
   const IDS = [];
 
+  // prefers-reduced-motion (audit F-P2-16 / L4-2 / L5-2): canvas animators
+  // render one static frame and do not loop under reduce, and programmatic
+  // smooth scrolling degrades to instant jumps (same contract as the staged
+  // figures, labs-figures.js REDUCED)
+  const MOTION = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
+  const reducedMotion = () => !!(MOTION && MOTION.matches);
+  const scrollBehavior = () => (reducedMotion() ? "auto" : "smooth");
+  const onMotionChange = (fn) => {
+    if (!MOTION) return;
+    if (MOTION.addEventListener) MOTION.addEventListener("change", fn);
+    else if (MOTION.addListener) MOTION.addListener(fn);
+  };
+  const offMotionChange = (fn) => {
+    if (!MOTION) return;
+    if (MOTION.removeEventListener) MOTION.removeEventListener("change", fn);
+    else if (MOTION.removeListener) MOTION.removeListener(fn);
+  };
+
   function tr(field) {
     if (field == null) return "";
     return typeof field === "string" ? field : (field[lang] || field.en || "");
@@ -52,7 +70,7 @@
       // на reload без скролла, при живом завершении — плавный скролл к нему
       const badge = document.querySelector("[data-lab-reward-badge]");
       if (badge) badge.hidden = false;
-      if (live) reward.scrollIntoView({ behavior: "smooth", block: "center" });
+      if (live) reward.scrollIntoView({ behavior: scrollBehavior(), block: "center" });
     }
     // ★-челлендж живёт ВНЕ счёта чекпойнтов: свой бейдж у полосы прогресса
     const chBadge = document.querySelector("[data-lab-challenge-badge]");
@@ -82,6 +100,10 @@
       x: rnd() * W, lane: 0.3 + rnd() * 0.4, v: 0.6 + rnd() * 1.2, r: 2 + rnd() * 2.5,
     }));
     let t0 = null;
+    // prefers-reduced-motion (audit F-P2-16 / L4-2 / L5-2): under reduce the
+    // reward renders one static frame — no rAF loop; a live change of the
+    // OS setting starts/stops the animation
+    let raf = 0;
     function draw(ts) {
       if (!t0) t0 = ts;
       ctx.clearRect(0, 0, W, H);
@@ -110,9 +132,20 @@
         ctx.fill();
         ctx.globalAlpha = 1;
       });
-      requestAnimationFrame(draw);
+      if (!reducedMotion()) raf = requestAnimationFrame(draw);
+      else raf = 0;
     }
-    requestAnimationFrame(draw);
+    const onMotion = () => {
+      if (reducedMotion()) {
+        if (raf) { cancelAnimationFrame(raf); raf = 0; }
+        draw(performance.now());
+      } else if (!raf) {
+        raf = requestAnimationFrame(draw);
+      }
+    };
+    onMotionChange(onMotion);
+    if (reducedMotion()) draw(performance.now());
+    else raf = requestAnimationFrame(draw);
   }
 
   function el(tag, cls, html) {
@@ -120,6 +153,21 @@
     if (cls) node.className = cls;
     if (html != null) node.innerHTML = html;
     return node;
+  }
+
+  // L1a-1: the exercise verdict sent the student to «the failing row above»
+  // in singular even when four rows had failed — pluralize by the fallen count
+  function ruTestsFail(n) {
+    const m10 = n % 10, m100 = n % 100;
+    if (m10 === 1 && m100 !== 11) return "тест упал";
+    if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return "теста упали";
+    return "тестов упало";
+  }
+  function someFailText(failed, total) {
+    if (failed === 1) return T.someFail;
+    return lang === "ru"
+      ? failed + " из " + total + " " + ruTestsFail(failed) + " — смотри упавшие строки выше."
+      : failed + " of " + total + " tests fail — see the failing rows above.";
   }
 
   // ------------------------------------------------- quiz follow-up (why?)
@@ -462,8 +510,11 @@
     resetBtn.type = "button";
     resetBtn.addEventListener("click", () => { setCode(tr(ex.starter)); results.innerHTML = ""; stdoutBox.textContent = ""; });
     controls.appendChild(resetBtn);
-    (ex.hints || []).forEach((h) => {
-      const hb = el("button", "button secondary", T.hint || "Hint");
+    // L2a-8: two or three identical «Подсказка» buttons in a row read as one
+    // repeated button — number them when an exercise ships several hints
+    const manyHints = (ex.hints || []).length > 1;
+    (ex.hints || []).forEach((h, hi) => {
+      const hb = el("button", "button secondary", (T.hint || "Hint") + (manyHints ? " " + (hi + 1) : ""));
       hb.type = "button";
       const shown = el("p", "lab-hint"); shown.dataset.open = "0"; shown.textContent = tr(h);
       hb.addEventListener("click", () => { shown.dataset.open = shown.dataset.open === "1" ? "0" : "1"; });
@@ -566,8 +617,9 @@
         solBtn.style.display = "";
       } else {
         verdict.dataset.state = "fail";
+        const failTotal = visibleFail + hiddenFail;
         verdict.textContent = visibleFail > 0
-          ? T.someFail
+          ? (failTotal > 1 ? someFailText(failTotal, (res.results || []).length) : T.someFail)
           : T.hiddenFail.replace("{n}", String(hiddenFail));
       }
       results.appendChild(verdict);
@@ -760,7 +812,8 @@
     refBox.style.display = "none";
     refBtn.addEventListener("click", () => {
       if (refBox.style.display === "none") {
-        refBox.textContent = ch.reference || "";
+        const ref = ch.reference;
+        refBox.textContent = typeof ref === "string" ? ref : ref ? (ref[lang] ?? ref.en) : "";
         refBox.style.display = "block";
         refBtn.textContent = T.hideSolution;
       } else {
@@ -817,6 +870,22 @@
         table.appendChild(tr_);
       });
       glHost.appendChild(table);
+      // L2a-6: the page template's glossary note speaks about Kubernetes and
+      // the docker-compose fleet — true only for the K8s labs. The content
+      // module can pin it with k8sGlossary: true/false; otherwise detect it
+      // from the glossary terms (pod / Deployment / Helm / HPA / k8s).
+      const glSection = document.querySelector("[data-lab-glossary]");
+      const note = glSection ? glSection.querySelector("p.lab-note") : null;
+      if (note) {
+        const k8s = typeof content.k8sGlossary === "boolean"
+          ? content.k8sGlossary
+          : content.glossary.some((row) => {
+            const term = row && row[0];
+            const en = term && typeof term === "object" ? String(term.en || "") : String(term || "");
+            return /kubernetes|k8s|\bpods?\b|deployment|helm|\bhpa\b/i.test(en);
+          });
+        if (!k8s) note.hidden = true;
+      }
     }
     const modelHost = document.querySelector("[data-lab-model]");
     if (modelHost && content.model) {
@@ -896,6 +965,26 @@
     const footer = document.querySelector("[data-lab-footer]");
     if (footer) footer.textContent = tr(content.footer) || "";
     renderProgress();
+    // F-P2-11: the browser's initial anchor scroll lands while the lab
+    // sections are still hidden; the render above then shifts the content
+    // and a deep link like #lab-challenge misses by thousands of px.
+    // Re-align once rendering is done — and once more after full load
+    // (fonts/images) unless the student has scrolled on their own meanwhile.
+    if (location.hash.length > 1) {
+      const scrollToHash = () => {
+        let target = null;
+        try { target = document.getElementById(decodeURIComponent(location.hash.slice(1))); }
+        catch (e) { target = document.getElementById(location.hash.slice(1)); }
+        if (target) target.scrollIntoView({ block: "start", behavior: scrollBehavior() });
+      };
+      scrollToHash();
+      let userScrolled = false;
+      const markUserScroll = () => { userScrolled = true; };
+      window.addEventListener("wheel", markUserScroll, { passive: true, once: true });
+      window.addEventListener("touchmove", markUserScroll, { passive: true, once: true });
+      window.addEventListener("keydown", markUserScroll, { once: true });
+      window.addEventListener("load", () => { if (!userScrolled) scrollToHash(); });
+    }
     // preload the runner after first paint so the first Run is fast
     if (window.LSMPython) setTimeout(() => window.LSMPython.preload(), 1500);
   });

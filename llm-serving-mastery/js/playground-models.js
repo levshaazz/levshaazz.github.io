@@ -5,7 +5,12 @@
   if (window.__pg_models) return;
   window.__pg_models = 1;
 
-  const fmt = (n, digits = 1) => Number(n).toLocaleString('en-US', { maximumFractionDigits: digits });
+  /* L4-6 / Q4 (UX audit 2026-11-25): readouts follow the page locale
+     (ru-RU: NBSP thousands, comma decimals; en-GB otherwise), not hardcoded
+     en-US. The script runs only on the playground page, which always has
+     an html lang attribute. */
+  const pageLocale = /^ru\b/.test(document.documentElement.lang || 'en') ? 'ru-RU' : 'en-GB';
+  const fmt = (n, digits = 1) => Number(n).toLocaleString(pageLocale, { maximumFractionDigits: digits });
   const val = (root, name) => Number(root.querySelector(`[data-pm-input="${name}"]`)?.value || 0);
   const out = (root, name, value) => {
     const el = root.querySelector(`[data-pm-output="${name}"]`);

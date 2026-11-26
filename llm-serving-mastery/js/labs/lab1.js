@@ -29,6 +29,13 @@
     };
   }
 
+  // prefers-reduced-motion (audit F-P2-16 / L4-2 / L5-2): canvas animators
+  // render one static frame and do not loop under reduce; smooth program
+  // scrolling degrades to instant. Same contract as labs-figures.js REDUCED.
+  var MOTION = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
+  function reducedMotion() { return !!(MOTION && MOTION.matches); }
+  function scrollBehavior() { return reducedMotion() ? "auto" : "smooth"; }
+
   function estimateTokens(text) {
     // Declared estimate: ~4 characters per token.
     return Math.max(1, Math.ceil((text || "").length / 4));
@@ -259,7 +266,7 @@
       var badge = document.querySelector("[data-lab-reward-badge]");
       if (badge) badge.hidden = false;
       startRewardLab1(reward);
-      if (live) reward.scrollIntoView({ behavior: "smooth", block: "center" });
+      if (live) reward.scrollIntoView({ behavior: scrollBehavior(), block: "center" });
     }
     // ★-челлендж живёт вне счёта чекпойнтов: свой бейдж у полосы прогресса
     var chBadge = document.querySelector("[data-lab-challenge-badge]");
@@ -292,6 +299,7 @@
     var accent = getComputedStyle(document.querySelector(".lab-shell")).getPropertyValue("--lab-accent").trim() || "#38e1ff";
     var ink = getComputedStyle(document.documentElement).getPropertyValue("--ink").trim() || "#e8eef7";
     var t0 = null;
+    var raf = 0;
     function draw(ts) {
       if (!t0) t0 = ts;
       ctx.clearRect(0, 0, W, H);
@@ -314,9 +322,23 @@
         ctx.beginPath(); ctx.arc(tk.x, H / 2 + Math.sin(tk.x / 60 + tk.lane * 9) * H * 0.08, tk.r, 0, 7); ctx.fill();
         ctx.globalAlpha = 1;
       });
-      requestAnimationFrame(draw);
+      if (!reducedMotion()) raf = requestAnimationFrame(draw);
+      else raf = 0;
     }
-    requestAnimationFrame(draw);
+    function onMotion() {
+      if (reducedMotion()) {
+        if (raf) { cancelAnimationFrame(raf); raf = 0; }
+        draw(performance.now());
+      } else if (!raf) {
+        raf = requestAnimationFrame(draw);
+      }
+    }
+    if (MOTION) {
+      if (MOTION.addEventListener) MOTION.addEventListener("change", onMotion);
+      else if (MOTION.addListener) MOTION.addListener(onMotion);
+    }
+    if (reducedMotion()) draw(performance.now());
+    else raf = requestAnimationFrame(draw);
   }
 
   // -------------------------------------------------------------- lifecycle

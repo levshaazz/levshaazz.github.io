@@ -25,7 +25,21 @@
       r: 1.6 + rnd() * 2.6, alt: rnd() > 0.75,
     }));
     let t0 = null;
+    // prefers-reduced-motion (audit F-P2-16 / L4-2 / L5-2): under reduce the
+    // hero renders one static frame and never loops; flipping the OS setting
+    // live starts/stops the flow (same contract as labs-figures.js REDUCED)
+    const motion = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
+    const reduced = () => !!(motion && motion.matches);
+    // Q5 / audit F-P2-4 (L6-1/L6-2): below 640px the decorative pipeline
+    // (rail, node dots, labels, particles) lands on top of the lead text, so
+    // it is not rendered at all — the hero keeps its heading, caption and CTA
+    // on the stage gradient. Same live-gate contract as reduce: crossing the
+    // boundary starts/stops the flow.
+    const narrow = window.matchMedia ? window.matchMedia("(max-width: 639px)") : null;
+    const hiddenNarrow = () => !!(narrow && narrow.matches);
+    let raf = 0;
     function draw(ts) {
+      if (hiddenNarrow()) return;
       if (!t0) t0 = ts;
       const W = canvas.width, H = canvas.height;
       ctx.clearRect(0, 0, W, H);
@@ -55,10 +69,42 @@
         ctx.beginPath(); ctx.arc(pt.x * W, y, pt.r, 0, 7); ctx.fill();
         ctx.globalAlpha = 1;
       });
-      raf = requestAnimationFrame(draw);
+      if (!reduced()) raf = requestAnimationFrame(draw);
+      else raf = 0;
     }
-    let raf = requestAnimationFrame(draw);
-    return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", onResize); };
+    // One gate for both media queries: stop any loop, and on a narrow
+    // viewport also wipe the last painted frame so nothing decorative stays.
+    const sync = () => {
+      if (raf) { cancelAnimationFrame(raf); raf = 0; }
+      if (hiddenNarrow()) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        return;
+      }
+      if (reduced()) draw(performance.now());
+      else raf = requestAnimationFrame(draw);
+    };
+    const onMotion = sync;
+    if (motion) {
+      if (motion.addEventListener) motion.addEventListener("change", onMotion);
+      else if (motion.addListener) motion.addListener(onMotion);
+    }
+    if (narrow) {
+      if (narrow.addEventListener) narrow.addEventListener("change", sync);
+      else if (narrow.addListener) narrow.addListener(sync);
+    }
+    sync();
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener("resize", onResize);
+      if (motion) {
+        if (motion.removeEventListener) motion.removeEventListener("change", onMotion);
+        else if (motion.removeListener) motion.removeListener(onMotion);
+      }
+      if (narrow) {
+        if (narrow.removeEventListener) narrow.removeEventListener("change", sync);
+        else if (narrow.removeListener) narrow.removeListener(sync);
+      }
+    };
   }
   window.LSMHero = { mount };
 })();

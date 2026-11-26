@@ -698,7 +698,7 @@ def verify_chain(entries):
         ru: "★ Вырасти цепочку на своём движке",
       },
       brief: {
-        en: "Needs the Layer 2 runtime. Make <strong>at least two measured experiments</strong> with the «Эксперимент» button, then press «Журнал» and «Проверить цепочку». Report what you saw: the gateway must hold <strong>≥ 2 experiment entries</strong>, the chain must verify clean, and the last sequence number must match the entry count (every entry appends exactly one seq). No tests guide you — the numbers are your own journal's.",
+        en: "Needs the Layer 2 runtime. Make <strong>at least two measured experiments</strong> with the «Run experiment» button, then press «Journal» and «Verify chain». Report what you saw: the gateway must hold <strong>≥ 2 experiment entries</strong>, the chain must verify clean, and the last sequence number must match the entry count (every entry appends exactly one seq). No tests guide you — the numbers are your own journal's.",
         ru: "Нужен рантайм слоя 2. Сделай <strong>минимум два измеренных эксперимента</strong> кнопкой «Эксперимент», затем нажми «Журнал» и «Проверить цепочку». Отчитайся, что видел: в шлюзе должно быть <strong>≥ 2 записей-экспериментов</strong>, цепочка обязана верифицироваться чисто, а последний seq должен соответствовать числу записей (каждая запись добавляет ровно один seq). Тестов-каркаса нет — числа из твоего собственного журнала.",
       },
       goal: {
@@ -731,14 +731,24 @@ def verify_chain(entries):
         }
         return { ok: true, note: { en: n + " entries, " + exp + " experiments, chain verified, head seq " + last + " — your journal is a real hash chain now", ru: n + " записей, " + exp + " эксперимента, цепочка верна, головной seq " + last + " — твой журнал теперь настоящая хэш-цепочка" } };
       },
-      reference: `# A walk you already know from Exercise 4, on YOUR data:
-#   1) press «Эксперимент» twice (different prompts if you like);
-#   2) press «Журнал» - note the entry count and the head hash prefix;
-#   3) press «Проверить цепочку» - expect «chain verified».
+      reference: {
+        en: `# A walk you already know from Exercise 4, on YOUR data:
+#   1) press "Run experiment" twice (different prompts if you like);
+#   2) press "Journal" - note the entry count and the head hash prefix;
+#   3) press "Verify chain" - expect «chain verified».
 # Report: entries (the count), experiments (>= 2), last_seq (entries - 1,
 # seqs start at the genesis 0), chain = true.
 # The point: the chain's head hash commits to ALL history - the number you
 # report is unforgeable without redoing every measurement.`,
+        ru: `# Этот маршрут ты уже знаешь из Упражнения 4, но на СВОИХ данных:
+#   1) нажми «Эксперимент» дважды (можно с разными промптами);
+#   2) нажми «Журнал» - заметь число записей и префикс головного хеша;
+#   3) нажми «Проверить цепочку» - ожидай «chain verified».
+# Отчет: записи (число), эксперименты (>= 2), last_seq (записи - 1,
+# seq с нуля), chain = true.
+# Смысл: головный хеш цепочки фиксирует всю историю - число, которое ты
+# сообщаешь, неподделаешь без повторения каждого измерения.`,
+      },
     },
     runtime: {
       title: {

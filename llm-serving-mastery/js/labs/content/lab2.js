@@ -50,7 +50,9 @@
   </g>
   <g id="g-bw">
     <line x1="80" y1="340" x2="200" y2="86" stroke="var(--lab-accent)" stroke-width="2.5" class="fig-flow"/>
-    <text x="112" y="216" font-size="14" fill="var(--lab-accent)">600 GB/s</text>
+    <!-- audit L1a-3: the label sat ON the dashed bandwidth roof (strikethrough
+         look); moved left of the slope, clear of the line at this height -->
+    <text x="88" y="170" font-size="14" fill="var(--lab-accent)">600 GB/s</text>
     <text x="88" y="90" font-size="13" fill="var(--lab-accent)" class="mono">60</text>
   </g>
   <g id="g-comp">

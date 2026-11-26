@@ -91,6 +91,18 @@
       var d = el("button", "");
       d.type = "button";
       d.setAttribute("aria-label", L.stage + " " + (i + 1));
+      // L5-1 (WCAG 2.5.8): the stylesheet paints the dot ON the button at
+      // 10×10 px — far below the 24×24 target minimum. The hit area grows to
+      // 44×44 while the visible dot keeps its exact look: the button paints
+      // nothing (inline overrides the sheet) and the dot moves onto a child
+      // span, re-tinted per state in go() below.
+      d.style.cssText = "box-sizing:border-box;width:44px;height:44px;padding:0;border:none;"
+        + "background:transparent;border-radius:50%;display:inline-flex;"
+        + "align-items:center;justify-content:center;";
+      var glyph = el("span", "");
+      glyph.style.cssText = "display:block;width:10px;height:10px;border-radius:50%;"
+        + "border:1px solid var(--lab-muted, #93a1b5);background:transparent;";
+      d.appendChild(glyph);
       d.addEventListener("click", function () { stopPlay(); go(i); });
       dots.appendChild(d);
       return d;
@@ -133,6 +145,17 @@
       cap.textContent = tr(cur.cap, lang);
       dotBtns.forEach(function (d, i) {
         d.setAttribute("aria-current", i === state ? "true" : "false");
+        var glyph = d.firstChild;
+        if (!glyph) return;
+        if (i === state) {
+          glyph.style.background = "var(--lab-accent, #38e1ff)";
+          glyph.style.borderColor = "var(--lab-accent, #38e1ff)";
+          glyph.style.boxShadow = "0 0 8px color-mix(in oklab, var(--lab-accent, #38e1ff) 60%, transparent)";
+        } else {
+          glyph.style.background = "transparent";
+          glyph.style.borderColor = "var(--lab-muted, #93a1b5)";
+          glyph.style.boxShadow = "none";
+        }
       });
       bPrev.disabled = state === 0;
       bNext.disabled = state === stages.length - 1;

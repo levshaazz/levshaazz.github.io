@@ -848,6 +848,10 @@ print("fast=12 slow=5")
 `,
     },
     runtime: {
+      // The «verify the journal with your own code» bridge reads this
+      // exercise (audit F-P2-10 / L1c-1): verify_chain lives in Exercise 1,
+      // not in lab 09's rt1 slot the button used to hard-code.
+      studentExerciseId: "ex1",
       title: {
         en: "Verify the live journal: your own layer-2 gateway",
         ru: "Проверь живой журнал: свой шлюз слой-2",

@@ -479,7 +479,11 @@ div.hidden-answer.is-revealed .ha-content { display: block; }
   color: #DDD7C7;
   font-variant-numeric: tabular-nums;
   padding: 0 12px;
-  min-width: 72px;
+  /* L1c-4: border-box makes min-width include the side padding — 72px left only
+     ~48px of content for ~58px of mono text and the counter broke onto two lines
+     («7 /» ↵ «23»). Keep the run on one line and size the box for it. */
+  min-width: 88px;
+  white-space: nowrap;
   text-align: center;
 }
 

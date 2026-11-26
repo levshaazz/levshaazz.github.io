@@ -27,21 +27,38 @@
   }
 
   function loadPrefs() {
-    /* No saved preference → the deck's own authored default (its initial
+    /* No manual choice yet → the deck's authored default (its initial
        data-lang), not a hardcoded language: bilingual decks open exactly as
-       their <html> declares, and a saved pref keeps travelling across decks. */
-    const initial = document.documentElement.dataset.lang || 'ru';
-    try {
-      return Object.assign({ lang: initial, theme: 'light' },
-        JSON.parse(localStorage.getItem(LS_KEY) || '{}'));
-    } catch { return { lang: initial, theme: 'light' }; }
+       their <html> declares, and a manually picked language keeps travelling
+       across decks. Q8 / audit L1c-3: a deck opened from the portal carries
+       the portal page's language in ?lang= — it replaces only the authored
+       default (or a stale non-manual copy of it), never a language the
+       student picked with the deck toggle (prefs.langSet), and only when the
+       deck actually ships that language (data-langs). */
+    const authored = document.documentElement.dataset.lang || 'ru';
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem(LS_KEY) || '{}') || {}; } catch { saved = {}; }
+    let lang = typeof saved.lang === 'string' ? saved.lang : authored;
+    if (saved.langSet !== true) {
+      try {
+        const urlLang = new URLSearchParams(location.search).get('lang');
+        if (urlLang && LANGS.indexOf(urlLang) !== -1) lang = urlLang;
+      } catch { /* keep the authored default */ }
+    }
+    const prefs = Object.assign({ lang, theme: 'light' }, saved);
+    prefs.lang = lang;
+    return prefs;
   }
   function savePrefs() {
     try { localStorage.setItem(LS_KEY, JSON.stringify(prefs)); } catch {}
   }
 
-  function applyLang(lang) {
+  function applyLang(lang, manual) {
     prefs.lang = lang;
+    /* Q8: only a student's own choice (toolbar toggle / L key / external
+       caller) sticks across decks; the init pass and the ?lang= default do
+       not turn themselves into a saved preference. */
+    if (manual) prefs.langSet = true;
     document.documentElement.dataset.lang = lang;
     /* Sync the document lang attribute for screen readers — without
        this they read all content with the same locale's phonetics. */
@@ -96,7 +113,7 @@
         case 'next': window.Lecture.next(); break;
         case 'overview': window.Lecture.toggleOverview(); break;
         case 'toc': toggleTocPop(); break;
-        case 'lang': applyLang(nextLang()); break;
+        case 'lang': applyLang(nextLang(), true); break;
         case 'theme': applyTheme(prefs.theme === 'light' ? 'dark' : 'light'); break;
         case 'pen': window.Pen && window.Pen.toggle(); break;
         case 'notes': window.PresenterNotes && window.PresenterNotes.toggle(); break;
@@ -626,7 +643,7 @@
     // Hotkeys for tools — registered on the central keybinding registry
     // (it handles the editable-focus skip and Space/Enter fall-through).
     if (window.LectureKeys) {
-      if (!SINGLE_LANG) window.LectureKeys.register('l', () => applyLang(nextLang()));
+      if (!SINGLE_LANG) window.LectureKeys.register('l', () => applyLang(nextLang(), true));
       window.LectureKeys.register('d', () => applyTheme(prefs.theme === 'light' ? 'dark' : 'light'));
       window.LectureKeys.register('f', () => toggleFullscreen());
     }

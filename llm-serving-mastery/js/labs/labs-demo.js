@@ -28,6 +28,41 @@
 
   function seedOf(n) { let s = n * 48271 + 11; return () => { s = (s * 48271) % 2147483647; return s / 2147483647; }; }
 
+  // prefers-reduced-motion (audit F-P2-16 / L4-2 / L5-2): under reduce every
+  // scene renders one static frame and never loops; a live change of the OS
+  // setting starts/stops the animation (same contract as labs-figures.js)
+  const MOTION = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
+  const reduced = () => !!(MOTION && MOTION.matches);
+  function runScene(draw) {
+    let raf = 0;
+    const step = () => {
+      draw();
+      if (!reduced()) raf = requestAnimationFrame(step);
+      else raf = 0;
+    };
+    const onMotion = () => {
+      if (reduced()) {
+        if (raf) { cancelAnimationFrame(raf); raf = 0; }
+        draw();
+      } else if (!raf) {
+        raf = requestAnimationFrame(step);
+      }
+    };
+    if (MOTION) {
+      if (MOTION.addEventListener) MOTION.addEventListener("change", onMotion);
+      else if (MOTION.addListener) MOTION.addListener(onMotion);
+    }
+    if (reduced()) draw();
+    else raf = requestAnimationFrame(step);
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      if (MOTION) {
+        if (MOTION.removeEventListener) MOTION.removeEventListener("change", onMotion);
+        else if (MOTION.removeListener) MOTION.removeListener(onMotion);
+      }
+    };
+  }
+
   // 01 · streaming: tokens stream in after a TTFT gap, then reset
   function stream(canvas, accent) {
     const ctx = setup(canvas);
@@ -56,9 +91,8 @@
       if (now >= ttftMs && now < ttftMs + stepMs) {
         ctx.fillStyle = accent; ctx.fillText("◆ " + sceneTexts.ttft, W * 0.72, H * 0.3);
       }
-      requestAnimationFrame(() => draw());
     }
-    draw();
+    return runScene(draw);
   }
 
   // 02 · KV blocks: 16-token blocks fill, tails waste, pool evicts
@@ -91,9 +125,8 @@
         ctx.font = "600 " + R(H * 0.045) + "px ui-monospace, monospace";
         ctx.fillText(String(b.fill) + "/16", x, y + cell + 10);
       });
-      requestAnimationFrame(() => draw());
     }
-    draw();
+    return runScene(draw);
   }
 
   // 03 · TP split: shards pulse, meet in an all-reduce bar every cycle
@@ -138,9 +171,8 @@
         ctx.fillStyle = "rgba(232, 238, 247, 0.7)";
         ctx.fillText(sceneTexts.step + " " + (Math.floor(t / cycle) + 1), W * 0.5, H * 0.14);
       }
-      requestAnimationFrame(() => draw());
     }
-    draw();
+    return runScene(draw);
   }
 
   // 04 · burst: 24 requests hit 4+4 slots; latecomers bounce with 429
@@ -176,9 +208,8 @@
           ctx.fillText("429", r.x * W, y);
         }
       });
-      requestAnimationFrame(() => draw());
     }
-    draw();
+    return runScene(draw);
   }
 
   const SCENES = { stream, kv, tp, burst };

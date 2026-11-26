@@ -104,7 +104,20 @@
   border-radius: 10px;
   box-shadow: 0 0 14px rgba(56, 225, 255, 0.18);
 }
-.lab-shell .button:hover { box-shadow: 0 0 22px rgba(56, 225, 255, 0.38); }
+.lab-shell .button:hover:not(:disabled) { box-shadow: 0 0 22px rgba(56, 225, 255, 0.38); }
+/* F-P2-17 (audit L4-3): JS regularly disables Run/Connect/Parsons controls
+   (labs-render.js lockRuns + parsons ↑/↓/Check, labs-colab.js connect,
+   challenge run) — without this rule a locked button looks clickable.
+   Gray palette from the scoped vars below, so data-cb modes keep working. */
+.lab-shell .button:disabled,
+.lab-shell button.secondary:disabled {
+  color: var(--lab-muted);
+  background: rgba(148, 163, 184, 0.10);
+  border-color: var(--lab-line);
+  box-shadow: none;
+  opacity: 0.55;
+  cursor: not-allowed;
+}
 .lab-shell button.secondary, .lab-shell a.button.secondary {
   background: transparent; color: var(--lab-muted); border-color: var(--lab-line); box-shadow: none;
 }
@@ -219,7 +232,13 @@ html[data-cb="trit"] .lab-shell { --lab-accent: #56b4e9 !important; --lab-accent
 html[data-cb="mono"] .lab-shell { --lab-accent: #c9ced6 !important; --lab-accent-2: #9aa1ac !important; --lab-good: #e8eef7 !important; --lab-bad: #8a9099 !important; --fig-warm: #9aa1ac !important; }
 
 .cb-switch { position: fixed; left: 12px; bottom: 12px; z-index: 50; display: flex; flex-direction: column-reverse; align-items: flex-start; gap: 6px; }
-.cb-toggle { width: 34px; height: 34px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 999px; background: rgba(13, 16, 23, 0.85); border: 1px solid var(--lab-line, rgba(148, 163, 184, 0.18)); backdrop-filter: blur(4px); cursor: pointer; }
+.cb-toggle { position: relative; width: 34px; height: 34px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 999px; background: rgba(13, 16, 23, 0.85); border: 1px solid var(--lab-line, rgba(148, 163, 184, 0.18)); backdrop-filter: blur(4px); cursor: pointer; }
+/* F-P2-18 (audit L4-10/L5-1): 44px touch target via an invisible pseudo-element
+   hitbox — the visible 34px button (and its :focus-visible ring) stays as is.
+   The box grows 10px left (into the empty viewport margin) and 5px up/down,
+   but NOT right: audit L5 measured the nearest stage dot 1px right of the
+   button in the worst scroll position, so extending right would steal taps. */
+.cb-toggle::before { content: ""; position: absolute; left: -10px; top: -5px; width: 44px; height: 44px; }
 .cb-switch .cb-toggle:focus-visible { outline: 2px solid var(--lab-accent, #38e1ff); outline-offset: 2px; }
 .cb-panel { display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: rgba(13, 16, 23, 0.85); border: 1px solid var(--lab-line, rgba(148, 163, 184, 0.18)); backdrop-filter: blur(4px); }
 .cb-panel[hidden] { display: none; }
@@ -248,7 +267,13 @@ html[data-cb="mono"] .lab-shell { --lab-accent: #c9ced6 !important; --lab-accent
 .lab-fig-title { font: 700 0.86rem/1.25 ui-sans-serif, system-ui, sans-serif; color: var(--lab-ink); }
 .lab-fig-count { margin-left: auto; font: 600 0.76rem/1 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--lab-muted); font-variant-numeric: tabular-nums; }
 .lab-fig-controls { display: flex; gap: 0.3rem; }
-.lab-fig-btn { width: 2rem; height: 2rem; border-radius: 8px; border: 1px solid var(--lab-line); background: rgba(148, 163, 184, 0.08); color: var(--lab-ink); font-size: 0.9rem; line-height: 1; cursor: pointer; padding: 0; }
+/* F-P2-18 (audit L4-10): 32px target -> 44px via min-width/min-height, so the
+   glyph (0.9rem) keeps its visual size while the whole button becomes the hit
+   area. Native button centering keeps the glyph centered; :focus-visible ring
+   just follows the larger box. Not a pseudo-hitbox: four of these sit in a row
+   (labs-figures.js: restart/prev/next/play, gap 4.8px) where overlapping
+   negative-inset hitboxes would steal clicks between neighbors. */
+.lab-fig-btn { min-width: 2.75rem; min-height: 2.75rem; border-radius: 8px; border: 1px solid var(--lab-line); background: rgba(148, 163, 184, 0.08); color: var(--lab-ink); font-size: 0.9rem; line-height: 1; cursor: pointer; padding: 0; }
 .lab-fig-btn:hover:not(:disabled) { border-color: var(--lab-accent); color: var(--lab-accent); }
 .lab-fig-btn:disabled { opacity: 0.35; cursor: default; }
 .lab-fig-canvas { padding: 0.4rem 0.6rem 0; }
@@ -258,6 +283,10 @@ html[data-cb="mono"] .lab-shell { --lab-accent: #c9ced6 !important; --lab-accent
 .lab-fig-cap { min-height: 2.7em; padding: 0.55rem 0.9rem 0.15rem; font-size: 0.94rem; line-height: 1.45; color: var(--lab-ink); }
 .lab-fig-dots { display: flex; gap: 6px; padding: 0.2rem 0.9rem 0.75rem; align-items: center; }
 .lab-fig-dots button { width: 10px; height: 10px; border-radius: 50%; border: 1px solid var(--lab-muted); background: transparent; padding: 0; cursor: pointer; }
+/* F-P2-17 family: dots are disabled when a figure ships no stages
+   (labs-figures.js) — keep them from looking interactive. Declared before the
+   [aria-current] rule (equal specificity) so an active dot stays highlighted. */
+.lab-fig-dots button:disabled { cursor: default; opacity: 0.45; }
 .lab-fig-dots button[aria-current="true"] { background: var(--lab-accent); border-color: var(--lab-accent); box-shadow: 0 0 8px color-mix(in oklab, var(--lab-accent) 60%, transparent); }
 
 .lab-fig-canvas g { transition: opacity 0.5s ease; }
@@ -285,6 +314,22 @@ html[data-cb="mono"] .lab-shell { --lab-accent: #c9ced6 !important; --lab-accent
 /* glossary table (labs 11+): term rows, slightly tighter than model table */
 .lab-glossary-table th { width: 30%; color: var(--lab-accent); font-weight: 600; }
 .lab-glossary-table td { color: var(--lab-ink); }
+/* Q5 / audit F-P2-3 (L2a-3): on mobile the glossary keeps its two-column term
+   table instead of crushing words — the host card scrolls horizontally
+   (keyboard access comes from the section's tabindex region, AG-8) and a
+   right-edge fade hints that the terms continue past the cut-off edge. */
+.lab-card[data-lab-glossary-host] { overflow-x: auto; }
+@media (max-width: 720px) {
+  .lab-card[data-lab-glossary-host] .lab-glossary-table { min-width: 30rem; }
+  .lab-card[data-lab-glossary-host] {
+    /* The fade sits on top of the card's own vertical gradient and stays
+       fixed to the card frame (default attachment), so it marks the edge
+       while the terms scroll underneath. */
+    background-image:
+      linear-gradient(to right, transparent, transparent calc(100% - 34px), var(--lab-card) calc(100% - 12px)),
+      linear-gradient(180deg, rgba(19, 24, 36, 0.9), rgba(16, 20, 30, 0.9));
+  }
+}
 .lab-fig-canvas.fig-settle g { transition: none !important; }
 
 /* -------------------------------------------- quiz follow-up (why? step) */

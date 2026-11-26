@@ -9,6 +9,10 @@
 
   LABS_CONTENT["11"] = {
     budget: 60,
+    // L2a-6: the page template's glossary note («each Kubernetes term below
+    // is that same mechanism…») is true here — keep it visible (other labs
+    // hide it; without the flag it is auto-detected from the glossary terms)
+    k8sGlossary: true,
     title: {
       en: "Kubernetes for LLM serving: pods, probes and Helm",
       ru: "Kubernetes для LLM-сервинга: поды, пробы и Helm",
@@ -505,7 +509,28 @@ def fix_manifest(manifest):
           { name: "exactly the three declared paths", hidden: true, code: "r, rep = fix_manifest(manifest)\nexpect = sorted(['spec.strategy.rollingUpdate.maxUnavailable', 'spec.template.spec.containers[0].resources.requests.memory', 'spec.template.spec.containers[0].startupProbe'])\neq(sorted(rep), expect)" },
           { name: "auditor, not tyrant: the rest untouched", hidden: true, code: "r, rep = fix_manifest(manifest)\neq(r['spec']['replicas'], 3)\neq(r['spec']['template']['spec']['containers'][0]['image'], 'vllm/vllm-openai:v0.8.0')" },
         ],
-        solution: `def fix_manifest(manifest):
+        // The reference is self-contained (audit F-P2-9 / L1b-1): it carries the
+        // declared manifest itself, so pasting it over the starter passes all
+        // five tests — the tests call fix_manifest(manifest) and would raise
+        // NameError if the reference were the bare function.
+        solution: `# The declared manifest (same as the starter) — keep it with the function.
+manifest = {
+    'apiVersion': 'apps/v1', 'kind': 'Deployment', 'metadata': {'name': 'llm-engine'},
+    'spec': {
+        'replicas': 3,
+        'strategy': {'type': 'RollingUpdate',
+                     'rollingUpdate': {'maxUnavailable': 1, 'maxSurge': 1}},
+        'template': {'spec': {'containers': [
+            {'name': 'engine', 'image': 'vllm/vllm-openai:v0.8.0',
+             'resources': {'requests': {'memory': '9.5Gi', 'gpu': 1},
+                           'limits': {'memory': '11.5Gi', 'gpu': 1}},
+             'readinessProbe': {'httpGet': {'path': '/health', 'port': 8000},
+                                'periodSeconds': 5}},
+        ]}},
+    },
+}
+
+def fix_manifest(manifest):
     import copy
     m = copy.deepcopy(manifest)
     c = m['spec']['template']['spec']['containers'][0]
