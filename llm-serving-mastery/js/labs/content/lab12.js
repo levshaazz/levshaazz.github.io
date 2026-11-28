@@ -967,7 +967,7 @@ for tq in (1, 2, 4, 8):
       },
       {
         id: "b1",
-        tag: { en: "bridge · T03", ru: "мост · T03" },
+        tag: { en: "bridge · Topic 03", ru: "мост · Тема 03" },
         context: { en: "T03 quantized weights to INT4; T09 priced the cold start (weight loading dominates). This lab prices scale-up decisions: a fresh pod pays the load again before it serves.", ru: "T03 квантовала веса в INT4; T09 оценила холодный старт (доминирует загрузка весов). Эта лаба оценивает решения скейл-апа: свежий под снова платит загрузку, прежде чем обслуживать." },
         q: { en: "The fleet swaps to an INT4-quantized backend. What changes for the HPA's scale-up, honestly?", ru: "Флот переезжает на INT4-квантованный бэкенд. Что честно меняется для скейл-апа HPA?" },
         options: [

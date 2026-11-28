@@ -645,7 +645,7 @@ print("W=3")
       },
       {
         id: "b1",
-        tag: { en: "bridge · T13", ru: "мост · T13" },
+        tag: { en: "bridge · Topic 13", ru: "мост · Тема 13" },
         q: { en: "The tenant p95 you computed here is trustworthy because…", ru: "p95 арендатора, который ты считал здесь, заслуживает доверия, потому что…" },
         options: [
           { en: "it slices the same hash-chained journal T13 verified — an edited entry would fail the chain before it poisoned the percentile", ru: "он режет тот же хэш-цепочечный журнал, что верифицировала T13 — правленая запись упадёт на цепочке раньше, чем отравит перцентиль" },

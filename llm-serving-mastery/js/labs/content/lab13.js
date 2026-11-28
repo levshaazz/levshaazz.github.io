@@ -914,7 +914,7 @@ print("fast=12 slow=5")
       },
       {
         id: "b1",
-        tag: { en: "bridge · T08", ru: "мост · T08" },
+        tag: { en: "bridge · Topic 08", ru: "мост · Тема 08" },
         q: { en: "The journal you verified here is the same species as the Topic 08 terminal-outcome journal because…", ru: "Журнал, который вы проверяли здесь, — тот же вид, что журнал исходов Темы 08, потому что…" },
         options: [
           { en: "Both are append-only and hash-sealed: each entry hashes the previous one, so an edit is a detected event, not a silent rewrite", ru: "Оба append-only и запечатаны хэшами: каждая запись хэширует предыдущую, поэтому правка — обнаруживаемое событие, а не тихая перепись" },

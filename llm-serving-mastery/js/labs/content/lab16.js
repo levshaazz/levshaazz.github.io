@@ -656,7 +656,7 @@ for p in (0.5, 0.75, 0.9):
       },
       {
         id: "p3",
-        tag: { en: "bridge · T03", ru: "мост · T03" },
+        tag: { en: "bridge · Topic 03", ru: "мост · Тема 03" },
         context: { en: "T03 priced quantization: coarser scales, smaller weights. Our runtime's draft is the SAME Qwen2.5-0.5B weights in Q2_K — quantization reused as a draft.", ru: "T03 оценивала квантование: грубые масштабы, меньшие веса. Draft в нашем рантайме — ТЕ ЖЕ веса Qwen2.5-0.5B в Q2_K: квантование переиспользовано как draft." },
         q: { en: "Why must the draft model share the tokenizer vocabulary with the main model?", ru: "Почему draft-модель обязана делить словарь токенизатора с основной моделью?" },
         options: [

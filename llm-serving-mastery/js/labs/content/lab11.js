@@ -786,7 +786,7 @@ for period in (2, 5, 10):
       },
       {
         id: "b1",
-        tag: { en: "bridge · T09", ru: "мост · T09" },
+        tag: { en: "bridge · Topic 09", ru: "мост · Тема 09" },
         context: { en: "T09 named the members of «crashed → answering»: extract layers + weight loading + server init + first /health. In T09 you measured them by restarting a compose fleet by hand.", ru: "T09 назвала члены «упал → снова отвечает»: extract слоёв + загрузка весов + init сервера + первый /health. В T09 ты измерял их, рестартуя compose-флот руками." },
         q: { en: "Where do those T09 members go in a rolling update with maxUnavailable 0, maxSurge 1?", ru: "Куда деваются члены T09 при rolling update с maxUnavailable 0 и maxSurge 1?" },
         options: [

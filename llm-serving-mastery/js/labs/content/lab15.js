@@ -678,7 +678,7 @@ print("lost_reuse=0 evicted_dead=1 hit_rate=1.0")`,
       },
       {
         id: "b1",
-        tag: { en: "bridge · T02", ru: "мост · T02" },
+        tag: { en: "bridge · Topic 02", ru: "мост · Тема 02" },
         context: { en: "T02 built the roofline: compute-bound work scales with the operand, memory-bound work rides a constant. This lab's iteration models are that lesson in the serving loop: prefill grows with uncached tokens, the decode step is ~constant.", ru: "T02 построила roofline: compute-bound работа растёт с операндом, memory-bound едет на константе. Итерационные модели этой лабы — тот же урок внутри сервинг-цикла: prefill растёт по некэш-токенам, шаг decode ~константа." },
         q: { en: "In the lab's iteration models, prefill time grows linearly with uncached tokens while the decode step stays ~constant. Which roofline regime is which?", ru: "В итерационных моделях лабы время prefill растёт линейно по некэш-токенам, а шаг decode остаётся ~константой. Какой roofline-режим есть какой?" },
         options: [

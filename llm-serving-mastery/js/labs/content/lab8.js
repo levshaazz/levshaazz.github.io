@@ -648,7 +648,7 @@ eq(classify_outcome(400), 'failed')` },
       },
       {
         id: "b1",
-        tag: { en: "bridge · T06", ru: "мост · T06" },
+        tag: { en: "bridge · Topic 06", ru: "мост · Тема 06" },
         context: { en: "T06 taught the saturation knee: the load where demand hits the seats. Here the seats are the gateway's slots + queue, and each request holds its seat for W seconds.", ru: "T06 учила колену насыщения: нагрузке, при которой спрос упирается в места. Здесь места — это slots + queue шлюза, и каждый запрос держит своё место W секунд." },
         q: { en: "Clients switch to 32-token requests (W = 0.15 + 0.02 × 32 = 0.79 s). What happens to the gateway's knee λ* = seats / W?", ru: "Клиенты переходят на запросы по 32 токена (W = 0.15 + 0.02 × 32 = 0.79 с). Что происходит с коленом шлюза λ* = места / W?" },
         options: [
