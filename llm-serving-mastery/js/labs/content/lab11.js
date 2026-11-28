@@ -553,7 +553,7 @@ def fix_manifest(manifest):
       },
       {
         id: "ex4",
-        title: { en: "Exercise 4 · Fix the bug: the rollout dips", ru: "Упражнение 3 · Почини баг: роллаут роет яму" },
+        title: { en: "Exercise 4 · Fix the bug: the rollout dips", ru: "Упражнение 4 · Почини баг: роллаут роет яму" },
         brief: {
           en: "This <code>rollout_floor(replicas, max_unavailable, max_surge)</code> claims the rollout's capacity floor is <code>replicas − maxUnavailable + maxSurge</code> — wrong on two sides. A surged pod serves <strong>nothing</strong> until it is Ready (weights, 165 s), so surge never raises the floor; and killing <code>maxUnavailable</code> old pods before any new one is Ready dips the floor to <code>replicas − maxUnavailable</code> — the OpenAI KubeCon lesson: an inference rollout is not a stateless rollout. Fix the formula, and the safe cadence falls out: <code>maxUnavailable 0, maxSurge 1</code> keeps the floor at <code>replicas</code>.",
           ru: "Эта <code>rollout_floor(replicas, max_unavailable, max_surge)</code> утверждает, что нижняя граница ёмкости роллаута — <code>replicas − maxUnavailable + maxSurge</code>, и ошибается с двух сторон. Surge-под не обслуживает <strong>ничего</strong>, пока не Ready (веса, 165 с), поэтому surge границу не поднимает; а убийство <code>maxUnavailable</code> старых подов до готовности хотя бы одного нового роняет границу до <code>replicas − maxUnavailable</code> — урок KubeCon-доклада OpenAI: роллаут инференса — не роллаут stateless. Почини формулу, и безопасный темп получится сам: <code>maxUnavailable 0, maxSurge 1</code> держит границу на <code>replicas</code>.",
@@ -647,7 +647,7 @@ def fix_manifest(manifest):
       },
       {
         id: "ex7",
-        title: { en: "Exercise 7 · Wrap it into a class: ReleaseSim", ru: "Упражнение 4 · Собери в класс: ReleaseSim" },
+        title: { en: "Exercise 7 · Wrap it into a class: ReleaseSim", ru: "Упражнение 7 · Собери в класс: ReleaseSim" },
         brief: {
           en: "The lab's final boss: a Helm release as a class. <code>ReleaseSim()</code> with <code>upgrade(values)</code> — appends a revision (numbered from 1) and returns its number; <code>history()</code> — the list of <code>{'revision': n, 'values': dict}</code>; <code>rollback(revision)</code> — appends a <strong>new</strong> revision whose values are a copy of that revision's (history is never rewritten — the Helm rule) and returns its number; an unknown revision raises <code>ValueError</code>.  Copy the values dicts — a release history that aliases its snapshots is a corrupt ledger. For scale: the real <code>helm history llm-engine</code> prints exactly this shape — <code>REVISION · UPDATED · STATUS · CHART</code>, one row per revision, deployed rows only grow.",
           ru: "Финальный босс лабы: Helm-релиз как класс. <code>ReleaseSim()</code> с <code>upgrade(values)</code> — добавляет ревизию (нумерация с 1) и возвращает её номер; <code>history()</code> — список <code>{'revision': n, 'values': dict}</code>; <code>rollback(revision)</code> — добавляет <strong>новую</strong> ревизию, значения которой — копия значений указанной (история никогда не переписывается — правило Helm), и возвращает её номер; неизвестная ревизия — <code>ValueError</code>.  Копируй словари values — история релиза, ссылающаяся на свои же снимки, — это испорченный журнал. Для масштаба: настоящий <code>helm history llm-engine</code> печатает ровно эту форму — <code>REVISION · UPDATED · STATUS · CHART</code>, строка на ревизию, deployed-строки только растут.",
@@ -724,32 +724,76 @@ class ReleaseSim:
 # Budget = period_s * failure_threshold.
 # Cover:   budget >= 165  (the measured T09-fleet cold start)
 # Respect: budget <= 300  (a truly dead pod must be caught this fast)
-# The page reads ONE summary line in exactly this shape:
+# The page reads every summary line — one knob pair per line, in exactly this shape:
 #   period_s=<from grid> threshold=<from grid> budget_s=<seconds>
 
 # TODO: scan the design space, print a point satisfying both bounds.
 `,
       check: (res) => {
         const out = String(res.stdout || "");
-        const mm = out.match(/period_s\s*=\s*([0-9]+)[\s\S]*?threshold\s*=\s*([0-9]+)[\s\S]*?budget_s\s*=\s*([0-9]+(?:\.[0-9]+)?)/i);
-        if (!mm) {
-          return { ok: false, note: { en: "no summary line found - print exactly: period_s=… threshold=… budget_s=…", ru: "итоговой строки нет — напечатай ровно: period_s=… threshold=… budget_s=…" } };
+        const PERIOD_GRID = [2, 5, 10], THR_GRID = [20, 30, 40, 60];
+        // Summary records are read as the key sequence period_s → threshold →
+        // budget_s (threshold may carry its failure prefix): one line per knob
+        // pair, a pair split over two lines and a scan of the whole grid all
+        // parse; a repeated key restarts (or overrides) the record it belongs
+        // to. No lookbehind: old Safari.
+        const KEY = /(^|[^A-Za-z0-9_])(period_s|(?:failure_?)?threshold|budget_s)\s*=\s*([0-9]+(?:\.[0-9]+)?)/gi;
+        const recs = [];
+        let cur = null, m;
+        while ((m = KEY.exec(out)) !== null) {
+          const key = m[2].toLowerCase(), val = m[3];
+          if (key === "period_s") {
+            cur = { period: parseInt(val, 10), thr: null, budgetClaimed: null };
+            recs.push(cur);
+          } else if (!cur) {
+            continue; // a value with no knob pair in front of it
+          } else if (key === "budget_s") {
+            cur.budgetClaimed = parseFloat(val);
+          } else {
+            cur.thr = parseInt(val, 10);
+          }
         }
-        const period = parseInt(mm[1], 10), thr = parseInt(mm[2], 10), budgetClaimed = parseFloat(mm[3]);
-        if (![2, 5, 10].includes(period) || ![20, 30, 40, 60].includes(thr)) {
-          return { ok: false, note: { en: "the knobs must come from the declared grids: period " + period + ", threshold " + thr, ru: "ручки обязаны быть из заявленных сеток: period " + period + ", threshold " + thr } };
+        // an unfinished record is not a summary line
+        for (let i = recs.length - 1; i >= 0; i--) {
+          if (recs[i].thr === null || recs[i].budgetClaimed === null) recs.splice(i, 1);
         }
-        const budget = period * thr;
-        if (Math.abs(budget - budgetClaimed) > 0.5) {
-          return { ok: false, note: { en: "budget must follow the model: " + period + " × " + thr + " = " + budget, ru: "бюджет обязан следовать модели: " + period + " × " + thr + " = " + budget } };
+        if (!recs.length) {
+          return { ok: false, note: { en: "no summary line found — print exactly: period_s=… threshold=… budget_s=…", ru: "итоговой строки нет — напечатай ровно: period_s=… threshold=… budget_s=…" } };
         }
-        if (budget < 165) {
-          return { ok: false, note: { en: "budget " + budget + " s < 165 s - the probe kills loading pods (CrashLoop by probe)", ru: "бюджет " + budget + " с < 165 с — проба убивает грузящиеся поды (CrashLoop по вине пробы)" } };
+        const off = recs.find((ln) => !PERIOD_GRID.includes(ln.period) || !THR_GRID.includes(ln.thr));
+        if (off) {
+          return { ok: false, note: { en: "the knobs must come from the declared grids: period " + off.period + ", threshold " + off.thr, ru: "ручки обязаны быть из заявленных сеток: period " + off.period + ", threshold " + off.thr } };
         }
-        if (budget > 300) {
-          return { ok: false, note: { en: "budget " + budget + " s > 300 s - a dead pod holds its slots too long", ru: "бюджет " + budget + " с > 300 с — мёртвый под слишком долго держит свои слоты" } };
+        // the page recomputes the budget from the knobs for every printed record
+        recs.forEach((ln) => { ln.budget = ln.period * ln.thr; });
+        const lie = recs.find((ln) => Math.abs(ln.budget - ln.budgetClaimed) > 0.5);
+        if (lie) {
+          return { ok: false, note: { en: "budget must follow the model: " + lie.period + " × " + lie.thr + " = " + lie.budget, ru: "бюджет обязан следовать модели: " + lie.period + " × " + lie.thr + " = " + lie.budget } };
         }
-        return { ok: true, note: { en: period + " s × " + thr + " = " + budget + " s: covers the 165 s cold start with " + Math.round(budget - 165) + " s headroom, catches a dead pod within " + budget + " s", ru: period + " с × " + thr + " = " + budget + " с: накрывает холодный старт 165 с с запасом " + Math.round(budget - 165) + " с и ловит мёртвый под за " + budget + " с" } };
+        // the run passes as soon as ONE printed point satisfies both bounds (a
+        // scan of the grid is fine); every record above was found in-grid and truthful
+        const win = recs.find((ln) => ln.budget >= 165 && ln.budget <= 300);
+        if (win) {
+          return { ok: true, note: { en: win.period + " s × " + win.thr + " = " + win.budget + " s: covers the 165 s cold start with " + Math.round(win.budget - 165) + " s headroom, catches a dead pod within " + win.budget + " s", ru: win.period + " с × " + win.thr + " = " + win.budget + " с: накрывает холодный старт 165 с (запас " + Math.round(win.budget - 165) + " с) и ловит мёртвый под за " + win.budget + " с" } };
+        }
+        // no printed point satisfies both bounds. Name the cause on the record
+        // closest to the band: the largest budget below 165 (the probe kills
+        // loading pods) and/or the smallest above 300 (the dead-pod clock).
+        const bestOf = (list, better) => list.reduce((a, ln) => (!a || better(ln, a) ? ln : a), null);
+        const low = bestOf(recs.filter((ln) => ln.budget < 165), (x, a) => x.budget > a.budget);
+        const high = bestOf(recs.filter((ln) => ln.budget > 300), (x, a) => x.budget < a.budget);
+        // every failure below returns the full { ok: false, note: { en, ru } } shape
+        const lowNote = (en, ru) => ({ ok: false, note: { en: en + "budget " + low.budget + " s < 165 s — the probe kills loading pods (CrashLoop by probe)", ru: ru + "бюджет " + low.budget + " с < 165 с — проба убивает грузящиеся поды (CrashLoop по вине пробы)" } });
+        const highNote = (en, ru) => ({ ok: false, note: { en: en + "budget " + high.budget + " s > 300 s — a dead pod holds its slots too long", ru: ru + "бюджет " + high.budget + " с > 300 с — мёртвый под слишком долго держит свои слоты" } });
+        if (recs.length === 1) {
+          return low ? lowNote("", "") : highNote("", "");
+        }
+        const n = "none of the " + recs.length + " printed points passes both bounds", nn = "ни одна из напечатанных точек (их " + recs.length + ") не проходит оба ограничения";
+        if (low && high) {
+          const a = lowNote("", "").note, b = highNote("", "").note;
+          return { ok: false, note: { en: n + ": " + a.en + "; " + b.en, ru: nn + ": " + a.ru + "; " + b.ru } };
+        }
+        return low ? lowNote(n + "; the closest: ", nn + "; ближайшая: ") : highNote(n + "; the closest: ", nn + "; ближайшая: ");
       },
       reference: `# The design space is small enough to print whole:
 for period in (2, 5, 10):
@@ -757,10 +801,14 @@ for period in (2, 5, 10):
         budget = period * thr
         mark = "OK " if 165 <= budget <= 300 else "   "
         print(f"{mark}period_s={period} threshold={thr} budget_s={budget}")
-# Feasible: (5, 40)=200, (5, 60)=300, (10, 20)=200, (10, 30)=300.
-# period_s=2 can never reach 165 (cap 120) - too chatty by half.
-# A pro pick: 10 x 30 = 300 - the fewest probes per healthy pod inside
-# the dead-pod clock; or 5 x 40 = 200 for tighter catch-up.`,
+# Feasible (165 <= budget <= 300): (5, 40)=200, (5, 60)=300, (10, 20)=200, (10, 30)=300.
+# period_s=2 never reaches 165: even 2 x 60 = 120 — the probe kills loading pods.
+# period_s=10 overshoots 300 from thr=40 (400, 600) — a dead pod holds its slots too long.
+# Probes a healthy pod answers before it is Ready come at a rate of 1 / period_s:
+# period 10 asks half as many as period 5. So 10 x 20 = 200 is the pick that is
+# best on both counts — the fewest probes AND the earliest dead-pod catch of the
+# feasible set. 10 x 30 = 300 spends the whole dead-pod clock, and 5 x 40 = 200
+# pays double the probes for the same 200 s catch.`,
     },
     posttest: [
       {

@@ -46,7 +46,9 @@
   background: linear-gradient(180deg, rgba(56, 225, 255, 0.06), transparent 55%);
   min-height: 240px;
 }
-.lab-hero-stage canvas { width: 100%; height: 300px; display: block; }
+/* --lab-hero-grow is set by labs-hero.js (inline, on the canvas) when a long title or
+   lead leaves no room for the pipeline band above the caption chip; unset = 300px. */
+.lab-hero-stage canvas { width: 100%; height: calc(300px + var(--lab-hero-grow, 0px)); display: block; }
 .lab-hero-caption {
   position: absolute; left: 14px; bottom: 12px;
   font: 600 0.82rem/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -57,11 +59,45 @@
   padding: 0.25rem 0.7rem;
 }
 .lab-hero-head { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; pointer-events: none; padding: 0 1rem; }
+/* T12 AG-7 (P3): on lab pages the centred title/lead sat exactly where labs-hero.js
+   draws the pipeline (rail at 72 % of the canvas height). The animator now owns the
+   band between the text block and the caption chip: it measures the text block and
+   grows the canvas by --lab-hero-grow when a long title/lead leaves no room above
+   the caption. So the text block is top-aligned on lab pages at every width. The
+   lab-page scope is one :is() list (forgiving: an unsupported alternative is skipped,
+   the other still matches):
+   - lab pages carry the progress counter (labs/1.astro, labs/[lab].astro) — a static
+     selector, so the layout is right at the FIRST paint (lab 1 renders its title
+     server-side; otherwise it would jump from centred to top-aligned when the script
+     mounts). The labs index and demo have no counter and never mount the animator.
+   - data-lab-hero-flow is set by labs-hero.js at mount: the explicit opt-in, and the
+     fallback where :has() is unsupported (a plain selector list with :has() would be
+     dropped as a whole there). Same 640px boundary as the script's narrow gate. */
+@media (min-width: 640px) {
+  :is(.lab-shell:has([data-lab-progress-count]) .lab-hero-stage, .lab-hero-stage[data-lab-hero-flow]) > .lab-hero-head { justify-content: flex-start; padding-top: 1.75rem; }
+}
+/* T12 AG-7 / M: below 640px nothing is drawn on the canvas, but the caption chip stayed
+   pinned to the bottom-left corner of the fixed 300px stage and landed on the last lead
+   lines (102 of 224 lab pages at 320–480px). Same lab-page scope, flow layout instead:
+   the canvas becomes a stretched backdrop, the heading and lead are in flow at the top
+   (same 1.75rem as >= 640px), the chip is in flow with an auto top margin — pinned to
+   the bottom-left when there is room, otherwise 0.75rem below the lead. The stage keeps
+   its 300px minimum and grows with the text. The labs index and demo are untouched. */
+@media (max-width: 639px) {
+  :is(.lab-shell:has([data-lab-progress-count]) .lab-hero-stage, .lab-hero-stage[data-lab-hero-flow]) { display: flex; flex-direction: column; min-height: 300px; }
+  :is(.lab-shell:has([data-lab-progress-count]) .lab-hero-stage, .lab-hero-stage[data-lab-hero-flow]) > canvas { position: absolute; inset: 0; height: 100%; }
+  :is(.lab-shell:has([data-lab-progress-count]) .lab-hero-stage, .lab-hero-stage[data-lab-hero-flow]) > .lab-hero-head { position: static; flex: none; justify-content: flex-start; padding: 1.75rem 1rem 0.75rem; }
+  :is(.lab-shell:has([data-lab-progress-count]) .lab-hero-stage, .lab-hero-stage[data-lab-hero-flow]) > .lab-hero-caption { position: static; flex: none; width: fit-content; max-width: calc(100% - 28px); margin: auto 14px 0.75rem; overflow-wrap: anywhere; }
+}
+/* overflow-wrap: anywhere — a single word wider than the line (RU lab 14 title at 320px:
+   "мультитенантность:" 271px in a 222px column) used to push the heading wider than the
+   stage, where overflow: hidden clipped it on both sides. Normal wrapping is unchanged;
+   an unbreakable run breaks mid-word only when nothing else fits. */
 .lab-hero-head h1 {
   margin: 0; font-size: clamp(1.6rem, 3.6vw, 2.9rem); font-weight: 800; letter-spacing: -0.02em;
-  color: #f2f7ff; text-shadow: 0 0 26px rgba(56, 225, 255, 0.45);
+  color: #f2f7ff; text-shadow: 0 0 26px rgba(56, 225, 255, 0.45); overflow-wrap: anywhere;
 }
-.lab-hero-head p { margin: 0.5rem auto 0; max-width: 46rem; color: var(--lab-muted); font-size: 0.98rem; }
+.lab-hero-head p { margin: 0.5rem auto 0; max-width: 46rem; color: var(--lab-muted); font-size: 0.98rem; overflow-wrap: anywhere; }
 
 .lab-hero-row { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end; justify-content: space-between; margin-top: 1.1rem; }
 .lab-eyebrow { font: 700 0.78rem/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.14em; text-transform: uppercase; color: var(--lab-accent); }
@@ -81,7 +117,11 @@
 /* ----------------------------------------------------------------- cards */
 .lab-card { border: 1px solid var(--lab-line); border-radius: 14px; padding: 1rem 1.15rem; margin: 0.9rem 0; background: linear-gradient(180deg, rgba(19, 24, 36, 0.9), rgba(16, 20, 30, 0.9)); }
 .lab-card h3 { margin-top: 0; color: var(--lab-ink); }
-.lab-model-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+/* display:block + overflow-x makes the table its own scroll box when its four columns are wider
+   than the card (RU edition, ~640-700 px viewports) instead of widening the page. min-width:0:
+   on phones the table otherwise keeps its min-content width (480-620 px in a 272 px card) and
+   the card scrolls instead of the table. */
+.lab-model-table { display: block; width: 100%; min-width: 0; max-width: 100%; overflow-x: auto; border-collapse: collapse; font-size: 0.92rem; }
 .lab-model-table th, .lab-model-table td { border: 1px solid var(--lab-line); padding: 0.35rem 0.6rem; text-align: left; }
 .lab-model-table th { color: var(--lab-muted); font-weight: 600; }
 .lab-model-table td { font-variant-numeric: tabular-nums; }
@@ -137,6 +177,12 @@
 .lab-unit { color: var(--lab-muted); }
 
 /* --------------------------------------------------------------- sandbox */
+/* Verbatim artifacts in exercise briefs (YAML manifests, /metrics, kubectl output) are long single
+   lines: they scroll inside their box instead of widening the page below ~800 px (iPads in portrait).
+   :not([class]) keeps the post-test code box (.lab-mc-code, 0.78rem) and the CodeMirror lines on
+   their own rules: this one must not out-rank a single class or tie with .CodeMirror pre. */
+.lab-shell pre:not([class]) { max-width: 100%; overflow-x: auto; padding: 0.7rem 0.8rem; border-radius: 10px;
+  background: #0b0e15; border: 1px solid var(--lab-line); font: 0.82rem/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; }
 .lab-editor { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; }
 @media (max-width: 900px) { .lab-editor { grid-template-columns: 1fr; } }
 .lab-panel { border: 1px solid var(--lab-line); border-radius: 12px; overflow: hidden; background: #0b0e15; }

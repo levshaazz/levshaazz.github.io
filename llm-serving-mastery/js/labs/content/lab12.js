@@ -1,7 +1,7 @@
 /* Lab 12 — Advanced Kubernetes: one pod, many clients, and the HPA.
    Content module for the generic lab page (window.LABS_CONTENT['12']).
    The HPA controller taught as declared arithmetic (ceil formula, tolerance
-   band, stabilization windows) over the T6 step model; LLM scaling signals
+   band, stabilization windows) over the T06 step model; LLM scaling signals
    per the llm-d/KubeCon lesson: queue depth and KV pressure, not GPU util. */
 (function () {
   "use strict";
@@ -20,7 +20,8 @@
     intro: {
       en: `<p>One vLLM pod already serves a crowd: continuous batching (T05) collects requests into batches at every step boundary, and the roof <code>1000 / b</code> from T06 still holds. That is why <strong>"GPU busy at 90%" is not an overload signal</strong> — batching is supposed to keep the GPU busy even when the queue is empty. The signals that actually mean "scale" are the <strong>queue depth</strong>, the KV-cache pressure and the TTFT — the lesson the llm-d team brought home from KubeCon NA 2026.</p>
 <p>The <strong>Horizontal Pod Autoscaler (HPA)</strong> is the controller that turns such a signal into replicas. Every tick (15 s) it computes one number: <code>desired = ceil(replicas × metric / target)</code>, clamped into <code>[min, max]</code>. If the metric-to-target ratio sits inside the <strong>tolerance band</strong> ±10 %, it does nothing. And the windows are asymmetric on purpose: scaling up is immediate (window 0 s), scaling down waits in a <strong>300 s stabilization window</strong> and applies the <em>maximum</em> recommendation seen there — without it, a saw-shaped metric makes the fleet flap 1↔2↔1 and burns money on churn.</p>
-<p>Scaling LLM pods is expensive in time even when it is free in paperwork: a fresh pod pays the weight load again (T09's members, ~165 s on the course fleet), which is exactly why scale-down is the cautious direction. Everything here runs on declared numbers and a deterministic simulator in the sandbox — this is controller arithmetic, not a cluster. The compose runtime from T08 remains your rehearsal: burst 24 → sixteen honest 429s (T08), then a hand-driven «HPA tick» — raise the gateway replicas — and burst again; the journal compares the refusals.</p>`,
+<p>Scaling LLM pods is expensive in time even when it is free in paperwork: a fresh pod pays the weight load again (T09's members, ~165 s on the course fleet), which is exactly why scale-down is the cautious direction. Everything here runs on declared numbers and a deterministic simulator in the sandbox — this is controller arithmetic, not a cluster. The compose runtime from T08 remains your rehearsal: burst 24 → sixteen honest 429s (T08), then a hand-driven «HPA tick» — raise the gateway replicas — and burst again; the journal compares the refusals.</p>
+<p>Where the controller gets its metric is a separate honest story. <strong>metrics-server</strong> sees only resources (CPU, memory) — for an LLM pod that is almost useless: a GPU at 90% with an empty queue is healthy batching, not overload. <strong>Custom metrics</strong> arrive from an adapter on top of the engine's own counters — for example, <code>vllm:num_requests_waiting</code> from the <code>/metrics</code> exposition. <strong>KEDA</strong> can do the same from outside (queue length in the broker) and adds scale-to-zero. And the <code>spec.behavior</code> of a real HPA holds the fields you will use to run the fleet in Exercise 5: stabilization windows and step policies.</p>`,
       ru: `<p>Один под vLLM уже обслуживает толпу: continuous batching (T05) собирает запросы в батчи на каждой границе шага, и крыша <code>1000 / b</code> из T06 никуда не делась. Поэтому <strong>«GPU занят на 90 %» — не сигнал перегрузки</strong>: батчинг и обязан держать GPU занятым, даже когда очередь пуста. Сигналы, которые действительно означают «масштабируй», — <strong>глубина очереди</strong>, давление на KV-кэш и TTFT: урок, который команда llm-d привезла с KubeCon NA 2026.</p>
 <p><strong>Horizontal Pod Autoscaler (HPA)</strong> — контроллер, превращающий такой сигнал в реплики. Каждый тик (15 с) он считает одно число: <code>desired = ceil(replicas × metric / target)</code>, зажатое в <code>[min, max]</code>. Если отношение метрики к цели сидит в <strong>полосе tolerance</strong> ±10 % — он не делает ничего. А окна намеренно асимметричны: вверх — мгновенно (окно 0 с), вниз — ждёт в <strong>окне стабилизации 300 с</strong> и применяет <em>максимум</em> увиденных там рекомендаций; без него пилообразная метрика дёргает флот 1↔2↔1 и сжигает деньги на перемешивание.</p>
 <p>Масштабировать LLM-поды дорого по времени, даже когда по бумагам бесплатно: свежий под снова платит загрузку весов (члены из T09, ~165 с на курсовом флоте) — поэтому осторожное направление именно скейл-даун. Всё здесь считается на заявленных числах и детерминированном симуляторе в песочнице — это арифметика контроллера, а не кластер. Compose-рантайм из T08 остаётся репетицией: бурст 24 → шестнадцать честных 429 (T08), потом «тик HPA» руками — поднять replicas шлюза — и снова бурст; журнал сравнит отказы.</p>
@@ -198,7 +199,7 @@
       {
         id: "ps1",
         title: { en: "Exercise · Assemble the HPA decision", ru: "Упражнение · Собери решение HPA" },
-        brief: { en: "One scaling decision in six steps — two decoys contradict the mechanism you ran in HPASim.", ru: "Одно решение о масштабировании в шести шагах — две ловушки противоречат механике, которую ты гонял в HPASim." },
+        brief: { en: "One scaling decision in six steps — two decoys contradict the mechanism you will meet in HPASim (Exercise 7).", ru: "Одно решение о масштабировании в шести шагах — две ловушки противоречат механике, с которой ты встретишься в HPASim (упражнение 7)." },
         pool: [
           { en: "Scale-down is held back by the stabilization window", ru: "Скейл-даун сдерживается окном стабилизации" },
           { en: "The queue is wiped on every scale-up", ru: "Очередь очищается при каждом скейл-апе" },
@@ -342,7 +343,7 @@
             { en: "Kubernetes computes the max because recommendations are negative for scale-down", ru: "Kubernetes считает максимум, потому что рекомендации при скейл-дауне отрицательны" },
           ],
           answer: 0,
-          explain: { en: "With the LLM cold start (~165 s) a wrong scale-down is expensive to undo: the window max turns a saw-shaped metric into a held fleet (Exercise 3's held_ticks). Latest-wins is what the buggy starter did.", ru: "При холодном старте LLM (~165 с) ошибочный скейл-даун дорого откатывать: максимум окна превращает пилообразную метрику в удержанный флот (held_ticks из упражнения 3). «Последняя выигрывает» — то, что делал багованный стартер." },
+          explain: { en: "With the LLM cold start (~165 s) a wrong scale-down is expensive to undo: the window max turns a saw-shaped metric into a held fleet (Exercise 7's held_ticks). Latest-wins is what the buggy starter did.", ru: "При холодном старте LLM (~165 с) ошибочный скейл-даун дорого откатывать: максимум окна превращает пилообразную метрику в удержанный флот (held_ticks из упражнения 7). «Последняя выигрывает» — то, что делал багованный стартер." },
         },
         // Вариативность №5: окно стабилизации меняется (300 → 600 / 360 с), тик 15 с — дефолт k8s.
         // Пересчёт ticks = window / tick: 600 / 15 = 40;   360 / 15 = 24.
@@ -487,7 +488,7 @@ def desired_from_metrics(text, target_per_pod, current, min_r, max_r):
       },
       {
         id: "ex4",
-        title: { en: "Exercise 4 · Fix the bug: the flapping fleet", ru: "Упражнение 3 · Почини баг: флаттерующий флот" },
+        title: { en: "Exercise 4 · Fix the bug: the flapping fleet", ru: "Упражнение 4 · Почини баг: флаттерующий флот" },
         brief: {
           en: "This <code>stabilized(recs, window, current)</code> always applies the latest recommendation, so a saw-shaped metric flaps the fleet 1↔2↔1: every scale-down is instantly regretted. Kubernetes' fix is the stabilization window: scaling <strong>up</strong> applies immediately (the shortage hurts now), scaling <strong>down</strong> takes the <em>maximum</em> recommendation seen within the last <code>window</code> ticks. Fix it: latest recommendation when it does not shrink the fleet; otherwise the window max.",
           ru: "Эта <code>stabilized(recs, window, current)</code> всегда применяет последнюю рекомендацию, поэтому пилообразная метрика дёргает флот 1↔2↔1: каждый скейл-даун тут же приходится отменять. Фикс Kubernetes — окно стабилизации: скейл-ап применяется немедленно (дефицит болит сейчас), скейл-даун берёт <em>максимум</em> рекомендаций за последние <code>window</code> тиков. Почини: последняя рекомендация, если она не сжимает флот; иначе — максимум окна.",
@@ -582,7 +583,7 @@ def desired_from_metrics(text, target_per_pod, current, min_r, max_r):
       },
       {
         id: "ex7",
-        title: { en: "Exercise 7 · Wrap it into a class: HPASim", ru: "Упражнение 4 · Собери в класс: HPASim" },
+        title: { en: "Exercise 7 · Wrap it into a class: HPASim", ru: "Упражнение 7 · Собери в класс: HPASim" },
         brief: {
           en: "The lab's final boss: the controller loop as a class. <code>HPASim(w_ms=60.0, b_ms=2.0, cap=30, target_queue=2.0, min_r=1, max_r=4, window=20)</code> — the T06 step model per pod (cap 30 sequences, working point 250 tok/s). <code>tick(arrivals)</code>: add arrivals to the queue; the metric is <code>queue / replicas</code>; recommend <code>ceil(replicas × metric / target)</code> clamped (no tolerance band here — Exercise 2's job); scale-down runs through the stabilization window (max of the last <code>window</code> recommendations), scale-up is immediate; then serve <code>min(queue, replicas × cap)</code>. The tick returns <code>{'replicas', 'served', 'queue', 'step_ms'}</code> with <code>step_ms = w_ms + b_ms × batch</code> and <code>batch = ceil(served / replicas)</code> capped at <code>cap</code> (0 if nothing served). <code>report()</code> returns <code>{'ticks', 'held_ticks', 'unserved_ticks', 'final_replicas', 'final_queue'}</code> where <code>held_ticks</code> counts scale-downs suppressed by the window and <code>unserved_ticks</code> counts ticks that ended with a non-empty queue.",
           ru: "Финальный босс лабы: цикл контроллера как класс. <code>HPASim(w_ms=60.0, b_ms=2.0, cap=30, target_queue=2.0, min_r=1, max_r=4, window=20)</code> — модель шага из T06 на под (кап 30 последовательностей, рабочая точка 250 ток/с). <code>tick(arrivals)</code>: добавь arrivals в очередь; метрика — <code>queue / replicas</code>; рекомендация — <code>ceil(replicas × metric / target)</code> с клампом (без полосы tolerance — её работа была в упражнении 2); скейл-даун идёт через окно стабилизации (максимум последних <code>window</code> рекомендаций), скейл-ап мгновенный; затем обслужи <code>min(queue, replicas × cap)</code>. Тик возвращает <code>{'replicas', 'served', 'queue', 'step_ms'}</code>, где <code>step_ms = w_ms + b_ms × batch</code>, а <code>batch = ceil(served / replicas)</code> с потолком <code>cap</code> (0, если ничего не обслужено). <code>report()</code> возвращает <code>{'ticks', 'held_ticks', 'unserved_ticks', 'final_replicas', 'final_queue'}</code>, где <code>held_ticks</code> считает скейл-дауны, удержанные окном, а <code>unserved_ticks</code> — тики, кончившиеся непустой очередью.",
@@ -695,7 +696,7 @@ class HPASim:
       },
       {
         id: "ex8",
-        title: { en: "Exercise 8 · Cold boot: the order fires now, the capacity comes later", ru: "Упражнение 5 · Холодный старт: заказ срабатывает сейчас, ёмкость приходит позже" },
+        title: { en: "Exercise 8 · Cold boot: the order fires now, the capacity comes later", ru: "Упражнение 8 · Холодный старт: заказ срабатывает сейчас, ёмкость приходит позже" },
         brief: {
           en: "The controller orders replicas instantly — a fresh pod still pays the weight load (~165 s, T09; a tick here is 15 s, so <code>boot_ticks=11</code>). Extend the frozen HPASim with two v2 knobs: <code>boot_ticks</code> (orders mature that many ticks later) and <code>metric</code> (<code>'queue_per_pod'</code> default, or <code>'concurrency'</code> = (queue + last served) / replicas). Scenario, declared: <code>target_queue=2, min_r=1, max_r=4, cap=30, window=3</code>, arrivals <code>[60, 60, 60, 60, 0×5, 60]</code>. Predict first: unserved ticks with <code>boot_ticks=0</code>, <code>=2</code>, <code>=11</code> — and what the <code>concurrency</code> metric does on a drained queue that <code>queue_per_pod</code> does not.",
           ru: "Контроллер заказывает реплики мгновенно — свежий под всё ещё платит загрузку весов (~165\u00a0с, T09; тик здесь 15\u00a0с, значит <code>boot_ticks=11</code>). Расширь замороженный HPASim двумя ручками v2: <code>boot_ticks</code> (заказы взрослеют через столько тиков) и <code>metric</code> (<code>'queue_per_pod'</code> дефолт, или <code>'concurrency'</code> = (очередь + обслужено на прошлом тике) / реплики). Сценарий заявлен: <code>target_queue=2, min_r=1, max_r=4, cap=30, window=3</code>, arrivals <code>[60, 60, 60, 60, 0×5, 60]</code>. Сначала предскажи: сколько тиков с непустой очередью при <code>boot_ticks=0</code>, <code>=2</code>, <code>=11</code> — и что метрика <code>concurrency</code> делает на опустевшей очереди такого, чего не делает <code>queue_per_pod</code>.",
@@ -876,8 +877,8 @@ class HPASim:
         ru: "★ Вобрать бурст из 60 за один тик, шаг ≤ 120 мс",
       },
       brief: {
-        en: "You tune the controller's knobs for one burst tick: <code>60</code> arrivals hit a fresh fleet (1 replica, empty queue). Knob grids: <code>target_queue ∈ {1, 2, 4, 8}</code>, <code>max_r ∈ {2, 3, 4}</code>; the per-pod model stays T06's (<code>cap 30</code>, step <code>60 + 2 × batch</code>). Goal: the tick <strong>serves all 60</strong> (queue empty after) with <strong>step ≤ 120 ms</strong>. No tests guide you — the page replays the controller arithmetic exactly as HPASim does (ceil, clamp, serve, batch).",
-        ru: "Ты тюнишь ручки контроллера на одном тике-бурсте: <code>60</code> заявок бьют в свежий флот (1 реплика, пустая очередь). Сетки ручек: <code>target_queue ∈ {1, 2, 4, 8}</code>, <code>max_r ∈ {2, 3, 4}</code>; модель пода остаётся T06 (<code>cap 30</code>, шаг <code>60 + 2 × batch</code>). Цель: тик <strong>обслуживает все 60</strong> (очередь пуста после) с <strong>шагом ≤ 120 мс</strong>. Тестов-каркаса нет — страница переигрывает арифметику контроллера ровно как HPASim (ceil, кламп, обслуживание, батч).",
+        en: "You tune the controller's knobs for one burst tick: <code>60</code> arrivals hit a fresh fleet (1 replica, empty queue). Knob grids: <code>target_queue ∈ {2, 15, 30, 60}</code>, <code>max_r ∈ {1, 2, 3, 4}</code>; the per-pod model stays T06's (<code>cap 30</code>, step <code>60 + 2 × batch</code>). Goal: the tick <strong>serves all 60</strong> (queue empty after) with <strong>step ≤ 120 ms</strong>. No tests guide you — the page replays the controller arithmetic exactly as HPASim does (ceil, clamp, serve, batch).",
+        ru: "Ты тюнишь ручки контроллера на одном тике-бурсте: <code>60</code> заявок бьют в свежий флот (1 реплика, пустая очередь). Сетки ручек: <code>target_queue ∈ {2, 15, 30, 60}</code>, <code>max_r ∈ {1, 2, 3, 4}</code>; модель пода остаётся T06 (<code>cap 30</code>, шаг <code>60 + 2 × batch</code>). Цель: тик <strong>обслуживает все 60</strong> (очередь пуста после) с <strong>шагом ≤ 120 мс</strong>. Тестов-каркаса нет — страница переигрывает арифметику контроллера ровно как HPASim (ceil, кламп, обслуживание, батч).",
       },
       goal: {
         en: "Print one line: <code>target_queue=… max_r=… served=… step_ms=…</code> with served = 60 and step ≤ 120 ms.",
@@ -887,61 +888,140 @@ class HPASim:
       numpy: false,
       timeoutMs: 30000,
       starter: `# One burst tick: queue = 60, replicas start at 1 (fresh fleet).
-# Knobs from the grids: target_queue in {1, 2, 4, 8}; max_r in {2, 3, 4}.
+# Knobs from the grids: target_queue in {2, 15, 30, 60}; max_r in {1, 2, 3, 4}.
 # Controller arithmetic (as in HPASim.tick):
 #   metric   = queue / replicas                 = 60
 #   rec      = clamp(ceil(replicas * metric / target_queue), 1, max_r)
 #   replicas = rec                              (scale-up is immediate)
 #   served   = min(queue, replicas * cap)       with cap = 30
 #   batch    = min(cap, ceil(served / replicas)); step_ms = 60 + 2 * batch
-# The page reads ONE summary line:
-#   target_queue=<from grid> max_r=<from grid> served=<tokens> step_ms=<ms>
-# Goal: served = 60 AND step_ms <= 120.
+# The page reads every summary line — one knob pair per line:
+#   target_queue=<from grid> max_r=<from grid> served=<requests> step_ms=<ms>
+# Goal: at least one line with served = 60 AND step_ms <= 120.
 
-# TODO: try the knob pairs by hand or scan them, print the line.
+# TODO: try the knob pairs by hand or scan them, print the line(s).
 `,
       check: (res) => {
         const out = String(res.stdout || "");
-        const mm = out.match(/target_queue\s*=\s*([0-9]+)[\s\S]*?max_r\s*=\s*([0-9]+)[\s\S]*?served\s*=\s*([0-9]+)[\s\S]*?step_ms\s*=\s*([0-9]+(?:\.[0-9]+)?)/i);
-        if (!mm) {
-          return { ok: false, note: { en: "no summary line found - print exactly: target_queue=… max_r=… served=… step_ms=…", ru: "итоговой строки нет — напечатай ровно: target_queue=… max_r=… served=… step_ms=…" } };
+        const TQ_GRID = [2, 15, 30, 60], MAXR_GRID = [1, 2, 3, 4];
+        // RU plural after a numeral: 1 реплика, 2–4 реплики, 5+ реплик
+        const ruRep = (n) => n + "\u00a0" + ((n % 10 === 1 && n % 100 !== 11) ? "реплика" : ([2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100)) ? "реплики" : "реплик");
+        // Summary records are read as the key sequence target_queue → max_r →
+        // served → step_ms: one line per knob pair, a pair split over two lines
+        // and a scan of the whole grid all parse; a repeated key restarts (or
+        // overrides) the record it belongs to. No lookbehind: old Safari.
+        const KEY = /(^|[^A-Za-z0-9_])(target_queue|max_r|served|step_ms)\s*=\s*([0-9]+(?:\.[0-9]+)?)/gi;
+        const recs = [];
+        let cur = null, m;
+        while ((m = KEY.exec(out)) !== null) {
+          const key = m[2].toLowerCase(), val = m[3];
+          if (key === "target_queue") {
+            cur = { tq: parseInt(val, 10), maxR: null, servedClaimed: null, stepClaimed: null };
+            recs.push(cur);
+          } else if (!cur) {
+            continue; // a value with no knob pair in front of it
+          } else if (key === "max_r") {
+            cur.maxR = parseInt(val, 10);
+          } else if (key === "served") {
+            cur.servedClaimed = parseInt(val, 10);
+          } else {
+            cur.stepClaimed = parseFloat(val);
+          }
         }
-        const tq = parseInt(mm[1], 10), maxR = parseInt(mm[2], 10);
-        const servedClaimed = parseInt(mm[3], 10), stepClaimed = parseFloat(mm[4]);
-        if (![1, 2, 4, 8].includes(tq) || ![2, 3, 4].includes(maxR)) {
-          return { ok: false, note: { en: "the knobs must come from the declared grids: target_queue " + tq + ", max_r " + maxR, ru: "ручки обязаны быть из заявленных сеток: target_queue " + tq + ", max_r " + maxR } };
+        // an unfinished record is not a summary line
+        for (let i = recs.length - 1; i >= 0; i--) {
+          if (recs[i].maxR === null || recs[i].servedClaimed === null || recs[i].stepClaimed === null) recs.splice(i, 1);
         }
-        const rec = Math.min(Math.max(Math.ceil(60 / tq), 1), maxR);
-        const served = Math.min(60, rec * 30);
-        const batch = served ? Math.min(30, Math.ceil(served / rec)) : 0;
-        const step = 60 + 2 * batch;
-        if (servedClaimed !== served || Math.abs(step - stepClaimed) > 0.5) {
-          return { ok: false, note: { en: "the controller arithmetic gives: rec " + rec + ", served " + served + ", step " + step + " ms for those knobs", ru: "арифметика контроллера даёт: rec " + rec + ", обслужено " + served + ", шаг " + step + " мс для этих ручек" } };
+        if (!recs.length) {
+          return { ok: false, note: { en: "no summary line found — print exactly: target_queue=… max_r=… served=… step_ms=…", ru: "итоговой строки нет — напечатай ровно: target_queue=… max_r=… served=… step_ms=…" } };
         }
-        if (served < 60) {
-          return { ok: false, note: { en: "served " + served + " < 60 - the burst left " + (60 - served) + " unserved; raise max_r or lower target_queue", ru: "обслужено " + served + " < 60 — бурст оставил " + (60 - served) + " необслуженными; подними max_r или снизь target_queue" } };
+        const knobs = (ln) => "target_queue " + ln.tq + ", max_r " + ln.maxR;
+        const off = recs.find((ln) => !TQ_GRID.includes(ln.tq) || !MAXR_GRID.includes(ln.maxR));
+        if (off) {
+          return { ok: false, note: { en: "the knobs must come from the declared grids: target_queue ∈ {2, 15, 30, 60}, max_r ∈ {1, 2, 3, 4} — you printed " + knobs(off), ru: "ручки обязаны быть из заявленных сеток: target_queue ∈ {2, 15, 30, 60}, max_r ∈ {1, 2, 3, 4} — а напечатано " + knobs(off) } };
         }
-        if (step > 120) {
-          return { ok: false, note: { en: "step " + step + " ms > 120 ms - the batch is too fat; spread it over more replicas", ru: "шаг " + step + " мс > 120 мс — батч слишком жирный; размажь его по большим репликам" } };
+        // replay the controller arithmetic exactly as HPASim.tick does
+        recs.forEach((ln) => {
+          ln.raw = Math.ceil(60 / ln.tq); // ceil FIRST
+          ln.rec = Math.min(Math.max(ln.raw, 1), ln.maxR); // clamp SECOND
+          ln.served = Math.min(60, ln.rec * 30);
+          ln.batch = ln.served ? Math.min(30, Math.ceil(ln.served / ln.rec)) : 0;
+          ln.step = 60 + 2 * ln.batch;
+        });
+        const lie = recs.find((ln) => ln.servedClaimed !== ln.served || Math.abs(ln.step - ln.stepClaimed) > 0.5);
+        if (lie) {
+          return { ok: false, note: { en: "the controller arithmetic gives: rec " + lie.rec + ", served " + lie.served + ", step " + lie.step + " ms for " + knobs(lie), ru: "арифметика контроллера даёт: rec " + lie.rec + ", обслужено " + lie.served + ", шаг " + lie.step + "\u00a0мс для " + knobs(lie) } };
         }
-        return { ok: true, note: { en: "tq " + tq + ", max_r " + maxR + " → rec " + rec + " replicas: served " + served + ", step " + step + " ms — burst absorbed in one tick", ru: "tq " + tq + ", max_r " + maxR + " → rec " + rec + " реплик: обслужено " + served + ", шаг " + step + " мс — бурст вобран за один тик" } };
+        // the run passes as soon as ONE honest line meets the goal (a scan of
+        // the grid is fine); every line above was replayed and found truthful
+        const win = recs.find((ln) => ln.served === 60 && ln.step <= 120);
+        if (win) {
+          return { ok: true, note: { en: "tq " + win.tq + ", max_r " + win.maxR + " → rec " + win.rec + " replicas: served " + win.served + ", step " + win.step + " ms — burst absorbed in one tick", ru: "tq " + win.tq + ", max_r " + win.maxR + " → rec " + ruRep(win.rec) + ": обслужено " + win.served + ", шаг " + win.step + "\u00a0мс — бурст вобран за один тик" } };
+        }
+        // no line meets the goal: name the real cause. rec = 1 is the only way
+        // to underserve (30 per replica): either the clamp (the budget) or the
+        // recommendation itself (a loose target) pinned it there.
+        const f = recs[0];
+        if (f.served < 60) {
+          const cls = (ln) => (ln.raw === 1 ? (ln.maxR === 1 ? "both" : "target") : "budget");
+          if (!recs.every((ln) => cls(ln) === cls(f))) {
+            // several lines, several causes: say which knob frees which lines
+            const loose = recs.some((ln) => ln.raw === 1), cut = recs.some((ln) => ln.raw > 1);
+            const both = recs.some((ln) => cls(ln) === "both");
+            const en = ["served " + f.served + " < 60 on all " + recs.length + " lines — each one orders only 1 replica, and one replica serves 30."];
+            const ru = ["обслужено " + f.served + " < 60 на всех " + recs.length + " строках — каждая заказывает лишь 1 реплику, а одна реплика обслуживает 30."];
+            if (loose) {
+              en.push("Where target_queue = 60, the formula recommends 1 replica before the clamp — tighten target_queue.");
+              ru.push("Где target_queue = 60, формула рекомендует 1 реплику ещё до клампа — снизь target_queue.");
+            }
+            if (cut) {
+              en.push("Where the formula asked for more, max_r = 1 cut the order to 1 — raise max_r.");
+              ru.push("Где формула просила больше, max_r = 1 срезал заказ до 1 — подними max_r.");
+            }
+            if (loose && cut && both) {
+              en.push("On the lines with both, one knob alone is not enough.");
+              ru.push("На строках, где действует и то и другое, одной ручки мало.");
+            }
+            return { ok: false, note: { en: en.join(" "), ru: ru.join(" ") } };
+          }
+          if (cls(f) === "both") {
+            return { ok: false, note: { en: "served " + f.served + " < 60 — the burst left " + (60 - f.served) + " unserved. Two faults stack: the target of 60 says a queue of 60 requests per pod is normal, so the formula recommends 1 replica before the clamp, and max_r = 1 would pin it there anyway — tighten target_queue AND raise max_r; one knob alone is not enough", ru: "обслужено " + f.served + " < 60 — бурст оставил " + (60 - f.served) + " необслуженными. Две ошибки сразу: цель 60 говорит, что очередь из 60 заявок на под — норма, поэтому формула рекомендует 1 реплику ещё до клампа, а max_r = 1 закрепил бы её там и так: снизь target_queue и подними max_r — одной ручки мало" } };
+          }
+          if (cls(f) === "target") {
+            return { ok: false, note: { en: "served " + f.served + " < 60 — the burst left " + (60 - f.served) + " unserved. ceil(60 / target_queue) = 1: the target of 60 says a queue of 60 requests per pod is normal, so the formula itself recommends 1 replica before the clamp (a bigger max_r changes nothing) — tighten target_queue", ru: "обслужено " + f.served + " < 60 — бурст оставил " + (60 - f.served) + " необслуженными. ceil(60 / target_queue) = 1: цель 60 говорит, что очередь из 60 заявок на под — норма, поэтому сама формула рекомендует 1 реплику ещё до клампа (большой max_r ничего не изменит): снизь target_queue" } };
+          }
+          return { ok: false, note: { en: "served " + f.served + " < 60 — the burst left " + (60 - f.served) + " unserved. ceil(60 / target_queue) = " + f.raw + ", but max_r = " + f.maxR + " clamps the order to 1 replica, and one replica serves 30 — raise max_r", ru: "обслужено " + f.served + " < 60 — бурст оставил " + (60 - f.served) + " необслуженными. ceil(60 / target_queue) = " + f.raw + ", но кламп max_r = " + f.maxR + " зажимает заказ до 1 реплики, а одна реплика обслуживает 30: подними max_r" } };
+        }
+        return { ok: false, note: { en: "step " + f.step + " ms > 120 ms — the batch is too fat; spread it over more replicas", ru: "шаг " + f.step + " мс > 120 мс — батч слишком жирный; размажь его по большим репликам" } };
       },
-      reference: `# Walk the knob pairs - it is 12 lines, cheaper than guessing:
-for tq in (1, 2, 4, 8):
-    for max_r in (2, 3, 4):
+      reference: `# Walk all 16 knob pairs — cheaper than guessing:
+for tq in (2, 15, 30, 60):
+    for max_r in (1, 2, 3, 4):
         rec = min(max(-(-60 // tq), 1), max_r)      # ceil + clamp
         served = min(60, rec * 30)
         batch = min(30, -(-served // rec)) if served else 0
         step = 60 + 2 * batch
         mark = "OK " if served == 60 and step <= 120 else "   "
         print(f"{mark}target_queue={tq} max_r={max_r} rec={rec} served={served} step_ms={step}")
-# target_queue=1 with max_r=1 never serves 60 (the clamp caps rec at 1);
-# tq=1 with max_r=2 lands exactly ON the line: served 60, batch 30,
-# step 120 <= 120 - accepted, but with zero headroom. Several pairs win
-# comfortably (tq 2 x max_r 4 gives rec 4, served 60, batch 15, step 90;
-# tq 4 x max_r 3 gives step 100; the tq 8 rows pass only where the clamp
-# leaves exactly enough replicas).
-# The clamp and the batch ceiling fight each other - tuning is the truce.`,
+# Full outcome table: rows = target_queue, columns = max_r; cell = rec, served/step_ms.
+#               max_r=1        max_r=2        max_r=3        max_r=4
+#   tq=2     rec 1, 30/120   rec 2, 60/120   rec 3, 60/100   rec 4, 60/90
+#   tq=15    rec 1, 30/120   rec 2, 60/120   rec 3, 60/100   rec 4, 60/90
+#   tq=30    rec 1, 30/120   rec 2, 60/120   rec 2, 60/120   rec 2, 60/120
+#   tq=60    rec 1, 30/120   rec 1, 30/120   rec 1, 30/120   rec 1, 30/120
+# 9 of the 16 pairs pass. The 7 failures are one fault — served 30 < 60:
+#   max_r = 1 (tq 2, 15, 30): ceil(60 / tq) asks for 30, 4 or 2 replicas and the
+#                             clamp leaves 1 -> raise max_r;
+#   tq = 60 (every max_r):    ceil(60 / 60) = 1 BEFORE the clamp: the target
+#                             says a queue of 60 requests per pod is normal, so
+#                             no budget helps -> tighten target_queue;
+#   tq = 60, max_r = 1:       both faults at once -> move both knobs.
+# step_ms never exceeds 120 (batch <= cap = 30), so the step half of the goal
+# never fails on its own: it is a roof. Every rec = 1 or rec = 2 cell touches it
+# exactly (batch 30, zero headroom); headroom needs rec >= 3, i.e. tq <= 15
+# together with max_r >= 3 (step 100 / 90).
+# In this tick more replicas only help both numbers. The price is paid elsewhere:
+# a fresh replica is a pod that boots (Exercise 8), and max_r is the cost fuse.`,
     },
     posttest: [
       {
@@ -973,7 +1053,7 @@ for tq in (1, 2, 4, 8):
         options: [
           { en: "The weight-loading member of the cold start shrinks (~4× smaller file), so a fresh pod turns Ready sooner — scale-up's hidden cost drops; the ceil formula and the windows do not change", ru: "Член загрузки весов холодного старта сжимается (файл ~в 4 раза меньше), поэтому свежий под быстрее становится Ready — скрытая цена скейл-апа падает; формула ceil и окна не меняются" },
           { en: "The ceil formula divides by 4 for quantized weights", ru: "Формула ceil делит на 4 для квантованных весов" },
-          { en: "Quantization removes the cold start entirely - scale-up becomes instant", ru: "Квантизация убирает холодный старт целиком — скейл-ап становится мгновенным" },
+          { en: "Quantization removes the cold start entirely — scale-up becomes instant", ru: "Квантизация убирает холодный старт целиком — скейл-ап становится мгновенным" },
         ],
         answer: 0,
         explain: { en: "T03 × T09 × this lab, multiplied honestly: quantization shrinks the DOMINANT member of the T09 chain, shortening the Not-Ready window; the HPA arithmetic (ceil, tolerance, windows) is controller math and does not know about bytes. The window's 300 s stays because it guards against metric noise, not against slow loads.", ru: "T03 × T09 × эта лаба, умноженные честно: квантизация сжимает ДОМИНИРУЮЩИЙ член цепочки T09, укорачивая окно Not-Ready; арифметика HPA (ceil, tolerance, окна) — математика контроллера, и байт она не знает. Окно 300 с остаётся: оно защищает от шума метрики, а не от медленной загрузки." },

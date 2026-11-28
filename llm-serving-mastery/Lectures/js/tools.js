@@ -66,6 +66,16 @@
     savePrefs();
     updateToolbarState();
     if (typeof syncDocTitle === 'function') syncDocTitle();
+    // The layout-type crumb (see TYPE_LABEL_RU) is filled per active language,
+    // so a live toggle re-runs the fill. applyLogoSlot() is idempotent: the
+    // logo slot is guarded by data-applied, the crumbs are recomputed as-is.
+    applyLogoSlot();
+    // And the TOC popover's type chips: buildTocPop builds the popover once, its
+    // rows in slide order, so chip i belongs to slides[i].
+    if ($('.toc-pop')) $$('.toc-pop .pop-type').forEach((chip, i) => {
+      const slide = window.Lecture && window.Lecture.slides && window.Lecture.slides[i];
+      if (slide) chip.innerHTML = popTypeHtml(slide.dataset.type || '');
+    });
   }
   function applyTheme(theme) {
     prefs.theme = theme;
@@ -239,6 +249,14 @@
   /* Focus management — when the popover opens, focus the first link;
      restore previous focus on close. Trap Tab inside the dialog. */
   let _tocLastFocus = null;
+  /* Type chip of a TOC row: the raw data-type, as before, except when the deck is
+     shown in Russian. Then the chip reads the TYPE_LABEL_RU label (natural case;
+     .pop-type is upper-cased by its own CSS) in a paired span, so the CSS [lang]
+     rule switches it live, exactly like the breadcrumbs. */
+  function popTypeHtml(type) {
+    const ru = prefs.lang === 'ru' ? TYPE_LABEL_RU[type] : undefined;
+    return ru ? `<span lang="ru">${escapeHtml(ru)}</span><span lang="en">${type}</span>` : type;
+  }
   function buildTocPop() {
     if ($('.toc-pop')) return;
     const slides = window.Lecture.slides;
@@ -267,7 +285,7 @@
       row.innerHTML = `
         <span class="pop-num">${String(i + 1).padStart(2,'0')}</span>
         <span class="pop-title">${escapeHtml(titleText)}</span>
-        <span class="pop-type">${s.dataset.type || ''}</span>
+        <span class="pop-type">${popTypeHtml(s.dataset.type || '')}</span>
       `;
       row.addEventListener('click', (e) => {
         e.preventDefault();
@@ -476,6 +494,37 @@
   }
 
   /* ---------------- Logo slot ---------------- */
+  /* Russian labels for the layout-type breadcrumb fallback. A slide with no
+     divider above it (a deck without divider slides, or the slides before the
+     first divider) shows its data-type as the crumb. Keys = every data-type
+     that occurs in the deck sources (Lectures/<slug>/parts). The last eight
+     get no frame from deck.js (injectFrame), so they cannot reach this
+     fallback today; they are listed for completeness. Natural case: the crumb
+     label is upper-cased by CSS (.slide__crumb-label). A type missing here
+     keeps the English fallback. */
+  const TYPE_LABEL_RU = {
+    'two-col': 'Две колонки',
+    'table': 'Таблица',
+    'evidence': 'Данные',
+    'walkthrough': 'Пошагово',
+    'art-hero': 'Иллюстрация',
+    'agenda': 'План',
+    'objectives': 'Результаты',
+    'refs': 'Источники',
+    'definition': 'Определение',
+    'pause': 'Пауза',
+    'misconception': 'Заблуждение',
+    'archflow': 'Схема',
+    'title': 'Титул',
+    'divider': 'Раздел',
+    'quote': 'Цитата',
+    'final': 'Финал',
+    'formula': 'Формула',
+    'timeline': 'Таймлайн',
+    'sequence': 'Последовательность',
+    'model-widget': 'Модель',
+  };
+
   function applyLogoSlot() {
     const courseLabel = $('[data-meta-course]') ? $('[data-meta-course]').textContent.trim() : '';
     const sectionLabels = (slide) => {
@@ -525,7 +574,17 @@
         if (labels.ru || labels.en) {
           secEl.innerHTML = `<span lang="ru">${escapeHtml(labels.ru)}</span><span lang="en">${escapeHtml(labels.en)}</span>`;
         } else {
-          secEl.textContent = (slide.dataset.type || '').toUpperCase();
+          // No divider above → the layout type is the label. In Russian the
+          // student sees a Russian word (paired spans, switched live by the
+          // CSS [lang] rule like the divider branch above); any other language
+          // keeps the raw upper-cased data-type, exactly as before.
+          const type = slide.dataset.type || '';
+          const ru = prefs.lang === 'ru' ? TYPE_LABEL_RU[type] : undefined;
+          if (ru) {
+            secEl.innerHTML = `<span lang="ru">${escapeHtml(ru)}</span><span lang="en">${escapeHtml(type.toUpperCase())}</span>`;
+          } else {
+            secEl.textContent = type.toUpperCase();
+          }
         }
       }
       // course breadcrumb
